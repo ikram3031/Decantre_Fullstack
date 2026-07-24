@@ -33,3 +33,8 @@ Thumbs.db
 # IDE files
 .vscode/
 .idea/
+
+# Ignore child repositories
+backend/
+frontend/
+dashboad/
