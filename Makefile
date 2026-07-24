@@ -1,7 +1,7 @@
 .PHONY: deploy build-bg build-fg build-dash logs status down
 
 deploy:
-	git pull origin main
+	git pull origin master
 	docker compose -f docker-compose.dev.yml --env-file .env.dev build --no-cache
 	docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
 
