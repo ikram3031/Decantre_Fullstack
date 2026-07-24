@@ -7,8 +7,6 @@
 # Node / package managers
 node_modules/
 **/node_modules/
-package-lock.json
-**/package-lock.json
 
 # Build output
 /dist/
