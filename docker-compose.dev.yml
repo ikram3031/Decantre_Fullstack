@@ -1,16 +1,18 @@
+version: '3.8'
+
 services:
   mongodb:
     image: mongo:7.0
-    container_name: decantre_mongodb
+    container_name: decantre-mongodb-dev
     restart: always
     networks:
       - decantre-network
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: devpass123
-      MONGO_INITDB_DATABASE: perfume-store
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-devpass123}
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-perfume-store}
     volumes:
-      - mongo_db_data:/data/db
+      - mongodb-data-dev:/data/db
     ports:
       - "27017:27017"
     healthcheck:
@@ -29,28 +31,28 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: decantre_backend
+    container_name: decantre-backend-dev
     restart: always
     networks:
       - decantre-network
     environment:
-      NODE_ENV: development
-      PORT: 4000
-      MONGODB_URI: mongodb://admin:devpass123@mongodb:27017/perfume-store?authSource=admin
-      MONGODB_DB_NAME: perfume-store
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${PORT:-4000}
+      MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-devpass123}@mongodb:27017/${MONGODB_DB_NAME:-perfume-store}?authSource=admin
+      MONGODB_DB_NAME: ${MONGODB_DB_NAME:-perfume-store}
       DB_HOST: ${DB_HOST:-localhost}
       DB_PORT: ${DB_PORT:-3306}
       DB_USER: ${DB_USER:-root}
       DB_PASSWORD: ${DB_PASSWORD:-password}
-      DB_NAME: ${DB_NAME:-perfume_store}
-      ACCESS_TOKEN_SECRET: dev-secret-key-min-32-characters-long
-      ACCESS_TOKEN_EXPIRES_IN: 15m
-      REFRESH_TOKEN_EXPIRES_MS: 2592000000
-      SMTP_HOST: smtp.hostinger.com
-      SMTP_PORT: 465
-      SMTP_ENCRYPTION: SSL
-      SMTP_USER: ""
-      SMTP_PASSWORD: ""
+      DB_NAME: ${DB_NAME:-perfume_store_dev}
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:-dev-secret-key-min-32-characters-long}
+      ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN:-15m}
+      REFRESH_TOKEN_EXPIRES_MS: ${REFRESH_TOKEN_EXPIRES_MS:-2592000000}
+      SMTP_HOST: ${SMTP_HOST:-smtp.hostinger.com}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_ENCRYPTION: ${SMTP_ENCRYPTION:-SSL}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
     ports:
       - "4000:4000"
     depends_on:
@@ -63,7 +65,7 @@ services:
       retries: 3
       start_period: 40s
     volumes:
-      - backend-logs:/app/logs
+      - backend-logs-dev:/app/logs
     logging:
       driver: "json-file"
       options:
@@ -74,15 +76,16 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: decantre_frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
+    container_name: decantre-frontend-dev
     restart: always
     networks:
       - decantre-network
     environment:
-      NODE_ENV: development
-      VITE_API_URL: http://localhost:4000
+      NODE_ENV: ${NODE_ENV:-development}
     ports:
-      - "8000:3000"
+      - "8001:3000"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
@@ -99,15 +102,16 @@ services:
     build:
       context: ./dashboad
       dockerfile: Dockerfile
-    container_name: decantre_dashboard
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
+    container_name: decantre-dashboard-dev
     restart: always
     networks:
       - decantre-network
     environment:
-      NODE_ENV: development
-      VITE_API_URL: http://localhost:4000
+      NODE_ENV: ${NODE_ENV:-development}
     ports:
-      - "5000:5000"
+      - "8005:5000"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000"]
       interval: 30s
@@ -125,5 +129,5 @@ networks:
     driver: bridge
 
 volumes:
-  mongo_db_data:
-  backend-logs:
+  mongodb-data-dev:
+  backend-logs-dev:
