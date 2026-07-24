@@ -3,10 +3,12 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:7.0
-    container_name: decantre-mongodb-dev
+    container_name: ${MONGODB_CONTAINER_NAME}
     restart: always
     networks:
       - decantre-network
+    env_file:
+      - .env.dev
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-devpass123}
@@ -14,7 +16,7 @@ services:
     volumes:
       - mongodb-data-dev:/data/db
     ports:
-      - "27017:27017"
+      - "0.0.0.0:27017:27017"
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -31,13 +33,15 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: decantre-backend-dev
+    container_name: ${BACKEND_CONTAINER_NAME}
     restart: always
     networks:
       - decantre-network
+    env_file:
+      - .env.dev
     environment:
       NODE_ENV: ${NODE_ENV:-development}
-      PORT: ${PORT:-4000}
+      PORT: 5092
       MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-devpass123}@mongodb:27017/${MONGODB_DB_NAME:-perfume-store}?authSource=admin
       MONGODB_DB_NAME: ${MONGODB_DB_NAME:-perfume-store}
       DB_HOST: ${DB_HOST:-localhost}
@@ -54,12 +58,12 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
     ports:
-      - "4000:4000"
+      - "${BACKEND_PORT}:5092"
     depends_on:
       mongodb:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5092', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -78,16 +82,18 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
-    container_name: decantre-frontend-dev
+    container_name: ${FRONTEND_CONTAINER_NAME}
     restart: always
     networks:
       - decantre-network
+    env_file:
+      - .env.dev
     environment:
       NODE_ENV: ${NODE_ENV:-development}
     ports:
-      - "8001:3000"
+      - "${FRONTEND_PORT}:8001"
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8001"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -104,16 +110,18 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
-    container_name: decantre-dashboard-dev
+    container_name: ${DASHBOARD_CONTAINER_NAME}
     restart: always
     networks:
       - decantre-network
+    env_file:
+      - .env.dev
     environment:
       NODE_ENV: ${NODE_ENV:-development}
     ports:
-      - "8005:5000"
+      - "${DASHBOARD_PORT}:8005"
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8005"]
       interval: 30s
       timeout: 10s
       retries: 3
