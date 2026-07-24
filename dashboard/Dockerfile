@@ -7,10 +7,10 @@ WORKDIR /app
 ARG VITE_API_URL=http://localhost:4000
 
 # Copy package files
-COPY package.json ./
+COPY package.json package-lock.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Copy source code
 COPY . .
