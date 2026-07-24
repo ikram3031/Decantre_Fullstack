@@ -1,136 +1,59 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:7.0
-    container_name: ${MONGODB_CONTAINER_NAME}
+    container_name: ${MONGODB_CONTAINER_NAME:-decantre-mongodb-dev}
     restart: always
-    networks:
-      - decantre-network
-    env_file:
-      - .env.dev
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-devpass123}
-      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-dev}
-    volumes:
-      - mongodb-data-dev:/data/db
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-11223345}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-perfume-store}
     ports:
       - "0.0.0.0:27017:27017"
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+    volumes:
+      - mongodb-data-dev:/data/db
+    networks:
+      - decantre-network
 
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    container_name: ${BACKEND_CONTAINER_NAME}
+      dockerfile: Dockerfile.dev
+    container_name: ${BACKEND_CONTAINER_NAME:-decantre-backend-dev}
     restart: always
+    env_file:
+      - .env
+    ports:
+      - "${BACKEND_PORT:-5092}:5092"
+    depends_on:
+      - mongodb
     networks:
       - decantre-network
-    env_file:
-      - .env.dev
-    environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      PORT: 5092
-      MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-devpass123}@mongodb:27017/${MONGODB_DB_NAME:-perfume-store}?authSource=admin
-      MONGODB_DB_NAME: ${MONGODB_DB_NAME:-perfume-store}
-      DB_HOST: ${DB_HOST:-localhost}
-      DB_PORT: ${DB_PORT:-3306}
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-password}
-      DB_NAME: ${DB_NAME:-perfume_store_dev}
-      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:-dev-secret-key-min-32-characters-long}
-      ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN:-15m}
-      REFRESH_TOKEN_EXPIRES_MS: ${REFRESH_TOKEN_EXPIRES_MS:-2592000000}
-      SMTP_HOST: ${SMTP_HOST:-smtp.hostinger.com}
-      SMTP_PORT: ${SMTP_PORT:-465}
-      SMTP_ENCRYPTION: ${SMTP_ENCRYPTION:-SSL}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-    ports:
-      - "${BACKEND_PORT}:5092"
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5092', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    volumes:
-      - backend-logs-dev:/app/logs
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
-    container_name: ${FRONTEND_CONTAINER_NAME}
+      dockerfile: Dockerfile.dev
+    container_name: ${FRONTEND_CONTAINER_NAME:-decantre-frontend-dev}
     restart: always
+    env_file:
+      - .env
+    ports:
+      - "${FRONTEND_PORT:-8001}:8001"
     networks:
       - decantre-network
-    env_file:
-      - .env.dev
-    environment:
-      NODE_ENV: ${NODE_ENV:-development}
-    ports:
-      - "${FRONTEND_PORT}:8001"
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8001"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
   dashboard:
     build:
       context: ./dashboard
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
-    container_name: ${DASHBOARD_CONTAINER_NAME}
+      dockerfile: Dockerfile.dev
+    container_name: ${DASHBOARD_CONTAINER_NAME:-decantre-dashboard-dev}
     restart: always
+    env_file:
+      - .env
+    ports:
+      - "${DASHBOARD_PORT:-8005}:8005"
     networks:
       - decantre-network
-    env_file:
-      - .env.dev
-    environment:
-      NODE_ENV: ${NODE_ENV:-development}
-    ports:
-      - "${DASHBOARD_PORT}:8005"
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8005"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
 networks:
   decantre-network:
@@ -138,4 +61,3 @@ networks:
 
 volumes:
   mongodb-data-dev:
-  backend-logs-dev:
