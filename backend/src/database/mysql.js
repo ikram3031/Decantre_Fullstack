@@ -19,11 +19,14 @@ export async function connectMySQL() {
     queueLimit: 0,
   });
 
-  const connection = await pool.getConnection();
-  await connection.ping();
-  connection.release();
-
-  console.log("Connected to MySQL");
+  try {
+    const connection = await pool.getConnection();
+    await connection.ping();
+    connection.release();
+    console.log("Connected to MySQL");
+  } catch (err) {
+    console.warn("Could not connect to MySQL. Server will continue without MySQL connection:", err.message);
+  }
   return pool;
 }
 
