@@ -1,0 +1,137 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: decantre_mongodb
+    restart: always
+    networks:
+      - decantre-network
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: devpass123
+      MONGO_INITDB_DATABASE: perfume-store
+    volumes:
+      - mongo_db_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  mysql:
+    image: mysql:8.0
+    container_name: decantre_mysql
+    restart: always
+    networks:
+      - decantre-network
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: perfume_store_dev
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: devpass123
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: decantre_backend
+    restart: always
+    networks:
+      - decantre-network
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      MONGODB_URI: mongodb://mongodb:27017/perfume-store
+      MONGODB_DB_NAME: perfume-store
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: devuser
+      DB_PASSWORD: devpass123
+      DB_NAME: perfume_store_dev
+      ACCESS_TOKEN_SECRET: dev-secret-key-min-32-characters-long
+      ACCESS_TOKEN_EXPIRES_IN: 15m
+      REFRESH_TOKEN_EXPIRES_MS: 2592000000
+      SMTP_HOST: smtp.hostinger.com
+      SMTP_PORT: 465
+      SMTP_ENCRYPTION: SSL
+      SMTP_USER: ""
+      SMTP_PASSWORD: ""
+    ports:
+      - "4000:4000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - backend-logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: decantre_frontend
+    restart: always
+    networks:
+      - decantre-network
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:4000
+    ports:
+      - "8000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  decantre-network:
+    driver: bridge
+
+volumes:
+  mongo_db_data:
+  mysql_dev_data:
+  backend-logs:
