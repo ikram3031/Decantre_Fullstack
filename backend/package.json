@@ -1,0 +1,37 @@
+{
+	"name": "Decantre-backend",
+	"version": "1.0.2",
+	"private": true,
+	"type": "module",
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"dev": "node --watch src/server.js",
+		"prod": "node src/server.js",
+		"lint": "eslint .",
+		"format": "prettier --write .",
+		"import:products": "node scripts/import-products.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"bcrypt": "^6.0.0",
+		"cors": "^2.8.6",
+		"dotenv": "^17.2.1",
+		"express": "^5.1.0",
+		"jsonwebtoken": "^9.0.3",
+		"mongodb": "7.5",
+		"mongoose": "^8.17.2",
+		"mysql2": "^3.23.0",
+		"nodemailer": "^9.0.3",
+		"pino": "^10.1.0",
+		"zod": "^4.0.17"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.34.0",
+		"eslint": "^9.34.0",
+		"prettier": "^3.6.2"
+	}
+}

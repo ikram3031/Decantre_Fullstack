@@ -1,0 +1,6 @@
+{
+  "name": "Decantre",
+  "description": "Premium e-commerce admin dashboard for Decantre, featuring inventory management, order tracking, and sales analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

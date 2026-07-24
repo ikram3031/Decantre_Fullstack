@@ -1,0 +1,425 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { SlidersHorizontal, Sparkles, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useApp } from '../context/AppContext';
+import { formatBDT } from '../utils/formatCurrency';
+import { ProductCard } from '../components/ProductCard';
+import { ProductGridSkeleton } from '../components/Skeleton';
+
+export const Shop = () => {
+  const {
+    searchQuery,
+    setSearchQuery,
+    cardSelections,
+    setCardSelections,
+    wishlist,
+    toggleWishlist,
+    handleOpenProductDetail,
+    handleAddToCart,
+    calculateItemPrice,
+    products,
+    categories,
+    brands,
+    fetchProducts,
+    fetchCategories,
+    fetchBrands,
+    selectedCategory,
+    setSelectedCategory,
+    currentTheme
+  } = useApp();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  const brandParam = searchParams.get('brand');
+  const searchParam = searchParams.get('search');
+
+  const [maxPrice, setMaxPrice] = useState(25000);
+  const [sortOrder, setSortOrder] = useState('newest');
+  const [brandFilters, setBrandFilters] = useState([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+  // Compute dynamic min/max price boundaries from currently fetched products
+  const priceLimits = useMemo(() => {
+    const prices = products.map((p) => p.basePrice).filter((p) => p > 0);
+    if (prices.length === 0) return { min: 140, max: 25000 };
+    return {
+      min: Math.min(...prices),
+      max: Math.max(...prices)
+    };
+  }, [products]);
+
+  // Sync initial max price selection with loaded products range
+  useEffect(() => {
+    if (products.length > 0) {
+      const prices = products.map((p) => p.basePrice).filter((p) => p > 0);
+      if (prices.length > 0) {
+        setMaxPrice(Math.max(...prices));
+      }
+    }
+  }, [products]);
+
+  // Mapped client-side filter for the price range
+  const displayedProducts = useMemo(() => {
+    return products.filter((prod) => prod.basePrice <= maxPrice);
+  }, [products, maxPrice]);
+
+  const categoryOptions = useMemo(
+    () => [{ id: 'all', name: 'All', slug: 'All', product_count: products.length }, ...categories],
+    [categories, products]
+  );
+
+  const brandOptions = useMemo(
+    () => [{ id: 'all', name: 'All', slug: 'All', product_count: products.length }, ...brands],
+    [brands, products]
+  );
+
+  // Sync URL query params to state
+  useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    } else {
+      setSelectedCategory('All');
+    }
+  }, [categoryParam, setSelectedCategory]);
+
+  useEffect(() => {
+    if (brandParam) {
+      setBrandFilters([brandParam]);
+    } else {
+      setBrandFilters([]);
+    }
+  }, [brandParam]);
+
+  useEffect(() => {
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    } else {
+      setSearchQuery('');
+    }
+  }, [searchParam, setSearchQuery]);
+
+  useEffect(() => {
+    if (typeof fetchCategories === 'function') {
+      fetchCategories({ rawQuery: 'skip=0&limit=50' });
+    }
+    if (typeof fetchBrands === 'function') {
+      fetchBrands({ rawQuery: 'skip=0&limit=50' });
+    }
+  }, [fetchCategories, fetchBrands]);
+
+  useEffect(() => {
+    if (typeof fetchProducts !== 'function') return;
+
+    const categoryFilter = selectedCategory && selectedCategory !== 'All' ? `&category=${encodeURIComponent(selectedCategory)}` : '';
+    const brandFilter = brandFilters.length === 1 ? `&brand=${encodeURIComponent(brandFilters[0])}` : '';
+    const searchFilter = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
+    const rawQuery = `skip=0&limit=20&sort=${sortOrder}${categoryFilter}${brandFilter}${searchFilter}`;
+
+    const loadProducts = async () => {
+      setIsLoadingProducts(true);
+      try {
+        await fetchProducts({ rawQuery });
+      } finally {
+        setIsLoadingProducts(false);
+      }
+    };
+
+    loadProducts();
+  }, [fetchProducts, selectedCategory, brandFilters, searchQuery, sortOrder]);
+
+  const handleBrandToggle = (brandSlug) => {
+    const params = new URLSearchParams(searchParams);
+    if (brandSlug === 'All') {
+      params.delete('brand');
+    } else {
+      if (brandParam === brandSlug) {
+        params.delete('brand');
+      } else {
+        params.set('brand', brandSlug);
+      }
+    }
+    setSearchParams(params);
+  };
+
+  const handleCategorySelect = (categorySlug) => {
+    const params = new URLSearchParams(searchParams);
+    if (categorySlug === 'All') {
+      params.delete('category');
+    } else {
+      params.set('category', categorySlug);
+    }
+    setSearchParams(params);
+  };
+
+  const handleClearBrands = () => {
+    const params = new URLSearchParams(searchParams);
+    params.delete('brand');
+    setSearchParams(params);
+  };
+
+  const isLight = currentTheme === 'light';
+
+  const renderFilterContent = () => (
+    <div className="space-y-8 text-left">
+      <div>
+        <h3 className={`text-xs font-sans font-bold uppercase tracking-widest ${isLight ? 'text-zinc-800' : 'text-zinc-300'} mb-4 hidden lg:flex items-center gap-2`}>
+          <SlidersHorizontal className="w-3.5 h-3.5 text-gold" /> Filter Collection
+        </h3>
+        <div className={`h-[1px] w-full ${isLight ? 'bg-zinc-200' : 'bg-gold/15'} mb-6 hidden lg:block`}></div>
+      </div>
+
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold block">Category</span>
+          <div className="space-y-2">
+            {categoryOptions.map((category) => (
+              <button
+                key={category.id || category.slug}
+                onClick={() => handleCategorySelect(category.slug)}
+                className={`w-full text-left px-4 py-3 rounded-[4px] text-xs transition-all border cursor-pointer ${
+                  selectedCategory === category.slug
+                    ? 'border-gold bg-gold/10 text-gold font-semibold'
+                    : `${isLight ? 'border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black' : 'border-white/10 text-zinc-400 hover:border-gold/30 hover:text-white'}`
+                }`}
+              >
+                {category.name}
+                {category.product_count !== undefined && category.slug !== 'All' ? (
+                  <span className="text-[10px] text-zinc-500 ml-2">({category.product_count})</span>
+                ) : null}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold block">Brands</span>
+            <button
+              type="button"
+              onClick={handleClearBrands}
+              className="text-[10px] uppercase tracking-wide text-gold hover:underline animate-fade-in cursor-pointer"
+            >
+              Clear
+            </button>
+          </div>
+          <div className="space-y-2">
+            {brandOptions.map((brand) => (
+              <label key={brand.id || brand.slug} className={`flex items-center gap-3 text-xs cursor-pointer ${isLight ? 'text-zinc-700' : 'text-zinc-300'}`}>
+                <input
+                  type="checkbox"
+                  checked={brand.slug === 'All' ? brandFilters.length === 0 : brandFilters.includes(brand.slug)}
+                  onChange={() => {
+                    if (brand.slug === 'All') {
+                      setBrandFilters([]);
+                      return;
+                    }
+                    handleBrandToggle(brand.slug);
+                  }}
+                  className={`h-4 w-4 accent-gold rounded-[4px] border cursor-pointer ${isLight ? 'border-zinc-300 bg-zinc-50' : 'border-white/10 bg-luxury-dark'}`}
+                />
+                <span>{brand.name}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">Maximum Price</span>
+            <span className="text-xs font-mono text-gold font-semibold">{formatBDT(maxPrice)}</span>
+          </div>
+          <input
+            type="range"
+            min={priceLimits.min}
+            max={priceLimits.max}
+            step={Math.max(1, Math.ceil((priceLimits.max - priceLimits.min) / 100))}
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(Number(e.target.value))}
+            className="w-full accent-gold bg-zinc-800 h-1 rounded-[4px] cursor-pointer"
+          />
+          <div className="flex justify-between text-[9px] text-zinc-600 font-mono">
+            <span>{formatBDT(priceLimits.min)}</span>
+            <span>{formatBDT(priceLimits.max)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className={`p-5 border ${isLight ? 'border-zinc-200 bg-zinc-50' : 'border-gold/15 bg-luxury-dark/30'} rounded-[4px] space-y-4`}>
+        <Sparkles className="w-5 h-5 text-gold" />
+        <h4 className={`text-xs font-sans font-bold uppercase tracking-wider ${isLight ? 'text-zinc-800' : 'text-zinc-200'}`}>Personal Scent finder</h4>
+        <p className="text-zinc-500 text-[11px] font-sans font-light leading-relaxed">
+          Undecided on the perfect balance of top and heart notes? Take our 4-step sensory assessment to discover your sovereign match.
+        </p>
+        <button
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const startQuizBtn = document.querySelector('#main-header button');
+            if (startQuizBtn) startQuizBtn.click();
+          }}
+          className={`w-full text-center font-bold uppercase tracking-widest text-[9px] py-2.5 transition-all duration-300 rounded-[4px] cursor-pointer ${
+            isLight 
+              ? 'bg-black text-white hover:bg-zinc-800 border border-black' 
+              : 'border border-gold/40 hover:bg-gold hover:text-black text-gold'
+          }`}
+        >
+          Launch Assessment
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={`py-12 sm:py-20 ${isLight ? 'bg-white text-black' : 'bg-luxury-black text-white'} animate-fade-in text-left`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Banner */}
+        <div className={`text-center space-y-4 mb-16 relative py-12 border ${isLight ? 'border-zinc-200 bg-zinc-50' : 'border-gold/15 bg-luxury-dark/20'} rounded-sm`}>
+          <div className="absolute -inset-px bg-gradient-to-r from-transparent via-gold/5 to-transparent pointer-events-none"></div>
+          <span className="text-[10px] uppercase tracking-[0.4em] text-gold font-sans font-medium block">The Decantre Boutique</span>
+          <h1 className={`text-3xl sm:text-5xl font-serif font-light ${isLight ? 'text-black' : 'text-luxury-white'} tracking-wide`}>
+            THE DECANTRE SHOP
+          </h1>
+          <p className="text-zinc-500 text-xs sm:text-sm font-sans font-light max-w-xl mx-auto leading-relaxed px-4">
+            Browse our curated reserves. Customize bottle volume and concentration. Each order is meticulously hand-packed in a velvet presentation chest.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+          
+          {/* Sidebar Filters */}
+          <div className={`lg:col-span-1 border-r-0 lg:border-r ${isLight ? 'border-zinc-200' : 'border-gold/10'} pr-0 lg:pr-8 space-y-4 lg:space-y-8`}>
+            
+            {/* Mobile Filter Toggle Button */}
+            <div className="block lg:hidden w-full">
+              <button
+                onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                className={`w-full flex items-center justify-between px-4 py-3 border rounded-[4px] text-xs font-sans font-bold uppercase tracking-widest transition-all cursor-pointer ${
+                  isLight 
+                    ? 'bg-zinc-100 border-zinc-200 text-zinc-800' 
+                    : 'bg-[#0a0a0a] border-gold/30 text-gold hover:border-gold'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <SlidersHorizontal className="w-4 h-4 text-gold" /> 
+                  {isFiltersOpen ? 'Hide Filters' : 'Show Filters'}
+                </span>
+                <span className="text-gold font-bold text-base leading-none">
+                  {isFiltersOpen ? '−' : '+'}
+                </span>
+              </button>
+            </div>
+
+            {/* Desktop-only filter view */}
+            <div className="hidden lg:block">
+              {renderFilterContent()}
+            </div>
+
+            {/* Mobile collapsible filter view */}
+            <AnimatePresence initial={false}>
+              {isFiltersOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="block lg:hidden overflow-hidden pb-4"
+                >
+                  <div className="pt-2">
+                    {renderFilterContent()}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Product Grid Area */}
+          <div className="lg:col-span-3 space-y-8">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between border-b border-white/5 pb-4">
+              <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
+                Displaying {displayedProducts.length} Premium Formulations
+              </span>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
+                  <span>Sort</span>
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                    className="bg-black border border-[#C5A059] text-[#C5A059] text-xs font-bold uppercase tracking-wider rounded-[4px] py-2 px-3 outline-none focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059] cursor-pointer"
+                  >
+                    <option value="newest" className="bg-[#C5A059] text-black font-bold">Newest first</option>
+                    <option value="price-asc" className="bg-[#C5A059] text-black font-bold">Price low to high</option>
+                    <option value="price-desc" className="bg-[#C5A059] text-black font-bold">Price high to low</option>
+                  </select>
+                </div>
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      const params = new URLSearchParams(searchParams);
+                      params.delete('search');
+                      setSearchParams(params);
+                    }}
+                    className="text-[10px] uppercase tracking-widest text-gold hover:underline font-mono"
+                  >
+                    Clear search: "{searchQuery}"
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Loading skeleton */}
+            {isLoadingProducts && (
+              <ProductGridSkeleton count={6} />
+            )}
+
+            {/* Empty search fallback */}
+            {!isLoadingProducts && displayedProducts.length === 0 && (
+              <div className="text-center py-24 border border-dashed border-gold/15 rounded-sm bg-luxury-dark/10 animate-fade-in">
+                <Search className="w-12 h-12 text-gold/40 mx-auto mb-4" />
+                <h3 className="text-lg font-serif font-light text-zinc-300 mb-2">No Products Found</h3>
+                <p className="text-zinc-500 text-xs font-sans font-light max-w-xs mx-auto">
+                  No formulations match your selected filters. Try broadening your criteria or resetting the price filter.
+                </p>
+              </div>
+            )}
+
+            {/* Perfume list */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
+              {!isLoadingProducts && displayedProducts.map((prod) => {
+                const currentSel = cardSelections[prod.id] || { size: '100ml', concentration: 'Eau de Parfum' };
+                return (
+                  <ProductCard 
+                    key={prod.id}
+                    product={prod}
+                    currentSel={currentSel}
+                    onSizeChange={(size) => {
+                      setCardSelections(prev => ({
+                        ...prev,
+                        [prod.id]: { ...currentSel, size }
+                      }));
+                    }}
+                    onConcentrationChange={(concentration) => {
+                      setCardSelections(prev => ({
+                        ...prev,
+                        [prod.id]: { ...currentSel, concentration }
+                      }));
+                    }}
+                    wishlist={wishlist}
+                    toggleWishlist={toggleWishlist}
+                    handleOpenProductDetail={handleOpenProductDetail}
+                    handleAddToCart={handleAddToCart}
+                    calculateItemPrice={calculateItemPrice}
+                    hideMobileVariations={true}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+export default Shop;

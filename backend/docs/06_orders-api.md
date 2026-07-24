@@ -1,0 +1,283 @@
+# Orders API Documentation
+
+This document describes all available order endpoints for the backend.
+
+## Base URL
+
+```text
+http://localhost:4000/api/v1
+```
+
+## Endpoints
+
+### Create a new order
+
+**Method:** POST
+
+**URL:** `/api/v1/orders/new-order`
+
+**Authentication:** Not required
+
+### Request Body
+
+```json
+{
+  "fullName": "Nadia Rahman",
+  "phone": "+8801712345678",
+  "email": "customer@example.com",
+  "address": "House 12, Road 3",
+  "city": "Dhaka",
+  "thana": "Dhanmondi",
+  "district": "Dhaka",
+  "zip": "1209",
+  "giftWrap": false,
+  "paymentMethod": "cod",
+  "subtotal": 1200,
+  "shippingFee": 0,
+  "tax": 96,
+  "total": 1296,
+  "shippingAddress": {},
+  "items": [
+    {
+      "name": "Oud Imperial",
+      "quantity": 1,
+      "unitPrice": 1200,
+      "size": "100ml",
+      "concentration": "Eau de Parfum"
+    }
+  ]
+}
+```
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "message": "Order received successfully",
+  "data": {
+    "id": "64a8c9b3f8e3a5c1d2e7f0a1",
+    "orderNumber": "ORD-20260719-123456",
+    "status": "received",
+    "customer": {
+      "fullName": "Nadia Rahman",
+      "phone": "+8801712345678",
+      "email": "customer@example.com",
+      "address": "House 12, Road 3",
+      "city": "Dhaka",
+      "thana": "Dhanmondi",
+      "district": "Dhaka",
+      "zip": "1209",
+      "giftWrap": false
+    },
+    "paymentMethod": "cod",
+    "shippingAddress": {},
+    "items": [
+      {
+        "name": "Oud Imperial",
+        "quantity": 1,
+        "unitPrice": 1200,
+        "size": "100ml",
+        "concentration": "Eau de Parfum"
+      }
+    ],
+    "totals": {
+      "subtotal": 1200,
+      "shippingFee": 0,
+      "tax": 96,
+      "total": 1296
+    },
+    "createdAt": "2026-07-19T10:00:00.000Z",
+    "updatedAt": "2026-07-19T10:00:00.000Z"
+  }
+}
+```
+
+### List orders
+
+**Method:** GET
+
+**URL:** `/api/v1/orders`
+
+**Authentication:** Required
+
+**Headers:**
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+### Query Parameters
+
+- `page` (optional) - page number, default `1`
+- `limit` (optional) - items per page, default `20`
+- `status` (optional) - filter by order status
+- `email` (optional) - filter by customer email
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "id": "64a8c9b3f8e3a5c1d2e7f0a1",
+      "orderNumber": "ORD-20260719-123456",
+      "status": "received",
+      "customer": {
+        "fullName": "Nadia Rahman",
+        "phone": "+8801712345678",
+        "email": "customer@example.com",
+        "address": "House 12, Road 3",
+        "city": "Dhaka",
+        "thana": "Dhanmondi",
+        "district": "Dhaka",
+        "zip": "1209",
+        "giftWrap": false
+      },
+      "paymentMethod": "cod",
+      "shippingAddress": {},
+      "items": [
+        {
+          "name": "Oud Imperial",
+          "quantity": 1,
+          "unitPrice": 1200,
+          "size": "100ml",
+          "concentration": "Eau de Parfum"
+        }
+      ],
+      "totals": {
+        "subtotal": 1200,
+        "shippingFee": 0,
+        "tax": 96,
+        "total": 1296
+      },
+      "createdAt": "2026-07-19T10:00:00.000Z",
+      "updatedAt": "2026-07-19T10:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "limit": 20,
+    "totalPages": 1
+  }
+}
+```
+
+### Get order by ID
+
+**Method:** GET
+
+**URL:** `/api/v1/orders/:orderId`
+
+**Authentication:** Required
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "data": {
+    "id": "64a8c9b3f8e3a5c1d2e7f0a1",
+    "orderNumber": "ORD-20260719-123456",
+    "status": "received",
+    "customer": {
+      "fullName": "Nadia Rahman",
+      "phone": "+8801712345678",
+      "email": "customer@example.com",
+      "address": "House 12, Road 3",
+      "city": "Dhaka",
+      "thana": "Dhanmondi",
+      "district": "Dhaka",
+      "zip": "1209",
+      "giftWrap": false
+    },
+    "paymentMethod": "cod",
+    "shippingAddress": {},
+    "items": [
+      {
+        "name": "Oud Imperial",
+        "quantity": 1,
+        "unitPrice": 1200,
+        "size": "100ml",
+        "concentration": "Eau de Parfum"
+      }
+    ],
+    "totals": {
+      "subtotal": 1200,
+      "shippingFee": 0,
+      "tax": 96,
+      "total": 1296
+    },
+    "createdAt": "2026-07-19T10:00:00.000Z",
+    "updatedAt": "2026-07-19T10:00:00.000Z"
+  }
+}
+```
+
+### Update order
+
+**Method:** PUT
+
+**URL:** `/api/v1/orders/:orderId`
+
+**Authentication:** Required
+
+### Request Body Examples
+
+Update status:
+
+```json
+{
+  "status": "processing"
+}
+```
+
+Update shipping address:
+
+```json
+{
+  "shippingAddress": {
+    "address": "House 14, Road 7",
+    "city": "Dhaka"
+  }
+}
+```
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "data": {
+    "id": "64a8c9b3f8e3a5c1d2e7f0a1",
+    "status": "processing",
+    "updatedAt": "2026-07-19T11:00:00.000Z"
+  }
+}
+```
+
+### Delete order
+
+**Method:** DELETE
+
+**URL:** `/api/v1/orders/:orderId`
+
+**Authentication:** Required
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "message": "Order deleted successfully"
+}
+```
+
+## Notes
+
+- `POST /api/v1/orders/new-order` is public and used for checkout submission.
+- All other order endpoints require a valid JWT access token in the `Authorization` header.
+- Supported order statuses: `received`, `processing`, `shipped`, `completed`, `cancelled`.
+- Orders are now persisted in MongoDB using the `Order` model.
