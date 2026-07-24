@@ -10,7 +10,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-devpass123}
-      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-perfume-store}
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-dev}
     volumes:
       - mongodb-data-dev:/data/db
     ports:
@@ -100,7 +100,7 @@ services:
 
   dashboard:
     build:
-      context: ./dashboad
+      context: ./dashboard
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}

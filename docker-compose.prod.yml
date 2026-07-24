@@ -9,8 +9,8 @@ services:
       - decantre-network
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-changeme}
-      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-perfume-store}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-ikr4m@}
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-prod}
     volumes:
       - mongodb-data:/data/db
     healthcheck:
@@ -98,7 +98,7 @@ services:
 
   dashboard:
     build:
-      context: ./dashboad
+      context: ./dashboard
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL}
