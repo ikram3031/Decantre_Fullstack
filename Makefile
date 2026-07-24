@@ -2,23 +2,25 @@
 
 deploy:
 	git pull origin master
-	docker compose -f docker-compose.dev.yml --env-file .env.dev build --no-cache
-	docker compose -f docker-compose.dev.yml --env-file .env.dev up -d
+	docker compose --env-file .env.dev -f docker-compose.dev.yml up -d --build --no-cache
 
 build-bg:
-	docker compose -f docker-compose.dev.yml --env-file .env.dev up -d --build backend
+	git pull origin master
+	docker compose --env-file .env.dev -f docker-compose.dev.yml up -d --build --no-cache backend
 
 build-fg:
-	docker compose -f docker-compose.dev.yml --env-file .env.dev up -d --build frontend
+	git pull origin master
+	docker compose --env-file .env.dev -f docker-compose.dev.yml up -d --build --no-cache frontend
 
 build-dash:
-	docker compose -f docker-compose.dev.yml --env-file .env.dev up -d --build dashboard
-
-logs:
-	docker compose -f docker-compose.dev.yml --env-file .env.dev logs -f
+	git pull origin master
+	docker compose --env-file .env.dev -f docker-compose.dev.yml up -d --build --no-cache dashboard
 
 status:
-	docker compose -f docker-compose.dev.yml --env-file .env.dev ps
+	docker compose --env-file .env.dev -f docker-compose.dev.yml ps
+
+logs:
+	docker compose --env-file .env.dev -f docker-compose.dev.yml logs -f
 
 down:
-	docker compose -f docker-compose.dev.yml --env-file .env.dev down
+	docker compose --env-file .env.dev -f docker-compose.dev.yml down
