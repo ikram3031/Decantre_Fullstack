@@ -44,12 +44,11 @@ export const Home = () => {
     fetchBrands
   } = useApp();
 
-  // fetch remote products, categories and brands on mount
+  // fetch categories and brands on mount (products are fetched by NewArrival)
   useEffect(() => {
-    if (typeof fetchProducts === 'function') fetchProducts();
-    if (typeof fetchCategories === 'function') fetchCategories();
-    if (typeof fetchBrands === 'function') fetchBrands();
-  }, [fetchProducts, fetchCategories, fetchBrands]);
+    if (typeof fetchCategories === 'function') fetchCategories({ skip: 0, limit: 50 });
+    if (typeof fetchBrands === 'function') fetchBrands({ skip: 0, limit: 50 });
+  }, [fetchCategories, fetchBrands]);
 
   // Show top 3 spotlight products on home page to keep layout premium, with link to view more
   const spotlightProducts = filteredProducts.slice(0, 3);
