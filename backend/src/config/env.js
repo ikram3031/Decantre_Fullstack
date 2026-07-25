@@ -10,12 +10,7 @@ const envSchema = z.object({
   MONGODB_DB_NAME: z.string().min(1).default("perfume-store"),
   ACCESS_TOKEN_SECRET: z.string().min(20, "ACCESS_TOKEN_SECRET is required"),
   ACCESS_TOKEN_EXPIRES_IN: z.string().default("15m"),
-  REFRESH_TOKEN_EXPIRES_MS: z.coerce.number().int().positive().default(30 * 24 * 60 * 60 * 1000),
-  DB_HOST: z.string().min(1, "DB_HOST is required"),
-  DB_PORT: z.coerce.number().int().positive().lte(65535).default(3306),
-  DB_USER: z.string().min(1, "DB_USER is required"),
-  DB_PASSWORD: z.string().min(1, "DB_PASSWORD is required"),
-  DB_NAME: z.string().min(1, "DB_NAME is required"),
+  REFRESH_TOKEN_EXPIRES_MS: z.coerce.number().int().positive().default(30 * 24 * 60 * 60 * 1000)
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -17,6 +17,11 @@
       ]
     },
     {
+      "id": "combo",
+      "label": "Combo",
+      "path": "/combo"
+    },
+    {
       "id": "shop",
       "label": "Shop",
       "path": "/shop",
@@ -109,6 +114,7 @@
   "mainNav": [
     { "id": "home", "label": "HOME", "path": "/" },
     { "id": "season", "label": "SEASON", "path": "/season" },
+    { "id": "combo", "label": "COMBO", "path": "/combo" },
     { "id": "shop", "label": "SHOP", "path": "/shop" },
     { "id": "brand", "label": "BRAND", "path": "/atelier" },
     { "id": "full-bottles", "label": "FULL BOTTLES", "path": "/shop?category=Full Bottles" },

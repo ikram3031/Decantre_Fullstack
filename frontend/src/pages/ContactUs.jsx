@@ -68,7 +68,7 @@ export const ContactUs = () => {
               {salons.map((salon) => (
                 <div 
                   key={salon.city}
-                  className="bg-luxury-dark/20 border border-gold/30 hover:border-gold p-8 rounded-sm space-y-5 transition-all duration-300 shadow-xl"
+                  className="bg-zinc-900/90 border border-zinc-700/60 hover:border-gold p-8 rounded-sm space-y-5 transition-all duration-300 shadow-xl"
                 >
                   <h3 className="text-base font-serif text-gold tracking-widest uppercase border-b border-white/10 pb-3 flex items-center justify-between">
                     <span>{salon.city}</span>
@@ -99,8 +99,8 @@ export const ContactUs = () => {
           </div>
 
           {/* Interactive contact booking form */}
-          <div className="lg:col-span-7 bg-luxury-dark/30 border border-gold/15 p-6 sm:p-10 rounded-sm space-y-6">
-            <div className="space-y-2 border-b border-white/5 pb-4">
+          <div className="lg:col-span-7 bg-zinc-900/90 border border-zinc-700/60 p-6 sm:p-10 rounded-sm space-y-6 shadow-xl">
+            <div className="space-y-2 border-b border-zinc-800 pb-4">
               <div className="flex items-center gap-2 text-gold">
                 <Sparkles className="w-4 h-4 animate-pulse" />
                 <span className="text-[9px] uppercase tracking-widest font-sans font-semibold">Concierge Dispatch</span>
@@ -121,7 +121,7 @@ export const ContactUs = () => {
                     placeholder="e.g. Countess Anastasia"
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
+                    className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
                   />
                 </div>
                 <div>
@@ -132,7 +132,7 @@ export const ContactUs = () => {
                     placeholder="e.g. anastasia@noble.ru"
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
+                    className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
                   />
                 </div>
               </div>
@@ -142,7 +142,7 @@ export const ContactUs = () => {
                 <select
                   value={formSubject}
                   onChange={(e) => setFormSubject(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 focus:border-gold/60 text-zinc-300 text-xs px-4 py-3 outline-none rounded-sm font-sans"
+                  className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
                 >
                   <option value="Boutique Appointment">Schedule Private Salon Appointment</option>
                   <option value="Custom Formula Commission">Bespoke Fragrance Commission</option>
@@ -159,7 +159,7 @@ export const ContactUs = () => {
                   placeholder="Describe your requested scent parameters, preferred consultation times, or specific questions..."
                   value={formMessage}
                   onChange={(e) => setFormMessage(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 focus:border-gold/60 text-zinc-200 text-xs p-4 outline-none rounded-sm font-sans leading-relaxed resize-none"
+                  className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs p-4 outline-none rounded-sm font-sans leading-relaxed resize-none"
                 />
               </div>
 

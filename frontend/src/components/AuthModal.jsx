@@ -120,7 +120,7 @@ export const AuthModal = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-          className="relative w-full max-w-md bg-[#050505] border border-gold/30 rounded-none overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.9)] p-6 sm:p-8"
+          className="relative w-full max-w-md bg-zinc-900/95 border border-zinc-700/80 rounded-sm overflow-hidden shadow-2xl p-6 sm:p-8"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Decorative Top Accent Line */}
@@ -141,7 +141,7 @@ export const AuthModal = () => {
               Decantre Membership
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif font-light text-white tracking-widest uppercase">
-              {mode === 'profile' ? 'My Atelier' : mode === 'login' ? 'Inner Circle Sign In' : 'Exclusive Registry'}
+              {mode === 'profile' ? 'My Profile' : mode === 'login' ? 'Account Sign In' : 'Create Account'}
             </h2>
           </div>
 
@@ -228,7 +228,7 @@ export const AuthModal = () => {
                       placeholder="e.g. Alexander Vance"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-zinc-950 border border-white/10 focus:border-gold/50 rounded-none py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-600"
+                      className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
                       required
                     />
                   </div>
@@ -246,7 +246,7 @@ export const AuthModal = () => {
                     placeholder="name@exclusive.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-zinc-950 border border-white/10 focus:border-gold/50 rounded-none py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-600"
+                    className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
                     required
                   />
                 </div>
@@ -263,7 +263,7 @@ export const AuthModal = () => {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-zinc-950 border border-white/10 focus:border-gold/50 rounded-none py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-600"
+                    className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
                     required
                   />
                 </div>
@@ -281,7 +281,7 @@ export const AuthModal = () => {
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-zinc-950 border border-white/10 focus:border-gold/50 rounded-none py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-600"
+                      className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
                       required
                     />
                   </div>

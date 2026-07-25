@@ -3,7 +3,7 @@ import { ProductCard } from '../ProductCard';
 import { useApp } from '../../context/AppContext';
 
 export const Featured = () => {
-  const { products, wishlist, toggleWishlist, cardSelections, setCardSelections, handleOpenProductDetail, handleAddToCart, calculateItemPrice } = useApp();
+  const { products, productsError, wishlist, toggleWishlist, cardSelections, setCardSelections, handleOpenProductDetail, handleAddToCart, calculateItemPrice } = useApp();
   const featured = products.filter(p => p.isFeatured).slice(0, 6);
 
   return (
@@ -17,23 +17,37 @@ export const Featured = () => {
           <h3 className="text-xl sm:text-2xl font-serif text-luxury-white">Featured</h3>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featured.map(p => (
-            <ProductCard
-              key={p.id}
-              product={p}
-              currentSel={cardSelections[p.id] || { size: (p.variations && p.variations[0] && p.variations[0].size) || '100ml', concentration: 'Eau de Parfum' }}
-              onSizeChange={(size) => setCardSelections(prev => ({ ...prev, [p.id]: { ...(prev[p.id] || {}), size } }))}
-              onConcentrationChange={(c) => setCardSelections(prev => ({ ...prev, [p.id]: { ...(prev[p.id] || {}), concentration: c } }))}
-              wishlist={wishlist}
-              toggleWishlist={toggleWishlist}
-              handleOpenProductDetail={handleOpenProductDetail}
-              handleAddToCart={handleAddToCart}
-              calculateItemPrice={calculateItemPrice}
-              isLargeCard={true} // large card -> 2 lines for description
-            />
-          ))}
-        </div>
+        {productsError ? (
+          <div className="p-8 border border-amber-500/20 bg-amber-500/5 rounded-sm text-center my-4">
+            <p className="text-amber-400 font-sans text-xs tracking-wide">
+              {productsError}
+            </p>
+          </div>
+        ) : featured.length === 0 ? (
+          <div className="p-8 border border-zinc-700/40 bg-zinc-900/40 rounded-sm text-center my-4">
+            <p className="text-zinc-400 font-sans text-xs tracking-wide">
+              No featured products available at the moment.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featured.map(p => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                currentSel={cardSelections[p.id] || { size: (p.variations && p.variations[0] && p.variations[0].size) || '100ml', concentration: 'Eau de Parfum' }}
+                onSizeChange={(size) => setCardSelections(prev => ({ ...prev, [p.id]: { ...(prev[p.id] || {}), size } }))}
+                onConcentrationChange={(c) => setCardSelections(prev => ({ ...prev, [p.id]: { ...(prev[p.id] || {}), concentration: c } }))}
+                wishlist={wishlist}
+                toggleWishlist={toggleWishlist}
+                handleOpenProductDetail={handleOpenProductDetail}
+                handleAddToCart={handleAddToCart}
+                calculateItemPrice={calculateItemPrice}
+                isLargeCard={true} // large card -> 2 lines for description
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

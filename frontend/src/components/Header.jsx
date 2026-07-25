@@ -166,10 +166,10 @@ export const Header = ({
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <header id="main-header" className={`sticky top-0 z-40 transition-all duration-300 translate-y-0 ${isScrolled ? 'bg-black/95 shadow-lg border-b border-gold/35' : 'bg-black/85 backdrop-blur-md border-b border-gold/20'}`}>
+    <header id="main-header" className={`sticky top-0 z-50 transition-all duration-300 translate-y-0 ${isScrolled ? 'bg-black/95 shadow-xl border-b border-gold/35' : 'bg-black/90 backdrop-blur-md border-b border-gold/20'}`}>
       <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'h-16 md:h-20' : 'h-20 md:h-24'} flex items-center justify-between w-full relative`}>
         
-        {/* Left Side: Decorative Icon + Menu Items */}
+        {/* Left Side: Decorative Icon + Menu Items + Desktop Nav Links */}
         <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
           {/* Decorative / Menu Toggle Icon */}
           <button 
@@ -179,6 +179,9 @@ export const Header = ({
           >
             {isMobileMenuOpen ? <X className="w-5 h-5 text-gold" /> : <Menu className="w-5 h-5 text-gold" />}
           </button>
+
+
+
         </div>
 
         {/* Center: Logo and Branding */}
@@ -208,7 +211,7 @@ export const Header = ({
           {/* Search Icon */}
           <button 
             onClick={() => setIsSearchPanelOpen(true)}
-            className="p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer flex items-center justify-center"
+            className="hidden sm:flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
             aria-label="Search"
           >
             <Search className="w-5 h-5 text-gold" />
@@ -217,7 +220,7 @@ export const Header = ({
           {/* Wishlist Icon */}
           <button 
             onClick={() => navigate('/wishlist')}
-            className="p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer flex items-center justify-center"
+            className="hidden sm:flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
             aria-label="Wishlist"
           >
             <Heart className={`w-5 h-5 text-gold ${wishlist.length > 0 ? 'fill-gold' : ''}`} />
@@ -247,7 +250,7 @@ export const Header = ({
           {user ? (
             <button 
               onClick={() => setAuthModal(true, 'profile')}
-              className="p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer flex items-center justify-center"
+              className="hidden sm:flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
               title={`Profile (${user.name})`}
               aria-label="User Profile"
             >
@@ -256,7 +259,7 @@ export const Header = ({
           ) : (
             <button 
               onClick={() => setAuthModal(true, 'login')}
-              className="p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer flex items-center justify-center"
+              className="hidden sm:flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
               title="Login"
               aria-label="User Login"
             >
@@ -268,7 +271,7 @@ export const Header = ({
 
       {/* Full Screen Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-[#080808] text-zinc-100 overflow-y-auto min-h-screen flex flex-col font-sans animate-fade-in border-l border-gold/20 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-[#080808] text-zinc-100 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden min-h-screen flex flex-col font-sans animate-fade-in border-l border-gold/20 shadow-2xl">
           {/* Top Bar Header */}
           <div className="border-b border-gold/20 bg-black/90 px-6 sm:px-12 py-4 flex items-center justify-between relative shrink-0">
             <button 
@@ -376,7 +379,26 @@ export const Header = ({
                   )}
                 </div>
 
-                {/* 3. Shop */}
+                {/* 3. Combo */}
+                <div className="bg-zinc-900/80 border border-gold/30 rounded-sm overflow-hidden bg-gradient-to-r from-gold/10 via-zinc-900 to-zinc-900">
+                  <button
+                    onClick={() => {
+                      navigate('/combo');
+                      handleNavLinkClick();
+                    }}
+                    className="w-full text-left py-2.5 px-4 font-semibold text-gold hover:text-white hover:bg-gold/20 transition-all flex items-center justify-between cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>Combo Sets</span>
+                      <span className="text-[9px] bg-gold text-black font-extrabold px-1.5 py-0.5 rounded-xs uppercase tracking-wider">
+                        Hot
+                      </span>
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-gold/70" />
+                  </button>
+                </div>
+
+                {/* 4. Shop */}
                 <div className="bg-zinc-900/80 border border-white/10 rounded-sm overflow-hidden">
                   <div className="w-full flex items-center justify-between py-2.5 px-4 bg-zinc-900/90 hover:bg-zinc-800/80 transition-colors">
                     <button

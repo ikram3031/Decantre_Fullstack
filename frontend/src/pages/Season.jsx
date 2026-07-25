@@ -6,6 +6,8 @@ import { ProductCard } from '../components/ProductCard';
 export const Season = () => {
   const {
     products,
+    productsError,
+    fetchProducts,
     cardSelections,
     setCardSelections,
     wishlist,
@@ -134,35 +136,57 @@ export const Season = () => {
 
           {/* Right products grid */}
           <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {seasonalProducts.map((prod) => {
-                const currentSel = cardSelections[prod.id] || { size: '100ml', concentration: 'Eau de Parfum' };
-                return (
-                  <ProductCard 
-                    key={prod.id}
-                    product={prod}
-                    currentSel={currentSel}
-                    onSizeChange={(size) => {
-                      setCardSelections(prev => ({
-                        ...prev,
-                        [prod.id]: { ...currentSel, size }
-                      }));
-                    }}
-                    onConcentrationChange={(concentration) => {
-                      setCardSelections(prev => ({
-                        ...prev,
-                        [prod.id]: { ...currentSel, concentration }
-                      }));
-                    }}
-                    wishlist={wishlist}
-                    toggleWishlist={toggleWishlist}
-                    handleOpenProductDetail={handleOpenProductDetail}
-                    handleAddToCart={handleAddToCart}
-                    calculateItemPrice={calculateItemPrice}
-                  />
-                );
-              })}
-            </div>
+            {productsError ? (
+              <div className="p-8 border border-amber-500/20 bg-amber-500/5 rounded-sm text-center space-y-3">
+                <p className="text-amber-400 font-sans text-xs tracking-wide">
+                  {productsError}
+                </p>
+                <button
+                  onClick={() => {
+                    if (typeof fetchProducts === 'function') fetchProducts();
+                  }}
+                  className="px-4 py-2 border border-gold/40 text-[10px] uppercase tracking-widest text-gold hover:bg-gold hover:text-black transition-all cursor-pointer font-bold rounded-sm"
+                >
+                  Retry Connection
+                </button>
+              </div>
+            ) : seasonalProducts.length === 0 ? (
+              <div className="p-8 border border-zinc-700/40 bg-zinc-900/40 rounded-sm text-center">
+                <p className="text-zinc-400 font-sans text-xs tracking-wide">
+                  No seasonal products currently match this curation.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {seasonalProducts.map((prod) => {
+                  const currentSel = cardSelections[prod.id] || { size: '100ml', concentration: 'Eau de Parfum' };
+                  return (
+                    <ProductCard 
+                      key={prod.id}
+                      product={prod}
+                      currentSel={currentSel}
+                      onSizeChange={(size) => {
+                        setCardSelections(prev => ({
+                          ...prev,
+                          [prod.id]: { ...currentSel, size }
+                        }));
+                      }}
+                      onConcentrationChange={(concentration) => {
+                        setCardSelections(prev => ({
+                          ...prev,
+                          [prod.id]: { ...currentSel, concentration }
+                        }));
+                      }}
+                      wishlist={wishlist}
+                      toggleWishlist={toggleWishlist}
+                      handleOpenProductDetail={handleOpenProductDetail}
+                      handleAddToCart={handleAddToCart}
+                      calculateItemPrice={calculateItemPrice}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </div>
 
         </div>

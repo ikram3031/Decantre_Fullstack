@@ -7,6 +7,7 @@ import { Catalog } from './pages/Catalog';
 import { Atelier } from './pages/Atelier';
 import { Reviews } from './pages/Reviews';
 import { Season } from './pages/Season';
+import { Combo } from './pages/Combo';
 
 // New luxury pages
 import { Shop } from './pages/Shop';
@@ -36,6 +37,7 @@ export default function App() {
 
             {/* Newly added routes */}
             <Route path="season" element={<Season />} />
+            <Route path="combo" element={<Combo />} />
             <Route path="shop" element={<Shop />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="product" element={<ProductDetail />} />

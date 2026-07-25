@@ -85,7 +85,7 @@ export const CartDrawer = ({
                   <div 
                     key={item.id} 
                     id={`cart-item-${item.id}`}
-                    className="flex gap-4 p-4 bg-[#080808] border border-white/5 hover:border-gold/15 rounded-sm relative group transition-all text-left"
+                    className="flex gap-4 p-4 bg-zinc-900/90 border border-zinc-700/60 hover:border-gold/30 rounded-sm relative group transition-all text-left shadow-md"
                   >
                     {/* Remove item absolute x */}
                     <button
@@ -371,20 +371,10 @@ export const CartDrawer = ({
 
 
             {/* Pricing Recalcs */}
-                <div className="space-y-2 text-xs font-sans font-light text-zinc-400 border-t border-white/5 pt-3 text-left">
-              <div className="flex justify-between">
-                <span>Cart Subtotal</span>
-                <span className="text-zinc-200 font-medium">{formatBDT(cartSubtotal)}</span>
-              </div>
-              {appliedDiscount > 0 && (
-                <div className="flex justify-between text-gold">
-                  <span>Discount ({appliedDiscount * 100}%)</span>
-                  <span>-{formatBDT(discountAmount)}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-xs font-semibold text-luxury-white border-t border-white/5 pt-2 font-sans tracking-widest">
-                <span>ESTIMATED TOTAL</span>
-                <span className="text-gold text-base">{formatBDT(Math.max(0, cartSubtotal - discountAmount))}</span>
+            <div className="space-y-2 text-xs font-sans font-light text-zinc-400 border-t border-white/5 pt-3 text-left">
+              <div className="flex justify-between items-center text-xs font-semibold text-luxury-white font-sans tracking-widest">
+                <span>CART TOTAL</span>
+                <span className="text-gold text-base font-bold font-mono">{formatBDT(Math.max(0, cartSubtotal - discountAmount))}</span>
               </div>
             </div>
 

@@ -19,8 +19,11 @@ export const Shop = () => {
     handleAddToCart,
     calculateItemPrice,
     products,
+    productsError,
     categories,
+    categoriesError,
     brands,
+    brandsError,
     fetchProducts,
     fetchCategories,
     fetchBrands,
@@ -102,25 +105,48 @@ export const Shop = () => {
 
   useEffect(() => {
     if (typeof fetchCategories === 'function') {
-      fetchCategories({ rawQuery: 'skip=0&limit=50' });
+      fetchCategories({ skip: 0, limit: 50 });
     }
     if (typeof fetchBrands === 'function') {
-      fetchBrands({ rawQuery: 'skip=0&limit=50' });
+      fetchBrands({ skip: 0, limit: 50 });
     }
   }, [fetchCategories, fetchBrands]);
 
   useEffect(() => {
     if (typeof fetchProducts !== 'function') return;
 
-    const categoryFilter = selectedCategory && selectedCategory !== 'All' ? `&category=${encodeURIComponent(selectedCategory)}` : '';
-    const brandFilter = brandFilters.length === 1 ? `&brand=${encodeURIComponent(brandFilters[0])}` : '';
-    const searchFilter = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
-    const rawQuery = `skip=0&limit=20&sort=${sortOrder}${categoryFilter}${brandFilter}${searchFilter}`;
+    // Map frontend sort labels to API sortBy/order
+    const sortMap = {
+      newest: { sortBy: 'createdAt', order: 'desc' },
+      oldest: { sortBy: 'createdAt', order: 'asc' },
+      'price-asc': { sortBy: 'price', order: 'asc' },
+      'price-desc': { sortBy: 'price', order: 'desc' },
+      'name-asc': { sortBy: 'name', order: 'asc' },
+      'name-desc': { sortBy: 'name', order: 'desc' },
+    };
+    const { sortBy, order } = sortMap[sortOrder] || sortMap.newest;
+
+    const opts = {
+      skip: 0,
+      limit: 20,
+      sortBy,
+      order,
+    };
+
+    if (selectedCategory && selectedCategory !== 'All') {
+      opts.category = selectedCategory;
+    }
+    if (brandFilters.length === 1) {
+      opts.brand = brandFilters[0];
+    }
+    if (searchQuery) {
+      opts.q = searchQuery;
+    }
 
     const loadProducts = async () => {
       setIsLoadingProducts(true);
       try {
-        await fetchProducts({ rawQuery });
+        await fetchProducts(opts);
       } finally {
         setIsLoadingProducts(false);
       }
@@ -275,14 +301,12 @@ export const Shop = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Banner */}
-        <div className={`text-center space-y-4 mb-16 relative py-12 border ${isLight ? 'border-zinc-200 bg-zinc-50' : 'border-gold/15 bg-luxury-dark/20'} rounded-sm`}>
-          <div className="absolute -inset-px bg-gradient-to-r from-transparent via-gold/5 to-transparent pointer-events-none"></div>
-          <span className="text-[10px] uppercase tracking-[0.4em] text-gold font-sans font-medium block">The Decantre Boutique</span>
-          <h1 className={`text-3xl sm:text-5xl font-serif font-light ${isLight ? 'text-black' : 'text-luxury-white'} tracking-wide`}>
-            THE DECANTRE SHOP
+        <div className={`text-center space-y-3 mb-12 relative py-8 px-4 border ${isLight ? 'border-zinc-200 bg-zinc-50' : 'border-gold/15 bg-luxury-dark/20'} rounded-sm`}>
+          <h1 className={`text-2xl sm:text-4xl font-serif font-light ${isLight ? 'text-black' : 'text-luxury-white'} tracking-wide uppercase`}>
+            ALL PERFUMES & DECANTS
           </h1>
           <p className="text-zinc-500 text-xs sm:text-sm font-sans font-light max-w-xl mx-auto leading-relaxed px-4">
-            Browse our curated reserves. Customize bottle volume and concentration. Each order is meticulously hand-packed in a velvet presentation chest.
+            Browse our complete collection of 100% authentic designer and niche perfume decants.
           </p>
         </div>
 
@@ -373,13 +397,34 @@ export const Shop = () => {
               <ProductGridSkeleton count={6} />
             )}
 
+            {/* Error state fallback */}
+            {!isLoadingProducts && productsError && (
+              <div className="text-center py-16 px-6 border border-amber-500/30 rounded-sm bg-amber-500/5 animate-fade-in space-y-3 my-4">
+                <SlidersHorizontal className="w-10 h-10 text-amber-400 mx-auto" />
+                <h3 className="text-lg font-serif font-light text-amber-300">Unable to Load Products</h3>
+                <p className="text-zinc-400 text-xs font-sans font-light max-w-sm mx-auto leading-relaxed">
+                  {productsError}
+                </p>
+                <button
+                  onClick={() => {
+                    if (typeof fetchProducts === 'function') {
+                      fetchProducts();
+                    }
+                  }}
+                  className="px-5 py-2.5 bg-gold text-black font-sans font-bold text-xs uppercase tracking-widest rounded-sm hover:bg-gold/90 transition-all cursor-pointer"
+                >
+                  Retry Connection
+                </button>
+              </div>
+            )}
+
             {/* Empty search fallback */}
-            {!isLoadingProducts && displayedProducts.length === 0 && (
+            {!isLoadingProducts && !productsError && displayedProducts.length === 0 && (
               <div className="text-center py-24 border border-dashed border-gold/15 rounded-sm bg-luxury-dark/10 animate-fade-in">
                 <Search className="w-12 h-12 text-gold/40 mx-auto mb-4" />
                 <h3 className="text-lg font-serif font-light text-zinc-300 mb-2">No Products Found</h3>
                 <p className="text-zinc-500 text-xs font-sans font-light max-w-xs mx-auto">
-                  No formulations match your selected filters. Try broadening your criteria or resetting the price filter.
+                  No products match your selected filters. Try broadening your criteria or resetting filters.
                 </p>
               </div>
             )}

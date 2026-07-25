@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { formatBDT } from '../utils/formatCurrency';
 import { mapRemoteProduct } from '../store/productHelpers';
+import { fetchProductDetails, fetchProducts } from '../lib/api';
 import { MoreProducts } from '../components/sections/MoreProducts';
 import { 
   ArrowLeft, 
@@ -87,21 +88,11 @@ export const ProductDetail = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const apiBaseUrl = (import.meta.env.VITE_API_URL || 'https://perfume-store-backend-wi7o.onrender.com').replace(/\/$/, '');
-        
-        try {
-          const res = await fetch(`${apiBaseUrl}/api/wp/products/${did}`);
-          if (res.ok) {
-            const json = await res.json();
-            if (json && json.data) {
-              const mapped = mapRemoteProduct(json.data);
-              setProduct(mapped);
-              setIsLoading(false);
-              return;
-            }
-          }
-        } catch (e) {
-          console.warn('Direct fetch failed, falling back to lists...', e);
+        const fetched = await fetchProductDetails(did);
+        if (fetched) {
+          setProduct(fetched);
+          setIsLoading(false);
+          return;
         }
 
         if (products && products.length > 0) {
@@ -113,23 +104,15 @@ export const ProductDetail = () => {
           }
         }
 
-        const res = await fetch(`${apiBaseUrl}/api/wp/products?limit=100`);
-        if (res.ok) {
-          const json = await res.json();
-          const list = Array.isArray(json.data) ? json.data : [];
-          const mappedList = list.map(mapRemoteProduct);
-          const found = mappedList.find(p => p.id === did || String(p.raw?.id) === String(did));
-          if (found) {
-            setProduct(found);
-          } else {
-            setError('The requested fragrance could not be located.');
-          }
+        const allProds = await fetchProducts({ limit: 100 });
+        const found = allProds.find(p => p.id === did || String(p.raw?.id) === String(did));
+        if (found) {
+          setProduct(found);
         } else {
-          setError('Failed to load fragrance information from our catalog.');
+          setError('Product not found.');
         }
       } catch (err) {
-        console.error('Error fetching product:', err);
-        setError('A network connection error occurred while loading details.');
+        setError('Something went wrong');
       } finally {
         setIsLoading(false);
       }
@@ -307,8 +290,8 @@ export const ProductDetail = () => {
             </div>
 
             {/* Linked Shipping Notice */}
-            <div className={`p-4 border rounded-sm flex items-start gap-3 ${
-              isLight ? 'bg-amber-50/60 border-amber-200 text-amber-900' : 'bg-amber-950/20 border-amber-500/25 text-amber-200'
+            <div className={`p-4 border rounded-sm flex items-start gap-3 shadow-md ${
+              isLight ? 'bg-amber-50/60 border-amber-200 text-amber-900' : 'bg-zinc-900/90 border-zinc-700/60 text-zinc-200'
             }`}>
               <Truck className="w-5 h-5 text-gold shrink-0 mt-0.5" />
               <div className="text-xs font-sans leading-relaxed">

@@ -1,19 +1,12 @@
 import { create } from 'zustand';
-import { mapRemoteProduct } from './productHelpers';
-import { FALLBACK_PRODUCTS, FALLBACK_CATEGORIES, FALLBACK_BRANDS } from '../data/fallbackData';
-
-const fetchWithTimeout = async (url, options = {}, timeout = 4000) => {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-  try {
-    const response = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return response;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-};
+import { 
+  fetchProducts as apiFetchProducts, 
+  fetchCategories as apiFetchCategories, 
+  fetchBrands as apiFetchBrands, 
+  fetchProductDetails as apiFetchProductDetails,
+  fetchCombos as apiFetchCombos,
+  createOrder as apiCreateOrder 
+} from '../lib/api';
 
 const parseQuery = (queryString) => {
   const params = {};
@@ -61,82 +54,82 @@ export const useAppStore = create((set, get) => {
   })();
 
   return {
-    // Dynamic lists populated from API on mount with fallback defaults
-    products: FALLBACK_PRODUCTS,
-    categories: FALLBACK_CATEGORIES,
-    brands: FALLBACK_BRANDS,
+    // Dynamic lists populated exclusively from backend API
+    products: [],
+    categories: [],
+    brands: [],
+    combos: [],
+
+    isProductsLoading: false,
+    productsError: null,
+
+    isCategoriesLoading: false,
+    categoriesError: null,
+
+    isBrandsLoading: false,
+    brandsError: null,
+
+    isCombosLoading: false,
+    combosError: null,
 
     setProducts: (newProducts) => set({ products: newProducts }),
     setCategories: (newCategories) => set({ categories: newCategories }),
     setBrands: (newBrands) => set({ brands: newBrands }),
+    setCombos: (newCombos) => set({ combos: newCombos }),
 
     fetchProducts: async (opts = {}) => {
+      set({ isProductsLoading: true, productsError: null });
       try {
-        const apiBaseUrl = (import.meta.env.VITE_API_URL || 'https://perfume-store-backend-wi7o.onrender.com').replace(/\/$/, '');
-        const base = `${apiBaseUrl}/api/wp/products`;
-        const url = opts && opts.rawQuery ? `${base}?${opts.rawQuery}` : base;
-        const res = await fetchWithTimeout(url, {}, 4000);
-        if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
-        const json = await res.json();
-        const list = Array.isArray(json.data) ? json.data : [];
-
-        if (list.length > 0) {
-          const mapped = list.map(mapRemoteProduct);
-          set({ products: mapped });
-          return mapped;
-        }
-        return get().products;
+        const mapped = await apiFetchProducts(opts);
+        set({ products: mapped, isProductsLoading: false, productsError: null });
+        return mapped;
       } catch (err) {
-        if (!get().products || get().products.length === 0) {
-          set({ products: FALLBACK_PRODUCTS });
-        }
-        return get().products;
+        set({ isProductsLoading: false, productsError: 'Something went wrong' });
+        return [];
+      }
+    },
+
+    fetchProductDetails: async (slugOrId) => {
+      try {
+        return await apiFetchProductDetails(slugOrId);
+      } catch (err) {
+        return null;
       }
     },
 
     fetchCategories: async (opts = {}) => {
+      set({ isCategoriesLoading: true, categoriesError: null });
       try {
-        const apiBaseUrl = (import.meta.env.VITE_API_URL || 'https://perfume-store-backend-wi7o.onrender.com').replace(/\/$/, '');
-        const base = `${apiBaseUrl}/api/wp/taxonomies/categories`;
-        const rawQuery = opts && opts.rawQuery ? opts.rawQuery : 'skip=0&limit=50';
-        const res = await fetchWithTimeout(`${base}?${rawQuery}`, {}, 4000);
-        if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
-        const json = await res.json();
-        const list = Array.isArray(json.data) ? json.data : [];
-
-        if (list.length > 0) {
-          set({ categories: list });
-          return list;
-        }
-        return get().categories;
+        const list = await apiFetchCategories(opts);
+        set({ categories: list, isCategoriesLoading: false, categoriesError: null });
+        return list;
       } catch (err) {
-        if (!get().categories || get().categories.length === 0) {
-          set({ categories: FALLBACK_CATEGORIES });
-        }
-        return get().categories;
+        set({ isCategoriesLoading: false, categoriesError: 'Something went wrong' });
+        return [];
       }
     },
 
     fetchBrands: async (opts = {}) => {
+      set({ isBrandsLoading: true, brandsError: null });
       try {
-        const apiBaseUrl = (import.meta.env.VITE_API_URL || 'https://perfume-store-backend-wi7o.onrender.com').replace(/\/$/, '');
-        const base = `${apiBaseUrl}/api/wp/taxonomies/brands`;
-        const rawQuery = opts && opts.rawQuery ? opts.rawQuery : 'skip=0&limit=50';
-        const res = await fetchWithTimeout(`${base}?${rawQuery}`, {}, 4000);
-        if (!res.ok) throw new Error(`Fetch error: ${res.status}`);
-        const json = await res.json();
-        const list = Array.isArray(json.data) ? json.data : [];
-
-        if (list.length > 0) {
-          set({ brands: list });
-          return list;
-        }
-        return get().brands;
+        const list = await apiFetchBrands(opts);
+        set({ brands: list, isBrandsLoading: false, brandsError: null });
+        return list;
       } catch (err) {
-        if (!get().brands || get().brands.length === 0) {
-          set({ brands: FALLBACK_BRANDS });
-        }
-        return get().brands;
+        set({ isBrandsLoading: false, brandsError: 'Something went wrong' });
+        return [];
+      }
+    },
+
+    fetchCombos: async (opts = {}) => {
+      set({ isCombosLoading: true, combosError: null });
+      try {
+        const list = await apiFetchCombos(opts);
+        set({ combos: list, isCombosLoading: false, combosError: null });
+        return list;
+      } catch (err) {
+        set({ isCombosLoading: false, combosError: 'Something went wrong' });
+        return [];
       }
     },
     // 1. Core States
@@ -347,6 +340,37 @@ export const useAppStore = create((set, get) => {
       get().addToast(`Added ${qty}x ${product.name} (${size} - ${concentration}) to your cart.`, 'success');
     },
 
+    handleAddComboToCart: (combo, qty = 1) => {
+      const cart = get().cart;
+      const comboId = `combo-${combo.id}`;
+      const existingIndex = cart.findIndex((item) => item.id === comboId);
+
+      let newCart = [...cart];
+      if (existingIndex > -1) {
+        newCart[existingIndex].quantity += qty;
+      } else {
+        newCart.push({
+          id: comboId,
+          product: {
+            id: combo.id,
+            name: combo.name,
+            image: combo.image || (combo.items && combo.items[0] && combo.items[0].image) || '',
+            category: 'Combo Set',
+            brand: combo.brand || 'Decantre Curated Bundle',
+            isCombo: true
+          },
+          size: 'Full Combo Set',
+          concentration: `${combo.items ? combo.items.length : 3} Items Included`,
+          quantity: qty,
+          unitPrice: combo.comboPrice,
+          comboItems: combo.items || []
+        });
+      }
+
+      get().saveCart(newCart);
+      get().addToast(`Added "${combo.name}" Combo Bundle to your cart!`, 'success');
+    },
+
     handleUpdateQty: (itemId, change) => {
       const cart = get().cart;
       const newCart = cart.map((item) => {
@@ -506,59 +530,17 @@ export const useAppStore = create((set, get) => {
           paymentDetails: ['bkash', 'nagad', 'bank_transfer'].includes(paymentMethod) ? paymentDetails : null
         };
 
-        const apiBaseUrl = (import.meta.env.VITE_API_URL || 'https://perfume-store-backend-wi7o.onrender.com').replace(/\/$/, '');
-        const res = await fetch(`${apiBaseUrl}/api/v1/orders/new-order`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        let json = {};
-        try {
-          json = await res.json();
-        } catch {
-          json = {};
-        }
-
-        if (!res.ok || json.status !== 'success') {
-          // If the backend doesn't support our new payment methods, fallback to local simulation
-          if (['bkash', 'nagad', 'bank_transfer'].includes(paymentMethod)) {
-            console.warn('Backend does not support this payment method, falling back to local simulation.');
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            const localOrderNumber = 'DEC-' + Math.floor(100000 + Math.random() * 900000);
-            set({
-              isProcessingOrder: false,
-              orderCompleted: true,
-              orderNumber: localOrderNumber
-            });
-            get().addToast('Your order has been officially verified and compiled.', 'success');
-            return;
-          }
-          const errMsg = json?.errors?.[0] || json?.message || 'Order submission failed. Please try again.';
-          get().addToast(errMsg, 'error');
-          set({ isProcessingOrder: false });
-          return;
-        }
+        const json = await apiCreateOrder(payload);
 
         set({
           isProcessingOrder: false,
           orderCompleted: true,
-          orderNumber: json.data?.orderNumber ?? null
+          orderNumber: json.data?.orderNumber ?? json.data?.id ?? ('DEC-' + Math.floor(100000 + Math.random() * 900000))
         });
-        get().addToast(json?.message || 'Your order has been officially verified and compiled.', 'success');
+        get().addToast(json?.message || 'Your order has been placed successfully!', 'success');
       } catch (err) {
-        console.warn('Network error during checkout submission, simulating high-fidelity local checkout:', err);
-        
-        // Simulating minor processing delay for realistic luxury experience
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        const localOrderNumber = 'DEC-' + Math.floor(100000 + Math.random() * 900000);
-        set({
-          isProcessingOrder: false,
-          orderCompleted: true,
-          orderNumber: localOrderNumber
-        });
-        get().addToast('Your order has been officially verified and compiled.', 'success');
+        set({ isProcessingOrder: false });
+        get().addToast('Something went wrong', 'error');
       }
     },
 

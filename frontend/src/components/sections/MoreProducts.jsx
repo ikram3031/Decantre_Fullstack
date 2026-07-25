@@ -7,6 +7,7 @@ import { useApp } from '../../context/AppContext';
 export const MoreProducts = ({ title = "More Fragrances You May Like", category, currentProductId, limit = 8 }) => {
   const { 
     products, 
+    productsError,
     wishlist, 
     toggleWishlist, 
     cardSelections, 
@@ -18,6 +19,18 @@ export const MoreProducts = ({ title = "More Fragrances You May Like", category,
   } = useApp();
 
   const isLight = currentTheme === 'light';
+
+  if (productsError) {
+    return (
+      <section className="py-10 border-t border-zinc-200/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="p-6 border border-amber-500/20 bg-amber-500/5 rounded-sm">
+            <p className="text-amber-400 font-sans text-xs">{productsError}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   // Filter products: exclude current product
   let filtered = products.filter(p => String(p.id) !== String(currentProductId));

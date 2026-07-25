@@ -186,7 +186,7 @@ export const FAQ = () => {
             return (
               <div 
                 key={index}
-                className="bg-luxury-dark/30 border border-white/10 hover:border-gold/30 rounded-sm overflow-hidden transition-all duration-300 shadow-lg"
+                className="bg-zinc-900/90 border border-zinc-700/60 hover:border-gold/40 rounded-sm overflow-hidden transition-all duration-300 shadow-xl"
               >
                 <button
                   onClick={() => toggleAccordion(index)}
@@ -202,7 +202,7 @@ export const FAQ = () => {
                 </button>
 
                 {isOpen && (
-                  <div className="px-6 pb-6 pt-2 text-xs sm:text-sm font-sans font-light text-zinc-300 leading-relaxed border-t border-white/5 animate-fade-in">
+                  <div className="px-6 pb-6 pt-2 text-xs sm:text-sm font-sans font-light text-zinc-300 leading-relaxed border-t border-zinc-800 animate-fade-in">
                     {faq.answer}
                   </div>
                 )}
@@ -212,7 +212,7 @@ export const FAQ = () => {
         </div>
 
         {/* Support Callout */}
-        <div className="mt-16 bg-black border border-gold/30 p-8 rounded-sm text-center space-y-4 shadow-2xl">
+        <div className="mt-16 bg-zinc-900/95 border border-zinc-700/70 p-8 rounded-sm text-center space-y-4 shadow-2xl">
           <h3 className="text-lg font-serif text-gold tracking-wide uppercase">Still Have Questions?</h3>
           <p className="text-zinc-400 text-xs sm:text-sm font-sans font-light max-w-md mx-auto">
             Our fragrance concierge team is here to assist you with any inquiries or recommendations.
