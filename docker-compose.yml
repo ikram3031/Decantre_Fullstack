@@ -1,12 +1,14 @@
+version: '3.8'
+
 services:
   mongodb:
     image: mongo:7.0
     container_name: ${MONGODB_CONTAINER_NAME:-decantre-mongodb-dev}
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-ad>
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-11>
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-perfume-stor>
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-11223345}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-perfume-store}
     ports:
       - "0.0.0.0:27017:27017"
     volumes:
@@ -35,7 +37,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: ${FRONTEND_CONTAINER_NAME:-decantre-frontend-d>
+    container_name: ${FRONTEND_CONTAINER_NAME:-decantre-frontend-dev}
     restart: always
     env_file:
       - .env
@@ -43,12 +45,12 @@ services:
       - "${FRONTEND_PORT:-8001}:8001"
     networks:
       - decantre-network
-  
-   dashboard:
+
+  dashboard:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
-    container_name: ${DASHBOARD_CONTAINER_NAME:-decantre-dashboard>
+    container_name: ${DASHBOARD_CONTAINER_NAME:-decantre-dashboard-dev}
     restart: always
     env_file:
       - .env
@@ -63,3 +65,4 @@ networks:
 
 volumes:
   mongodb-data-dev:
+    driver: local
