@@ -4,7 +4,8 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Accept VITE_API_URL as build argument
-ARG VITE_API_URL=http://localhost:4000
+ARG VITE_API_URL=http://144.79.218.126:5092
+ENV VITE_API_URL=$VITE_API_URL
 
 # Copy package files
 COPY package.json package-lock.json ./
@@ -17,6 +18,8 @@ COPY . .
 
 # Build with VITE_API_URL
 RUN VITE_API_URL=${VITE_API_URL} npm run build
+ARG VITE_API_URL=http://144.79.218.126:5092
+ENV VITE_API_URL=$VITE_API_URL
 
 # Production stage
 FROM node:22-alpine
