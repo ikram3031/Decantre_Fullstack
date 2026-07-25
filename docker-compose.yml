@@ -43,7 +43,7 @@ services:
       - "${FRONTEND_PORT:-8001}:8001"
     networks:
       - decantre-network
-
+  
    dashboard:
     build:
       context: ./dashboard
