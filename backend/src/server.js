@@ -10,7 +10,7 @@ async function bootstrap() {
   await connectDatabase();
 
   const app = await createApp();
-  const port = Number(process.env.PORT) || 4000;
+  const port = Number.parseInt(process.env.PORT ?? process.env.BACKEND_PORT ?? "4000", 10);
 
   const server = app.listen(port, "0.0.0.0", () => {
     logger.info({ port, environment: env.NODE_ENV }, "Server listening");

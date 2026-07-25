@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:7.0
@@ -24,8 +22,10 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      PORT: ${BACKEND_PORT:-5092}
     ports:
-      - "${BACKEND_PORT:-5092}:5092"
+      - "${BACKEND_PORT:-5092}:${BACKEND_PORT:-5092}"
     volumes:
       - ./uploads:/app/uploads
     depends_on:
