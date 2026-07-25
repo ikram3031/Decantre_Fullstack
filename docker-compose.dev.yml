@@ -24,6 +24,8 @@ services:
       - .env
     ports:
       - "${BACKEND_PORT:-5092}:5092"
+    volumes:
+      - ./uploads:/app/uploads
     depends_on:
       - mongodb
     networks:

@@ -4,6 +4,31 @@
 
 ---
 
+## DEC-05 — Product, Category, and Brand Management with File Uploads
+
+**Date:** 2026-07-25 | **Type:** Feature | **Status:** ✅
+
+**Description:** Implemented Product, Category, and Brand management endpoints with MongoDB/Mongoose models, integrated a flexible Multer file upload middleware, and optimized Docker development volume mounts.
+
+**Created:**
+- `src/middlewares/upload.middleware.js` — Multer upload middleware with path URL injection
+- `src/models/product.model.js` — Product Mongoose schema with variants & index optimizations
+- `src/routes/ProductsRoute.js` — CRUD routes for products
+- `src/routes/BrandRoute.js` — CRUD routes for brands
+- `src/routes/CategoryRoute.js` — CRUD routes for categories
+- `docs/09_brands.md` — Brands API documentation
+- `docs/10_categories.md` — Categories API documentation
+
+**Modified:**
+- `src/app.js` — Registered products, categories, and brands routes
+- `docker-compose.dev.yml` — Updated uploads volume mapping for dev environment
+
+**Benefits:** Robust inventory management structure, structured file uploads, and container storage consistency.
+
+**Testing:** ✅ Route registration verified and file upload paths validated.
+
+---
+
 ## DEC-04 — Auth and Orders Enhancement
 
 **Date:** 2026-07-20 | **Type:** Feature | **Status:** ✅

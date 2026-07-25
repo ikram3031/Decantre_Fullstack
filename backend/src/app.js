@@ -30,6 +30,9 @@ app.use(
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
+  // Serve the WordPress uploads folder statically
+  app.use("/uploads", express.static("uploads"));
+
   app.use((req, res, next) => {
     logger.info({ method: req.method, path: req.originalUrl }, "route hit");
     next();
