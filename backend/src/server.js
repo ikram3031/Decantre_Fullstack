@@ -1,13 +1,12 @@
-import http from "http";
 import { createApp } from "./app.js";
-import { connectMySQL } from "./database/mysql.js";
+// import { connectMySQL } from "./database/mysql.js";
 import { connectDatabase } from "./database/index.js";
 import { env } from "./config/env.js";
 import { logger } from "./config/logger.js";
 import { createShutdownHandler } from "./helper/sutdownHelper.js";
 
 async function bootstrap() {
-  await connectMySQL();
+  // await connectMySQL();
   await connectDatabase();
 
   const app = await createApp();

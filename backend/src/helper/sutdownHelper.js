@@ -1,5 +1,5 @@
 import { logger } from "../config/logger.js";
-import { closeMySQL } from "../database/mysql.js";
+// import { closeMySQL } from "../database/mysql.js";
 import { closeDatabase } from "../database/index.js";
 
 export const createShutdownHandler = (server) => {
@@ -19,12 +19,14 @@ export const createShutdownHandler = (server) => {
 				process.exit(1);
 			}
 
+			/*
 			try {
 				await closeMySQL();
 				logger.info("MySQL connection pool closed successfully");
 			} catch (error) {
 				logger.error({ err: error }, "Error closing MySQL connection");
 			}
+			*/
 
 			try {
 				await closeDatabase();

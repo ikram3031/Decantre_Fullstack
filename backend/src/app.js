@@ -4,13 +4,11 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { logger } from "./config/logger.js";
 import productsRouter from "./routes/ProductsRoute.js";
 import { searchProducts } from "./controllers/SearchController.js";
-import wpProductsRouter from "./routes/WpProductsRoute.js";
-import wpTaxonomiesRouter from "./routes/WpTaxonomiesRoute.js";
 import emailRouter from "./routes/EmailRoute.js";
 import ordersRouter from "./routes/OrdersRoute.js";
 import usersRouter from "./routes/UsersRoute.js";
 import authRouter from "./routes/AuthRoute.js";
-import exportRouter from "./routes/ExportRoute.js";
+// import exportRouter from "./routes/ExportRoute.js";
 import categoriesRouter from "./routes/CategoryRoute.js";
 import brandRouter from "./routes/BrandRoute.js";
 
@@ -44,16 +42,13 @@ app.use(
 
   app.use("/api/v1/products", productsRouter);
   // app.use("/api/v1/images", imagesRouter);
-  app.use("/api/v1/export", exportRouter);
+  // app.use("/api/v1/export", exportRouter);
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/users", usersRouter);
   app.use("/api/v1/sendEmail", emailRouter);
   app.use("/api/v1/orders", ordersRouter);
-app.use("/api/v1/categories", categoriesRouter);
-app.use("/api/v1/brands", brandRouter);
-  app.use("/api/wp/products", wpProductsRouter);
-  app.use("/api/wp/taxonomies", wpTaxonomiesRouter);
-
+  app.use("/api/v1/categories", categoriesRouter);
+  app.use("/api/v1/brands", brandRouter);
   app.get("/api/v1/search-products", searchProducts);
 
   app.use((req, res) => {
