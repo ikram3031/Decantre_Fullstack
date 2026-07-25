@@ -6,60 +6,60 @@ import { connectDatabase, closeDatabase } from "../src/database/index.js";
 import { ProductModel } from "../src/models/product.model.js";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(scriptDir, "..");
+const uploadsDir = path.resolve(projectRoot, "uploads");
 const failureLogPath = path.join(scriptDir, "failed-product-images.json");
 
-const normalizeUrlToLocalPath = (value) => {
-  if (typeof value !== "string" || !value.trim()) return null;
+/**
+ * DB path / filename theke actual file Path find koro
+ */
+const findLocalSourceFile = (dbPath) => {
+  if (!dbPath || typeof dbPath !== "string") return null;
 
-  const normalized = value.replace(/\\/g, "/").trim();
-  let relativePath = null;
-  const uploadsRoot = path.resolve(scriptDir, "..", "uploads");
+  const rawFilename = path.basename(dbPath.replace(/\\/g, "/").trim());
+  const rawBaseName = path.basename(rawFilename, path.extname(rawFilename));
+  // Strip timestamp if present (e.g. -1784973479540)
+  const cleanBaseName = rawBaseName.replace(/-\d{10,}$/, "");
 
-  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
-    try {
-      const url = new URL(normalized);
-      return normalizeUrlToLocalPath(url.pathname);
-    } catch {
-      return null;
-    }
+  const candidates = [
+    path.join(uploadsDir, rawFilename),
+    path.join(uploadsDir, `${rawBaseName}.webp`),
+    path.join(uploadsDir, `${rawBaseName}.jpg`),
+    path.join(uploadsDir, `${rawBaseName}.png`),
+    path.join(uploadsDir, `${rawBaseName}.jpeg`),
+    path.join(uploadsDir, `${cleanBaseName}.webp`),
+    path.join(uploadsDir, `${cleanBaseName}.jpg`),
+    path.join(uploadsDir, `${cleanBaseName}.png`),
+    path.join(uploadsDir, `${cleanBaseName}.jpeg`),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
   }
 
-  if (normalized.startsWith("/content/")) {
-    relativePath = normalized.replace("/content/", "uploads/");
-  } else if (normalized.startsWith("/uploads/")) {
-    relativePath = normalized.slice(1);
-  } else if (normalized.startsWith("uploads/")) {
-    relativePath = normalized;
-  } else {
-    const contentIndex = normalized.indexOf("/content/");
-    const uploadsIndex = normalized.indexOf("/uploads/");
+  // Scan uploads dir for case-insensitive match
+  try {
+    const allFiles = fs.readdirSync(uploadsDir);
+    const lowerClean = cleanBaseName.toLowerCase();
+    const matched = allFiles.find((f) => {
+      const fLower = f.toLowerCase();
+      return (
+        fLower === lowerClean ||
+        fLower.startsWith(lowerClean + ".") ||
+        fLower.startsWith(lowerClean + "-")
+      );
+    });
 
-    if (contentIndex !== -1) {
-      relativePath = normalized.slice(contentIndex + 1).replace("content/", "uploads/");
-    } else if (uploadsIndex !== -1) {
-      relativePath = normalized.slice(uploadsIndex + 1);
-    }
+    if (matched) return path.join(uploadsDir, matched);
+  } catch {
+    // ignore
   }
 
-  if (!relativePath) return null;
-  const trimmedRelativePath = relativePath.replace(/^uploads[\\/]+/, "");
-  const candidate = path.resolve(uploadsRoot, trimmedRelativePath);
-  if (fs.existsSync(candidate)) {
-    return candidate;
-  }
-
-  // If files live in the flat uploads root, try the basename as a fallback.
-  const fallbackName = path.basename(candidate);
-  const fallbackRoot = path.resolve(uploadsRoot, fallbackName);
-  if (fs.existsSync(fallbackRoot)) {
-    return fallbackRoot;
-  }
-
-  return candidate;
+  return null;
 };
 
 const localPathToPublicUrl = (fullPath) => {
-  const relative = path.relative(process.cwd(), fullPath).replace(/\\/g, "/");
+  const relative = path.relative(projectRoot, fullPath).replace(/\\/g, "/");
   if (relative.startsWith("uploads/")) {
     return `/${relative}`;
   }
@@ -70,15 +70,31 @@ const convertImageToWebp = async (sourcePath, options) => {
   const dir = path.dirname(sourcePath);
   const name = path.basename(sourcePath, path.extname(sourcePath));
   const outputPath = path.join(dir, `${name}.webp`);
+
+  // If already webp and exists, return
+  if (path.extname(sourcePath).toLowerCase() === ".webp" && fs.existsSync(outputPath)) {
+    return outputPath;
+  }
+
   const tempPath = `${outputPath}.tmp`;
 
   await sharp(sourcePath)
     .rotate()
     .resize(options)
-    .webp({ quality: 80 })
+    .webp({ quality: 82 })
     .toFile(tempPath);
 
   await fs.promises.rename(tempPath, outputPath);
+
+  // If source was not webp, delete original file to save space
+  if (sourcePath !== outputPath && fs.existsSync(sourcePath)) {
+    try {
+      await fs.promises.unlink(sourcePath);
+    } catch {
+      // ignore
+    }
+  }
+
   return outputPath;
 };
 
@@ -90,23 +106,17 @@ const processProductImages = async (product) => {
     const currentValue = product[field];
     if (!currentValue || typeof currentValue !== "string") continue;
 
-    const localSource = normalizeUrlToLocalPath(currentValue);
+    const localSource = findLocalSourceFile(currentValue);
     if (!localSource) {
-      errors.push(`${field} path invalid: ${currentValue}`);
+      errors.push(`${field} file not found for: ${currentValue}`);
       continue;
     }
 
     try {
-      await fs.promises.access(localSource, fs.constants.R_OK);
-    } catch {
-      errors.push(`${field} file not found: ${localSource}`);
-      continue;
-    }
-
-    try {
-      const resizeOptions = field === "thumbnailUrl"
-        ? { width: 150, height: 150, fit: "inside", withoutEnlargement: true }
-        : { width: 1000, height: 1000, fit: "inside", withoutEnlargement: true };
+      const resizeOptions =
+        field === "thumbnailUrl"
+          ? { width: 300, height: 300, fit: "inside", withoutEnlargement: true }
+          : { width: 800, height: 800, fit: "inside", withoutEnlargement: true };
 
       const webpPath = await convertImageToWebp(localSource, resizeOptions);
       updates[field] = localPathToPublicUrl(webpPath);
@@ -129,10 +139,13 @@ const migrateProductImagePaths = async () => {
 
   const cursor = ProductModel.find({
     $or: [
-      { imageUrl: { $exists: true, $ne: "" } },
-      { thumbnailUrl: { $exists: true, $ne: "" } },
+      { imageUrl: { $exists: true, $ne: null, $ne: "" } },
+      { thumbnailUrl: { $exists: true, $ne: null, $ne: "" } },
     ],
-  }).cursor();
+  })
+    .skip(0)
+    .limit(5)
+    .cursor();
 
   for await (const product of cursor) {
     productCount += 1;
@@ -146,13 +159,15 @@ const migrateProductImagePaths = async () => {
       await ProductModel.updateOne({ _id: product._id }, { $set: updates });
     }
 
+    const pDid = product.did || product._id;
+
     if (errors.length === 0) {
       productSuccessCount += 1;
-      console.log(`✔ product did=${product.did || product._id} processed (${imagesProcessed} image(s))`);
+      console.log(`did: ${pDid}`);
     } else {
       productFailureCount += 1;
-      failedProducts.push({ did: product.did || null, _id: product._id?.toString?.() || null, errors });
-      console.log(`✖ product did=${product.did || product._id} failed: ${errors.join("; ")}`);
+      failedProducts.push({ did: pDid, _id: product._id?.toString?.() || null, errors });
+      console.log(`✖ product did=${pDid} failed: ${errors.join("; ")}`);
     }
   }
 
@@ -162,7 +177,7 @@ const migrateProductImagePaths = async () => {
   console.log(`Products scanned: ${productCount}`);
   console.log(`Products succeeded: ${productSuccessCount}`);
   console.log(`Products failed: ${productFailureCount}`);
-  console.log(`Images converted: ${totalImagesProcessed}`);
+  console.log(`Images converted/updated: ${totalImagesProcessed}`);
   console.log(`Image conversion errors: ${totalImagesFailed}`);
   console.log(`Failed product list saved to: ${failureLogPath}`);
 
