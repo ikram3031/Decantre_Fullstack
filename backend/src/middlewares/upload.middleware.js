@@ -3,7 +3,6 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-/*
 let globalProductCount = 0;
 
 const storage = multer.diskStorage({
@@ -16,14 +15,20 @@ const storage = multer.diskStorage({
     const day = String(now.getDate()).padStart(2, '0');
     const dateStr = `${year}${month}${day}`;
 
-    const folderName = `uploads/products/${dateStr}-batch-${batchNumber}`;
+    // ১. ফোল্ডারের নাম (ব্যাচ সহ)
+    const folderName = `${dateStr}-batch-${batchNumber}`;
+    
+    // ২. Absolute Path ব্যবহার করা হলো (ডকারের ভেতরে নিরাপদ)
+    const targetDir = path.join(process.cwd(), 'uploads/products', folderName);
 
-    if (!fs.existsSync(folderName)) {
-      fs.mkdirSync(folderName, { recursive: true });
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
     }
 
-    req.currentBatchFolder = `${dateStr}-batch-${batchNumber}`;
-    cb(null, folderName);
+    // URL জেনারেট করার জন্য রিলেটিভ ফোল্ডার পাথ সেভ রাখছি
+    req.currentBatchPath = `/uploads/products/${folderName}`;
+    
+    cb(null, targetDir);
   },
   filename: (req, file, cb) => {
     globalProductCount++;
@@ -37,40 +42,6 @@ const storage = multer.diskStorage({
 });
 
 const multerUpload = multer({ storage });
-*/
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const now = new Date();
-    
-    // YYMMDD ফরম্যাট তৈরি (যেমন: 260726)
-    const year = String(now.getFullYear()).slice(-2); // 2026 -> 26
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // July -> 07
-    const day = String(now.getDate()).padStart(2, '0'); // 26th -> 26
-    
-    const dateFolder = `${year}${month}${day}`; // Result: "260726"
-
-    // ডাইনামিক প্যাথ: uploads/products/260726
-    const dir = path.join(process.cwd(), `uploads/products/${dateFolder}`);
-
-    // ফোল্ডার না থাকলে অটোমেটিক তৈরি করবে
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    // ফাইলের মূল এক্সটেনশন ঠিক রেখে ইউনিক নাম জেনারেট
-    const ext = path.extname(file.originalname);
-    const nameWithoutExt = path.basename(file.originalname, ext).replace(/\s+/g, '-');
-    const uniqueName = `${nameWithoutExt}-${Date.now()}${ext}`;
-    
-    cb(null, uniqueName);
-  }
-});
-
-const multerUpload = multer({ storage: storage });
 
 const compressImageFile = async (file) => {
   if (!file?.mimetype?.startsWith('image/')) return;
@@ -88,14 +59,6 @@ const compressImageFile = async (file) => {
   await fs.promises.writeFile(file.path, outputBuffer);
 };
 
-/**
- * Wrapper middleware to process file uploads and automatically inject the 
- * public database URL (`/content/...`) into the `file` object.
- * 
- * Usage in routes:
- * 1. Single file: `upload('image')` -> access URL via `req.file.url`
- * 2. Multiple fields: `upload([{ name: 'image', maxCount: 1 }, { name: 'gallery', maxCount: 5 }])` -> access via `req.files['fieldname'][i].url`
- */
 export const upload = (fields) => {
   const middleware = Array.isArray(fields) 
     ? multerUpload.fields(fields) 
@@ -118,18 +81,18 @@ export const upload = (fields) => {
           });
         }
 
+        // Sharp দিয়ে ছবি কমপ্রেস করা
         await Promise.all(filesToProcess.map(compressImageFile));
 
+        // DB তে সেভ করার জন্য ক্লিন ইউআরএল (req.file.url) জেনারেট
         if (req.file) {
-          const relativePath = req.file.path.replace(/\\/g, '/');
-          req.file.url = relativePath.replace(/^uploads\//, '/content/');
+          req.file.url = `${req.currentBatchPath}/${req.file.filename}`;
         }
 
         if (req.files) {
           Object.keys(req.files).forEach((key) => {
             req.files[key] = req.files[key].map((file) => {
-              const relativePath = file.path.replace(/\\/g, '/');
-              file.url = relativePath.replace(/^uploads\//, '/content/');
+              file.url = `${req.currentBatchPath}/${file.filename}`;
               return file;
             });
           });
