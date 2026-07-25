@@ -11,7 +11,10 @@
 		"prod": "node src/server.js",
 		"lint": "eslint .",
 		"format": "prettier --write .",
-		"import:products": "node scripts/import-products.js"
+		"import:products": "node scripts/import-products.js",
+		"delete:obsolete-categories": "node scripts/delete-obsolete-categories.js",
+		"reset:brands": "node scripts/reset-and-import-brands.js",
+		"migrate:products-did": "node scripts/migrate-products-by-did.js"
 	},
 	"keywords": [],
 	"author": "",

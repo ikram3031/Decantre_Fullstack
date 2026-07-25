@@ -1,121 +1,238 @@
-# Brand Documentation
+# Brand Hierarchy Documentation
 
-This file lists all brand documents stored in the **`brands`** collection, including their MongoDB `_id`, generated `did`, `name`, `slug`, and timestamps.
+This file documents all brand records stored in the **`brands`** collection, structured to show the hierarchy between main (parent) brands and sub-brands.
 
-| _id                                 | did               | name                     | slug                     | createdAt                | updatedAt                |
-|------------------------------------|-------------------|--------------------------|--------------------------|--------------------------|--------------------------|
-| 6a647ac500d5281346d53cbf          | 611e13aa8e50c2ae  | Afnan                    | afnan                    | 2026-07-25T08:58:45.572Z | 2026-07-25T08:58:45.572Z |
-| 6a647ac500d5281346d53cc2          | 2147f1042fc4b5a4  | Ahmad Al Maghribi        | ahmad-al-maghribi        | 2026-07-25T08:58:45.630Z | 2026-07-25T08:58:45.630Z |
-| 6a647ac500d5281346d53cc4          | 8e6cc1e87622e181  | Ahmed Al Magribi         | ahmed-al-magribi         | 2026-07-25T08:58:45.661Z | 2026-07-25T08:58:45.661Z |
-| 6a647ac500d5281346d53cc7          | 785b9e2753a6b64a  | Ajmal                    | ajmal                    | 2026-07-25T08:58:45.673Z | 2026-07-25T08:58:45.673Z |
-| 6a647ac500d5281346d53cca          | 5db33d933e8ed451  | Al Haramain              | al-haramain              | 2026-07-25T08:58:45.733Z | 2026-07-25T08:58:45.733Z |
-| 6a647ac500d5281346d53ccc          | ea55bbfc0f80cdac  | Amouage                  | amouage                  | 2026-07-25T08:58:45.770Z | 2026-07-25T08:58:45.770Z |
-| 6a647ac500d5281346d53cce          | 97e4603e4ac9059b  | Arabiyat Prestige        | arabiyat-prestige        | 2026-07-25T08:58:45.783Z | 2026-07-25T08:58:45.783Z |
-| 6a647ac500d5281346d53cd0          | 45aa7cbb00d4e6cc  | Ariana Grande            | ariana-grande            | 2026-07-25T08:58:45.797Z | 2026-07-25T08:58:45.797Z |
-| 6a647ac500d5281346d53cd2          | 54826b93ec419650  | Armaf                    | armaf                    | 2026-07-25T08:58:45.811Z | 2026-07-25T08:58:45.811Z |
-| 6a647ac500d5281346d53cd4          | 48ba31c9e8a171c8  | Atelier des Ors          | atelier-des-ors          | 2026-07-25T08:58:45.825Z | 2026-07-25T08:58:45.825Z |
-| 6a647ac600d5281346d53cd7          | 707064c68efade56  | Atralia                  | atralia                  | 2026-07-25T08:58:46.060Z | 2026-07-25T08:58:46.060Z |
-| 6a647ac600d5281346d53cd9          | f48a1c0a9e1d67f7  | Azzaro                   | azzaro                   | 2026-07-25T08:58:46.071Z | 2026-07-25T08:58:46.071Z |
-| 6a647ac600d5281346d53cdb          | 9fbc67d3c8d5653c  | BDK Parfums              | bdk-parfums              | 2026-07-25T08:58:46.083Z | 2026-07-25T08:58:46.083Z |
-| 6a647ac600d5281346d53cdd          | 75095041f5dff75e  | Bentley                  | bentley                  | 2026-07-25T08:58:46.095Z | 2026-07-25T08:58:46.095Z |
-| 6a647ac600d5281346d53cdf          | e0d8bd3538b3e107  | Billie Eilish            | billie-eilish            | 2026-07-25T08:58:46.108Z | 2026-07-25T08:58:46.108Z |
-| 6a647ac600d5281346d53ce1          | 4c3ea72ae036eb42  | Bottega Veneta           | bottega-veneta           | 2026-07-25T08:58:46.121Z | 2026-07-25T08:58:46.121Z |
-| 6a647ac600d5281346d53ce3          | 128d6bb0c598c5ce  | Brandy                   | brandy                   | 2026-07-25T08:58:46.134Z | 2026-07-25T08:58:46.134Z |
-| 6a647ac600d5281346d53ce5          | c092f992fd323c3e  | Burberry                 | burberry                 | 2026-07-25T08:58:46.148Z | 2026-07-25T08:58:46.148Z |
-| 6a647ac600d5281346d53ce7          | b2ef2203942ea6d1  | Bvlgari                  | bvlgari                  | 2026-07-25T08:58:46.161Z | 2026-07-25T08:58:46.161Z |
-| 6a647ac600d5281346d53ce9          | a6ca909cbacf6b3d  | Byredo                   | byredo                   | 2026-07-25T08:58:46.171Z | 2026-07-25T08:58:46.171Z |
-| 6a647ac600d5281346d53ceb          | 5340ad97401f6efc  | Calvin Klein             | calvin-klein             | 2026-07-25T08:58:46.185Z | 2026-07-25T08:58:46.185Z |
-| 6a647ac600d5281346d53ced          | 739e6b2f8e130a6b  | Carolina Herrera         | carolina-herrera         | 2026-07-25T08:58:46.200Z | 2026-07-25T08:58:46.200Z |
-| 6a647ac600d5281346d53cef          | 07eb5209bebc45b8  | Cartier                  | cartier                  | 2026-07-25T08:58:46.211Z | 2026-07-25T08:58:46.211Z |
-| 6a647ac600d5281346d53cf1          | 80b1aefa88938848  | Chanel                   | chanel                   | 2026-07-25T08:58:46.224Z | 2026-07-25T08:58:46.224Z |
-| 6a647ac600d5281346d53cf3          | 3d62dba49531b60f  | Chloe                    | chloe                    | 2026-07-25T08:58:46.237Z | 2026-07-25T08:58:46.237Z |
-| 6a647ac600d5281346d53cf5          | 1c059a713e366084  | Coach                    | coach                    | 2026-07-25T08:58:46.248Z | 2026-07-25T08:58:46.248Z |
-| 6a647ac600d5281346d53cf7          | d9e19a9dbd730f8d  | Creed                    | creed                    | 2026-07-25T08:58:46.261Z | 2026-07-25T08:58:46.261Z |
-| 6a647ac600d5281346d53cf9          | 403201d60f3c5feb  | DAVIDOFF                 | davidoff                 | 2026-07-25T08:58:46.276Z | 2026-07-25T08:58:46.276Z |
-| 6a647ac600d5281346d53cfb          | b87e081f2121bd7f  | Dior                     | dior                     | 2026-07-25T08:58:46.289Z | 2026-07-25T08:58:46.289Z |
-| 6a647ac600d5281346d53cfd          | 9260f894068a661d  | Diptyque                 | diptyque                 | 2026-07-25T08:58:46.304Z | 2026-07-25T08:58:46.304Z |
-| 6a647ac600d5281346d53cff          | 90d821fe048ad5c0  | Dolce & Gabbana          | dolce-gabbana            | 2026-07-25T08:58:46.318Z | 2026-07-25T08:58:46.318Z |
-| 6a647ac600d5281346d53d01          | 4f5a6a5ee48ee5d5  | Dumont                   | dumont                   | 2026-07-25T08:58:46.330Z | 2026-07-25T08:58:46.330Z |
-| 6a647ac600d5281346d53d03          | f5875b542d98e968  | Dunhill                  | dunhill                  | 2026-07-25T08:58:46.343Z | 2026-07-25T08:58:46.343Z |
-| 6a647ac600d5281346d53d05          | d594724aad54b3b9  | Elie Saab                | elie-saab                | 2026-07-25T08:58:46.354Z | 2026-07-25T08:58:46.354Z |
-| 6a647ac600d5281346d53d07          | de0f54c6b1a51b81  | Elizabeth Arden          | elizabeth-arden         | 2026-07-25T08:58:46.367Z | 2026-07-25T08:58:46.367Z |
-| 6a647ac600d5281346d53d09          | 6aca7be46326d737  | Essential Parfums        | essential-parfums        | 2026-07-25T08:58:46.380Z | 2026-07-25T08:58:46.380Z |
-| 6a647ac600d5281346d53d0b          | 6605bc73a50c8b1c  | Ex Nihilo                | ex-nihilo                | 2026-07-25T08:58:46.393Z | 2026-07-25T08:58:46.393Z |
-| 6a647ac600d5281346d53d0d          | 908c889b8e2bdd54  | Fragrance.one            | fragrance-one            | 2026-07-25T08:58:46.404Z | 2026-07-25T08:58:46.404Z |
-| 6a647ac600d5281346d53d0f          | b487008560c56274  | Frederic Malle           | frederic-malle           | 2026-07-25T08:58:46.417Z | 2026-07-25T08:58:46.417Z |
-| 6a647ac600d5281346d53d11          | afe4371f2b9daec7  | French Avenue            | french-avenue            | 2026-07-25T08:58:46.430Z | 2026-07-25T08:58:46.430Z |
-| 6a647ac600d5281346d53d13          | 5e3ba88ba45f11e2  | Giardini Di Toscana      | giardini-di-toscana      | 2026-07-25T08:58:46.444Z | 2026-07-25T08:58:46.444Z |
-| 6a647ac600d5281346d53d15          | eef572952e95241d  | Giorgio Armani           | giorgio-armani           | 2026-07-25T08:58:46.454Z | 2026-07-25T08:58:46.454Z |
-| 6a647ac600d5281346d53d17          | 9d791383da15daa7  | Gisada                   | gisada                   | 2026-07-25T08:58:46.468Z | 2026-07-25T08:58:46.468Z |
-| 6a647ac600d5281346d53d19          | b01aee705708ee84  | GIVENCHY                 | givenchy                 | 2026-07-25T08:58:46.481Z | 2026-07-25T08:58:46.481Z |
-| 6a647ac600d5281346d53d1b          | 52e84ded0568f1d0  | Gucci                    | gucci                    | 2026-07-25T08:58:46.495Z | 2026-07-25T08:58:46.495Z |
-| 6a647ac600d5281346d53d1d          | 13adc8a9cb7cd3a1  | Guerlain                 | guerlain                 | 2026-07-25T08:58:46.506Z | 2026-07-25T08:58:46.506Z |
-| 6a647ac600d5281346d53d1f          | 648e192c7b387c7b  | Gulf Orchid              | gulf-orchid              | 2026-07-25T08:58:46.520Z | 2026-07-25T08:58:46.520Z |
-| 6a647ac600d5281346d53d21          | 3b626284090b4e84  | Hermes                   | hermes                   | 2026-07-25T08:58:46.533Z | 2026-07-25T08:58:46.533Z |
-| 6a647ac600d5281346d53d23          | 01ff7ce3a7ee41b4  | Hugo Boss                | hugo-boss                | 2026-07-25T08:58:46.546Z | 2026-07-25T08:58:46.546Z |
-| 6a647ac600d5281346d53d25          | 091f8ed0cf32ff2a  | Initio Parfums Privés    | initio                   | 2026-07-25T08:58:46.559Z | 2026-07-25T08:58:46.559Z |
-| 6a647ac600d5281346d53d27          | d77852777874c6cf  | Issey Miyake             | issey-miyake             | 2026-07-25T08:58:46.573Z | 2026-07-25T08:58:46.573Z |
-| 6a647ac600d5281346d53d29          | 446c3fb8d1d21493  | Jean Paul Gaultier       | jean-paul-gaultier       | 2026-07-25T08:58:46.585Z | 2026-07-25T08:58:46.585Z |
-| 6a647ac600d5281346d53d2b          | bc255cca9a2e529d  | Jimmy Choo               | jimmy-choo               | 2026-07-25T08:58:46.598Z | 2026-07-25T08:58:46.598Z |
-| 6a647ac600d5281346d53d2d          | 9145127e8f5af033  | Kajal                    | kajal                    | 2026-07-25T08:58:46.611Z | 2026-07-25T08:58:46.611Z |
-| 6a647ac600d5281346d53d2f          | df1f860be7760287  | Kayali                   | kayali                   | 2026-07-25T08:58:46.626Z | 2026-07-25T08:58:46.626Z |
-| 6a647ac600d5281346d53d31          | defd9f24957a39c7  | Kenzo                    | kenzo                    | 2026-07-25T08:58:46.640Z | 2026-07-25T08:58:46.640Z |
-| 6a647ac600d5281346d53d33          | 96a376723b0427a3  | Khadlaj                  | khadlaj                  | 2026-07-25T08:58:46.651Z | 2026-07-25T08:58:46.651Z |
-| 6a647ac600d5281346d53d35          | 4b01d270b6a23a90  | Kilian                   | kilian                   | 2026-07-25T08:58:46.664Z | 2026-07-25T08:58:46.664Z |
-| 6a647ac600d5281346d53d37          | 89083bbb91558452  | Lacoste                  | lacoste                  | 2026-07-25T08:58:46.678Z | 2026-07-25T08:58:46.678Z |
-| 6a647ac600d5281346d53d39          | 61075526e5b684da  | Lalique                  | lalique                  | 2026-07-25T08:58:46.692Z | 2026-07-25T08:58:46.692Z |
-| 6a647ac600d5281346d53d3b          | 02011dc7c4ead789  | Lancome                  | lancome                  | 2026-07-25T08:58:46.706Z | 2026-07-25T08:58:46.706Z |
-| 6a647ac600d5281346d53d3d          | a491e4933a80827f  | Lattafa                  | lattafa                  | 2026-07-25T08:58:46.716Z | 2026-07-25T08:58:46.716Z |
-| 6a647ac600d5281346d53d3f          | 4f0137ee1ac7383b  | Le Labo                  | le-labo                  | 2026-07-25T08:58:46.729Z | 2026-07-25T08:58:46.729Z |
-| 6a647ac600d5281346d53d41          | b39b380dc59111fd  | Loewe                    | loewe                    | 2026-07-25T08:58:46.742Z | 2026-07-25T08:58:46.742Z |
-| 6a647ac600d5281346d53d43          | 02fc9ba1a6e76c23  | Louis Vuitton            | louis-vuitton            | 2026-07-25T08:58:46.752Z | 2026-07-25T08:58:46.752Z |
-| 6a647ac600d5281346d53d45          | 29fd478a8b75f778  | Maison Alhambra          | maison-alhambra          | 2026-07-25T08:58:46.766Z | 2026-07-25T08:58:46.766Z |
-| 6a647ac600d5281346d53d47          | 7dfe28f98913bf21  | Maison Asrar             | maison-asrar             | 2026-07-25T08:58:46.779Z | 2026-07-25T08:58:46.779Z |
-| 6a647ac600d5281346d53d49          | 7c672fd3525f8f9b  | Maison Crivelli          | maison-crivelli          | 2026-07-25T08:58:46.794Z | 2026-07-25T08:58:46.794Z |
-| 6a647ac600d5281346d53d4b          | 3cbdd7c39e5f3697  | Maison Francis Kurkdjian | maison-francis-kurkdjian | 2026-07-25T08:58:46.805Z | 2026-07-25T08:58:46.805Z |
-| 6a647ac600d5281346d53d4d          | db87dc71aa005338  | Maison Margiela          | maison-margiela          | 2026-07-25T08:58:46.818Z | 2026-07-25T08:58:46.818Z |
-| 6a647ac600d5281346d53d4f          | afca8c3519bf7c83  | Maison Milan             | maison-milan             | 2026-07-25T08:58:46.829Z | 2026-07-25T08:58:46.829Z |
-| 6a647ac600d5281346d53d51          | 1d1a59cd9ab3dfe7  | Mancera                  | mancera                  | 2026-07-25T08:58:46.842Z | 2026-07-25T08:58:46.842Z |
-| 6a647ac600d5281346d53d53          | 1e8ee38e6d52e806  | Marc Jacobs              | marc-jacobs              | 2026-07-25T08:58:46.855Z | 2026-07-25T08:58:46.855Z |
-| 6a647ac600d5281346d53d55          | d00d240edf1bdf07  | Marc-Antoine Barrois     | marc-antoine-barrois     | 2026-07-25T08:58:46.870Z | 2026-07-25T08:58:46.870Z |
-| 6a647ac600d5281346d53d57          | 81df26cae17d4c59  | Matiere Premier          | matiere-premier          | 2026-07-25T08:58:46.883Z | 2026-07-25T08:58:46.883Z |
-| 6a647ac600d5281346d53d59          | fba36b5d8bc1117f  | Mercedes-Benz            | mercedes                 | 2026-07-25T08:58:46.896Z | 2026-07-25T08:58:46.896Z |
-| 6a647ac600d5281346d53d5b          | 3371b5d5bddf57f6  | Missoni                  | missoni                  | 2026-07-25T08:58:46.908Z | 2026-07-25T08:58:46.908Z |
-| 6a647ac600d5281346d53d5d          | 34a3bbcb92f8b666  | Montale                  | montale                  | 2026-07-25T08:58:46.923Z | 2026-07-25T08:58:46.923Z |
-| 6a647ac600d5281346d53d5f          | 6f3d590e9532abf6  | MontBlanc                | montblanc                | 2026-07-25T08:58:46.939Z | 2026-07-25T08:58:46.939Z |
-| 6a647ac600d5281346d53d61          | b9774577c1a2dd05  | Moschino                 | moschino                 | 2026-07-25T08:58:46.958Z | 2026-07-25T08:58:46.958Z |
-| 6a647ac600d5281346d53d63          | 6b391ce4e5927301  | Mugler                   | mugler                   | 2026-07-25T08:58:46.973Z | 2026-07-25T08:58:46.973Z |
-| 6a647ac600d5281346d53d65          | 53d3dce19fb983be  | Narciso Rodriguez        | narciso-rodriguez        | 2026-07-25T08:58:46.986Z | 2026-07-25T08:58:46.986Z |
-| 6a647ac600d5281346d53d67          | 8e5a6194374197ce  | Naseem                   | naseem                   | 2026-07-25T08:58:46.998Z | 2026-07-25T08:58:46.998Z |
-| 6a647ac600d5281346d53d69          | c1140706a2fae53c  | Nautica                  | nautica                  | 2026-07-25T08:58:47.009Z | 2026-07-25T08:58:47.009Z |
-| 6a647ac600d5281346d53d6b          | e1e80338aa813ed8  | Nishane                  | nishane                  | 2026-07-25T08:58:47.022Z | 2026-07-25T08:58:47.022Z |
-| 6a647ac700d5281346d53d6d          | e2659c8fd1af21d2  | Orto Parisi              | orto-parisi              | 2026-07-25T08:58:47.035Z | 2026-07-25T08:58:47.035Z |
-| 6a647ac700d5281346d53d6f          | 20b9d1d5b389ce3b  | Paco Rabanne             | paco-rabanne             | 2026-07-25T08:58:47.048Z | 2026-07-25T08:58:47.048Z |
-| 6a647ac700d5281346d53d71          | cfb6739d4e1b9b85  | Parfums de Marly         | parfums-de-marly         | 2026-07-25T08:58:47.058Z | 2026-07-25T08:58:47.058Z |
-| 6a647ac700d5281346d53d73          | a1942bdbad438dc6  | Paris Corner             | paris-corner             | 2026-07-25T08:58:47.070Z | 2026-07-25T08:58:47.070Z |
-| 6a647ac700d5281346d53d75          | f2cfbe5be6e176c4  | Penhaligon’s             | penhaligons              | 2026-07-25T08:58:47.081Z | 2026-07-25T08:58:47.081Z |
-| 6a647ac700d5281346d53d77          | 567868d54435b1ac  | Prada                    | prada                    | 2026-07-25T08:58:47.094Z | 2026-07-25T08:58:47.094Z |
-| 6a647ac700d5281346d53d79          | eecc99476d8c4e6a  | Ralph Lauren             | ralph-lauren             | 2026-07-25T08:58:47.107Z | 2026-07-25T08:58:47.107Z |
-| 6a647ac700d5281346d53d7b          | 8c222f41da0888dc  | Rasasi                   | rasasi                   | 2026-07-25T08:58:47.121Z | 2026-07-25T08:58:47.121Z |
-| 6a647ac700d5281346d53d7d          | 7b77335b8cea121a  | Rayhaan                  | rayhaan                  | 2026-07-25T08:58:47.135Z | 2026-07-25T08:58:47.135Z |
-| 6a647ac700d5281346d53d7f          | f699a06c7031634b  | Reef                     | reef                     | 2026-07-25T08:58:47.149Z | 2026-07-25T08:58:47.149Z |
-| 6a647ac700d5281346d53d81          | 7c0d99581503c7b5  | Reyane Tradition         | reyane-tradition         | 2026-07-25T08:58:47.162Z | 2026-07-25T08:58:47.162Z |
-| 6a647ac700d5281346d53d83          | 0b87a0482c703219  | Riiffs                   | riiffs                   | 2026-07-25T08:58:47.175Z | 2026-07-25T08:58:47.175Z |
-| 6a647ac700d5281346d53d85          | 447356e67d443d66  | Roja Parfums             | roja-parfums             | 2026-07-25T08:58:47.188Z | 2026-07-25T08:58:47.188Z |
-| 6a647ac700d5281346d53d87          | b4a296ede13f90a3  | Sabrina Carpenter        | sabrina-carpenter        | 2026-07-25T08:58:47.201Z | 2026-07-25T08:58:47.201Z |
-| 6a647ac700d5281346d53d89          | 754db3108701c500  | Serge Lutens             | serge-lutens             | 2026-07-25T08:58:47.211Z | 2026-07-25T08:58:47.211Z |
-| 6a647ac700d5281346d53d8b          | 89f92e3f32138526  | Sospiro                  | sospiro                  | 2026-07-25T08:58:47.224Z | 2026-07-25T08:58:47.224Z |
-| 6a647ac700d5281346d53d8d          | 2d5a40a2c2d89416  | Swiss Arabian            | swiss-arabian            | 2026-07-25T08:58:47.238Z | 2026-07-25T08:58:47.238Z |
-| 6a647ac700d5281346d53d8f          | 677d4c49e9019ca0  | Tom Ford                 | tom-ford                 | 2026-07-25T08:58:47.252Z | 2026-07-25T08:58:47.252Z |
-| 6a647ac700d5281346d53d91          | 234edb64ccf784dd  | Tommy Hilfiger           | tommy-hilfiger           | 2026-07-25T08:58:47.264Z | 2026-07-25T08:58:47.264Z |
-| 6a647ac700d5281346d53d93          | a6c1c7dfeaac3300  | Unique’e Luxury          | uniquee-luxury           | 2026-07-25T08:58:47.278Z | 2026-07-25T08:58:47.278Z |
-| 6a647ac700d5281346d53d95          | 344330e47e353691  | Valentino                | valentino                | 2026-07-25T08:58:47.292Z | 2026-07-25T08:58:47.292Z |
-| 6a647ac700d5281346d53d97          | da150503463f9c2b  | Van Cleef & Arpels       | van-cleef-arpels         | 2026-07-25T08:58:47.306Z | 2026-07-25T08:58:47.306Z |
-| 6a647ac700d5281346d53d99          | 8a16de855092d253  | Versace                  | versace                  | 2026-07-25T08:58:47.319Z | 2026-07-25T08:58:47.319Z |
-| 6a647ac700d5281346d53d9b          | f844c55d55f88c3d  | Victoria’s Secret        | victorias-secret         | 2026-07-25T08:58:47.333Z | 2026-07-25T08:58:47.333Z |
-| 6a647ac700d5281346d53d9d          | a7c6c115f662a48e  | Viktor & Rolf            | viktor-rolf              | 2026-07-25T08:58:47.347Z | 2026-07-25T08:58:47.347Z |
-| 6a647ac700d5281346d53d9f          | bd3a55c6e2e4a093  | Xerjoff                  | xerjoff                  | 2026-07-25T08:58:47.360Z | 2026-07-25T08:58:47.360Z |
-| 6a647ac700d5281346d53da1          | 492d00e262142c6d  | Yves Saint Laurent       | yves-saint-laurent       | 2026-07-25T08:58:47.374Z | 2026-07-25T08:58:47.374Z |
-| 6a647ac700d5281346d53da3          | 9798150783150840  | Zara                     | zara                     | 2026-07-25T08:58:47.387Z | 2026-07-25T08:58:47.387Z |
+There are **3 Main (Parent) Brands**:
+1. **Niche** (`6a64c1ee19f66260bb34f468`)
+2. **Designer Brands** (`6a64c1ee19f66260bb34f469`)
+3. **UAE & Arabian Brands** (`6a64c1ee19f66260bb34f46a`)
 
-*All entries are generated automatically when importing `docs/Brands.json` via the `import-doc-brands.js` script.*
+---
+
+## 🗺️ Unified Brand Hierarchy Table
+
+| Parent Brand | Sub-Brand Name | Slug | did | MongoDB _id |
+| :--- | :--- | :--- | :--- | :--- |
+| **Niche** | — *(Main Brand)* | `niche` | `6753bac703aeecba` | `6a64c1ee19f66260bb34f468` |
+| ↳ *Niche* | Amouage | `amouage` | `4b767b620b6399b7` | `6a64c1ee19f66260bb34f46c` |
+| ↳ *Niche* | Atelier des Ors | `atelier-des-ors` | `6d568babb301816e` | `6a64c1ee19f66260bb34f46d` |
+| ↳ *Niche* | BDK Parfums | `bdk-parfums` | `4f9d42d23e29346e` | `6a64c1ee19f66260bb34f46e` |
+| ↳ *Niche* | Byredo | `byredo` | `b791faf48659c355` | `6a64c1ee19f66260bb34f46f` |
+| ↳ *Niche* | Creed | `creed` | `5ec318529670aafb` | `6a64c1ee19f66260bb34f470` |
+| ↳ *Niche* | Diptyque | `diptyque` | `5238451a3a3beb97` | `6a64c1ee19f66260bb34f471` |
+| ↳ *Niche* | Essential Parfums | `essential-parfums` | `a31afc9f5b00031c` | `6a64c1ee19f66260bb34f472` |
+| ↳ *Niche* | Frederic Malle | `frederic-malle` | `a4638c9588eb8237` | `6a64c1ee19f66260bb34f473` |
+| ↳ *Niche* | Giardini Di Toscana | `giardini-di-toscana` | `9e3fd97c518af9dc` | `6a64c1ee19f66260bb34f474` |
+| ↳ *Niche* | Gisada | `gisada` | `128b9d6c1ec4d49b` | `6a64c1ee19f66260bb34f475` |
+| ↳ *Niche* | INITIO PARFUMS PRIVÉS | `initio-parfums-priv-s` | `a40cddb46ab551e4` | `6a64c1ee19f66260bb34f476` |
+| ↳ *Niche* | Kajal | `kajal` | `6910d9d52ecff6e9` | `6a64c1ee19f66260bb34f477` |
+| ↳ *Niche* | Kayali | `kayali` | `d28b9852345d6ffc` | `6a64c1ee19f66260bb34f478` |
+| ↳ *Niche* | Loewe | `loewe` | `f5b5a2faa2c57321` | `6a64c1ee19f66260bb34f479` |
+| ↳ *Niche* | Maison Crivelli | `maison-crivelli` | `226f1480fd9b9eb4` | `6a64c1ee19f66260bb34f47a` |
+| ↳ *Niche* | Maison Francis Kurkdjian | `maison-francis-kurkdjian` | `4259e064404c9c27` | `6a64c1ee19f66260bb34f47b` |
+| ↳ *Niche* | Maison Martin Margiela | `maison-martin-margiela` | `bc841ab2c603537e` | `6a64c1ee19f66260bb34f47c` |
+| ↳ *Niche* | Mancera | `mancera` | `f7a4db2731a932c6` | `6a64c1ee19f66260bb34f47d` |
+| ↳ *Niche* | Matiere Premier | `matiere-premier` | `47acf47011794d87` | `6a64c1ee19f66260bb34f47e` |
+| ↳ *Niche* | Montale | `montale` | `7f4940dd9890c94f` | `6a64c1ee19f66260bb34f47f` |
+| ↳ *Niche* | Nishane | `nishane` | `66ce546a89965fed` | `6a64c1ee19f66260bb34f480` |
+| ↳ *Niche* | Orto Parisi | `orto-parisi` | `115748bcab5e6974` | `6a64c1ee19f66260bb34f481` |
+| ↳ *Niche* | Parfums de Marly | `parfums-de-marly` | `b1a34875ebcddf24` | `6a64c1ee19f66260bb34f482` |
+| ↳ *Niche* | Penhaligon's | `penhaligon-s` | `1564d643e259a1bb` | `6a64c1ee19f66260bb34f483` |
+| ↳ *Niche* | Roja | `roja` | `72e164ea16b3a53f` | `6a64c1ee19f66260bb34f484` |
+| ↳ *Niche* | Roja Parfums | `roja-parfums` | `fc15d1a3f680ee9f` | `6a64c1ee19f66260bb34f485` |
+| ↳ *Niche* | Serge Lutens | `serge-lutens` | `06a12dfab8c89f49` | `6a64c1ee19f66260bb34f486` |
+| ↳ *Niche* | Sospiro | `sospiro` | `a7d3a70b322bd63e` | `6a64c1ee19f66260bb34f487` |
+| ↳ *Niche* | Unique'e Luxury | `unique-e-luxury` | `7f5fd8c01c556c6a` | `6a64c1ee19f66260bb34f488` |
+| ↳ *Niche* | Van Cleef & Arpels | `van-cleef-arpels` | `ea9bc7eeb2f852f2` | `6a64c1ee19f66260bb34f489` |
+| ↳ *Niche* | Xerjoff | `xerjoff` | `5fc0bf7c30b90a77` | `6a64c1ee19f66260bb34f48a` |
+| **Designer Brands** | — *(Main Brand)* | `designer` | `202873cd38f8974b` | `6a64c1ee19f66260bb34f469` |
+| ↳ *Designer* | Ariana Grande | `ariana-grande` | `a512b69cac82a9e4` | `6a64c1ee19f66260bb34f48b` |
+| ↳ *Designer* | Azzaro | `azzaro` | `868535b4e15a022b` | `6a64c1ee19f66260bb34f48c` |
+| ↳ *Designer* | Bentley | `bentley` | `77e214017cb6ef8d` | `6a64c1ee19f66260bb34f48d` |
+| ↳ *Designer* | Billie Eilish | `billie-eilish` | `7510e7daead289e2` | `6a64c1ee19f66260bb34f48e` |
+| ↳ *Designer* | Bottega Veneta | `bottega-veneta` | `65d4c0f0cd2903b1` | `6a64c1ee19f66260bb34f48f` |
+| ↳ *Designer* | Burberry | `burberry` | `7d3ad9b627850f06` | `6a64c1ee19f66260bb34f490` |
+| ↳ *Designer* | Bvlgaris | `bvlgaris` | `e9ef684dff772225` | `6a64c1ee19f66260bb34f491` |
+| ↳ *Designer* | Cartier | `cartier` | `89f181296faf89b9` | `6a64c1ee19f66260bb34f492` |
+| ↳ *Designer* | Calvin Klein | `calvin-klein` | `73aa247285aa9ccb` | `6a64c1ee19f66260bb34f493` |
+| ↳ *Designer* | Carolina Herrera | `carolina-herrera` | `b39f6789d92c42cc` | `6a64c1ee19f66260bb34f494` |
+| ↳ *Designer* | Chanel | `chanel` | `d3b8a98286d7551a` | `6a64c1ee19f66260bb34f495` |
+| ↳ *Designer* | Chloe | `chloe` | `4940ba7c8e1db983` | `6a64c1ee19f66260bb34f496` |
+| ↳ *Designer* | Coach | `coach` | `0cebb3519e9eb1bf` | `6a64c1ee19f66260bb34f497` |
+| ↳ *Designer* | Davidoff | `davidoff` | `39e0befbe8c09ee4` | `6a64c1ee19f66260bb34f498` |
+| ↳ *Designer* | Dior | `dior` | `d8180584ac1a8302` | `6a64c1ee19f66260bb34f499` |
+| ↳ *Designer* | Dolce & Gabbana | `dolce-gabbana` | `bca76de6f6f4d9b9` | `6a64c1ee19f66260bb34f49a` |
+| ↳ *Designer* | Dunhill | `dunhill` | `e222e3aab26b8803` | `6a64c1ee19f66260bb34f49b` |
+| ↳ *Designer* | Elie Saab | `elie-saab` | `0437a90ef89afb82` | `6a64c1ee19f66260bb34f49c` |
+| ↳ *Designer* | Elizabeth Arden | `elizabeth-arden` | `31f8df243e2113cf` | `6a64c1ee19f66260bb34f49d` |
+| ↳ *Designer* | Giorgio Armani | `giorgio-armani` | `97ae7ed770304f34` | `6a64c1ee19f66260bb34f49e` |
+| ↳ *Designer* | Givenchy | `givenchy` | `7581557e5047b567` | `6a64c1ee19f66260bb34f49f` |
+| ↳ *Designer* | Gucci | `gucci` | `3ae1a45917ac796a` | `6a64c1ee19f66260bb34f4a0` |
+| ↳ *Designer* | Guerlain | `guerlain` | `31a33f736f440bef` | `6a64c1ee19f66260bb34f4a1` |
+| ↳ *Designer* | Hermes | `hermes` | `4eb3f3ea19aa5ac5` | `6a64c1ee19f66260bb34f4a2` |
+| ↳ *Designer* | Hugo Boss | `hugo-boss` | `d5be64e3abff7748` | `6a64c1ee19f66260bb34f4a3` |
+| ↳ *Designer* | Issey Miyake | `issey-miyake` | `ce95bfe3467de96a` | `6a64c1ee19f66260bb34f4a4` |
+| ↳ *Designer* | Jean Paul Gaultier | `jean-paul-gaultier` | `dbdddaaaaf5a3635` | `6a64c1ee19f66260bb34f4a5` |
+| ↳ *Designer* | Jimmy Choo | `jimmy-choo` | `87839d74219034a0` | `6a64c1ee19f66260bb34f4a6` |
+| ↳ *Designer* | Kenzo | `kenzo` | `be0ccdcd32e4f827` | `6a64c1ee19f66260bb34f4a7` |
+| ↳ *Designer* | Kilian | `kilian` | `78fc16f2b7c71517` | `6a64c1ee19f66260bb34f4a8` |
+| ↳ *Designer* | Lancôme | `lanc-me` | `0e176b7760ba9797` | `6a64c1ee19f66260bb34f4a9` |
+| ↳ *Designer* | Lacoste | `lacoste` | `396cca3203c71ac1` | `6a64c1ee19f66260bb34f4aa` |
+| ↳ *Designer* | Louis Vuitton | `louis-vuitton` | `79668e56346b045c` | `6a64c1ee19f66260bb34f4ab` |
+| ↳ *Designer* | Mercedes Benz | `mercedes-benz` | `19a15ddf6a45b99f` | `6a64c1ee19f66260bb34f4ac` |
+| ↳ *Designer* | Marc Jacobs | `marc-jacobs` | `7bd7f401b8e02446` | `6a64c1ee19f66260bb34f4ad` |
+| ↳ *Designer* | Montblanc | `montblanc` | `d820a939e59c4f5f` | `6a64c1ee19f66260bb34f4ae` |
+| ↳ *Designer* | Moschino | `moschino` | `2ddeba7b62e9fa8e` | `6a64c1ee19f66260bb34f4af` |
+| ↳ *Designer* | Mugler | `mugler` | `572ad8d7c796f271` | `6a64c1ee19f66260bb34f4b0` |
+| ↳ *Designer* | Narciso Rodriguez | `narciso-rodriguez` | `6e49bfc7ec7a741b` | `6a64c1ee19f66260bb34f4b1` |
+| ↳ *Designer* | Nautica | `nautica` | `c1ea32c68186f57c` | `6a64c1ee19f66260bb34f4b2` |
+| ↳ *Designer* | Office for men (fragrance only) | `office-for-men-fragrance-only` | `6b055dbe63c2f607` | `6a64c1ee19f66260bb34f4b3` |
+| ↳ *Designer* | Paco Rabanne | `paco-rabanne` | `fdee9c94c73d73e0` | `6a64c1ee19f66260bb34f4b4` |
+| ↳ *Designer* | Prada | `prada` | `6f8840b217f04bfc` | `6a64c1ee19f66260bb34f4b5` |
+| ↳ *Designer* | Ralph Lauren | `ralph-lauren` | `6a32129cf884cb17` | `6a64c1ee19f66260bb34f4b6` |
+| ↳ *Designer* | Sabrina Carpenter | `sabrina-carpenter` | `c7c35681c31bee42` | `6a64c1ee19f66260bb34f4b7` |
+| ↳ *Designer* | Tom Ford | `tom-ford` | `4decc439c7062450` | `6a64c1ee19f66260bb34f4b8` |
+| ↳ *Designer* | Valentino | `valentino` | `52f33e7d03045072` | `6a64c1ee19f66260bb34f4b9` |
+| ↳ *Designer* | Versace | `versace` | `58ba96c1059155f8` | `6a64c1ee19f66260bb34f4ba` |
+| ↳ *Designer* | Victoria's Secret | `victoria-s-secret` | `6596b4caae69ec07` | `6a64c1ee19f66260bb34f4bb` |
+| ↳ *Designer* | Viktor & Rolf | `viktor-rolf` | `02199fdf71e15c8a` | `6a64c1ee19f66260bb34f4bc` |
+| ↳ *Designer* | Yves Saint Laurent | `yves-saint-laurent` | `aaafb22f2ec6030b` | `6a64c1ee19f66260bb34f4bd` |
+| ↳ *Designer* | Zara | `zara` | `992b52a223e1938e` | `6a64c1ee19f66260bb34f4be` |
+| **UAE & Arabian Brands** | — *(Main Brand)* | `arabian` | `7dbba3cd8de67be4` | `6a64c1ee19f66260bb34f4a` |
+| ↳ *UAE & Arabian* | Armaf | `armaf` | `c3efb14e1775f7e1` | `6a64c1ee19f66260bb34f4bf` |
+| ↳ *UAE & Arabian* | Afnan | `afnan` | `223b30b53b9fef2f` | `6a64c1ee19f66260bb34f4c0` |
+| ↳ *UAE & Arabian* | Ahmad Al Maghribi | `ahmad-al-maghribi` | `bd4770f26b9e0bcb` | `6a64c1ee19f66260bb34f4c1` |
+| ↳ *UAE & Arabian* | Al Haramain | `al-haramain` | `451e9e5b5023e3ea` | `6a64c1ee19f66260bb34f4c2` |
+| ↳ *UAE & Arabian* | Brandy | `brandy` | `c8d8065b1caa0fb0` | `6a64c1ee19f66260bb34f4c3` |
+| ↳ *UAE & Arabian* | French Avenue | `french-avenue` | `39b8185d9a0f0f8e` | `6a64c1ee19f66260bb34f4c4` |
+| ↳ *UAE & Arabian* | Khadlaj | `khadlaj` | `09b0c5844769abca` | `6a64c1ee19f66260bb34f4c5` |
+| ↳ *UAE & Arabian* | Maison Alhambra | `maison-alhambra` | `b7c174dc06e908f7` | `6a64c1ee19f66260bb34f4c6` |
+| ↳ *UAE & Arabian* | Maison Asrar | `maison-asrar` | `6a6635bff0c9bfae` | `6a64c1ee19f66260bb34f4c7` |
+| ↳ *UAE & Arabian* | Naseem | `naseem` | `a334060477e6f9c5` | `6a64c1ee19f66260bb34f4c8` |
+| ↳ *UAE & Arabian* | Lattafa | `lattafa` | `27d8e11c38dd109c` | `6a64c1ee19f66260bb34f4c9` |
+| ↳ *UAE & Arabian* | Paris Corner | `paris-corner` | `b6af2ad3397deb16` | `6a64c1ee19f66260bb34f4ca` |
+| ↳ *UAE & Arabian* | Rasasi | `rasasi` | `dd5d3f457c91d8ac` | `6a64c1ee19f66260bb34f4cb` |
+| ↳ *UAE & Arabian* | Rayhaan | `rayhaan` | `d74c2a564259b94e` | `6a64c1ee19f66260bb34f4cc` |
+| ↳ *UAE & Arabian* | Reyane Tradition | `reyane-tradition` | `b8caf41d74ad7c41` | `6a64c1ee19f66260bb34f4cd` |
+| ↳ *UAE & Arabian* | Swiss Arabian | `swiss-arabian` | `9cacdae9a48a6e61` | `6a64c1ee19f66260bb34f4ce` |
+
+---
+
+## 🗂️ Grouped Brand Details
+
+### Niche Brands
+**Main Brand ID:** `6a64c1ee19f66260bb34f468` | **did:** `6753bac703aeecba` | **Slug:** `niche`
+
+| Brand Name | Slug | did | MongoDB _id |
+| :--- | :--- | :--- | :--- |
+| Amouage | `amouage` | `4b767b620b6399b7` | `6a64c1ee19f66260bb34f46c` |
+| Atelier des Ors | `atelier-des-ors` | `6d568babb301816e` | `6a64c1ee19f66260bb34f46d` |
+| BDK Parfums | `bdk-parfums` | `4f9d42d23e29346e` | `6a64c1ee19f66260bb34f46e` |
+| Byredo | `byredo` | `b791faf48659c355` | `6a64c1ee19f66260bb34f46f` |
+| Creed | `creed` | `5ec318529670aafb` | `6a64c1ee19f66260bb34f470` |
+| Diptyque | `diptyque` | `5238451a3a3beb97` | `6a64c1ee19f66260bb34f471` |
+| Essential Parfums | `essential-parfums` | `a31afc9f5b00031c` | `6a64c1ee19f66260bb34f472` |
+| Frederic Malle | `frederic-malle` | `a4638c9588eb8237` | `6a64c1ee19f66260bb34f473` |
+| Giardini Di Toscana | `giardini-di-toscana` | `9e3fd97c518af9dc` | `6a64c1ee19f66260bb34f474` |
+| Gisada | `gisada` | `128b9d6c1ec4d49b` | `6a64c1ee19f66260bb34f475` |
+| INITIO PARFUMS PRIVÉS | `initio-parfums-priv-s` | `a40cddb46ab551e4` | `6a64c1ee19f66260bb34f476` |
+| Kajal | `kajal` | `6910d9d52ecff6e9` | `6a64c1ee19f66260bb34f477` |
+| Kayali | `kayali` | `d28b9852345d6ffc` | `6a64c1ee19f66260bb34f478` |
+| Loewe | `loewe` | `f5b5a2faa2c57321` | `6a64c1ee19f66260bb34f479` |
+| Maison Crivelli | `maison-crivelli` | `226f1480fd9b9eb4` | `6a64c1ee19f66260bb34f47a` |
+| Maison Francis Kurkdjian | `maison-francis-kurkdjian` | `4259e064404c9c27` | `6a64c1ee19f66260bb34f47b` |
+| Maison Martin Margiela | `maison-martin-margiela` | `bc841ab2c603537e` | `6a64c1ee19f66260bb34f47c` |
+| Mancera | `mancera` | `f7a4db2731a932c6` | `6a64c1ee19f66260bb34f47d` |
+| Matiere Premier | `matiere-premier` | `47acf47011794d87` | `6a64c1ee19f66260bb34f47e` |
+| Montale | `montale` | `7f4940dd9890c94f` | `6a64c1ee19f66260bb34f47f` |
+| Nishane | `nishane` | `66ce546a89965fed` | `6a64c1ee19f66260bb34f480` |
+| Orto Parisi | `orto-parisi` | `115748bcab5e6974` | `6a64c1ee19f66260bb34f481` |
+| Parfums de Marly | `parfums-de-marly` | `b1a34875ebcddf24` | `6a64c1ee19f66260bb34f482` |
+| Penhaligon's | `penhaligon-s` | `1564d643e259a1bb` | `6a64c1ee19f66260bb34f483` |
+| Roja | `roja` | `72e164ea16b3a53f` | `6a64c1ee19f66260bb34f484` |
+| Roja Parfums | `roja-parfums` | `fc15d1a3f680ee9f` | `6a64c1ee19f66260bb34f485` |
+| Serge Lutens | `serge-lutens` | `06a12dfab8c89f49` | `6a64c1ee19f66260bb34f486` |
+| Sospiro | `sospiro` | `a7d3a70b322bd63e` | `6a64c1ee19f66260bb34f487` |
+| Unique'e Luxury | `unique-e-luxury` | `7f5fd8c01c556c6a` | `6a64c1ee19f66260bb34f488` |
+| Van Cleef & Arpels | `van-cleef-arpels` | `ea9bc7eeb2f852f2` | `6a64c1ee19f66260bb34f489` |
+| Xerjoff | `xerjoff` | `5fc0bf7c30b90a77` | `6a64c1ee19f66260bb34f48a` |
+
+### Designer Brands
+**Main Brand ID:** `6a64c1ee19f66260bb34f469` | **did:** `202873cd38f8974b` | **Slug:** `designer`
+
+| Brand Name | Slug | did | MongoDB _id |
+| :--- | :--- | :--- | :--- |
+| Ariana Grande | `ariana-grande` | `a512b69cac82a9e4` | `6a64c1ee19f66260bb34f48b` |
+| Azzaro | `azzaro` | `868535b4e15a022b` | `6a64c1ee19f66260bb34f48c` |
+| Bentley | `bentley` | `77e214017cb6ef8d` | `6a64c1ee19f66260bb34f48d` |
+| Billie Eilish | `billie-eilish` | `7510e7daead289e2` | `6a64c1ee19f66260bb34f48e` |
+| Bottega Veneta | `bottega-veneta` | `65d4c0f0cd2903b1` | `6a64c1ee19f66260bb34f48f` |
+| Burberry | `burberry` | `7d3ad9b627850f06` | `6a64c1ee19f66260bb34f490` |
+| Bvlgaris | `bvlgaris` | `e9ef684dff772225` | `6a64c1ee19f66260bb34f491` |
+| Cartier | `cartier` | `89f181296faf89b9` | `6a64c1ee19f66260bb34f492` |
+| Calvin Klein | `calvin-klein` | `73aa247285aa9ccb` | `6a64c1ee19f66260bb34f493` |
+| Carolina Herrera | `carolina-herrera` | `b39f6789d92c42cc` | `6a64c1ee19f66260bb34f494` |
+| Chanel | `chanel` | `d3b8a98286d7551a` | `6a64c1ee19f66260bb34f495` |
+| Chloe | `chloe` | `4940ba7c8e1db983` | `6a64c1ee19f66260bb34f496` |
+| Coach | `coach` | `0cebb3519e9eb1bf` | `6a64c1ee19f66260bb34f497` |
+| Davidoff | `davidoff` | `39e0befbe8c09ee4` | `6a64c1ee19f66260bb34f498` |
+| Dior | `dior` | `d8180584ac1a8302` | `6a64c1ee19f66260bb34f499` |
+| Dolce & Gabbana | `dolce-gabbana` | `bca76de6f6f4d9b9` | `6a64c1ee19f66260bb34f49a` |
+| Dunhill | `dunhill` | `e222e3aab26b8803` | `6a64c1ee19f66260bb34f49b` |
+| Elie Saab | `elie-saab` | `0437a90ef89afb82` | `6a64c1ee19f66260bb34f49c` |
+| Elizabeth Arden | `elizabeth-arden` | `31f8df243e2113cf` | `6a64c1ee19f66260bb34f49d` |
+| Giorgio Armani | `giorgio-armani` | `97ae7ed770304f34` | `6a64c1ee19f66260bb34f49e` |
+| Givenchy | `givenchy` | `7581557e5047b567` | `6a64c1ee19f66260bb34f49f` |
+| Gucci | `gucci` | `3ae1a45917ac796a` | `6a64c1ee19f66260bb34f4a0` |
+| Guerlain | `guerlain` | `31a33f736f440bef` | `6a64c1ee19f66260bb34f4a1` |
+| Hermes | `hermes` | `4eb3f3ea19aa5ac5` | `6a64c1ee19f66260bb34f4a2` |
+| Hugo Boss | `hugo-boss` | `d5be64e3abff7748` | `6a64c1ee19f66260bb34f4a3` |
+| Issey Miyake | `issey-miyake` | `ce95bfe3467de96a` | `6a64c1ee19f66260bb34f4a4` |
+| Jean Paul Gaultier | `jean-paul-gaultier` | `dbdddaaaaf5a3635` | `6a64c1ee19f66260bb34f4a5` |
+| Jimmy Choo | `jimmy-choo` | `87839d74219034a0` | `6a64c1ee19f66260bb34f4a6` |
+| Kenzo | `kenzo` | `be0ccdcd32e4f827` | `6a64c1ee19f66260bb34f4a7` |
+| Kilian | `kilian` | `78fc16f2b7c71517` | `6a64c1ee19f66260bb34f4a8` |
+| Lancôme | `lanc-me` | `0e176b7760ba9797` | `6a64c1ee19f66260bb34f4a9` |
+| Lacoste | `lacoste` | `396cca3203c71ac1` | `6a64c1ee19f66260bb34f4aa` |
+| Louis Vuitton | `louis-vuitton` | `79668e56346b045c` | `6a64c1ee19f66260bb34f4ab` |
+| Mercedes Benz | `mercedes-benz` | `19a15ddf6a45b99f` | `6a64c1ee19f66260bb34f4ac` |
+| Marc Jacobs | `marc-jacobs` | `7bd7f401b8e02446` | `6a64c1ee19f66260bb34f4ad` |
+| Montblanc | `montblanc` | `d820a939e59c4f5f` | `6a64c1ee19f66260bb34f4ae` |
+| Moschino | `moschino` | `2ddeba7b62e9fa8e` | `6a64c1ee19f66260bb34f4af` |
+| Mugler | `mugler` | `572ad8d7c796f271` | `6a64c1ee19f66260bb34f4b0` |
+| Narciso Rodriguez | `narciso-rodriguez` | `6e49bfc7ec7a741b` | `6a64c1ee19f66260bb34f4b1` |
+| Nautica | `nautica` | `c1ea32c68186f57c` | `6a64c1ee19f66260bb34f4b2` |
+| Office for men (fragrance only) | `office-for-men-fragrance-only` | `6b055dbe63c2f607` | `6a64c1ee19f66260bb34f4b3` |
+| Paco Rabanne | `paco-rabanne` | `fdee9c94c73d73e0` | `6a64c1ee19f66260bb34f4b4` |
+| Prada | `prada` | `6f8840b217f04bfc` | `6a64c1ee19f66260bb34f4b5` |
+| Ralph Lauren | `ralph-lauren` | `6a32129cf884cb17` | `6a64c1ee19f66260bb34f4b6` |
+| Sabrina Carpenter | `sabrina-carpenter` | `c7c35681c31bee42` | `6a64c1ee19f66260bb34f4b7` |
+| Tom Ford | `tom-ford` | `4decc439c7062450` | `6a64c1ee19f66260bb34f4b8` |
+| Valentino | `valentino` | `52f33e7d03045072` | `6a64c1ee19f66260bb34f4b9` |
+| Versace | `versace` | `58ba96c1059155f8` | `6a64c1ee19f66260bb34f4ba` |
+| Victoria's Secret | `victoria-s-secret` | `6596b4caae69ec07` | `6a64c1ee19f66260bb34f4bb` |
+| Viktor & Rolf | `viktor-rolf` | `02199fdf71e15c8a` | `6a64c1ee19f66260bb34f4bc` |
+| Yves Saint Laurent | `yves-saint-laurent` | `aaafb22f2ec6030b` | `6a64c1ee19f66260bb34f4bd` |
+| Zara | `zara` | `992b52a223e1938e` | `6a64c1ee19f66260bb34f4be` |
+
+### UAE & Arabian Brands
+**Main Brand ID:** `6a64c1ee19f66260bb34f46a` | **did:** `7dbba3cd8de67be4` | **Slug:** `arabian`
+
+| Brand Name | Slug | did | MongoDB _id |
+| :--- | :--- | :--- | :--- |
+| Armaf | `armaf` | `c3efb14e1775f7e1` | `6a64c1ee19f66260bb34f4bf` |
+| Afnan | `afnan` | `223b30b53b9fef2f` | `6a64c1ee19f66260bb34f4c0` |
+| Ahmad Al Maghribi | `ahmad-al-maghribi` | `bd4770f26b9e0bcb` | `6a64c1ee19f66260bb34f4c1` |
+| Al Haramain | `al-haramain` | `451e9e5b5023e3ea` | `6a64c1ee19f66260bb34f4c2` |
+| Brandy | `brandy` | `c8d8065b1caa0fb0` | `6a64c1ee19f66260bb34f4c3` |
+| French Avenue | `french-avenue` | `39b8185d9a0f0f8e` | `6a64c1ee19f66260bb34f4c4` |
+| Khadlaj | `khadlaj` | `09b0c5844769abca` | `6a64c1ee19f66260bb34f4c5` |
+| Maison Alhambra | `maison-alhambra` | `b7c174dc06e908f7` | `6a64c1ee19f66260bb34f4c6` |
+| Maison Asrar | `maison-asrar` | `6a6635bff0c9bfae` | `6a64c1ee19f66260bb34f4c7` |
+| Naseem | `naseem` | `a334060477e6f9c5` | `6a64c1ee19f66260bb34f4c8` |
+| Lattafa | `lattafa` | `27d8e11c38dd109c` | `6a64c1ee19f66260bb34f4c9` |
+| Paris Corner | `paris-corner` | `b6af2ad3397deb16` | `6a64c1ee19f66260bb34f4ca` |
+| Rasasi | `rasasi` | `dd5d3f457c91d8ac` | `6a64c1ee19f66260bb34f4cb` |
+| Rayhaan | `rayhaan` | `d74c2a564259b94e` | `6a64c1ee19f66260bb34f4cc` |
+| Reyane Tradition | `reyane-tradition` | `b8caf41d74ad7c41` | `6a64c1ee19f66260bb34f4cd` |
+| Swiss Arabian | `swiss-arabian` | `9cacdae9a48a6e61` | `6a64c1ee19f66260bb34f4ce` |
