@@ -18,7 +18,7 @@ export const TrustBadges = () => {
         <div className="flex flex-col items-center p-1 sm:p-3 space-y-1 sm:space-y-2">
           <ShieldCheck className="w-5 h-5 sm:w-7 sm:h-7 text-gold" />
           <span className="text-[9px] sm:text-[10px] uppercase font-sans font-semibold tracking-wider sm:tracking-widest text-zinc-200">Authentic</span>
-          <span className="text-[9px] sm:text-[11px] text-zinc-500 font-sans font-light leading-tight">100% genuine guaranteed formulations</span>
+          <span className="text-[9px] sm:text-[11px] text-zinc-500 font-sans font-light leading-tight">100% genuine guaranteed original perfumes</span>
         </div>
       </div>
     </section>

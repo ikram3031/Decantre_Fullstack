@@ -16,7 +16,7 @@ export const ScentFinderQuiz = ({
   const navigate = useNavigate();
   return (
     <Dialog open={isQuizOpen} onOpenChange={setIsQuizOpen}>
-      <DialogContent className="bg-luxury-black border border-gold/25 text-luxury-white p-6 sm:p-8 max-w-xl w-full shadow-[0_0_50px_rgba(197,160,89,0.05)] rounded-none text-center font-sans">
+      <DialogContent className="bg-zinc-900/95 border border-zinc-700/80 text-luxury-white p-6 sm:p-8 max-w-xl w-full shadow-2xl rounded-sm text-center font-sans">
         <div className="sr-only">
           <DialogTitle>Sensory Assessment Scent Finder Quiz</DialogTitle>
           <DialogDescription>Let our master perfumers curate your custom signature scents</DialogDescription>
@@ -46,19 +46,19 @@ export const ScentFinderQuiz = ({
             <div className="grid grid-cols-1 gap-3 pt-4 font-sans">
               <button 
                 onClick={() => handleQuizAnswer('gender', 'Him')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 Masculine / Bold (For Him)
               </button>
               <button 
                 onClick={() => handleQuizAnswer('gender', 'Her')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 Feminine / Gracious (For Her)
               </button>
               <button 
                 onClick={() => handleQuizAnswer('gender', 'Unisex')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 Boundless / Shared (Unisex)
               </button>
@@ -76,25 +76,25 @@ export const ScentFinderQuiz = ({
             <div className="grid grid-cols-2 gap-3 pt-4 font-sans">
               <button 
                 onClick={() => handleQuizAnswer('family', 'Woody')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-[10px] font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-[10px] font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 🪵 Smoked Woods & Incense
               </button>
               <button 
                 onClick={() => handleQuizAnswer('family', 'Floral')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-[10px] font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-[10px] font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 🌹 Sweet Blossoms & Honey
               </button>
               <button 
                 onClick={() => handleQuizAnswer('family', 'Fresh')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-[10px] font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-[10px] font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 🌊 Clean Air & Bergamot
               </button>
               <button 
                 onClick={() => handleQuizAnswer('family', 'Warm')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-[10px] font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-[10px] font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 ✨ Golden Saffron & Resins
               </button>
@@ -112,19 +112,19 @@ export const ScentFinderQuiz = ({
             <div className="grid grid-cols-1 gap-3 pt-4 font-sans">
               <button 
                 onClick={() => handleQuizAnswer('vibe', 'Day')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 Daylight Radiance / Crisp Offices
               </button>
               <button 
                 onClick={() => handleQuizAnswer('vibe', 'Night')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 Intimate Dinners / Midnight Heat
               </button>
               <button 
                 onClick={() => handleQuizAnswer('vibe', 'Royal')}
-                className="p-4 rounded-none bg-[#0a0a0a] hover:bg-gold hover:text-black border border-white/5 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all"
+                className="p-4 rounded-sm bg-zinc-800/80 hover:bg-gold hover:text-black border border-zinc-700/80 hover:border-gold text-xs font-semibold tracking-widest uppercase transition-all shadow-md"
               >
                 Sovereign / Formal Gala Red Carpet
               </button>

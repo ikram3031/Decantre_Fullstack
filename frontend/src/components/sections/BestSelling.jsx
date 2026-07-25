@@ -5,6 +5,8 @@ import { useApp } from '../../context/AppContext';
 export const BestSelling = () => {
   const { 
     products, 
+    isProductsLoading,
+    productsError,
     wishlist, 
     toggleWishlist, 
     cardSelections, 
@@ -90,33 +92,39 @@ export const BestSelling = () => {
         </div>
 
         {/* Product Grid: 6 items shown (3 cols x 2 rows on md/lg, 2 cols x 3 rows on sm) */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 pt-2">
-          {filtered.map((p) => {
-            const currentSel = cardSelections[p.id] || { size: (p.variations && p.variations[0] && p.variations[0].size) || '100ml', concentration: 'Eau de Parfum' };
-
-            return (
-              <div key={p.id}>
-                <ProductCard
-                  product={p}
-                  currentSel={currentSel}
-                  onSizeChange={(size) => setCardSelections(prev => ({ ...prev, [p.id]: { ...(prev[p.id] || {}), size } }))}
-                  onConcentrationChange={(c) => setCardSelections(prev => ({ ...prev, [p.id]: { ...(prev[p.id] || {}), concentration: c } }))}
-                  wishlist={wishlist}
-                  toggleWishlist={toggleWishlist}
-                  handleOpenProductDetail={handleOpenProductDetail}
-                  handleAddToCart={handleAddToCart}
-                  calculateItemPrice={calculateItemPrice}
-                  isLargeCard={false}
-                />
-              </div>
-            );
-          })}
-        </div>
-
-        {filtered.length === 0 && (
+        {productsError ? (
+          <div className="p-8 border border-amber-500/20 bg-amber-500/5 rounded-sm text-center my-4 space-y-2">
+            <p className="text-amber-400 font-sans text-xs tracking-wide">
+              {productsError}
+            </p>
+          </div>
+        ) : filtered.length === 0 ? (
           <p className="text-zinc-500 text-xs font-sans font-light py-6">
-            No matching formulations found in our bestsellers list.
+            No bestseller products available at the moment.
           </p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 pt-2">
+            {filtered.map((p) => {
+              const currentSel = cardSelections[p.id] || { size: (p.variations && p.variations[0] && p.variations[0].size) || '100ml', concentration: 'Eau de Parfum' };
+
+              return (
+                <div key={p.id}>
+                  <ProductCard
+                    product={p}
+                    currentSel={currentSel}
+                    onSizeChange={(size) => setCardSelections(prev => ({ ...prev, [p.id]: { ...(prev[p.id] || {}), size } }))}
+                    onConcentrationChange={(c) => setCardSelections(prev => ({ ...prev, [p.id]: { ...(prev[p.id] || {}), concentration: c } }))}
+                    wishlist={wishlist}
+                    toggleWishlist={toggleWishlist}
+                    handleOpenProductDetail={handleOpenProductDetail}
+                    handleAddToCart={handleAddToCart}
+                    calculateItemPrice={calculateItemPrice}
+                    isLargeCard={false}
+                  />
+                </div>
+              );
+            })}
+          </div>
         )}
 
       </div>

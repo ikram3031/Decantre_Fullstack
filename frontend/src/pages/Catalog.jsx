@@ -16,7 +16,9 @@ export const Catalog = () => {
     handleOpenProductDetail,
     handleAddToCart,
     calculateItemPrice,
-    filteredProducts
+    filteredProducts,
+    productsError,
+    fetchProducts
   } = useApp();
 
   return (
@@ -62,8 +64,24 @@ export const Catalog = () => {
           </div>
         </div>
 
-        {/* Empty search fallback */}
-        {filteredProducts.length === 0 && (
+        {/* Error / Empty search fallback */}
+        {productsError ? (
+          <div className="text-center py-20 px-6 border border-amber-500/30 rounded-sm bg-amber-500/5 my-4 space-y-3">
+            <SlidersHorizontal className="w-10 h-10 text-amber-400 mx-auto" />
+            <h3 className="text-lg font-serif font-light text-amber-300">Unable to Load Catalog</h3>
+            <p className="text-zinc-400 text-xs font-sans font-light max-w-sm mx-auto leading-relaxed">
+              {productsError}
+            </p>
+            <button
+              onClick={() => {
+                if (typeof fetchProducts === 'function') fetchProducts();
+              }}
+              className="px-5 py-2.5 bg-gold text-black font-sans font-bold text-xs uppercase tracking-widest rounded-sm hover:bg-gold/90 transition-all cursor-pointer"
+            >
+              Retry Connection
+            </button>
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-24 border border-dashed border-gold/15 rounded-sm bg-luxury-dark/10">
             <SlidersHorizontal className="w-12 h-12 text-gold/40 mx-auto mb-4" />
             <h3 className="text-lg font-serif font-light text-zinc-300 mb-2">No Fragrances Found</h3>
@@ -77,7 +95,7 @@ export const Catalog = () => {
               Reset All Filters
             </button>
           </div>
-        )}
+        ) : null}
 
         {/* Perfume catalog cards list */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

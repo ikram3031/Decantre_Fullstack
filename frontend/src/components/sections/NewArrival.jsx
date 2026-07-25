@@ -6,16 +6,16 @@ import { ProductCard } from '../ProductCard';
 import { ProductGridSkeleton } from '../Skeleton';
 
 export const NewArrival = () => {
-    const { fetchProducts, filteredProducts, cardSelections, setCardSelections, wishlist, toggleWishlist, handleOpenProductDetail, handleAddToCart, calculateItemPrice, currentTheme } = useApp();
+    const { fetchProducts, filteredProducts, isProductsLoading, productsError, cardSelections, setCardSelections, wishlist, toggleWishlist, handleOpenProductDetail, handleAddToCart, calculateItemPrice, currentTheme } = useApp();
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [visibleCount, setVisibleCount] = useState(4);
     const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
-        // request API with sort=dec, empty category, and pagination limits
+        // Fetch newest products (sorted by createdAt descending)
         if (typeof fetchProducts === 'function') {
-            fetchProducts({ rawQuery: 'sort=dec&skip=0&limit=15' });
+            fetchProducts({ skip: 0, limit: 15, sortBy: 'createdAt', order: 'desc' });
         }
     }, [fetchProducts]);
 
@@ -96,9 +96,27 @@ export const NewArrival = () => {
                     </p>
                 </div>
 
-                {items.length === 0 ? (
+                {isProductsLoading ? (
                     <div className="w-full">
                         <ProductGridSkeleton count={visibleCount} />
+                    </div>
+                ) : productsError ? (
+                    <div className="p-8 border border-amber-500/20 bg-amber-500/5 rounded-sm text-center my-4 space-y-3">
+                        <p className="text-amber-400 font-sans text-xs tracking-wide">
+                            {productsError}
+                        </p>
+                        <button 
+                            onClick={() => fetchProducts({ skip: 0, limit: 15, sortBy: 'createdAt', order: 'desc' })}
+                            className="px-4 py-2 border border-gold/40 text-[10px] uppercase tracking-widest text-gold hover:bg-gold hover:text-black transition-all cursor-pointer font-bold rounded-sm"
+                        >
+                            Retry Connection
+                        </button>
+                    </div>
+                ) : items.length === 0 ? (
+                    <div className="p-8 border border-zinc-700/40 bg-zinc-900/40 rounded-sm text-center my-4">
+                        <p className="text-zinc-400 font-sans text-xs tracking-wide">
+                            No new arrival products available at the moment.
+                        </p>
                     </div>
                 ) : (
                     <div 
