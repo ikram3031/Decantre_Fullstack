@@ -242,8 +242,10 @@ export async function createOrder(orderPayload) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(orderPayload)
   });
+  const json = await res.json().catch(() => null);
   if (!res.ok) {
-    throw new Error('Something went wrong');
+    const errorMsg = json?.errors?.join(', ') || json?.message || 'Failed to place order';
+    throw new Error(errorMsg);
   }
-  return await res.json();
+  return json;
 }

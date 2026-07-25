@@ -18,11 +18,71 @@ export const Header = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setSelectedCategory, user, setAuthModal, currentTheme, toggleTheme } = useApp();
+  const { setSelectedCategory, user, setAuthModal, currentTheme, toggleTheme, brands, categories } = useApp();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileShopExpanded, setIsMobileShopExpanded] = React.useState(false);
   const [isMobileBrandExpanded, setIsMobileBrandExpanded] = React.useState(false);
   const [isMobileCatalogExpanded, setIsMobileCatalogExpanded] = React.useState(false);
+  // Dynamically compute brand hierarchy from store brands
+  const dynamicBrandHierarchy = React.useMemo(() => {
+    const nicheGroups = { 'A-E': [], 'F-J': [], 'K-O': [], 'P-T': [], 'U-Z': [] };
+    const designerGroups = { 'A-E': [], 'F-J': [], 'K-O': [], 'P-T': [], 'U-Z': [] };
+    const arabianGroups = { 'A-E': [], 'F-J': [], 'K-O': [], 'P-T': [], 'U-Z': [] };
+
+    const getGroup = (char) => {
+      if (char >= 'A' && char <= 'E') return 'A-E';
+      if (char >= 'F' && char <= 'J') return 'F-J';
+      if (char >= 'K' && char <= 'O') return 'K-O';
+      if (char >= 'P' && char <= 'T') return 'P-T';
+      return 'U-Z';
+    };
+
+    if (brands && brands.length > 0) {
+      brands.forEach((b) => {
+        const name = typeof b === 'string' ? b : (b.name || b.slug || '');
+        if (!name) return;
+        const brandObj = typeof b === 'object' ? b : {};
+        const firstChar = name.trim().charAt(0).toUpperCase();
+        const groupKey = getGroup(firstChar);
+        const type = (brandObj.type || brandObj.category || '').toLowerCase();
+
+        if (type.includes('arabian') || type.includes('uae')) {
+          if (!arabianGroups[groupKey].includes(name)) arabianGroups[groupKey].push(name);
+        } else if (type.includes('designer')) {
+          if (!designerGroups[groupKey].includes(name)) designerGroups[groupKey].push(name);
+        } else {
+          if (!nicheGroups[groupKey].includes(name)) nicheGroups[groupKey].push(name);
+        }
+      });
+    }
+
+    // Clean empty ranges if no brands match
+    const filterRanges = (groups, fallbackStatic) => {
+      const res = {};
+      Object.keys(groups).forEach((key) => {
+        if (groups[key].length > 0) {
+          groups[key].sort();
+          res[key] = groups[key];
+        }
+      });
+      return Object.keys(res).length > 0 ? res : fallbackStatic;
+    };
+
+    return {
+      niche: {
+        name: 'Niche Perfumes',
+        ranges: filterRanges(nicheGroups, brandHierarchy.niche?.ranges || {})
+      },
+      designer: {
+        name: 'Designer Fragrances',
+        ranges: filterRanges(designerGroups, brandHierarchy.designer?.ranges || {})
+      },
+      arabian: {
+        name: 'Arabian & UAE Fragrances',
+        ranges: filterRanges(arabianGroups, brandHierarchy.arabian?.ranges || {})
+      }
+    };
+  }, [brands]);
   const [activeDropdown, setActiveDropdown] = React.useState(null);
   const [logoFailed, setLogoFailed] = React.useState(false);
 
@@ -421,11 +481,11 @@ export const Header = ({
                   {expandedNodes['shop'] && (
                     <div className="bg-zinc-950/90 pl-4 pr-3 py-2 space-y-1 border-t border-white/5">
                       {[
-                        { label: 'For Him', path: '/shop?category=For Him' },
-                        { label: 'For Her', path: '/shop?category=For Her' },
-                        { label: 'Unisex', path: '/shop?category=Unisex' },
-                        { label: 'Miniatures', path: '/shop?category=Miniatures' },
-                        { label: 'Decant Accessories', path: '/shop?category=Decant Accessories' }
+                        { label: 'For Him', path: '/shop?category=for-him' },
+                        { label: 'For Her', path: '/shop?category=for-her' },
+                        { label: 'Unisex', path: '/shop?category=unisex' },
+                        { label: 'Miniatures', path: '/shop?category=miniatures' },
+                        { label: 'Decant Accessories', path: '/shop?category=decant-accessories' }
                       ].map((item) => (
                         <button
                           key={item.label}
@@ -465,15 +525,15 @@ export const Header = ({
 
                   {expandedNodes['brand'] && (
                     <div className="bg-zinc-950/90 pl-3 pr-2 py-2 space-y-2 border-t border-white/5">
-                      {Object.keys(brandHierarchy).map((catId) => {
-                        const cat = brandHierarchy[catId];
+                      {Object.keys(dynamicBrandHierarchy).map((catId) => {
+                        const cat = dynamicBrandHierarchy[catId];
                         const isCatExpanded = expandedNodes[`brand-${catId}`] !== false; // default open
                         return (
                           <div key={catId} className="bg-zinc-900/50 border border-white/5 rounded-sm overflow-hidden">
                             <div className="w-full flex items-center justify-between py-2 px-3 bg-zinc-900/90 hover:bg-zinc-800/90 transition-colors">
                               <button
                                 onClick={() => {
-                                  navigate(`/shop?search=${encodeURIComponent(cat.name)}`);
+                                  navigate(`/shop?brand=${encodeURIComponent(cat.name.toLowerCase())}`);
                                   handleNavLinkClick();
                                 }}
                                 className="text-xs font-semibold text-zinc-200 hover:text-gold text-left cursor-pointer flex-grow flex items-center justify-between pr-2"

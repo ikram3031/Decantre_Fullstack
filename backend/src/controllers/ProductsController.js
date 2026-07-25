@@ -1,5 +1,7 @@
 import { Types } from "mongoose";
 import { ProductModel } from "../models/product.model.js";
+import { CategoryModel } from "../models/category.model.js";
+import { BrandModel } from "../models/brand.model.js";
 
 const DEFAULT_LIMIT = 10;
 const SORT_FIELD_MAP = {
@@ -34,7 +36,7 @@ export const serializeProduct = (product) => {
   };
 };
 
-export const buildProductFilter = (input = {}) => {
+export const buildProductFilter = async (input = {}) => {
   const source = input && typeof input === "object" && !Array.isArray(input) ? input : {};
   const explicitFilter = source.filter && typeof source.filter === "object" && !Array.isArray(source.filter)
     ? source.filter
@@ -53,7 +55,7 @@ export const buildProductFilter = (input = {}) => {
   });
 
   Object.entries(source).forEach(([key, value]) => {
-    if (["q", "search", "keyword", "skip", "limit", "sortBy", "sortby", "order", "filter"].includes(key)) {
+    if (["q", "search", "keyword", "skip", "limit", "sortBy", "sortby", "order", "filter", "category", "categories", "brand", "brands"].includes(key)) {
       return;
     }
 
@@ -84,6 +86,72 @@ export const buildProductFilter = (input = {}) => {
     filter.stockStatus = stockStatus;
   }
 
+  const categoryInput = source.category ?? source.categories;
+  if (categoryInput) {
+    const categoryValues = Array.isArray(categoryInput) ? categoryInput : [categoryInput];
+    const resolved = [];
+
+    for (const categoryValue of categoryValues) {
+      if (categoryValue === "" || categoryValue === null || categoryValue === undefined) {
+        continue;
+      }
+
+      if (Types.ObjectId.isValid(categoryValue)) {
+        resolved.push(categoryValue);
+        continue;
+      }
+
+      const normalizedCategory = normalizeValue(categoryValue);
+      if (!normalizedCategory) continue;
+
+      const categoryQuery = /^[0-9a-fA-F]{16}$/.test(normalizedCategory)
+        ? { did: normalizedCategory }
+        : { slug: normalizedCategory };
+
+      const categoryDoc = await CategoryModel.findOne(categoryQuery).lean();
+      if (categoryDoc?._id) {
+        resolved.push(categoryDoc._id);
+      }
+    }
+
+    if (resolved.length > 0) {
+      filter.categories = { $in: resolved };
+    }
+  }
+
+  const brandInput = source.brand ?? source.brands;
+  if (brandInput) {
+    const brandValues = Array.isArray(brandInput) ? brandInput : [brandInput];
+    const resolved = [];
+
+    for (const brandValue of brandValues) {
+      if (brandValue === "" || brandValue === null || brandValue === undefined) {
+        continue;
+      }
+
+      const normalizedBrand = normalizeValue(brandValue);
+      if (!normalizedBrand) continue;
+
+      if (/^[0-9a-fA-F]{16}$/.test(normalizedBrand)) {
+        resolved.push(normalizedBrand);
+        continue;
+      }
+
+      const brandQuery = /^[0-9a-fA-F]{24}$/.test(normalizedBrand)
+        ? { _id: normalizedBrand }
+        : { slug: normalizedBrand };
+
+      const brandDoc = await BrandModel.findOne(brandQuery).lean();
+      if (brandDoc?.did) {
+        resolved.push(brandDoc.did);
+      }
+    }
+
+    if (resolved.length > 0) {
+      filter.brand = { $in: resolved };
+    }
+  }
+
   const type = normalizeValue(source.type);
   if (type) {
     filter.type = type;
@@ -92,6 +160,11 @@ export const buildProductFilter = (input = {}) => {
   const slug = normalizeValue(source.slug);
   if (slug) {
     filter.slug = slug;
+  }
+
+  const did = normalizeValue(source.did);
+  if (did) {
+    filter.did = did;
   }
 
   return filter;
@@ -133,7 +206,7 @@ export const listProducts = async (req, res, next) => {
       }
     } else {
       // POST: accept richer filters (category, brand, tags, season, name, slug, did, etc.)
-      filter = buildProductFilter(req.body || {});
+      filter = await buildProductFilter(req.body || {});
     }
 
     const [total, rows] = await Promise.all([

@@ -1,0 +1,2825 @@
+{
+  "total": 402,
+  "updated": 401,
+  "skipped": 0,
+  "failed": 1,
+  "details": [
+    {
+      "did": "b25ed03aaec90214",
+      "name": "Bleu De Chanel EDT",
+      "imageUrl": "converted → /uploads/BDC-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/BDC-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "fc6a51cc7b150956",
+      "name": "Bleu De Chanel EDP",
+      "imageUrl": "converted → /uploads/BDC-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/BDC-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "9e88a534d72efbe9",
+      "name": "Bleu De Chanel PARFUM",
+      "imageUrl": "converted → /uploads/Bdc-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Bdc-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "545ba6116e124a0e",
+      "name": "Azzaro The Most Wanted PARFUM",
+      "imageUrl": "converted → /uploads/azzaro-the-most-wanted-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/azzaro-the-most-wanted-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "2e8988f193f9083e",
+      "name": "Azzaro The Most Wanted EDP INTENSE",
+      "imageUrl": "converted → /uploads/azzaro-the-most-wanted-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/azzaro-the-most-wanted-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "cf9ea6b6ae8c7035",
+      "name": "Azzaro Forever Wanted ELIXIR",
+      "imageUrl": "converted → /uploads/azzaro-forever-elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/azzaro-forever-elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "554e35ba8cec65d9",
+      "name": "Emporio Armani Stronger With You Intensely EDP",
+      "imageUrl": "converted → /uploads/swy-intensely.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/swy-intensely.webp",
+      "errors": []
+    },
+    {
+      "did": "363678517582ec21",
+      "name": "Emporio Armani Stronger With You Absolutely EDP",
+      "imageUrl": "converted → /uploads/swy-absolutely.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/swy-absolutely.webp",
+      "errors": []
+    },
+    {
+      "did": "f38757cd6ae0b1fd",
+      "name": "Emporio Armani Stronger With You PARFUM",
+      "imageUrl": "converted → /uploads/swy-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/swy-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "82d77cfd6be09326",
+      "name": "Dior Sauvage EDT",
+      "imageUrl": "converted → /uploads/sauvage-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/sauvage-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "a8c522764793f68c",
+      "name": "Dior Sauvage EDP",
+      "imageUrl": "converted → /uploads/sauvage-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/sauvage-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "3cd82d6c0cfa1094",
+      "name": "Dior Sauvage PARFUM",
+      "imageUrl": "converted → /uploads/sauvage-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/sauvage-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "65a3731a0cb69736",
+      "name": "Dior Sauvage ELIXIR",
+      "imageUrl": "converted → /uploads/sauvage-elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/sauvage-elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "03759e49fd25c80a",
+      "name": "Dior Homme Intense EDP",
+      "imageUrl": "converted → /uploads/dior-homme-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dior-homme-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "aa8ed9f2037f905f",
+      "name": "Miss Dior Blooming Bouquet EDP",
+      "imageUrl": "converted → /uploads/miss-dior-blooming-bouquet.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/miss-dior-blooming-bouquet.webp",
+      "errors": []
+    },
+    {
+      "did": "243bcb29b7ed7fd1",
+      "name": "Miss Dior EDP",
+      "imageUrl": "converted → /uploads/miss-dior-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/miss-dior-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "d5a5b10703d40e4b",
+      "name": "Dior Hypnotic Poison EDP",
+      "imageUrl": "converted → /uploads/hypnotic-poison.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/hypnotic-poison.webp",
+      "errors": []
+    },
+    {
+      "did": "77247917e5b08599",
+      "name": "Dior Jadore EDP",
+      "imageUrl": "converted → /uploads/jadore-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jadore-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "e490d64a1e75d8d3",
+      "name": "Dior Homme EDT",
+      "imageUrl": "converted → /uploads/dior-homme-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dior-homme-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "0d15f8c36af6dfb0",
+      "name": "Giorgio Armani Acqua Di Gio EDT",
+      "imageUrl": "converted → /uploads/acqua-di-gio-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/acqua-di-gio-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "4ac92cc5fbb47211",
+      "name": "Giorgio Armani Acqua Di Gio EDP",
+      "imageUrl": "converted → /uploads/adg-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/adg-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "c8e7651c57f85a5a",
+      "name": "Giorgio Armani Acqua Di Gio Profondo EDP",
+      "imageUrl": "converted → /uploads/acqua-di-gio-PROFONDO-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/acqua-di-gio-PROFONDO-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "254e9ef50d8f49c3",
+      "name": "Giorgio Armani Acqua di Gio PARFUM",
+      "imageUrl": "converted → /uploads/adg-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/adg-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "e56a038fa5e68227",
+      "name": "Armani Code PARFUM",
+      "imageUrl": "converted → /uploads/ARMANI-CODE-PARFUM.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ARMANI-CODE-PARFUM.webp",
+      "errors": []
+    },
+    {
+      "did": "2cdf98ff3abebbf2",
+      "name": "Giorgio Armani Sì Passione EDP",
+      "imageUrl": "converted → /uploads/Giorgio-Armani-Si-Passione-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Giorgio-Armani-Si-Passione-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "f517247d12065f0f",
+      "name": "Giorgio Armani My Way EDP",
+      "imageUrl": "converted → /uploads/my-way-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/my-way-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "897a15792470602a",
+      "name": "Narciso Rodriguez for Her EDT",
+      "imageUrl": "converted → /uploads/narciso-for-her-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/narciso-for-her-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "991ed7d1c203c63b",
+      "name": "Narciso Rodriguez for Her EDP",
+      "imageUrl": "converted → /uploads/narciso-for-her-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/narciso-for-her-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "8ad42cb9176c6752",
+      "name": "Narciso Rodriguez Musc Noir Rose  EDP",
+      "imageUrl": "converted → /uploads/narciso-musc-noir-rose-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/narciso-musc-noir-rose-1.webp",
+      "errors": []
+    },
+    {
+      "did": "77e674329735a20d",
+      "name": "Narciso Rodriguez for Her EDP INTENSE",
+      "imageUrl": "converted → /uploads/narciso-for-her-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/narciso-for-her-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "cdda34998e737d13",
+      "name": "Narciso Rodriguez Pure Musc EDP",
+      "imageUrl": "converted → /uploads/narciso-pure-musc.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/narciso-pure-musc.webp",
+      "errors": []
+    },
+    {
+      "did": "2f19076a3e5b0dea",
+      "name": "Gucci Bloom EDP",
+      "imageUrl": "converted → /uploads/gucci-bloom.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/gucci-bloom.webp",
+      "errors": []
+    },
+    {
+      "did": "922576eaf5ecbd92",
+      "name": "Gucci Flora Gorgeous Gardenia EDP",
+      "imageUrl": "converted → /uploads/gucci-gardenia.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/gucci-gardenia.webp",
+      "errors": []
+    },
+    {
+      "did": "39fb37cd63e03990",
+      "name": "Gucci Flora Gorgeous Jasmine EDP",
+      "imageUrl": "converted → /uploads/gucci-jasmine.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/gucci-jasmine.webp",
+      "errors": []
+    },
+    {
+      "did": "dad3e853406f9a1f",
+      "name": "Gucci Flora Gorgeous Orchid EDP",
+      "imageUrl": "converted → /uploads/gucci-orchid.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/gucci-orchid.webp",
+      "errors": []
+    },
+    {
+      "did": "c8f723fc5419d7b4",
+      "name": "Gucci Flora Gorgeous Magnolia EDP",
+      "imageUrl": "converted → /uploads/gucci-mangolia.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/gucci-mangolia.webp",
+      "errors": []
+    },
+    {
+      "did": "2567b74efdaa0800",
+      "name": "Valentino Donna Born in Roma EDP",
+      "imageUrl": "converted → /uploads/Valentino-Donna-Born-in-Roma-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Valentino-Donna-Born-in-Roma-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "424538ee7d7f9c34",
+      "name": "Valentino Donna Born in Roma Intense EDP",
+      "imageUrl": "converted → /uploads/Valentino-Donna-Born-in-Roma-Intense-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Valentino-Donna-Born-in-Roma-Intense-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "917dce8f43405331",
+      "name": "Valentino Donna Born in Roma Coral Fantasy",
+      "imageUrl": "converted → /uploads/vaalentino-donno-coral-fantasy.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/vaalentino-donno-coral-fantasy.webp",
+      "errors": []
+    },
+    {
+      "did": "c22d1e0c056bccc2",
+      "name": "Valentino Uomo Intense EDP",
+      "imageUrl": "converted → /uploads/valentino-uomo-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/valentino-uomo-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "fac063a6b97eee0e",
+      "name": "Valentino Uomo Born In Roma Intense EDP",
+      "imageUrl": "converted → /uploads/valentino-born-in-roma-intense-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/valentino-born-in-roma-intense-1.webp",
+      "errors": []
+    },
+    {
+      "did": "4738e01c05284a10",
+      "name": "Valentino Uomo EDT",
+      "imageUrl": "converted → /uploads/valentino-uomo-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/valentino-uomo-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "7c27871affea0fb6",
+      "name": "Valentino Uomo Born In Roma Coral Fantasy EDP",
+      "imageUrl": "converted → /uploads/valentino-coral-fantasy.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/valentino-coral-fantasy.webp",
+      "errors": []
+    },
+    {
+      "did": "236354c4c3737078",
+      "name": "Valentino Uomo Born in Roma Extradose PARFUM",
+      "imageUrl": "converted → /uploads/valentino-extradose.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/valentino-extradose.webp",
+      "errors": []
+    },
+    {
+      "did": "9ab3b535983a0dba",
+      "name": "Valentino Born in Roma Donna Extradose Parfum",
+      "imageUrl": "converted → /uploads/valentino-donno-extradose.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/valentino-donno-extradose.webp",
+      "errors": []
+    },
+    {
+      "did": "3694c476ce09a9a0",
+      "name": "Amouage Guidance",
+      "imageUrl": "converted → /uploads/amouage-guidance.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/amouage-guidance.webp",
+      "errors": []
+    },
+    {
+      "did": "ad5a14fa5b368bfb",
+      "name": "Ariana Grande Cloud EDP",
+      "imageUrl": "converted → /uploads/Ag-cloud.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Ag-cloud.webp",
+      "errors": []
+    },
+    {
+      "did": "08694de7a38ae1c8",
+      "name": "Burberry HER EDP",
+      "imageUrl": "converted → /uploads/burberry-her-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/burberry-her-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "253636ab4c90590b",
+      "name": "Burberry HER ELIXIR",
+      "imageUrl": "converted → /uploads/burberry-her-elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/burberry-her-elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "c3d4241539a9a99c",
+      "name": "Burberry Goddess EDP",
+      "imageUrl": "converted → /uploads/burberry-goddess.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/burberry-goddess.webp",
+      "errors": []
+    },
+    {
+      "did": "892ef94e1adcf236",
+      "name": "Bianco Latte by Giardini Di Toscana",
+      "imageUrl": "converted → /uploads/bianco-latte.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/bianco-latte.webp",
+      "errors": []
+    },
+    {
+      "did": "19b9c65703f04ed8",
+      "name": "Carolina Herrera Good Girl EDP",
+      "imageUrl": "converted → /uploads/ch-gg-blush.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ch-gg-blush.webp",
+      "errors": []
+    },
+    {
+      "did": "f401d82c9fc8ab22",
+      "name": "Carolina Herrera Very Good Girl EDP",
+      "imageUrl": "converted → /uploads/ch-gg-very-good-girl.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ch-gg-very-good-girl.webp",
+      "errors": []
+    },
+    {
+      "did": "3861cde606a6c9f3",
+      "name": "Carolina Herrera Good Girl Blush EDP",
+      "imageUrl": "converted → /uploads/ch-gg-blush-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ch-gg-blush-1.webp",
+      "errors": []
+    },
+    {
+      "did": "08418221f9ab7a40",
+      "name": "Carolina Herrera Good Girl Blush Elixir",
+      "imageUrl": "converted → /uploads/Ch-gg-blush-elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Ch-gg-blush-elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "842f00f16b649a2e",
+      "name": "CHANEL No. 5 EDP",
+      "imageUrl": "converted → /uploads/chanel-no-5.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/chanel-no-5.webp",
+      "errors": []
+    },
+    {
+      "did": "f3c992d6361e1c84",
+      "name": "CHANEL COCO MADEMOISELLE EDP (2022 batch)",
+      "imageUrl": "converted → /uploads/chanel-coco-mademoiselle.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/chanel-coco-mademoiselle.webp",
+      "errors": []
+    },
+    {
+      "did": "b9fae20e0dd37c9a",
+      "name": "Versace Crystal Noir EDP",
+      "imageUrl": "converted → /uploads/versace-crystal-noir-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/versace-crystal-noir-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "735d58ff518840dd",
+      "name": "Xerjoff Erba Pura (2022 old batch)",
+      "imageUrl": "converted → /uploads/xerjoff-erba-pura.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/xerjoff-erba-pura.webp",
+      "errors": []
+    },
+    {
+      "did": "c806ed5e89fb9502",
+      "name": "Versace Bright Crystal EDT",
+      "imageUrl": "converted → /uploads/versace-bright-crystal-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/versace-bright-crystal-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "43a01a4a2dfd1f65",
+      "name": "Xerjoff Naxos",
+      "imageUrl": "converted → /uploads/xerjoff-naxos.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/xerjoff-naxos.webp",
+      "errors": []
+    },
+    {
+      "did": "cca4ebc6d2345fd5",
+      "name": "Prada Paradoxe Intense EDP",
+      "imageUrl": "converted → /uploads/prada-paradoxe-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/prada-paradoxe-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "289452bac781e0f4",
+      "name": "Prada Paradoxe EDP",
+      "imageUrl": "converted → /uploads/prada-paradoxe.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/prada-paradoxe.webp",
+      "errors": []
+    },
+    {
+      "did": "9b0def54b7efb8db",
+      "name": "Yves Saint Laurent (YSL) Libre  Intense",
+      "imageUrl": "converted → /uploads/ysl-libre-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ysl-libre-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "ea8193473b3c0f92",
+      "name": "DAVIDOFF cool Water Intense EDP",
+      "imageUrl": "converted → /uploads/Davidoff-cool-water-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Davidoff-cool-water-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "ac7336984cec5311",
+      "name": "Yves Saint Laurent (YSL) Libre EDP",
+      "imageUrl": "converted → /uploads/ysl-libre-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ysl-libre-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "e15a933ab09ab60d",
+      "name": "Yves Saint Laurent (YSL) Black Opium Extreme EDP",
+      "imageUrl": "converted → /uploads/YSL-black-opium-extreme.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/YSL-black-opium-extreme.webp",
+      "errors": []
+    },
+    {
+      "did": "7e26debff2ae030a",
+      "name": "Atelier Lune Feline EDP",
+      "imageUrl": "converted → /uploads/athelier-lune-feline.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/athelier-lune-feline.webp",
+      "errors": []
+    },
+    {
+      "did": "d426500d8f2ae9f1",
+      "name": "DAVIDOFF cool Water EDT",
+      "imageUrl": "converted → /uploads/Davidoff-cool-water-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Davidoff-cool-water-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "a57210d80a5d2f93",
+      "name": "Yves Saint Laurent (YSL) Black Opium EDP",
+      "imageUrl": "converted → /uploads/YSL-black-opium-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/YSL-black-opium-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "a6dcfc62b41d38c7",
+      "name": "Viktor & Rolf Spicebomb Extreme EDP",
+      "imageUrl": "converted → /uploads/spicebomb-extreme.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/spicebomb-extreme.webp",
+      "errors": []
+    },
+    {
+      "did": "988c430a15efdeec",
+      "name": "Victoria’s Secret BombShell Eau de Parfum",
+      "imageUrl": "converted → /uploads/Victorias-Secret-BombShell.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Victorias-Secret-BombShell.webp",
+      "errors": []
+    },
+    {
+      "did": "58b4aa16017f3ef3",
+      "name": "Versace Pour Femme Dylan Blue EDP",
+      "imageUrl": "converted → /uploads/versace-dylan-blue-femme.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/versace-dylan-blue-femme.webp",
+      "errors": []
+    },
+    {
+      "did": "64201b7bd348dd94",
+      "name": "Yves Saint Laurent (YSL)  La Nuit de L’Homme EDT",
+      "imageUrl": "converted → /uploads/ysl-l-nuit-d-lhomme.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ysl-l-nuit-d-lhomme.webp",
+      "errors": []
+    },
+    {
+      "did": "3f1c0c87659b9b9f",
+      "name": "Yves Saint Laurent (YSL) MYSLF EDP",
+      "imageUrl": "converted → /uploads/yslmyself.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/yslmyself.webp",
+      "errors": []
+    },
+    {
+      "did": "e36dd94a48acd4e5",
+      "name": "Yves Saint Laurent (YSL) Y EDP",
+      "imageUrl": "converted → /uploads/ysl-y-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ysl-y-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "301880a3a71832e7",
+      "name": "Parfums de Marly (PDM) Valaya Eau de Parfum",
+      "imageUrl": "converted → /uploads/pdm-valaya.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/pdm-valaya.webp",
+      "errors": []
+    },
+    {
+      "did": "a5050eefedb45658",
+      "name": "Parfums de Marly (PDM) Delina Eau de Parfum",
+      "imageUrl": "converted → /uploads/pdm-delina.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/pdm-delina.webp",
+      "errors": []
+    },
+    {
+      "did": "381921fb0bec7881",
+      "name": "Bois Imperial by Essential Parfums",
+      "imageUrl": "converted → /uploads/bois-imperial.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/bois-imperial.webp",
+      "errors": []
+    },
+    {
+      "did": "ed155624dc9e582a",
+      "name": "Versace Eros Flame edp",
+      "imageUrl": "converted → /uploads/versace-eros-flame.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/versace-eros-flame.webp",
+      "errors": []
+    },
+    {
+      "did": "a590a0dcdc98a518",
+      "name": "Marc Jacobs Daisy Love EDT",
+      "imageUrl": "converted → /uploads/marc-jacob-daisy-love.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/marc-jacob-daisy-love.webp",
+      "errors": []
+    },
+    {
+      "did": "231300b656745c85",
+      "name": "Versace Dylan Blue EDT",
+      "imageUrl": "converted → /uploads/versace-dylan-blue.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/versace-dylan-blue.webp",
+      "errors": []
+    },
+    {
+      "did": "1b6b393cfba729fc",
+      "name": "Lancome La Vie Est Belle L’Eau de Parfum",
+      "imageUrl": "converted → /uploads/lancome-le-viest-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/lancome-le-viest-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "eb45d1f9b1f449bc",
+      "name": "Versace Eros edp",
+      "imageUrl": "converted → /uploads/versace-eros.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/versace-eros.webp",
+      "errors": []
+    },
+    {
+      "did": "ca210e5d0c809be5",
+      "name": "Kayali Fleur Majesty Rose Royale | 31 EDP",
+      "imageUrl": "converted → /uploads/kayali-fluer-majesty-rose.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kayali-fluer-majesty-rose.webp",
+      "errors": []
+    },
+    {
+      "did": "2511395f3a486142",
+      "name": "Versace Pour Homme EDT for Men",
+      "imageUrl": "converted → /uploads/versace-pour-homme-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/versace-pour-homme-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "a9651932431a2a02",
+      "name": "Kayali Eden Juicy Apple | 01 EDP",
+      "imageUrl": "converted → /uploads/kayali-eden-juicy-apple.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kayali-eden-juicy-apple.webp",
+      "errors": []
+    },
+    {
+      "did": "8ebbe1a8212d640a",
+      "name": "Tom Ford Black Orchid Eau de Parfum",
+      "imageUrl": "converted → /uploads/tomford-black-orchid.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/tomford-black-orchid.webp",
+      "errors": []
+    },
+    {
+      "did": "bd1867d2e3325279",
+      "name": "Kayali Love Fest Burning Cherry| 48 EDP",
+      "imageUrl": "converted → /uploads/kayali-love-fest-burning-cherry.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kayali-love-fest-burning-cherry.webp",
+      "errors": []
+    },
+    {
+      "did": "b48e67359cbba5b4",
+      "name": "Tom Ford Noir Extreme Eau de Parfum",
+      "imageUrl": "converted → /uploads/tomford-noir-extreme.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/tomford-noir-extreme.webp",
+      "errors": []
+    },
+    {
+      "did": "bcd7703ffdddcd60",
+      "name": "Tom Ford Ombre Leather Eau de Parfum",
+      "imageUrl": "converted → /uploads/tomford-ombre-leaather.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/tomford-ombre-leaather.webp",
+      "errors": []
+    },
+    {
+      "did": "849d7476c1a6a707",
+      "name": "Hermes Terre D’Hermes Eau Givree Eau de Parfum",
+      "imageUrl": "converted → /uploads/hermes-eau-givree.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/hermes-eau-givree.webp",
+      "errors": []
+    },
+    {
+      "did": "d905cc61688fb89b",
+      "name": "Kayali Eden Sparkling Lychee| 39 EDP",
+      "imageUrl": "converted → /uploads/kayali-eden-sparkling-lychee.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kayali-eden-sparkling-lychee.webp",
+      "errors": []
+    },
+    {
+      "did": "9c32647189b1b0b9",
+      "name": "Ralph Lauren Polo Black EDT",
+      "imageUrl": "converted → /uploads/polo-black-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/polo-black-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "02c2e068962bc819",
+      "name": "Kayali Wedding Silk Santal| 36 EDP",
+      "imageUrl": "converted → /uploads/kayali-wedding-silk-santal.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kayali-wedding-silk-santal.webp",
+      "errors": []
+    },
+    {
+      "did": "015096ac9c05fb78",
+      "name": "Ralph Lauren Polo Blue EDP",
+      "imageUrl": "converted → /uploads/polo-blue-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/polo-blue-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "14f8c5521381eab5",
+      "name": "Kayali Yum – Pistachio Gelato | 33 EDP Intense",
+      "imageUrl": "converted → /uploads/kayali-yum-pistachio-gelato.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kayali-yum-pistachio-gelato.webp",
+      "errors": []
+    },
+    {
+      "did": "f39257a0c455a5cc",
+      "name": "Kayali Yum – Boujee Marushmallow | 81 EDP Intense",
+      "imageUrl": "converted → /uploads/kayali-yum-boujee-marshmallow.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kayali-yum-boujee-marshmallow.webp",
+      "errors": []
+    },
+    {
+      "did": "a2dfdfa8b38b563c",
+      "name": "Kayali Vanilla | 28 EDP",
+      "imageUrl": "converted → /uploads/kayali-vanilla-28-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kayali-vanilla-28-1.webp",
+      "errors": []
+    },
+    {
+      "did": "476067711ce4a9be",
+      "name": "Creed Aventus EDP (2022 Batch)",
+      "imageUrl": "converted → /uploads/creed-aventus.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/creed-aventus.webp",
+      "errors": []
+    },
+    {
+      "did": "50f7d06fb3e662d0",
+      "name": "Jean Paul Gaultier (JPG)  So Scandal EDP",
+      "imageUrl": "converted → /uploads/JPG-SO-SCANDAL-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/JPG-SO-SCANDAL-1.webp",
+      "errors": []
+    },
+    {
+      "did": "ee13c15282db2f1f",
+      "name": "Jean Paul Gaultier (JPG) Divine EDP",
+      "imageUrl": "converted → /uploads/jpg-divine.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-divine.webp",
+      "errors": []
+    },
+    {
+      "did": "38a6f16ad7889fcb",
+      "name": "Creed Green Irish Tweed",
+      "imageUrl": "converted → /uploads/creed-green-irish-tweed.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/creed-green-irish-tweed.webp",
+      "errors": []
+    },
+    {
+      "did": "252770c251005ebc",
+      "name": "Prada L’Homme Edt",
+      "imageUrl": "converted → /uploads/prada-lhomme-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/prada-lhomme-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "28018ea030bd529e",
+      "name": "Jean Paul Gaultier (JPG) La Belle EDP",
+      "imageUrl": "converted → /uploads/jpg-le-belle-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-le-belle-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "5a2da5afe1a4e055",
+      "name": "Calvin Klein (CK) One EDT",
+      "imageUrl": "converted → /uploads/ck-one-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ck-one-1.webp",
+      "errors": []
+    },
+    {
+      "did": "3ed2e58a4c618208",
+      "name": "Jimmy Choo I Want Choo Forever EDP",
+      "imageUrl": "converted → /uploads/jimmy-choo-i-want-you-forever.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jimmy-choo-i-want-you-forever.webp",
+      "errors": []
+    },
+    {
+      "did": "a0bfc7d2dbbd6600",
+      "name": "Prada Luna Rossa Black EDP",
+      "imageUrl": "converted → /uploads/prada-luna-rossa-black.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/prada-luna-rossa-black.webp",
+      "errors": []
+    },
+    {
+      "did": "96f82f5fed779c9b",
+      "name": "Calvin Klein (CK) Eternity EDP",
+      "imageUrl": "converted → /uploads/ck-eternity-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ck-eternity-1.webp",
+      "errors": []
+    },
+    {
+      "did": "0c56186ef1fab368",
+      "name": "Prada Luna Rossa Ocean Edp",
+      "imageUrl": "converted → /uploads/prada-luna-rossa-ocean.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/prada-luna-rossa-ocean.webp",
+      "errors": []
+    },
+    {
+      "did": "144a1905d4cb7cff",
+      "name": "Chanel ALLURE Homme Sport Eau Extreme EDP",
+      "imageUrl": "converted → /uploads/chanel-allure-homme-eau-intense-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/chanel-allure-homme-eau-intense-1.webp",
+      "errors": []
+    },
+    {
+      "did": "2e6275e8a861905e",
+      "name": "Paco Rabanne 1 Million Elixir",
+      "imageUrl": "converted → /uploads/1-million-elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/1-million-elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "4cbd6331e5d578cb",
+      "name": "Carolina Herrera Bad Boy Cobalt Edp Electrique",
+      "imageUrl": "converted → /uploads/CH-bad-boy-cobalt-electrique.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/CH-bad-boy-cobalt-electrique.webp",
+      "errors": []
+    },
+    {
+      "did": "301671553961d0ea",
+      "name": "Paco Rabanne 1 Million EDT",
+      "imageUrl": "converted → /uploads/1-million-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/1-million-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "e7906b505d66b139",
+      "name": "Carolina Herrera Bad Boy Cobalt Elixir EDP",
+      "imageUrl": "converted → /uploads/CH-bad-bou-cobalt-elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/CH-bad-bou-cobalt-elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "262bbae333d45968",
+      "name": "Carolina Herrera 212 VIP Black EDP",
+      "imageUrl": "converted → /uploads/CH-212-vip-black.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/CH-212-vip-black.webp",
+      "errors": []
+    },
+    {
+      "did": "61bad73444a18293",
+      "name": "Paco Rabanne Invictus Parfum",
+      "imageUrl": "converted → /uploads/paco-rabanne-invictus-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/paco-rabanne-invictus-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "eed3b06a5798e72e",
+      "name": "Carolina Herrera 212 NYC Men EDT",
+      "imageUrl": "converted → /uploads/CH-212-Nyc-men.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/CH-212-Nyc-men.webp",
+      "errors": []
+    },
+    {
+      "did": "20d3ce8ff1f56221",
+      "name": "Paco Rabanne Invictus Victory Elixir",
+      "imageUrl": "converted → /uploads/Paco-Rabanne-Invictus-Victory-Elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Paco-Rabanne-Invictus-Victory-Elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "719e204b1a216415",
+      "name": "GIVENCHY L’INTERDIT ROUGE EDP",
+      "imageUrl": "converted → /uploads/LInterdit-Eau-de-Parfum-Rouge-Givenchy.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/LInterdit-Eau-de-Parfum-Rouge-Givenchy.webp",
+      "errors": []
+    },
+    {
+      "did": "f391a47e23a1e168",
+      "name": "Dolce & Gabbana Light Blue Eau Intense EDP (Female)",
+      "imageUrl": "converted → /uploads/dng-light-blue-intense-female.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dng-light-blue-intense-female.webp",
+      "errors": []
+    },
+    {
+      "did": "5cf1d8993c729de0",
+      "name": "DIPTYQUE Tam Dao EDP",
+      "imageUrl": "converted → /uploads/diptique-tamdao.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/diptique-tamdao.webp",
+      "errors": []
+    },
+    {
+      "did": "b797974149825664",
+      "name": "Dunhill Icon EDP",
+      "imageUrl": "converted → /uploads/dunhill-icon.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dunhill-icon.webp",
+      "errors": []
+    },
+    {
+      "did": "7d33799ddddb7bab",
+      "name": "Dolce & Gabbana The One Eau Edp",
+      "imageUrl": "converted → /uploads/dng-the-one-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dng-the-one-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "ad562a977fd519e7",
+      "name": "Dolce & Gabbana Light Blue Eau Intense Pour Homme EDP",
+      "imageUrl": "converted → /uploads/dng-light-blue-eau-intense-male.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dng-light-blue-eau-intense-male.webp",
+      "errors": []
+    },
+    {
+      "did": "5adb76ac9989b32e",
+      "name": "Hugo Boss Bottled EDT",
+      "imageUrl": "converted → /uploads/boss-bottled-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/boss-bottled-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "816260798a031aaa",
+      "name": "Hugo Boss Bottled Absolu Parfum",
+      "imageUrl": "converted → /uploads/boss-bottled-absolu.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/boss-bottled-absolu.webp",
+      "errors": []
+    },
+    {
+      "did": "b85545b59faa1337",
+      "name": "Parfums de Marly (PDM) Layton ( 2023 Batch )",
+      "imageUrl": "converted → /uploads/pdm-layton.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/pdm-layton.webp",
+      "errors": []
+    },
+    {
+      "did": "6bcb146cf376b1fe",
+      "name": "Office For Men",
+      "imageUrl": "converted → /uploads/office-for-him.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/office-for-him.webp",
+      "errors": []
+    },
+    {
+      "did": "8c34614483a5f51c",
+      "name": "Nishane Wulong Cha Extrait de Parfum",
+      "imageUrl": "converted → /uploads/nishane-wulong-cha.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/nishane-wulong-cha.webp",
+      "errors": []
+    },
+    {
+      "did": "e5deff8507d885a3",
+      "name": "Givenchy Gentleman Eau de Parfum Reserve Privée",
+      "imageUrl": "converted → /uploads/givenchy-reserve-prieve.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/givenchy-reserve-prieve.webp",
+      "errors": []
+    },
+    {
+      "did": "9217acc4a73e2cf1",
+      "name": "Nishane Hacivat Extrait de Parfum",
+      "imageUrl": "converted → /uploads/Nishane-Hacivat.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Nishane-Hacivat.webp",
+      "errors": []
+    },
+    {
+      "did": "ca67e842c92d1528",
+      "name": "NISHANE Ani Extrait De Parfum",
+      "imageUrl": "converted → /uploads/nishane-ani.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/nishane-ani.webp",
+      "errors": []
+    },
+    {
+      "did": "e2a782ad481658eb",
+      "name": "Nishane Favonius Extrait de Parfum",
+      "imageUrl": "converted → /uploads/nishane-favonius.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/nishane-favonius.webp",
+      "errors": []
+    },
+    {
+      "did": "b6aec1e22842ea7c",
+      "name": "Nautica Voyage EDT",
+      "imageUrl": "converted → /uploads/nautica-voyage.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/nautica-voyage.webp",
+      "errors": []
+    },
+    {
+      "did": "b61e10585389e7eb",
+      "name": "Mercedes Benz Club Extreme",
+      "imageUrl": "converted → /uploads/mercedes-club-extreme.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mercedes-club-extreme.webp",
+      "errors": []
+    },
+    {
+      "did": "a79ef7f2c7c186da",
+      "name": "Mont Blanc Explorer Edp",
+      "imageUrl": "converted → /uploads/montblanc-explorer.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/montblanc-explorer.webp",
+      "errors": []
+    },
+    {
+      "did": "bcdae81aa4590bab",
+      "name": "Mancera Tonka cola",
+      "imageUrl": "converted → /uploads/mancera-tonka-cola.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mancera-tonka-cola.webp",
+      "errors": []
+    },
+    {
+      "did": "0ae2392deb92363f",
+      "name": "Guerlain L’homme Ideal EDP",
+      "imageUrl": "converted → /uploads/guerlain-ideal-lhomme.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/guerlain-ideal-lhomme.webp",
+      "errors": []
+    },
+    {
+      "did": "d43223bfba6cb575",
+      "name": "Mancera Amore Caffe",
+      "imageUrl": "converted → /uploads/mancera-amore-caffe.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mancera-amore-caffe.webp",
+      "errors": []
+    },
+    {
+      "did": "aedb720d7367de31",
+      "name": "Mancera Cedrat Boise",
+      "imageUrl": "converted → /uploads/mancera-cedrat-boise.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mancera-cedrat-boise.webp",
+      "errors": []
+    },
+    {
+      "did": "e5fdbcd2ce991db1",
+      "name": "Mancera Intense Cedrat Boise EDP",
+      "imageUrl": "converted → /uploads/mancera-cedrat-boise-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mancera-cedrat-boise-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "74da5cb205102c72",
+      "name": "Jean Paul Gaultier (JPG) Le Beau EDT",
+      "imageUrl": "converted → /uploads/jpg-le-beau-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-le-beau-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "bfd37edf371d09e4",
+      "name": "Jean Paul Gaultier (JPG) Le Beau Le Parfum",
+      "imageUrl": "converted → /uploads/jpg-le-beau-le-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-le-beau-le-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "97ac32196eec7f0d",
+      "name": "Jean Paul Gaultier (JPG) Le Beau Paradise Garden EDP",
+      "imageUrl": "converted → /uploads/jpg-paradise-gaarden-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-paradise-gaarden-1.webp",
+      "errors": []
+    },
+    {
+      "did": "c22e0000b9496bdd",
+      "name": "Jean Paul Gaultier (JPG) Le Male ELIXIR EDP",
+      "imageUrl": "converted → /uploads/jpg-elixir-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-elixir-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "258eb14b4c23170f",
+      "name": "Jean Paul Gaultier (JPG) Le Male Elixir Absolu",
+      "imageUrl": "converted → /uploads/jpg-elixir-absolu.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-elixir-absolu.webp",
+      "errors": []
+    },
+    {
+      "did": "647b04eb06655918",
+      "name": "Jean Paul Gaultier (JPG) Le Male Le Parfum Edp",
+      "imageUrl": "converted → /uploads/jpg-le-male-le-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-le-male-le-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "8546241eb70e289e",
+      "name": "Jean Paul Gaultier (JPG) Ultra Male EDT",
+      "imageUrl": "converted → /uploads/jpg-ultra-male.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/jpg-ultra-male.webp",
+      "errors": []
+    },
+    {
+      "did": "9e76f109d5d684f9",
+      "name": "Louis Vuitton (LV) Imagination Eau De Parfum",
+      "imageUrl": "converted → /uploads/lv-imagiantion.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/lv-imagiantion.webp",
+      "errors": []
+    },
+    {
+      "did": "c1f4b58812b9f0a1",
+      "name": "Mancera French Riviera EDP",
+      "imageUrl": "converted → /uploads/mancera-french-riveire.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mancera-french-riveire.webp",
+      "errors": []
+    },
+    {
+      "did": "f4f99479aeb34678",
+      "name": "Mancera Red Tobacco Edp",
+      "imageUrl": "converted → /uploads/mancera-red-tobacco.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mancera-red-tobacco.webp",
+      "errors": []
+    },
+    {
+      "did": "6bec104e2c08e413",
+      "name": "Mancera Instant Crush EDP",
+      "imageUrl": "converted → /uploads/mancera-instant-crush.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mancera-instant-crush.webp",
+      "errors": []
+    },
+    {
+      "did": "bfb56ca4dcde4855",
+      "name": "Maison Margiela Replica Jazz Club EDT",
+      "imageUrl": "converted → /uploads/replica-jazz-club.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/replica-jazz-club.webp",
+      "errors": []
+    },
+    {
+      "did": "7f9c987b892b0570",
+      "name": "Louis Vuitton (LV) Ombre Nomade",
+      "imageUrl": "converted → /uploads/Lv-ombre-nomade.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lv-ombre-nomade.webp",
+      "errors": []
+    },
+    {
+      "did": "ebe0af4f6b20f2bf",
+      "name": "Maison Margiela Replica By the Fireplace EDT",
+      "imageUrl": "converted → /uploads/replica-by-the-fireplace.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/replica-by-the-fireplace.webp",
+      "errors": []
+    },
+    {
+      "did": "ad8b247f6f96c7ff",
+      "name": "Maison Francis Kurkdjian (MFK) OUD satin mood",
+      "imageUrl": "converted → /uploads/mfk-oud-satin-mood.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mfk-oud-satin-mood.webp",
+      "errors": []
+    },
+    {
+      "did": "a358a8c32429f3a9",
+      "name": "Louis Vuitton (LV) L’Immensité Eau De Parfum",
+      "imageUrl": "converted → /uploads/LV-Limmensite.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/LV-Limmensite.webp",
+      "errors": []
+    },
+    {
+      "did": "890a8106c1704876",
+      "name": "Maison Francis Kurkdjian (MFK) Grand Soir",
+      "imageUrl": "converted → /uploads/mfk-grand-soir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mfk-grand-soir.webp",
+      "errors": []
+    },
+    {
+      "did": "e3d7ea5e811af92c",
+      "name": "Maison Francis Kurkdjian (MFK) Baccarat Rouge 540 Extrait de Parfum",
+      "imageUrl": "converted → /uploads/mfk-rouge-540-extrairt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mfk-rouge-540-extrairt.webp",
+      "errors": []
+    },
+    {
+      "did": "f80f0d78053889fc",
+      "name": "Maison Francis Kurkdjian (MFK) Baccarat Rouge 540 Eau de Parfum",
+      "imageUrl": "converted → /uploads/mfk-rouge-540-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/mfk-rouge-540-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "aeac78e0c65a3e2e",
+      "name": "Chanel Chance Eau Tendre EDP",
+      "imageUrl": "converted → /uploads/chanel-eau-tendre-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/chanel-eau-tendre-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "7bace74471858941",
+      "name": "Bentley for Men Intense EDP",
+      "imageUrl": "converted → /uploads/bentley-for-him-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/bentley-for-him-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "debf3b8f7354c5e2",
+      "name": "Dior Fahrenheit EDT",
+      "imageUrl": "converted → /uploads/dior-farhenheit.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dior-farhenheit.webp",
+      "errors": []
+    },
+    {
+      "did": "4c55270f5da47c33",
+      "name": "Dunhill Desire Red",
+      "imageUrl": "converted → /uploads/dunhill-desire-red.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dunhill-desire-red.webp",
+      "errors": []
+    },
+    {
+      "did": "e498987855cb61bd",
+      "name": "Dunhill Desire Blue",
+      "imageUrl": "converted → /uploads/dunhill-desire-blue.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dunhill-desire-blue.webp",
+      "errors": []
+    },
+    {
+      "did": "178386cb2f21e49b",
+      "name": "Gentleman Givenchy Society Ambree EDP",
+      "imageUrl": "converted → /uploads/givenchy-society.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/givenchy-society.webp",
+      "errors": []
+    },
+    {
+      "did": "433a18cd1cc290d2",
+      "name": "Gucci Guilty Elixir de Parfum",
+      "imageUrl": "converted → /uploads/gucci-guilty-elixir-de-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/gucci-guilty-elixir-de-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "7d56e502e7aa4aaf",
+      "name": "Kenzo Homme EDT Intense",
+      "imageUrl": "converted → /uploads/kenzo-homme-edt-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/kenzo-homme-edt-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "2aa5c3b606c03913",
+      "name": "Mancera Oud Lemon Mint",
+      "imageUrl": "converted → /uploads/Aoud-Lemon-Mint-Mancera.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Aoud-Lemon-Mint-Mancera.webp",
+      "errors": []
+    },
+    {
+      "did": "d5f0d39aed97f1ab",
+      "name": "Parfums de Marly (PDM) Oajan",
+      "imageUrl": "converted → /uploads/pdm-oajan.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/pdm-oajan.webp",
+      "errors": []
+    },
+    {
+      "did": "4e967361bb10da00",
+      "name": "Parfums de Marly (PDM) Althair",
+      "imageUrl": "converted → /uploads/pdm-altheier.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/pdm-altheier.webp",
+      "errors": []
+    },
+    {
+      "did": "eb8bb55ee37db41c",
+      "name": "Prada Paradoxe Radical Essence",
+      "imageUrl": "converted → /uploads/prada-radical-essence.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/prada-radical-essence.webp",
+      "errors": []
+    },
+    {
+      "did": "da129da6bd26c917",
+      "name": "Ralph Lauren Polo Blue EDT",
+      "imageUrl": "converted → /uploads/polo-blue-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/polo-blue-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "8ee35eff070a6508",
+      "name": "Amouage Interlude Man",
+      "imageUrl": "converted → /uploads/amouage-interlude-man.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/amouage-interlude-man.webp",
+      "errors": []
+    },
+    {
+      "did": "dec034247339ff5b",
+      "name": "Amouage Reflection Man",
+      "imageUrl": "converted → /uploads/amouage-reflection-man.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/amouage-reflection-man.webp",
+      "errors": []
+    },
+    {
+      "did": "966ddd3da0de00e8",
+      "name": "Azzaro Wanted by Night EDP",
+      "imageUrl": "converted → /uploads/azzaro-wanted-by-nights.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/azzaro-wanted-by-nights.webp",
+      "errors": []
+    },
+    {
+      "did": "f735f04037982c0f",
+      "name": "Atelier Des Ors Pink Me Up",
+      "imageUrl": "converted → /uploads/Atelier-Des-Ors-Pink-Me-Up.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Atelier-Des-Ors-Pink-Me-Up.webp",
+      "errors": []
+    },
+    {
+      "did": "58006de56cf2eda6",
+      "name": "Ariana Grande Cloud Pink EDP",
+      "imageUrl": "converted → /uploads/Ariana-Grande-Cloud-Pink-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Ariana-Grande-Cloud-Pink-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "d6365a0e486f5334",
+      "name": "Billie Eilish Eilish EDP",
+      "imageUrl": "converted → /uploads/Billie-Eilish-Eilish-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Billie-Eilish-Eilish-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "36cc7460a2fb0308",
+      "name": "Chanel Allure Homme Edition Blanche EDP",
+      "imageUrl": "converted → /uploads/allure-homme-edition-blanchee.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/allure-homme-edition-blanchee.webp",
+      "errors": []
+    },
+    {
+      "did": "0298add71c485f77",
+      "name": "Louis Vuitton (LV) Pacific Chill",
+      "imageUrl": "converted → /uploads/LV-Pacific-Chill.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/LV-Pacific-Chill.webp",
+      "errors": []
+    },
+    {
+      "did": "51d2fbfccb212c6c",
+      "name": "Montale Arabians Tonka",
+      "imageUrl": "converted → /uploads/montale-arabian-tonka.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/montale-arabian-tonka.webp",
+      "errors": []
+    },
+    {
+      "did": "5bda8fd28ee2bb91",
+      "name": "Montale Honey Aoud",
+      "imageUrl": "converted → /uploads/Montale-Honey-AOUD.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Montale-Honey-AOUD.webp",
+      "errors": []
+    },
+    {
+      "did": "6c2bd19edbf47bc7",
+      "name": "Nishane Hundred Silent Ways Extrait de Parfum",
+      "imageUrl": "converted → /uploads/Nishane-Hundred-Silent-Ways-Extrait-de-Parfum-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Nishane-Hundred-Silent-Ways-Extrait-de-Parfum-1.webp",
+      "errors": []
+    },
+    {
+      "did": "2faa063a67960dd4",
+      "name": "Tom Ford Noir Extreme Parfum",
+      "imageUrl": "converted → /uploads/TomFord-Noir-Extreme-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/TomFord-Noir-Extreme-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "6c29db5dc3826ca7",
+      "name": "Tom Ford Oud Wood",
+      "imageUrl": "converted → /uploads/TomFord-Oud-Wood.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/TomFord-Oud-Wood.webp",
+      "errors": []
+    },
+    {
+      "did": "682e1c1fe7cbb3f5",
+      "name": "Tom Ford Tobacco Vanille",
+      "imageUrl": "converted → /uploads/TomFord-Black-Tobacco-Vanille.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/TomFord-Black-Tobacco-Vanille.webp",
+      "errors": []
+    },
+    {
+      "did": "cf772bb3ba13a5c6",
+      "name": "Byredo Slow Dance EDP",
+      "imageUrl": "converted → /uploads/Byredo-Slow-Dance-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Byredo-Slow-Dance-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "d4e80587312f519d",
+      "name": "Tommy Girl EDT by Tommy Hilfiger",
+      "imageUrl": "converted → /uploads/tommy-girl-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/tommy-girl-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "df7e4ffb391edc05",
+      "name": "Viktor & Rolf Flowerbomb EDP",
+      "imageUrl": "converted → /uploads/Viktor-Rolf-Flowerbomb-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Viktor-Rolf-Flowerbomb-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "df458d22522cfc28",
+      "name": "Portrait of a Lady by Frederic Malle",
+      "imageUrl": null,
+      "thumbnailUrl": null,
+      "errors": [
+        "imageUrl source not found: placeholder.jpg",
+        "thumbnailUrl source not found: placeholder.jpg"
+      ]
+    },
+    {
+      "did": "d10c8df6d3cba58a",
+      "name": "Rasasi Hawas Diva",
+      "imageUrl": "converted → /uploads/Rasasi-Hawas-Diva.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rasasi-Hawas-Diva.webp",
+      "errors": []
+    },
+    {
+      "did": "6fc2e87324e4744c",
+      "name": "Lancôme Idôle EDP",
+      "imageUrl": "converted → /uploads/Lancome-Idole-Edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lancome-Idole-Edp.webp",
+      "errors": []
+    },
+    {
+      "did": "94bfe8c831b6b16f",
+      "name": "Givenchy Irresistible EDP",
+      "imageUrl": "converted → /uploads/givenchy-irresistable.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/givenchy-irresistable.webp",
+      "errors": []
+    },
+    {
+      "did": "da947ff2ff50c251",
+      "name": "Dolce & Gabbana Devotion Intense EDP",
+      "imageUrl": "converted → /uploads/dng-devotion.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dng-devotion.webp",
+      "errors": []
+    },
+    {
+      "did": "34ed9cf36814fcb8",
+      "name": "Dolce & Gabbana Devotion EDP",
+      "imageUrl": "converted → /uploads/dng-devation-edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/dng-devation-edp.webp",
+      "errors": []
+    },
+    {
+      "did": "952eb6328c187616",
+      "name": "Vanilla Powder by Matiere Premiere",
+      "imageUrl": "converted → /uploads/Vanilla-Powder-by-Matiere-Premiere.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Vanilla-Powder-by-Matiere-Premiere.webp",
+      "errors": []
+    },
+    {
+      "did": "50460ecd194314a2",
+      "name": "Yves Saint Laurent (YSL) MYSLF L’absolu",
+      "imageUrl": "converted → /uploads/ysl-myself-labsolu.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ysl-myself-labsolu.webp",
+      "errors": []
+    },
+    {
+      "did": "c31940b6c39ea20a",
+      "name": "Byredo Blanche Eau de Parfum",
+      "imageUrl": "converted → /uploads/Byredo-Blanche.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Byredo-Blanche.webp",
+      "errors": []
+    },
+    {
+      "did": "819a3a345b19ddd8",
+      "name": "Lattafa Nebras EDP",
+      "imageUrl": "converted → /uploads/Lattafa-Nebras-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Nebras-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "c84007e6301c5090",
+      "name": "Lattafa Teriaq Intense EDP",
+      "imageUrl": "converted → /uploads/Lattafa-Teriaq-Intense-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Teriaq-Intense-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "678c0a652373fa4f",
+      "name": "Lattafa Nebras Elixir",
+      "imageUrl": "converted → /uploads/Lattafa-Nebras-ELIXIR.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Nebras-ELIXIR.webp",
+      "errors": []
+    },
+    {
+      "did": "7197e304b503b897",
+      "name": "Lattafa Eclaire",
+      "imageUrl": "converted → /uploads/Lattafa-Eclaire-Eau-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Eclaire-Eau-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "2f494db4ebcbd053",
+      "name": "Lattafa Angham",
+      "imageUrl": "converted → /uploads/Lattafa-Angham.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Angham.webp",
+      "errors": []
+    },
+    {
+      "did": "b96453c79cd6c7fc",
+      "name": "Lattafa Tharwah Gold",
+      "imageUrl": "converted → /uploads/Lattafa-Tharwah-Gold.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Tharwah-Gold.webp",
+      "errors": []
+    },
+    {
+      "did": "af2e338d2fe8a02e",
+      "name": "Lattafa Yara EDP",
+      "imageUrl": "converted → /uploads/Lattafa-Yara-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Yara-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "ff0c59212809c835",
+      "name": "Lattafa Yara Candy",
+      "imageUrl": "converted → /uploads/Lattafa-Yara-Candy.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Yara-Candy.webp",
+      "errors": []
+    },
+    {
+      "did": "3df79bacde6b0aec",
+      "name": "Lattafa Yara Moi",
+      "imageUrl": "converted → /uploads/Lattafa-Yara-Moi.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Yara-Moi.webp",
+      "errors": []
+    },
+    {
+      "did": "b167dbb210511ba0",
+      "name": "Lattafa Yara Tous",
+      "imageUrl": "converted → /uploads/Lattafa-Yara-Tous.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Yara-Tous.webp",
+      "errors": []
+    },
+    {
+      "did": "587e16ec76d1f9f5",
+      "name": "Lattafa Rave Now Women",
+      "imageUrl": "converted → /uploads/Lattafa-Rave-Now-Women.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Rave-Now-Women.webp",
+      "errors": []
+    },
+    {
+      "did": "7e02007c15e5e0a9",
+      "name": "Lattafa Mayar",
+      "imageUrl": "converted → /uploads/Lattafa-Mayar.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Mayar.webp",
+      "errors": []
+    },
+    {
+      "did": "b4f877aa99d5d7f1",
+      "name": "Lattafa Atheri",
+      "imageUrl": "converted → /uploads/Lattafa-Atheri.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Atheri.webp",
+      "errors": []
+    },
+    {
+      "did": "28e1bbe2f1d91413",
+      "name": "Armaf Club de Nuit Bling EDP",
+      "imageUrl": "converted → /uploads/Armaf-Club-de-Nuit-Bling-EDP-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-de-Nuit-Bling-EDP-1.webp",
+      "errors": []
+    },
+    {
+      "did": "8f7ae3c6a0c3918f",
+      "name": "Marshmallow Blush Paris Corner",
+      "imageUrl": "converted → /uploads/Marshmallow-Blush-by-Paris-Corner.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Marshmallow-Blush-by-Paris-Corner.webp",
+      "errors": []
+    },
+    {
+      "did": "8927ea822b0e1cb3",
+      "name": "Rasasi Hawas Pink",
+      "imageUrl": "converted → /uploads/Rasasi-Hawas-Pink.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rasasi-Hawas-Pink.webp",
+      "errors": []
+    },
+    {
+      "did": "cb91fc5825b86b80",
+      "name": "Rasasi Hawas Eclat",
+      "imageUrl": "converted → /uploads/Rasasi-Hawas-Eclat.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rasasi-Hawas-Eclat.webp",
+      "errors": []
+    },
+    {
+      "did": "2cfc9ed5b2b7665c",
+      "name": "Maison Asrar Vanilla Voyage",
+      "imageUrl": "converted → /uploads/Maison-Asrar-Vanilla-Voyage.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Maison-Asrar-Vanilla-Voyage.webp",
+      "errors": []
+    },
+    {
+      "did": "16e192ab42a068dd",
+      "name": "Al Haramain Amber Oud Gold Edition",
+      "imageUrl": "converted → /uploads/Al-Haramain-Amber-Oud-Gold-Edition.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Al-Haramain-Amber-Oud-Gold-Edition.webp",
+      "errors": []
+    },
+    {
+      "did": "94427f88ab26c1af",
+      "name": "Al Haramain Amber Oud Aqua Dubai",
+      "imageUrl": "converted → /uploads/Al-Haramain-Amber-Oud-Aqua-Dubai.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Al-Haramain-Amber-Oud-Aqua-Dubai.webp",
+      "errors": []
+    },
+    {
+      "did": "8b7300c9f6dc18fe",
+      "name": "Ahmed Al Maghribi Kaaf",
+      "imageUrl": "converted → /uploads/Ahmed-Al-Maghribi-Kaaf.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Ahmed-Al-Maghribi-Kaaf.webp",
+      "errors": []
+    },
+    {
+      "did": "0520f00e184129c5",
+      "name": "Ahmed Al Maghribi Kaaf Noir",
+      "imageUrl": "converted → /uploads/Ahmed-Al-Maghribi-Kaaf-Noir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Ahmed-Al-Maghribi-Kaaf-Noir.webp",
+      "errors": []
+    },
+    {
+      "did": "d8c1ab0dec895617",
+      "name": "Armaf Club De Nuit Intense Man EDT",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Intense-Man-EDT-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Intense-Man-EDT-1.webp",
+      "errors": []
+    },
+    {
+      "did": "2d18e23445ac722b",
+      "name": "Armaf Club De Nuit Intense Man EDP",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Intense-Man-EDP-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Intense-Man-EDP-1.webp",
+      "errors": []
+    },
+    {
+      "did": "909537d4b41c63eb",
+      "name": "Armaf Club De Nuit Intense Man Limited Edition Parfum",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Intense-Man-Limited-Edition-Parfum-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Intense-Man-Limited-Edition-Parfum-1.webp",
+      "errors": []
+    },
+    {
+      "did": "1ab613f625b13db6",
+      "name": "Armaf Club De Nuit Precieux",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Precieux-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Precieux-1.webp",
+      "errors": []
+    },
+    {
+      "did": "43cf8925ab1be269",
+      "name": "Armaf Club De Nuit Urban Man Elixir",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Urban-Man-Elixir-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Urban-Man-Elixir-1.webp",
+      "errors": []
+    },
+    {
+      "did": "463e8b7f3d3c8aa4",
+      "name": "Armaf Club De Nuit Iconic",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Iconic-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Iconic-1.webp",
+      "errors": []
+    },
+    {
+      "did": "44d1f657425a8acb",
+      "name": "Armaf Club De Nuit Untold",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Untold-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Untold-1.webp",
+      "errors": []
+    },
+    {
+      "did": "62a011b048703583",
+      "name": "Afnan 9PM",
+      "imageUrl": "converted → /uploads/afnan-9-pm.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/afnan-9-pm.webp",
+      "errors": []
+    },
+    {
+      "did": "5c2ec62026a4ed93",
+      "name": "Afnan 9PM Night Out",
+      "imageUrl": "converted → /uploads/afnan-9-pm-night-out.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/afnan-9-pm-night-out.webp",
+      "errors": []
+    },
+    {
+      "did": "086bbb84e35e0b70",
+      "name": "Afnan 9PM REBEL",
+      "imageUrl": "converted → /uploads/afnan-9-pm-rebel.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/afnan-9-pm-rebel.webp",
+      "errors": []
+    },
+    {
+      "did": "bd06c6d05e61ad7e",
+      "name": "Afnan 9PM ELIXIR",
+      "imageUrl": "converted → /uploads/afnan-9-pm-elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/afnan-9-pm-elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "0ed5dafc49861a3b",
+      "name": "Afnan Supremacy Not Only Intense EDP",
+      "imageUrl": "converted → /uploads/afnan-supremacy-noi.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/afnan-supremacy-noi.webp",
+      "errors": []
+    },
+    {
+      "did": "3a67e9a56fc7eaba",
+      "name": "Afnan Supremacy Collector Edition",
+      "imageUrl": "converted → /uploads/afnan-supremacy-collectors-edition.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/afnan-supremacy-collectors-edition.webp",
+      "errors": []
+    },
+    {
+      "did": "fd2df8b5bf6e9bdd",
+      "name": "Afnan Turathi Blue EDP",
+      "imageUrl": "converted → /uploads/afnan-turathi-blue.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/afnan-turathi-blue.webp",
+      "errors": []
+    },
+    {
+      "did": "a26a4ceae6faabf0",
+      "name": "Brandy Oud For Excellence",
+      "imageUrl": "converted → /uploads/Brandy-Oud-For-Excellence.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Brandy-Oud-For-Excellence.webp",
+      "errors": []
+    },
+    {
+      "did": "d37884f7c38a073a",
+      "name": "Brandy Salvage EDP",
+      "imageUrl": "converted → /uploads/Brandy-Salvage-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Brandy-Salvage-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "0a4d414066effa16",
+      "name": "Brandy Inspiration",
+      "imageUrl": "converted → /uploads/Brandy-Inspiration.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Brandy-Inspiration.webp",
+      "errors": []
+    },
+    {
+      "did": "db79d5d73cf348a8",
+      "name": "Brandy Ambre Leather",
+      "imageUrl": "converted → /uploads/Brandy-Ambre-Leather.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Brandy-Ambre-Leather.webp",
+      "errors": []
+    },
+    {
+      "did": "e5b08f17d1f1afd9",
+      "name": "French Avenue Aether Extrait de Parfum",
+      "imageUrl": "converted → /uploads/French-Avenue-Aether-Extrait-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Aether-Extrait-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "a41427404e09d8f9",
+      "name": "French Avenue Atlantis Extrait de Parfum",
+      "imageUrl": "converted → /uploads/French-Avenue-Atlantis-Extrait-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Atlantis-Extrait-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "b4fbe42d591dbe1f",
+      "name": "French Avenue Liquid Brun",
+      "imageUrl": "converted → /uploads/French-Avenue-Liquid-Brun.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Liquid-Brun.webp",
+      "errors": []
+    },
+    {
+      "did": "7865c4413d265807",
+      "name": "French Avenue Spectre Ghost",
+      "imageUrl": "converted → /uploads/French-Avenue-Spectre-Ghost.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Spectre-Ghost.webp",
+      "errors": []
+    },
+    {
+      "did": "dc752b5e6bee9cd2",
+      "name": "French Avenue Vulcan Feu",
+      "imageUrl": "converted → /uploads/French-Avenue-Vulcan-Feu.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Vulcan-Feu.webp",
+      "errors": []
+    },
+    {
+      "did": "a9404ecd1a8a55da",
+      "name": "French Avenue Amber Empire",
+      "imageUrl": "converted → /uploads/French-Avenue-Amber-Empire.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Amber-Empire.webp",
+      "errors": []
+    },
+    {
+      "did": "a9ba8148505409a6",
+      "name": "Khadlaj Island",
+      "imageUrl": "converted → /uploads/Khadlaj-Island.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Khadlaj-Island.webp",
+      "errors": []
+    },
+    {
+      "did": "5ee825b151a8344b",
+      "name": "Khadlaj Island Dream",
+      "imageUrl": "converted → /uploads/Khadlaj-Island-Dream.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Khadlaj-Island-Dream.webp",
+      "errors": []
+    },
+    {
+      "did": "01abd956d0e2890e",
+      "name": "Khadlaj Titan",
+      "imageUrl": "converted → /uploads/Khadlaj-Titan.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Khadlaj-Titan.webp",
+      "errors": []
+    },
+    {
+      "did": "b87429a11b64a0fe",
+      "name": "Khadlaj Shiyaaka Snow",
+      "imageUrl": "converted → /uploads/Khadlaj-Shiyaaka-Snow.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Khadlaj-Shiyaaka-Snow.webp",
+      "errors": []
+    },
+    {
+      "did": "ef702db0eb9a28cb",
+      "name": "Lattafa ASAD EDP",
+      "imageUrl": "converted → /uploads/Lattafa-ASAD-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-ASAD-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "acb268077fc17dac",
+      "name": "Lattafa ASAD Bourbon",
+      "imageUrl": "converted → /uploads/Lattafa-ASAD-Bourbon.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-ASAD-Bourbon.webp",
+      "errors": []
+    },
+    {
+      "did": "b8780f5aa83687c8",
+      "name": "Lattafa Khamrah Edp",
+      "imageUrl": "converted → /uploads/Lattafa-Khamrah-Edp.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Khamrah-Edp.webp",
+      "errors": []
+    },
+    {
+      "did": "daaf4c88f7ede2b3",
+      "name": "Lattafa Khamrah Qahwa",
+      "imageUrl": "converted → /uploads/Lattafa-Khamrah-Qahwa.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Khamrah-Qahwa.webp",
+      "errors": []
+    },
+    {
+      "did": "e91fe9d7fb6ddfad",
+      "name": "Lattafa Khamrah Dukhan",
+      "imageUrl": "converted → /uploads/Lattafa-Khamrah-Dukhan.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Khamrah-Dukhan.webp",
+      "errors": []
+    },
+    {
+      "did": "bbdedd595da382b6",
+      "name": "Lattafa Art Of Arabia iii",
+      "imageUrl": "converted → /uploads/Lattafa-Art-Of-Arabia-iii.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Art-Of-Arabia-iii.webp",
+      "errors": []
+    },
+    {
+      "did": "72e15a3a6ce2f303",
+      "name": "Lattafa Art Of Universe",
+      "imageUrl": "converted → /uploads/Lattafa-Art-Of-Universe.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Art-Of-Universe.webp",
+      "errors": []
+    },
+    {
+      "did": "066ace18e2649c65",
+      "name": "Lattafa Dynasty",
+      "imageUrl": "converted → /uploads/Lattafa-Dynasty.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Dynasty.webp",
+      "errors": []
+    },
+    {
+      "did": "a1e47eab6c030e4f",
+      "name": "Lattafa Mahir Legacy",
+      "imageUrl": "converted → /uploads/Lattafa-Mahir-Legacy.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Mahir-Legacy.webp",
+      "errors": []
+    },
+    {
+      "did": "5f16904045013c06",
+      "name": "Maison Al HAMRA Daring Blue",
+      "imageUrl": "converted → /uploads/Maison-Al-HAMRA-Daring-Blue.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Maison-Al-HAMRA-Daring-Blue.webp",
+      "errors": []
+    },
+    {
+      "did": "af41e3cae1610b47",
+      "name": "Paris Corner Rifaaqat Adron",
+      "imageUrl": "converted → /uploads/Paris-Corner-Rifaaqat-Adron.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Paris-Corner-Rifaaqat-Adron.webp",
+      "errors": []
+    },
+    {
+      "did": "c1c2bfe15d63bc99",
+      "name": "RASASI HAWAS For Him",
+      "imageUrl": "converted → /uploads/RASASI-HAWAS-For-Him.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-HAWAS-For-Him.webp",
+      "errors": []
+    },
+    {
+      "did": "06cdf17ae970b1af",
+      "name": "RASASI HAWAS ICE",
+      "imageUrl": "converted → /uploads/RASASI-HAWAS-ICE.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-HAWAS-ICE.webp",
+      "errors": []
+    },
+    {
+      "did": "9ff678e4426d0c2f",
+      "name": "RASASI HAWAS BLACK",
+      "imageUrl": "converted → /uploads/RASASI-HAWAS-BLACK.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-HAWAS-BLACK.webp",
+      "errors": []
+    },
+    {
+      "did": "2464a3c30e8c24f7",
+      "name": "RASASI HAWAS KOBRA",
+      "imageUrl": "converted → /uploads/RASASI-HAWAS-KOBRA.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-HAWAS-KOBRA.webp",
+      "errors": []
+    },
+    {
+      "did": "e4cb45f80c09cf3d",
+      "name": "RASASI HAWAS MALIBU",
+      "imageUrl": "converted → /uploads/RASASI-HAWAS-MALIBU.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-HAWAS-MALIBU.webp",
+      "errors": []
+    },
+    {
+      "did": "505f281325b05a3b",
+      "name": "RASASI HAWAS FIRE",
+      "imageUrl": "converted → /uploads/RASASI-HAWAS-FIRE.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-HAWAS-FIRE.webp",
+      "errors": []
+    },
+    {
+      "did": "91498765b41067ba",
+      "name": "RASASI HAWAS ELIXIR",
+      "imageUrl": "converted → /uploads/RASASI-HAWAS-ELIXIR.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-HAWAS-ELIXIR.webp",
+      "errors": []
+    },
+    {
+      "did": "d6c8734a70a1dd5a",
+      "name": "RASASI Shuhrah Elixir",
+      "imageUrl": "converted → /uploads/RASASI-Shuhrah-Elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-Shuhrah-Elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "ca4e293869099ddb",
+      "name": "RASASI Shuhrah Boisee",
+      "imageUrl": "converted → /uploads/RASASI-Shuhrah-Boisee.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/RASASI-Shuhrah-Boisee.webp",
+      "errors": []
+    },
+    {
+      "did": "52160af619fb085e",
+      "name": "Rayhaan Nocturno Pour Homme EDP",
+      "imageUrl": "converted → /uploads/Rayhaan-Nocturono-Pour-Homme-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rayhaan-Nocturono-Pour-Homme-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "ca3b3588fc9376aa",
+      "name": "Rayhaan Pacific Aura",
+      "imageUrl": "converted → /uploads/rayhaan-pacific-aura.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/rayhaan-pacific-aura.webp",
+      "errors": []
+    },
+    {
+      "did": "1e3d4a3c17078053",
+      "name": "Rayhaan Lion",
+      "imageUrl": "converted → /uploads/rayhaan-lion.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/rayhaan-lion.webp",
+      "errors": []
+    },
+    {
+      "did": "d9bd01419d8ee842",
+      "name": "Rayhaan Crimson",
+      "imageUrl": "converted → /uploads/Rayhaan-crimson.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rayhaan-crimson.webp",
+      "errors": []
+    },
+    {
+      "did": "d3bb75e76535f475",
+      "name": "Rayhaan Aquatica",
+      "imageUrl": "converted → /uploads/Rayhaan-Aquatica-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rayhaan-Aquatica-1.webp",
+      "errors": []
+    },
+    {
+      "did": "6348d2f1f8821a03",
+      "name": "Rayhaan Elixir",
+      "imageUrl": "converted → /uploads/Rayhaan-Elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rayhaan-Elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "5008622f0ca98fd2",
+      "name": "Rayhaan Terra",
+      "imageUrl": "converted → /uploads/Rayhaan-Terra.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rayhaan-Terra.webp",
+      "errors": []
+    },
+    {
+      "did": "13a859fc9691f9dc",
+      "name": "Rayhaan Obsidian",
+      "imageUrl": "converted → /uploads/Rayhaan-Obsidian.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rayhaan-Obsidian.webp",
+      "errors": []
+    },
+    {
+      "did": "7645555f4fcd2b0c",
+      "name": "Rayhaan Tiger",
+      "imageUrl": "converted → /uploads/Rayhaan-Tiger.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rayhaan-Tiger.webp",
+      "errors": []
+    },
+    {
+      "did": "ede90d945dc4642b",
+      "name": "Reef 33 EDP",
+      "imageUrl": "converted → /uploads/Reef-33-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Reef-33-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "dc95c56bf7681c67",
+      "name": "Initio Oud For Greatness",
+      "imageUrl": "converted → /uploads/initio-oud-for-greatness.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/initio-oud-for-greatness.webp",
+      "errors": []
+    },
+    {
+      "did": "3cb6f68e339c12db",
+      "name": "Initio Musk Therapy",
+      "imageUrl": "converted → /uploads/Initio-MusK-therapy-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Initio-MusK-therapy-1.webp",
+      "errors": []
+    },
+    {
+      "did": "7a2ae9fcc0537e2f",
+      "name": "Initio Side Effect",
+      "imageUrl": "converted → /uploads/initio-side-effect.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/initio-side-effect.webp",
+      "errors": []
+    },
+    {
+      "did": "bffa9a31840a1bc3",
+      "name": "Parfums de Marly (PDM) Greenly",
+      "imageUrl": "converted → /uploads/PDM-Greenley.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/PDM-Greenley.webp",
+      "errors": []
+    },
+    {
+      "did": "70b7350036b634ac",
+      "name": "Parfums de Marly (PDM) Sedley",
+      "imageUrl": "converted → /uploads/PDM-Sedley.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/PDM-Sedley.webp",
+      "errors": []
+    },
+    {
+      "did": "178b2c1e929a673e",
+      "name": "Parfums de Marly (PDM) Castley",
+      "imageUrl": "converted → /uploads/PDM-Castley.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/PDM-Castley.webp",
+      "errors": []
+    },
+    {
+      "did": "b4d2cac5ca7ad57c",
+      "name": "Maison Margiela Replica Lazy Sunday Morning",
+      "imageUrl": "converted → /uploads/Lazy-Sunday-morning.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lazy-Sunday-morning.webp",
+      "errors": []
+    },
+    {
+      "did": "1911fcb47b05151f",
+      "name": "Lattafa Asdaaf Raneen",
+      "imageUrl": "converted → /uploads/Lattafa-Asdaaf-Raneen.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Asdaaf-Raneen.webp",
+      "errors": []
+    },
+    {
+      "did": "568322672b9928b7",
+      "name": "Lattafa ASAD Elixir",
+      "imageUrl": "converted → /uploads/Lattafa-ASAD-Elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-ASAD-Elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "85e3ffaf4845ec9e",
+      "name": "Lattafa Angham Second Song",
+      "imageUrl": "converted → /uploads/Lattafa-Angham-Second-Song.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Angham-Second-Song.webp",
+      "errors": []
+    },
+    {
+      "did": "9dae40c10f36c6e7",
+      "name": "Ajmal Kuro",
+      "imageUrl": "converted → /uploads/ajmal-kuro.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ajmal-kuro.webp",
+      "errors": []
+    },
+    {
+      "did": "b6694f9d5ad6bd49",
+      "name": "Amouage Beach Hut",
+      "imageUrl": "converted → /uploads/Amouage-Beach-Hut-Man.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Amouage-Beach-Hut-Man.webp",
+      "errors": []
+    },
+    {
+      "did": "18a8e7d836baa780",
+      "name": "Amouage Decision",
+      "imageUrl": "converted → /uploads/Amouage-Decision.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Amouage-Decision.webp",
+      "errors": []
+    },
+    {
+      "did": "543ca5356e01732f",
+      "name": "DIPTYQUE Do Son Eau de Parfum",
+      "imageUrl": "converted → /uploads/DIPTYQUE-Do-Son-Eau-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/DIPTYQUE-Do-Son-Eau-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "7a06d1a79dd36c82",
+      "name": "DIPTYQUE Fleur de Peau Eau de Parfum",
+      "imageUrl": "converted → /uploads/DIPTYQUE-Fleur-de-Peau-Eau-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/DIPTYQUE-Fleur-de-Peau-Eau-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "c071d9b31a834d72",
+      "name": "Giorgio Armani Acqua Di Gio PROFUMO (2020 Batch)",
+      "imageUrl": "converted → /uploads/Acqua-di-Gio-Profumo-Giorgio-Arman.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Acqua-di-Gio-Profumo-Giorgio-Arman.webp",
+      "errors": []
+    },
+    {
+      "did": "9a4b269a2676270c",
+      "name": "Roja Enigma Pour Homme Parfum Cologne",
+      "imageUrl": "converted → /uploads/Roja-Enigma-Pour-Homme-Parfum-Cologne.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Roja-Enigma-Pour-Homme-Parfum-Cologne.webp",
+      "errors": []
+    },
+    {
+      "did": "135abeec3a205a91",
+      "name": "Roja Elysium Eau de Parfum",
+      "imageUrl": "converted → /uploads/Roja-Elysium-Eau-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Roja-Elysium-Eau-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "78fdd7a455247c70",
+      "name": "Sospiro Vibrato Eau de Parfum",
+      "imageUrl": "converted → /uploads/Sospiro-Vibrato-Eau-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Sospiro-Vibrato-Eau-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "08c052649b53a73b",
+      "name": "Xerjoff Alexandria II",
+      "imageUrl": "converted → /uploads/Xerjoff-Alexandria-II.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Xerjoff-Alexandria-II.webp",
+      "errors": []
+    },
+    {
+      "did": "ec1f227b7b5eba35",
+      "name": "Versace Man Eau Fraiche EDT",
+      "imageUrl": "converted → /uploads/Versace-Man-Eau-Fraiche.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Versace-Man-Eau-Fraiche.webp",
+      "errors": []
+    },
+    {
+      "did": "a115810a5ea9a49d",
+      "name": "Yves Saint Laurent (YSL)  La Nuit de L’Homme EDP",
+      "imageUrl": "converted → /uploads/Yves-Saint-Laurent-YSL-La-Nuit-de-LHomme-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Yves-Saint-Laurent-YSL-La-Nuit-de-LHomme-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "2f964e31597a9190",
+      "name": "Byredo Mojave Ghost Eau De Parfum",
+      "imageUrl": "converted → /uploads/Byredo-Mojave-Ghost-Eau-De-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Byredo-Mojave-Ghost-Eau-De-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "a8fabdd284a53e6b",
+      "name": "Byredo Gypsy Water Eau de Parfum",
+      "imageUrl": "converted → /uploads/Byredo-Gypsy-Water-Eau-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Byredo-Gypsy-Water-Eau-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "70d6cd60b0597765",
+      "name": "Prada Candy EDP",
+      "imageUrl": "converted → /uploads/Prada-Candy-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Prada-Candy-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "c99529f7129e98e9",
+      "name": "BVLGARI Le Gemme Tygar",
+      "imageUrl": "converted → /uploads/BVLGARI-Le-Gemme-Tygar.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/BVLGARI-Le-Gemme-Tygar.webp",
+      "errors": []
+    },
+    {
+      "did": "88d589d2c6f98a64",
+      "name": "BDK Rouge Smoking Extrait",
+      "imageUrl": "converted → /uploads/BDK-Rouge-Smoking-Extrait.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/BDK-Rouge-Smoking-Extrait.webp",
+      "errors": []
+    },
+    {
+      "did": "31acbb3e3a78d81e",
+      "name": "Parfums de Marly (PDM) Delina Exclusif Eau de Parfum",
+      "imageUrl": "converted → /uploads/Parfums-de-Marly-PDM-Delina-Exclusif-Eau-de-Parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Parfums-de-Marly-PDM-Delina-Exclusif-Eau-de-Parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "34d2ecf7224104d5",
+      "name": "Viktor & Rolf Spicebomb Metallic Musk EDP",
+      "imageUrl": "converted → /uploads/Viktor-Rolf-Spicebomb-Metallic-Musk-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Viktor-Rolf-Spicebomb-Metallic-Musk-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "67f02145cef622e1",
+      "name": "Ganymede EDP by Marc-Antoine Barrois",
+      "imageUrl": "converted → /uploads/Ganymede-EDP-by-Marc-Antoine-Barrois.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Ganymede-EDP-by-Marc-Antoine-Barrois.webp",
+      "errors": []
+    },
+    {
+      "did": "db78f0cab8c22a26",
+      "name": "Mugler Alien EDP",
+      "imageUrl": "converted → /uploads/Mugler-Alien-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Mugler-Alien-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "e7f4e82dc91bf2a0",
+      "name": "Mugler Alien Goddess EDP",
+      "imageUrl": "converted → /uploads/Mugler-Alien-Goddess-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Mugler-Alien-Goddess-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "f541f68f00d91a82",
+      "name": "French Avenue Vulcan Black Friday EDP",
+      "imageUrl": "converted → /uploads/French-Avenue-Vulcan-Black-Friday-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Vulcan-Black-Friday-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "46762394d1b966ef",
+      "name": "Incense 01 by Swiss Arabian",
+      "imageUrl": "already WebP → path corrected to /uploads/Incense-01-by-Swiss-Arabian.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Incense-01-by-Swiss-Arabian.webp",
+      "errors": []
+    },
+    {
+      "did": "b12ae3a1760fe590",
+      "name": "Yves Saint Laurent (YSL) Y Iced Cologne EDP",
+      "imageUrl": "converted → /uploads/Yves-Saint-Laurent-YSL-Y-Iced-Cologne-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Yves-Saint-Laurent-YSL-Y-Iced-Cologne-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "2eb06d223ebf5b43",
+      "name": "Yves Saint Laurent (YSL) Libre Vanille Couture",
+      "imageUrl": "converted → /uploads/Yves-Saint-Laurent-YSL-Libre-Vanille-Couture.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Yves-Saint-Laurent-YSL-Libre-Vanille-Couture.webp",
+      "errors": []
+    },
+    {
+      "did": "9927a063ee222639",
+      "name": "Giorgio Armani Power Of You EDP",
+      "imageUrl": "converted → /uploads/Power-of-you-100x100.webp",
+      "thumbnailUrl": "converted → /uploads/Power-of-you-100x100-thumb.webp",
+      "errors": []
+    },
+    {
+      "did": "f864af1a8bf6473d",
+      "name": "Burberry Goddess EDP Intense",
+      "imageUrl": "converted → /uploads/burberry-goddess-edp-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/burberry-goddess-edp-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "af28b137d94a9e01",
+      "name": "Maison Francis Kurkdjian (MFK) Baccarat Rouge 540 EDP 10ml miniature",
+      "imageUrl": "converted → /uploads/20260502_131517-scaled.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/20260502_131517-scaled.webp",
+      "errors": []
+    },
+    {
+      "did": "82987847ad5ed4cf",
+      "name": "Maison Francis Kurkdjian (MFK) Grand Soir 10ml miniature",
+      "imageUrl": "converted → /uploads/20260502_131444-scaled.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/20260502_131444-scaled.webp",
+      "errors": []
+    },
+    {
+      "did": "d79477749d8904cc",
+      "name": "Cristian Dior Oud Ispahan EDP 10ml miniature",
+      "imageUrl": "converted → /uploads/20260502_133835-scaled.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/20260502_133835-scaled.webp",
+      "errors": []
+    },
+    {
+      "did": "87bce885564c4f28",
+      "name": "Cristian Dior Gris Dior EDP 10ml miniature",
+      "imageUrl": "converted → /uploads/20260502_134002-scaled.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/20260502_134002-scaled.webp",
+      "errors": []
+    },
+    {
+      "did": "fb068ecfb01a07da",
+      "name": "Cristian Dior Rouge Trafalgar EDP 7ml miniature",
+      "imageUrl": "converted → /uploads/20260502_134127-scaled.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/20260502_134127-scaled.webp",
+      "errors": []
+    },
+    {
+      "did": "215421ab725b1962",
+      "name": "Creed Virgin Island Water EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/virgin.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/virgin.webp",
+      "errors": []
+    },
+    {
+      "did": "9c480a86d7bf62ba",
+      "name": "Creed Silver Mountain Water EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/silver.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/silver.webp",
+      "errors": []
+    },
+    {
+      "did": "d85bc765ab027268",
+      "name": "Creed Viking EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/viking.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/viking.webp",
+      "errors": []
+    },
+    {
+      "did": "39be9f63ff786856",
+      "name": "Creed Oud Zarian EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/Oud-Zarian.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Oud-Zarian.webp",
+      "errors": []
+    },
+    {
+      "did": "a6090d569d2f878a",
+      "name": "Creed ABSOLU Aventus EDP",
+      "imageUrl": "converted → /uploads/absolu-aventus-100x100.webp",
+      "thumbnailUrl": "converted → /uploads/absolu-aventus-100x100-thumb.webp",
+      "errors": []
+    },
+    {
+      "did": "fe3a8535017c771a",
+      "name": "Yves Saint Laurent (YSL) Libre Berry Crush EDP",
+      "imageUrl": "converted → /uploads/image_2026-06-15_233134390.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/image_2026-06-15_233134390.webp",
+      "errors": []
+    },
+    {
+      "did": "ee75a0f4aa205f8a",
+      "name": "Carolina Herrera La Bomba EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/la-bomba.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/la-bomba.webp",
+      "errors": []
+    },
+    {
+      "did": "0ffdc78c98957e50",
+      "name": "Paco Rabanne Invictus EDT",
+      "imageUrl": "converted → /uploads/invictus-edt-100x100.webp",
+      "thumbnailUrl": "converted → /uploads/invictus-edt-100x100-thumb.webp",
+      "errors": []
+    },
+    {
+      "did": "1ce73c1f17dff9fc",
+      "name": "Jean Paul Gaultier (JPG) La Belle Le Parfum EDP Intense",
+      "imageUrl": "converted → /uploads/le-belle-le-parfum.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/le-belle-le-parfum.webp",
+      "errors": []
+    },
+    {
+      "did": "41ba1f1106163045",
+      "name": "French Avenue Liquid Brun Limited Edition",
+      "imageUrl": "converted → /uploads/French-Avenue-Liquid-Brun-Limited-Edition.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Liquid-Brun-Limited-Edition.webp",
+      "errors": []
+    },
+    {
+      "did": "03ca1d1cc7be1e25",
+      "name": "Arabiyat Prestige Marwa EDP",
+      "imageUrl": "converted → /uploads/Marwa.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Marwa.webp",
+      "errors": []
+    },
+    {
+      "did": "81615106079123ec",
+      "name": "Missoni Wave EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/missoni.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/missoni.webp",
+      "errors": []
+    },
+    {
+      "did": "892f49fe76182572",
+      "name": "Lattafa Opulent Dubai",
+      "imageUrl": "converted → /uploads/Lattafa-Opulent-Dubai.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Opulent-Dubai.webp",
+      "errors": []
+    },
+    {
+      "did": "374b24cbdb218f4b",
+      "name": "Yves Saint Laurent (YSL) Y Tuxedo EDP",
+      "imageUrl": "converted → /uploads/Tuxedo-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Tuxedo-1.webp",
+      "errors": []
+    },
+    {
+      "did": "781c7f0cb5b60fbd",
+      "name": "Hermes Terre D’Hermes EDT For Men",
+      "imageUrl": "converted → /uploads/Hermes-EDT.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Hermes-EDT.webp",
+      "errors": []
+    },
+    {
+      "did": "dc2a966f10237922",
+      "name": "Ralph Lauren Polo 67 EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/polo-67.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/polo-67.webp",
+      "errors": []
+    },
+    {
+      "did": "60ea81e00b6604ee",
+      "name": "Blue Talisman EDP By Ex Nihilo",
+      "imageUrl": "already WebP → path corrected to /uploads/Blue-talisman.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Blue-talisman.webp",
+      "errors": []
+    },
+    {
+      "did": "09e005afa1d49fa7",
+      "name": "Mancera Amberful EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/AMBERFUL.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/AMBERFUL.webp",
+      "errors": []
+    },
+    {
+      "did": "b775ad66d2fd1c05",
+      "name": "Armaf Club De Nuit Intense Man Pure Parfum",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Intense-Man-Pure-Parfum-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Intense-Man-Pure-Parfum-1.webp",
+      "errors": []
+    },
+    {
+      "did": "5997de37bdf46acd",
+      "name": "Creed Royal Oud EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/Royal-oud.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Royal-oud.webp",
+      "errors": []
+    },
+    {
+      "did": "995a05af28713611",
+      "name": "Le Labo The Noir 29",
+      "imageUrl": "converted → /uploads/The-Noir-29-100x100.webp",
+      "thumbnailUrl": "converted → /uploads/The-Noir-29-100x100-thumb.webp",
+      "errors": []
+    },
+    {
+      "did": "64c181e38a35821c",
+      "name": "Al Haramain Amber Oud Carbon Edition",
+      "imageUrl": "converted → /uploads/Al-Haramain-Amber-Oud-Carbon-Edition.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Al-Haramain-Amber-Oud-Carbon-Edition.webp",
+      "errors": []
+    },
+    {
+      "did": "0d44e19504effc1c",
+      "name": "Al Haramain Amber Oud Tobacco Edition",
+      "imageUrl": "converted → /uploads/Al-Haramain-Amber-Oud-Tobacco-Edition.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Al-Haramain-Amber-Oud-Tobacco-Edition.webp",
+      "errors": []
+    },
+    {
+      "did": "01ce60c8c875f6c8",
+      "name": "Christian Dior Vanilla Diorama",
+      "imageUrl": "already WebP → path corrected to /uploads/Vanilla-Diorama.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Vanilla-Diorama.webp",
+      "errors": []
+    },
+    {
+      "did": "fddc81b78f9f4a54",
+      "name": "Yves Saint Laurent (YSL) Babycat",
+      "imageUrl": "converted → /uploads/ysl-babycat.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/ysl-babycat.webp",
+      "errors": []
+    },
+    {
+      "did": "5dfbfa82e2f5d554",
+      "name": "Gucci Intense Oud",
+      "imageUrl": "already WebP → path corrected to /uploads/Gucci-intense-oud.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Gucci-intense-oud.webp",
+      "errors": []
+    },
+    {
+      "did": "037f950b887b1b6f",
+      "name": "Roja Burlington 1819",
+      "imageUrl": "already WebP → path corrected to /uploads/Burlington.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Burlington.webp",
+      "errors": []
+    },
+    {
+      "did": "e22e2e8417996461",
+      "name": "Mancera Roses And Vanille",
+      "imageUrl": "already WebP → path corrected to /uploads/Roses-and-vanille.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Roses-and-vanille.webp",
+      "errors": []
+    },
+    {
+      "did": "fd25446dc951390f",
+      "name": "Nice Bergamot by Essential Parfums",
+      "imageUrl": "converted → /uploads/image_2026-06-15_232137502.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/image_2026-06-15_232137502.webp",
+      "errors": []
+    },
+    {
+      "did": "3aa5af8e39cd181a",
+      "name": "Amouage Outlands",
+      "imageUrl": "converted → /uploads/amouage-outlands.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/amouage-outlands.webp",
+      "errors": []
+    },
+    {
+      "did": "390404ddae5c7aee",
+      "name": "Rayhaan Kiss",
+      "imageUrl": "already WebP → path corrected to /uploads/Rayhaan-Kiss.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rayhaan-Kiss.webp",
+      "errors": []
+    },
+    {
+      "did": "67a4e6c4376ff28e",
+      "name": "Armaf Club De Nuit Maleka",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Maleka-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Maleka-1.webp",
+      "errors": []
+    },
+    {
+      "did": "161ca0ac3cac6dec",
+      "name": "Armaf Club De Nuit Woman EDP",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Woman-EDP-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Woman-EDP-1.webp",
+      "errors": []
+    },
+    {
+      "did": "0bae2837afd62ccb",
+      "name": "Armaf Club De Nuit Woman Intense",
+      "imageUrl": "converted → /uploads/Armaf-Club-De-Nuit-Woman-Intense-1.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Club-De-Nuit-Woman-Intense-1.webp",
+      "errors": []
+    },
+    {
+      "did": "fb7fa65d80eff4be",
+      "name": "Dumont Nitro Red EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/nitro-red.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/nitro-red.webp",
+      "errors": []
+    },
+    {
+      "did": "ed4958172c103f92",
+      "name": "Rasasi Hawas Viper",
+      "imageUrl": "converted → /uploads/Rasasi-Hawas-Viper.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Rasasi-Hawas-Viper.webp",
+      "errors": []
+    },
+    {
+      "did": "65fc1897871a057b",
+      "name": "Khadlaj Azure Velvet EDP",
+      "imageUrl": "converted → /uploads/Khadlaj-Azure-Velvet-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Khadlaj-Azure-Velvet-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "43c0a45f6499dd7e",
+      "name": "Afnan Lynked Freedom  Edp",
+      "imageUrl": "converted → /uploads/Afnan-Lynked-Freedom.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Afnan-Lynked-Freedom.webp",
+      "errors": []
+    },
+    {
+      "did": "29ea3bbacfcffa1b",
+      "name": "AFNAN 9AM Dive",
+      "imageUrl": "converted → /uploads/afnan-9-am-dive.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/afnan-9-am-dive.webp",
+      "errors": []
+    },
+    {
+      "did": "fdd72e987c357858",
+      "name": "Maison Asar Muharib EDP",
+      "imageUrl": "converted → /uploads/Maison-Asar-Muharib-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Maison-Asar-Muharib-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "089ac16761e47215",
+      "name": "French Avenue Azzure Aoud",
+      "imageUrl": "converted → /uploads/French-Avenue-Azzure-Aoud.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Azzure-Aoud.webp",
+      "errors": []
+    },
+    {
+      "did": "aedf8ae8b37b995c",
+      "name": "Lalique Encre Noire Sport EDT",
+      "imageUrl": "converted → /uploads/Encre-noire-sport-scaled.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Encre-noire-sport-scaled.webp",
+      "errors": []
+    },
+    {
+      "did": "fe3382f3086a99d6",
+      "name": "Atralia Absolute Chill EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/Absolute-chill.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Absolute-chill.webp",
+      "errors": []
+    },
+    {
+      "did": "0fcc67e8915afcb4",
+      "name": "Gulf Orchid Naseem EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/Guld-orchid.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Guld-orchid.webp",
+      "errors": []
+    },
+    {
+      "did": "6c54c6a10694ee69",
+      "name": "Lattafa Ameer Al Oudh Intense Oud EDP",
+      "imageUrl": "converted → /uploads/Lattafa-Ameer-Al-Oudh-Intense-Oud.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Ameer-Al-Oudh-Intense-Oud.webp",
+      "errors": []
+    },
+    {
+      "did": "7d865328960846d4",
+      "name": "Lattafa Atlas EDP",
+      "imageUrl": "converted → /uploads/Lattafa-Atlas-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Atlas-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "9e091403b78b493c",
+      "name": "Riiffs Momento Extrait",
+      "imageUrl": "converted → /uploads/Riffs-momento.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Riffs-momento.webp",
+      "errors": []
+    },
+    {
+      "did": "d3926ed0ec030aab",
+      "name": "Khadlaj Island Vanilla Dunes Extrait",
+      "imageUrl": "converted → /uploads/Khadlaj-Island-Vanilla-Dunes.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Khadlaj-Island-Vanilla-Dunes.webp",
+      "errors": []
+    },
+    {
+      "did": "b4760ee8eaa8eefa",
+      "name": "Atralia Elixir EDP",
+      "imageUrl": "converted → /uploads/Atralia-Elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Atralia-Elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "95a7b7fc312aa4cb",
+      "name": "Tahara Vanilla Gulf Orchid",
+      "imageUrl": "already WebP → path corrected to /uploads/Tahara-Vanilla.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Tahara-Vanilla.webp",
+      "errors": []
+    },
+    {
+      "did": "94975e66d1d0e8c7",
+      "name": "Lattafa Rave Now For Men",
+      "imageUrl": "converted → /uploads/Lattafa-Rave-Now.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Rave-Now.webp",
+      "errors": []
+    },
+    {
+      "did": "2ac148f33412bb63",
+      "name": "Mango Ice by Gulf Orchid",
+      "imageUrl": "already WebP → path corrected to /uploads/Mango-ice.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Mango-ice.webp",
+      "errors": []
+    },
+    {
+      "did": "96f7a5b371a3ca5d",
+      "name": "Maison Asrar Thriller III Extrait",
+      "imageUrl": "converted → /uploads/Maison-Asrar-Thriller-III-Extrait.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Maison-Asrar-Thriller-III-Extrait.webp",
+      "errors": []
+    },
+    {
+      "did": "98c414bd0ebd251a",
+      "name": "French Avenue Zenith Blue EDP",
+      "imageUrl": "converted → /uploads/French-Avenue-Zenith-Blue-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Zenith-Blue-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "bfb78a8c0b5c16bf",
+      "name": "Rasasi Fattan  EDP",
+      "imageUrl": "converted → /uploads/rasasi-fattan.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/rasasi-fattan.webp",
+      "errors": []
+    },
+    {
+      "did": "0fd3036cec60ba32",
+      "name": "French Avenue Vulcan Baie",
+      "imageUrl": "converted → /uploads/French-Avenue-Vulcan-Baie.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Vulcan-Baie.webp",
+      "errors": []
+    },
+    {
+      "did": "ea8cd8042459f217",
+      "name": "French Avenue Safari Breeze Extrait",
+      "imageUrl": "converted → /uploads/French-Avenue-Safari-Breeze-Extrait.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/French-Avenue-Safari-Breeze-Extrait.webp",
+      "errors": []
+    },
+    {
+      "did": "3a81114310ab267c",
+      "name": "Afnan Modest Une Edp",
+      "imageUrl": "converted → /uploads/Afnan-Modest-Une-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Afnan-Modest-Une-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "2bfc5cef769f6e30",
+      "name": "ISSEY MIYAKE L’EAU D’ISSEY POUR HOMME EDT",
+      "imageUrl": "already WebP → path corrected to /uploads/Issey-miyake-edt.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Issey-miyake-edt.webp",
+      "errors": []
+    },
+    {
+      "did": "d56682abbffa6cfe",
+      "name": "ISSEY MIYAKE A DROP D’ISSEY FRAICHE EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/Drop.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Drop.webp",
+      "errors": []
+    },
+    {
+      "did": "eb0789fb259d9631",
+      "name": "Versace Eros Energy",
+      "imageUrl": "converted → /uploads/Eros-energy.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Eros-energy.webp",
+      "errors": []
+    },
+    {
+      "did": "6aeb968f29fe2a36",
+      "name": "Emporio Armani Stronger With You Sandalwood",
+      "imageUrl": "already WebP → path corrected to /uploads/stronger-with-you-sandalwood-armani.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/stronger-with-you-sandalwood-armani.webp",
+      "errors": []
+    },
+    {
+      "did": "822e745ad8a82422",
+      "name": "Armaf Dunescape EDP",
+      "imageUrl": "converted → /uploads/Armaf-Dunescape-EDP.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Armaf-Dunescape-EDP.webp",
+      "errors": []
+    },
+    {
+      "did": "714c189b4a39dac9",
+      "name": "Rasasi Hawas London EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/London.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/London.webp",
+      "errors": []
+    },
+    {
+      "did": "636ab4df248b517b",
+      "name": "Al Haramain Amber Oud Ruby Edition",
+      "imageUrl": "converted → /uploads/Al-Haramain-Amber-Oud-Ruby-Edition.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Al-Haramain-Amber-Oud-Ruby-Edition.webp",
+      "errors": []
+    },
+    {
+      "did": "5514c70a97f549cf",
+      "name": "MYSTIQUE by MAISON MILAN",
+      "imageUrl": "already WebP → path corrected to /uploads/Maison-Milan.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Maison-Milan.webp",
+      "errors": []
+    },
+    {
+      "did": "d91a01d821fad4b1",
+      "name": "Lattafa Yara Elixir",
+      "imageUrl": "already WebP → path corrected to /uploads/Lattafa-Yara-Elixir.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lattafa-Yara-Elixir.webp",
+      "errors": []
+    },
+    {
+      "did": "ef4ab8e1f06aaa5f",
+      "name": "Khadlaj Panache Angel Dust EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/Angel-Dust.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Angel-Dust.webp",
+      "errors": []
+    },
+    {
+      "did": "2573df9b6be56cfb",
+      "name": "Eshal Musk by Paris Corner",
+      "imageUrl": "already WebP → path corrected to /uploads/Eshal-Musk.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Eshal-Musk.webp",
+      "errors": []
+    },
+    {
+      "did": "a3b1238f1f01d0c3",
+      "name": "Yves Saint Laurent (YSL) MON PARIS EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/Mon-Paris.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Mon-Paris.webp",
+      "errors": []
+    },
+    {
+      "did": "9be88c07827b6b7b",
+      "name": "Yves Saint Laurent (YSL) Black Opium Over Red",
+      "imageUrl": "converted → /uploads/Black-opium-100x100.webp",
+      "thumbnailUrl": "converted → /uploads/Black-opium-100x100-thumb.webp",
+      "errors": []
+    },
+    {
+      "did": "b3945a350af9c92c",
+      "name": "Giorgio Armani SI EDP Intense",
+      "imageUrl": "already WebP → path corrected to /uploads/Si-intense.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Si-intense.webp",
+      "errors": []
+    },
+    {
+      "did": "2082eef09873772e",
+      "name": "Giorgio Armani SI EDP",
+      "imageUrl": "converted → /uploads/Si-edp-100x100.webp",
+      "thumbnailUrl": "converted → /uploads/Si-edp-100x100-thumb.webp",
+      "errors": []
+    },
+    {
+      "did": "18d7b29e659f8ffc",
+      "name": "Dolce & Gabbana My Devotion EDP Intense",
+      "imageUrl": "converted → /uploads/My-devotion-scaled.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/My-devotion-scaled.webp",
+      "errors": []
+    },
+    {
+      "did": "50989e7254d75a4e",
+      "name": "Lancôme TRESORE MIDNIGHT ROSE L'EAU DE PARFUM",
+      "imageUrl": "already WebP → path corrected to /uploads/Lancome-tresor.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Lancome-tresor.webp",
+      "errors": []
+    },
+    {
+      "did": "8df24dab116e99d4",
+      "name": "CHLOE NOMADE EDP",
+      "imageUrl": "already WebP → path corrected to /uploads/Chloe-Nomade.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Chloe-Nomade.webp",
+      "errors": []
+    },
+    {
+      "did": "61069ef0108c58c3",
+      "name": "Chanel Chance Eau Vive EDT",
+      "imageUrl": "already WebP → path corrected to /uploads/Eau-vive.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Eau-vive.webp",
+      "errors": []
+    },
+    {
+      "did": "22aee04208726b8e",
+      "name": "Sospiro Basso Eau de Parfum",
+      "imageUrl": "already WebP → path corrected to /uploads/Sospiro-Basso.webp",
+      "thumbnailUrl": "already WebP → path corrected to /uploads/Sospiro-Basso.webp",
+      "errors": []
+    },
+    {
+      "did": "cca9a679397c5f96",
+      "name": "Initio Atomic Rose",
+      "imageUrl": "converted → /uploads/Atomic-rose-100x100.webp",
+      "thumbnailUrl": "converted → /uploads/Atomic-rose-100x100-thumb.webp",
+      "errors": []
+    }
+  ]
+}

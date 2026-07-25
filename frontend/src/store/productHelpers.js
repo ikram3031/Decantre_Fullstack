@@ -1,41 +1,26 @@
 export const getApiBaseUrl = () => {
-  if (typeof window !== 'undefined') {
-    const envUrl = import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL;
-    // If page is https and target API is http, use relative url '' so Vite dev server proxy handles it safely
-    if (window.location.protocol === 'https:' && (!envUrl || envUrl.startsWith('http://'))) {
-      return '';
-    }
-    return envUrl ? envUrl.replace(/\/$/, '') : '';
+  const envUrl = import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL;
+  if (envUrl) {
+    return envUrl.replace(/\/$/, '');
   }
-  return (import.meta.env.VITE_API_URL || 'http://144.79.218.126:5092').replace(/\/$/, '');
+  return 'http://144.79.218.126:5092';
 };
 
 export const normalizeProductImage = (rawImage = '') => {
   let imageUrl = rawImage || '';
-  if (!imageUrl) return '';
+  if (!imageUrl || imageUrl === 'undefined') return '';
   if (imageUrl.startsWith('//')) imageUrl = `https:${imageUrl}`;
   
   imageUrl = imageUrl.replace(/webiste\.decantrebd\.com|webste\.decantrebd\.com/gi, 'decantrebd.com');
+  imageUrl = imageUrl.replace(/\/content\//gi, '/uploads/');
   
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-    if (typeof window !== 'undefined' && window.location.protocol === 'https:' && imageUrl.includes('144.79.218.126')) {
-      return imageUrl.replace(/^https?:\/\/[^/]+/, '');
-    }
     return imageUrl;
   }
 
-  if (imageUrl.startsWith('/')) {
-    if (imageUrl.startsWith('/wp-content')) {
-      return `https://decantrebd.com${imageUrl}`;
-    }
-    if (imageUrl.startsWith('/uploads') || imageUrl.startsWith('/content')) {
-      const apiBaseUrl = getApiBaseUrl();
-      return apiBaseUrl ? `${apiBaseUrl}${imageUrl}` : imageUrl;
-    }
-    return imageUrl;
-  }
-
-  return `/${imageUrl.replace(/^\/+/, '')}`;
+  const baseUrl = getApiBaseUrl();
+  const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
+  return `${baseUrl}${cleanPath}`;
 };
 
 const parseBadge = (badge = {}) => ({
