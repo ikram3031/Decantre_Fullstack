@@ -11,6 +11,8 @@ import ordersRouter from "./routes/OrdersRoute.js";
 import usersRouter from "./routes/UsersRoute.js";
 import authRouter from "./routes/AuthRoute.js";
 import exportRouter from "./routes/ExportRoute.js";
+import categoriesRouter from "./routes/CategoryRoute.js";
+import brandRouter from "./routes/BrandRoute.js";
 
 export async function createApp() {
   const app = express();
@@ -44,6 +46,8 @@ app.use(
   app.use("/api/v1/users", usersRouter);
   app.use("/api/v1/sendEmail", emailRouter);
   app.use("/api/v1/orders", ordersRouter);
+app.use("/api/v1/categories", categoriesRouter);
+app.use("/api/v1/brands", brandRouter);
   app.use("/api/wp/products", wpProductsRouter);
   app.use("/api/wp/taxonomies", wpTaxonomiesRouter);
 

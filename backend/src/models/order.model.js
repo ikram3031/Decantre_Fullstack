@@ -1,4 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
+import { randomUUID } from "crypto";
+import { generateDid } from "../utils/generateDid.js";
 
 const { models } = mongoose;
 
@@ -41,6 +43,7 @@ const orderTotalsSchema = new Schema(
 const orderSchema = new Schema(
   {
     orderNumber: { type: String, required: true, unique: true, index: true },
+    did: { type: String, default: () => generateDid(), unique: true, index: true },
     status: {
       type: String,
       required: true,

@@ -1,4 +1,5 @@
 import mongoose, { Schema, model } from "mongoose";
+import { generateDid } from "../utils/generateDid.js";
 
 const { models } = mongoose;
 
@@ -15,6 +16,7 @@ const userSchema = new Schema(
       unique: true,
       index: true,
     },
+    did: { type: String, default: () => generateDid(), unique: true, index: true },
     passwordHash: { type: String, required: true, trim: true, select: false },
     refreshToken: { type: String, select: false },
     refreshTokenExpiresAt: { type: Date, select: false },

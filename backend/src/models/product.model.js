@@ -1,44 +1,118 @@
 import mongoose, { Schema, model } from "mongoose";
-
-const { models } = mongoose;
-
-const productVariantSchema = new Schema(
-  {
-    size: { type: String, required: true, trim: true },
-    price: { type: Number, required: true, min: 0 },
-    sortOrder: { type: Number, required: true, default: 0 },
-  },
-  { _id: false },
-);
-
-const namedSlugSchema = new Schema(
-  {
-    name: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, trim: true },
-  },
-  { _id: false },
-);
-
-const productImageSchema = new Schema(
-  {
-    externalId: { type: String, trim: true },
-    url: { type: String, trim: true },
-    storageKey: { type: String, trim: true },
-    altText: { type: String, trim: true },
-  },
-  { _id: false },
-);
+import { generateDid } from "../utils/generateDid.js";
 
 const productSchema = new Schema(
   {
-    slug: { type: String, required: true, trim: true, unique: true, index: true },
+    // Basic Details
     name: { type: String, required: true, trim: true, index: true },
+    slug: { type: String, required: true, trim: true, unique: true, index: true },
+    did: { type: String, default: () => generateDid(), unique: true, index: true },
     description: { type: String, required: true, trim: true },
-    brand: { type: namedSlugSchema, required: false },
-    thumbnail: { type: productImageSchema, required: false },
-    categories: { type: [namedSlugSchema], default: [] },
-    variants: { type: [productVariantSchema], default: [] },
-    stockStatus: { type: String, required: true, default: "instock", trim: true },
+
+    // Product Type (Simple or Variant)
+    type: { 
+      type: String, 
+      enum: ["simple", "variant"], 
+      default: "simple",
+      required: true,
+      index: true 
+    },
+
+    // Simple Product Fields (Type = "simple" hole eiti babohar hobe)
+    price: { 
+      type: Number, 
+      min: 0,
+      required: function () {
+        return this.type === "simple"; // Simple product hole price mandatory
+      },
+    },
+    offerPrice: { 
+      type: Number, 
+      min: 0, 
+      default: null 
+    },
+    stockQuantity: { 
+      type: Number, 
+      min: 0, 
+      default: 0 
+    },
+    sku: { type: String, trim: true },
+    did: { type: String, default: () => generateDid(), unique: true, index: true },
+
+    // Variant Product Fields (Type = "variant" hole eiti babohar hobe)
+    variants: [
+      {
+        _id: false,
+        size: { type: String, required: true, trim: true },
+        price: { type: Number, required: true, min: 0 },
+        offerPrice: { type: Number, min: 0, default: null }, // Variant-er offer price
+        stockQuantity: { type: Number, default: 0, min: 0 },
+        sku: { type: String, trim: true },
+        sortOrder: { type: Number, default: 0 },
+      },
+    ],
+
+    // Filtering, Season & Notes
+    season: { 
+      type: String, 
+      enum: ["Summer", "Winter", "Spring", "Autumn", "All-Season"], 
+      default: "All-Season",
+      index: true 
+    },
+    tags: [{ type: String, trim: true, lowercase: true }],
+    notes: [{ type: String, trim: true }],
+
+    // SEO Meta Data
+    metaData: {
+      _id: false,
+      metaTitle: { type: String, trim: true },
+      metaDescription: { type: String, trim: true },
+      keywords: [{ type: String, trim: true }],
+      ogImage: { type: String, trim: true },
+    },
+
+    // Brand & Categories (Reference)
+    brand: { 
+      type: Schema.Types.ObjectId, 
+      ref: "Brand", 
+      default: null 
+    },
+    categories: [
+      { 
+        type: Schema.Types.ObjectId, 
+        ref: "Category" 
+      }
+    ],
+
+    // Images
+    imageUrl: { type: String, required: true, trim: true },
+    images: [
+      {
+        _id: false,
+        url: { type: String, required: true, trim: true },
+        altText: { type: String, trim: true },
+        sortOrder: { type: Number, default: 0 },
+      }
+    ],
+
+    stockStatus: { 
+      type: String, 
+      enum: ["instock", "outofstock", "preorder"], 
+      default: "instock",
+      index: true 
+    },
+
+    // Audit Fields
+    createdBy: { 
+      type: Schema.Types.ObjectId, 
+      ref: "User", 
+      required: true 
+    },
+    updatedBy: { 
+      type: Schema.Types.ObjectId, 
+      ref: "User", 
+      default: null 
+    },
   },
   {
     timestamps: true,
@@ -46,16 +120,18 @@ const productSchema = new Schema(
     toJSON: {
       virtuals: true,
       transform: (_doc, ret) => {
-        if (typeof ret._id === "object" && ret._id !== null && "toString" in ret._id) {
-          ret.id = ret._id.toString();
-        }
+        ret.id = ret._id?.toString();
         delete ret._id;
         return ret;
       },
     },
-  },
+  }
 );
 
-productSchema.index({ name: "text", description: "text", "brand.name": "text" });
+// Price Filtering index (Duto price ebong offerPrice index kora, jeno fast query kora jay)
+productSchema.index({ price: 1, offerPrice: 1 });
+productSchema.index({ "variants.price": 1, "variants.offerPrice": 1 });
+productSchema.index({ tags: 1 });
+productSchema.index({ name: "text", description: "text", tags: "text" });
 
-export const ProductModel = models.Product || model("Product", productSchema);
+export const ProductModel = mongoose.models.Product || model("Product", productSchema);
