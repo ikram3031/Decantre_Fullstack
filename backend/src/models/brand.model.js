@@ -9,6 +9,7 @@ const brandSchema = new Schema(
     description: { type: String, trim: true, default: "" },
     imageUrl: { type: String, trim: true, default: "" },
     productCount: { type: Number, default: 0, min: 0 },
+    parent: { type: Schema.Types.ObjectId, ref: "Brand", default: null },
   },
   {
     timestamps: true,
@@ -23,5 +24,11 @@ const brandSchema = new Schema(
     },
   }
 );
+
+brandSchema.virtual("subBrands", {
+  ref: "Brand",
+  localField: "_id",
+  foreignField: "parent",
+});
 
 export const BrandModel = mongoose.models.Brand || model("Brand", brandSchema);

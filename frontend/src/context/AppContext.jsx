@@ -18,6 +18,21 @@ export const useApp = () => {
 };
 
 export const AppProvider = ({ children }) => {
+  const categories = useAppStore((state) => state.categories);
+  const brands = useAppStore((state) => state.brands);
+  const fetchCategories = useAppStore((state) => state.fetchCategories);
+  const fetchBrands = useAppStore((state) => state.fetchBrands);
+
+  React.useEffect(() => {
+    const state = useAppStore.getState();
+    if (!state.categories || state.categories.length === 0) {
+      fetchCategories({ skip: 0, limit: 100 });
+    }
+    if (!state.brands || state.brands.length === 0) {
+      fetchBrands({ skip: 0, limit: 100 });
+    }
+  }, []);
+
   return (
     <AppContext.Provider value={null}>
       {children}

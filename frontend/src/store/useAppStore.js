@@ -56,8 +56,22 @@ export const useAppStore = create((set, get) => {
   return {
     // Dynamic lists populated exclusively from backend API
     products: [],
-    categories: [],
-    brands: [],
+    categories: (() => {
+      try {
+        const cached = localStorage.getItem('luxury_categories');
+        return cached ? JSON.parse(cached) : [];
+      } catch (e) {
+        return [];
+      }
+    })(),
+    brands: (() => {
+      try {
+        const cached = localStorage.getItem('luxury_brands');
+        return cached ? JSON.parse(cached) : [];
+      } catch (e) {
+        return [];
+      }
+    })(),
     combos: [],
 
     isProductsLoading: false,
@@ -102,6 +116,9 @@ export const useAppStore = create((set, get) => {
       try {
         const list = await apiFetchCategories(opts);
         set({ categories: list, isCategoriesLoading: false, categoriesError: null });
+        try {
+          localStorage.setItem('luxury_categories', JSON.stringify(list));
+        } catch (_) {}
         return list;
       } catch (err) {
         set({ isCategoriesLoading: false, categoriesError: 'Something went wrong' });
@@ -114,6 +131,9 @@ export const useAppStore = create((set, get) => {
       try {
         const list = await apiFetchBrands(opts);
         set({ brands: list, isBrandsLoading: false, brandsError: null });
+        try {
+          localStorage.setItem('luxury_brands', JSON.stringify(list));
+        } catch (_) {}
         return list;
       } catch (err) {
         set({ isBrandsLoading: false, brandsError: 'Something went wrong' });
@@ -462,19 +482,21 @@ export const useAppStore = create((set, get) => {
         shippingInfo.fullName,
         shippingInfo.phone,
         shippingInfo.email,
+        shippingInfo.address,
         shippingInfo.district
       ];
 
       if (requiredBilling.some((field) => !field || !field.trim())) {
-        get().addToast('Please complete required billing fields: Name, Phone, Email, District.', 'error');
+        get().addToast('Please complete required billing fields: Name, Phone, Email, Address, District.', 'error');
         return;
       }
 
       if (paymentMethod !== 'instore' && !sameAsBilling) {
         if (!shippingAddress.fullName || !shippingAddress.fullName.trim() ||
             !shippingAddress.phone || !shippingAddress.phone.trim() ||
+            !shippingAddress.address || !shippingAddress.address.trim() ||
             !shippingAddress.district || !shippingAddress.district.trim()) {
-          get().addToast('Please enter required shipping fields: Recipient Name, Phone Number, and District.', 'error');
+          get().addToast('Please enter required shipping fields: Recipient Name, Phone Number, Address, and District.', 'error');
           return;
         }
       }
@@ -540,7 +562,7 @@ export const useAppStore = create((set, get) => {
         get().addToast(json?.message || 'Your order has been placed successfully!', 'success');
       } catch (err) {
         set({ isProcessingOrder: false });
-        get().addToast('Something went wrong', 'error');
+        get().addToast(err?.message || 'Something went wrong', 'error');
       }
     },
 

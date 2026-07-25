@@ -72,11 +72,8 @@ const productSchema = new Schema(
     },
 
     // Brand & Categories (Reference)
-    brand: { 
-      type: Schema.Types.ObjectId, 
-      ref: "Brand", 
-      default: null 
-    },
+    // brand: array of `did` strings — [sub-brand-did, parent-brand-did]
+    brand: [{ type: String, trim: true }],
     categories: [
       { 
         type: Schema.Types.ObjectId, 

@@ -37,9 +37,6 @@ const staticCategories = [
   "For Her",
   "Unisex",
   "Miniature",
-  "Designer",
-  "Niche",
-  "Arabian and UAE Brand",
 ];
 
 async function main() {

@@ -1,0 +1,3218 @@
+[
+  {
+    "did": "b25ed03aaec90214",
+    "_id": "6a64887400d5281346d54dc8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\BDC-edt-1784973428163.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\BDC-edt-1784973428163.webp"
+    ]
+  },
+  {
+    "did": "fc6a51cc7b150956",
+    "_id": "6a64887500d5281346d54dca",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\BDC-edp-1784973428871.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\BDC-edp-1784973428871.webp"
+    ]
+  },
+  {
+    "did": "9e88a534d72efbe9",
+    "_id": "6a64887600d5281346d54dcc",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Bdc-parfum-1784973429575.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Bdc-parfum-1784973429575.webp"
+    ]
+  },
+  {
+    "did": "545ba6116e124a0e",
+    "_id": "6a64887600d5281346d54dd0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\azzaro-the-most-wanted-parfum-1784973430263.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\azzaro-the-most-wanted-parfum-1784973430263.webp"
+    ]
+  },
+  {
+    "did": "2e8988f193f9083e",
+    "_id": "6a64887700d5281346d54dd2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\azzaro-the-most-wanted-intense-1784973430941.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\azzaro-the-most-wanted-intense-1784973430941.webp"
+    ]
+  },
+  {
+    "did": "cf9ea6b6ae8c7035",
+    "_id": "6a64887800d5281346d54dd5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\azzaro-forever-elixir-1784973431608.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\azzaro-forever-elixir-1784973431608.webp"
+    ]
+  },
+  {
+    "did": "554e35ba8cec65d9",
+    "_id": "6a64887800d5281346d54dd7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\swy-intensely-1784973432277.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\swy-intensely-1784973432277.webp"
+    ]
+  },
+  {
+    "did": "363678517582ec21",
+    "_id": "6a64887900d5281346d54dda",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\swy-absolutely-1784973432950.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\swy-absolutely-1784973432950.webp"
+    ]
+  },
+  {
+    "did": "f38757cd6ae0b1fd",
+    "_id": "6a64887a00d5281346d54dde",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\swy-parfum-1784973433610.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\swy-parfum-1784973433610.webp"
+    ]
+  },
+  {
+    "did": "82d77cfd6be09326",
+    "_id": "6a64887b00d5281346d54de0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\sauvage-edt-1784973434331.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\sauvage-edt-1784973434331.webp"
+    ]
+  },
+  {
+    "did": "a8c522764793f68c",
+    "_id": "6a64887b00d5281346d54de4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\sauvage-edp-1784973435303.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\sauvage-edp-1784973435303.webp"
+    ]
+  },
+  {
+    "did": "3cd82d6c0cfa1094",
+    "_id": "6a64887c00d5281346d54de6",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\sauvage-parfum-1784973436101.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\sauvage-parfum-1784973436101.webp"
+    ]
+  },
+  {
+    "did": "65a3731a0cb69736",
+    "_id": "6a64887d00d5281346d54dea",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\sauvage-elixir-1784973436943.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\sauvage-elixir-1784973436943.webp"
+    ]
+  },
+  {
+    "did": "03759e49fd25c80a",
+    "_id": "6a64887e00d5281346d54ded",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dior-homme-intense-1784973437811.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dior-homme-intense-1784973437811.webp"
+    ]
+  },
+  {
+    "did": "aa8ed9f2037f905f",
+    "_id": "6a64887f00d5281346d54def",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\miss-dior-blooming-bouquet-1784973438559.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\miss-dior-blooming-bouquet-1784973438559.webp"
+    ]
+  },
+  {
+    "did": "243bcb29b7ed7fd1",
+    "_id": "6a64887f00d5281346d54df1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\miss-dior-edp-1784973439388.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\miss-dior-edp-1784973439388.webp"
+    ]
+  },
+  {
+    "did": "d5a5b10703d40e4b",
+    "_id": "6a64888000d5281346d54df5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\hypnotic-poison-1784973440118.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\hypnotic-poison-1784973440118.webp"
+    ]
+  },
+  {
+    "did": "77247917e5b08599",
+    "_id": "6a64888100d5281346d54df7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jadore-edp-1784973440870.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jadore-edp-1784973440870.webp"
+    ]
+  },
+  {
+    "did": "e490d64a1e75d8d3",
+    "_id": "6a64888200d5281346d54dfa",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dior-homme-edt-1784973441616.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dior-homme-edt-1784973441616.webp"
+    ]
+  },
+  {
+    "did": "0d15f8c36af6dfb0",
+    "_id": "6a64888200d5281346d54dfd",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\acqua-di-gio-edt-1784973442365.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\acqua-di-gio-edt-1784973442365.webp"
+    ]
+  },
+  {
+    "did": "4ac92cc5fbb47211",
+    "_id": "6a64888300d5281346d54e00",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\adg-edp-1784973443134.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\adg-edp-1784973443134.webp"
+    ]
+  },
+  {
+    "did": "c8e7651c57f85a5a",
+    "_id": "6a64888400d5281346d54e03",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\acqua-di-gio-PROFONDO-EDP-1784973443925.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\acqua-di-gio-PROFONDO-EDP-1784973443925.webp"
+    ]
+  },
+  {
+    "did": "254e9ef50d8f49c3",
+    "_id": "6a64888500d5281346d54e05",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\adg-parfum-1784973444668.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\adg-parfum-1784973444668.webp"
+    ]
+  },
+  {
+    "did": "e56a038fa5e68227",
+    "_id": "6a64888500d5281346d54e09",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ARMANI-CODE-PARFUM-1784973445391.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ARMANI-CODE-PARFUM-1784973445391.webp"
+    ]
+  },
+  {
+    "did": "2cdf98ff3abebbf2",
+    "_id": "6a64888600d5281346d54e0b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Giorgio-Armani-Si-Passione-EDP-1784973446152.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Giorgio-Armani-Si-Passione-EDP-1784973446152.webp"
+    ]
+  },
+  {
+    "did": "f517247d12065f0f",
+    "_id": "6a64888700d5281346d54e0f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\my-way-edp-1784973446923.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\my-way-edp-1784973446923.webp"
+    ]
+  },
+  {
+    "did": "897a15792470602a",
+    "_id": "6a64888800d5281346d54e12",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\narciso-for-her-edt-1784973447680.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\narciso-for-her-edt-1784973447680.webp"
+    ]
+  },
+  {
+    "did": "991ed7d1c203c63b",
+    "_id": "6a64888900d5281346d54e14",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\narciso-for-her-edp-1784973448447.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\narciso-for-her-edp-1784973448447.webp"
+    ]
+  },
+  {
+    "did": "8ad42cb9176c6752",
+    "_id": "6a64888900d5281346d54e16",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\narciso-musc-noir-rose-1-1784973449220.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\narciso-musc-noir-rose-1-1784973449220.webp"
+    ]
+  },
+  {
+    "did": "77e674329735a20d",
+    "_id": "6a64888a00d5281346d54e1a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\narciso-for-her-intense-1784973450035.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\narciso-for-her-intense-1784973450035.webp"
+    ]
+  },
+  {
+    "did": "cdda34998e737d13",
+    "_id": "6a64888b00d5281346d54e1c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\narciso-pure-musc-1784973450905.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\narciso-pure-musc-1784973450905.webp"
+    ]
+  },
+  {
+    "did": "2f19076a3e5b0dea",
+    "_id": "6a64888c00d5281346d54e1f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\gucci-bloom-1784973451713.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\gucci-bloom-1784973451713.webp"
+    ]
+  },
+  {
+    "did": "922576eaf5ecbd92",
+    "_id": "6a64888d00d5281346d54e25",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\gucci-gardenia-1784973452925.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\gucci-gardenia-1784973452925.webp"
+    ]
+  },
+  {
+    "did": "39fb37cd63e03990",
+    "_id": "6a64888e00d5281346d54e28",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\gucci-jasmine-1784973453810.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\gucci-jasmine-1784973453810.webp"
+    ]
+  },
+  {
+    "did": "dad3e853406f9a1f",
+    "_id": "6a64888f00d5281346d54e2a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\gucci-orchid-1784973454623.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\gucci-orchid-1784973454623.webp"
+    ]
+  },
+  {
+    "did": "c8f723fc5419d7b4",
+    "_id": "6a64888f00d5281346d54e2e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\gucci-mangolia-1784973455333.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\gucci-mangolia-1784973455333.webp"
+    ]
+  },
+  {
+    "did": "2567b74efdaa0800",
+    "_id": "6a64889000d5281346d54e30",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Valentino-Donna-Born-in-Roma-EDP-1784973456037.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Valentino-Donna-Born-in-Roma-EDP-1784973456037.webp"
+    ]
+  },
+  {
+    "did": "424538ee7d7f9c34",
+    "_id": "6a64889100d5281346d54e32",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Valentino-Donna-Born-in-Roma-Intense-EDP-1784973456741.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Valentino-Donna-Born-in-Roma-Intense-EDP-1784973456741.webp"
+    ]
+  },
+  {
+    "did": "917dce8f43405331",
+    "_id": "6a64889100d5281346d54e36",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\vaalentino-donno-coral-fantasy-1784973457453.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\vaalentino-donno-coral-fantasy-1784973457453.webp"
+    ]
+  },
+  {
+    "did": "c22d1e0c056bccc2",
+    "_id": "6a64889200d5281346d54e39",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\valentino-uomo-intense-1784973458155.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\valentino-uomo-intense-1784973458155.webp"
+    ]
+  },
+  {
+    "did": "fac063a6b97eee0e",
+    "_id": "6a64889300d5281346d54e3b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\valentino-born-in-roma-intense-1-1784973458858.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\valentino-born-in-roma-intense-1-1784973458858.webp"
+    ]
+  },
+  {
+    "did": "4738e01c05284a10",
+    "_id": "6a64889400d5281346d54e3d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\valentino-uomo-edt-1784973459581.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\valentino-uomo-edt-1784973459581.webp"
+    ]
+  },
+  {
+    "did": "7c27871affea0fb6",
+    "_id": "6a64889400d5281346d54e41",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\valentino-coral-fantasy-1784973460354.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\valentino-coral-fantasy-1784973460354.webp"
+    ]
+  },
+  {
+    "did": "236354c4c3737078",
+    "_id": "6a64889500d5281346d54e44",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\valentino-extradose-1784973461117.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\valentino-extradose-1784973461117.webp"
+    ]
+  },
+  {
+    "did": "9ab3b535983a0dba",
+    "_id": "6a64889600d5281346d54e46",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\valentino-donno-extradose-1784973461875.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\valentino-donno-extradose-1784973461875.webp"
+    ]
+  },
+  {
+    "did": "3694c476ce09a9a0",
+    "_id": "6a64889700d5281346d54e49",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\amouage-guidance-1784973462641.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\amouage-guidance-1784973462641.webp"
+    ]
+  },
+  {
+    "did": "ad5a14fa5b368bfb",
+    "_id": "6a64889800d5281346d54e4c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Ag-cloud-1784973463416.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Ag-cloud-1784973463416.webp"
+    ]
+  },
+  {
+    "did": "08694de7a38ae1c8",
+    "_id": "6a64889800d5281346d54e4f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\burberry-her-edp-1784973464165.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\burberry-her-edp-1784973464165.webp"
+    ]
+  },
+  {
+    "did": "253636ab4c90590b",
+    "_id": "6a64889900d5281346d54e53",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\burberry-her-elixir-1784973464892.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\burberry-her-elixir-1784973464892.webp"
+    ]
+  },
+  {
+    "did": "c3d4241539a9a99c",
+    "_id": "6a64889a00d5281346d54e55",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\burberry-goddess-1784973465649.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\burberry-goddess-1784973465649.webp"
+    ]
+  },
+  {
+    "did": "892ef94e1adcf236",
+    "_id": "6a64889a00d5281346d54e57",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\bianco-latte-1784973466382.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\bianco-latte-1784973466382.webp"
+    ]
+  },
+  {
+    "did": "19b9c65703f04ed8",
+    "_id": "6a64889b00d5281346d54e5b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ch-gg-blush-1784973467087.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ch-gg-blush-1784973467087.webp"
+    ]
+  },
+  {
+    "did": "f401d82c9fc8ab22",
+    "_id": "6a64889c00d5281346d54e5e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ch-gg-very-good-girl-1784973467788.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ch-gg-very-good-girl-1784973467788.webp"
+    ]
+  },
+  {
+    "did": "3861cde606a6c9f3",
+    "_id": "6a64889d00d5281346d54e60",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ch-gg-blush-1-1784973468484.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ch-gg-blush-1-1784973468484.webp"
+    ]
+  },
+  {
+    "did": "08418221f9ab7a40",
+    "_id": "6a64889d00d5281346d54e62",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Ch-gg-blush-elixir-1784973469180.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Ch-gg-blush-elixir-1784973469180.webp"
+    ]
+  },
+  {
+    "did": "842f00f16b649a2e",
+    "_id": "6a64889e00d5281346d54e64",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\chanel-no-5-1784973469887.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\chanel-no-5-1784973469887.webp"
+    ]
+  },
+  {
+    "did": "f3c992d6361e1c84",
+    "_id": "6a64889f00d5281346d54e68",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\chanel-coco-mademoiselle-1784973470723.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\chanel-coco-mademoiselle-1784973470723.webp"
+    ]
+  },
+  {
+    "did": "b9fae20e0dd37c9a",
+    "_id": "6a6488a000d5281346d54e6b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\versace-crystal-noir-edp-1784973471632.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\versace-crystal-noir-edp-1784973471632.webp"
+    ]
+  },
+  {
+    "did": "735d58ff518840dd",
+    "_id": "6a6488a000d5281346d54e6e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\xerjoff-erba-pura-1784973472379.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\xerjoff-erba-pura-1784973472379.webp"
+    ]
+  },
+  {
+    "did": "c806ed5e89fb9502",
+    "_id": "6a6488a100d5281346d54e71",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\versace-bright-crystal-edt-1784973473092.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\versace-bright-crystal-edt-1784973473092.webp"
+    ]
+  },
+  {
+    "did": "43a01a4a2dfd1f65",
+    "_id": "6a6488a200d5281346d54e74",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\xerjoff-naxos-1784973473852.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\xerjoff-naxos-1784973473852.webp"
+    ]
+  },
+  {
+    "did": "cca4ebc6d2345fd5",
+    "_id": "6a6488a300d5281346d54e76",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\prada-paradoxe-intense-1784973474531.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\prada-paradoxe-intense-1784973474531.webp"
+    ]
+  },
+  {
+    "did": "289452bac781e0f4",
+    "_id": "6a6488a300d5281346d54e7a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\prada-paradoxe-1784973475310.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\prada-paradoxe-1784973475310.webp"
+    ]
+  },
+  {
+    "did": "9b0def54b7efb8db",
+    "_id": "6a6488a400d5281346d54e7c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ysl-libre-intense-1784973475985.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ysl-libre-intense-1784973475985.webp"
+    ]
+  },
+  {
+    "did": "ea8193473b3c0f92",
+    "_id": "6a6488a500d5281346d54e7e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Davidoff-cool-water-intense-1784973476662.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Davidoff-cool-water-intense-1784973476662.webp"
+    ]
+  },
+  {
+    "did": "ac7336984cec5311",
+    "_id": "6a6488a500d5281346d54e82",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ysl-libre-edp-1784973477356.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ysl-libre-edp-1784973477356.webp"
+    ]
+  },
+  {
+    "did": "e15a933ab09ab60d",
+    "_id": "6a6488a600d5281346d54e85",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\YSL-black-opium-extreme-1784973478021.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\YSL-black-opium-extreme-1784973478021.webp"
+    ]
+  },
+  {
+    "did": "7e26debff2ae030a",
+    "_id": "6a6488a700d5281346d54e87",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\athelier-lune-feline-1784973478708.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\athelier-lune-feline-1784973478708.webp"
+    ]
+  },
+  {
+    "did": "d426500d8f2ae9f1",
+    "_id": "6a6488a800d5281346d54e89",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Davidoff-cool-water-edt-1784973479540.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Davidoff-cool-water-edt-1784973479540.webp"
+    ]
+  },
+  {
+    "did": "a57210d80a5d2f93",
+    "_id": "6a6488a800d5281346d54e8d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\YSL-black-opium-edp-1784973480266.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\YSL-black-opium-edp-1784973480266.webp"
+    ]
+  },
+  {
+    "did": "a6dcfc62b41d38c7",
+    "_id": "6a6488a900d5281346d54e8f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\spicebomb-extreme-1784973481000.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\spicebomb-extreme-1784973481000.webp"
+    ]
+  },
+  {
+    "did": "988c430a15efdeec",
+    "_id": "6a6488aa00d5281346d54e92",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Victorias-Secret-BombShell-1784973481678.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Victorias-Secret-BombShell-1784973481678.webp"
+    ]
+  },
+  {
+    "did": "58b4aa16017f3ef3",
+    "_id": "6a6488aa00d5281346d54e95",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\versace-dylan-blue-femme-1784973482359.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\versace-dylan-blue-femme-1784973482359.webp"
+    ]
+  },
+  {
+    "did": "64201b7bd348dd94",
+    "_id": "6a6488ab00d5281346d54e97",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ysl-l-nuit-d-lhomme-1784973483037.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ysl-l-nuit-d-lhomme-1784973483037.webp"
+    ]
+  },
+  {
+    "did": "3f1c0c87659b9b9f",
+    "_id": "6a6488ac00d5281346d54e9b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\yslmyself-1784973483699.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\yslmyself-1784973483699.webp"
+    ]
+  },
+  {
+    "did": "e36dd94a48acd4e5",
+    "_id": "6a6488ac00d5281346d54e9d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ysl-y-edp-1784973484377.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ysl-y-edp-1784973484377.webp"
+    ]
+  },
+  {
+    "did": "301880a3a71832e7",
+    "_id": "6a6488ad00d5281346d54ea1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\pdm-valaya-1784973485059.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\pdm-valaya-1784973485059.webp"
+    ]
+  },
+  {
+    "did": "a5050eefedb45658",
+    "_id": "6a6488ae00d5281346d54ea3",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\pdm-delina-1784973485726.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\pdm-delina-1784973485726.webp"
+    ]
+  },
+  {
+    "did": "381921fb0bec7881",
+    "_id": "6a6488ae00d5281346d54ea5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\bois-imperial-1784973486398.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\bois-imperial-1784973486398.webp"
+    ]
+  },
+  {
+    "did": "ed155624dc9e582a",
+    "_id": "6a6488af00d5281346d54ea9",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\versace-eros-flame-1784973487062.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\versace-eros-flame-1784973487062.webp"
+    ]
+  },
+  {
+    "did": "a590a0dcdc98a518",
+    "_id": "6a6488b000d5281346d54eab",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\marc-jacob-daisy-love-1784973487736.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\marc-jacob-daisy-love-1784973487736.webp"
+    ]
+  },
+  {
+    "did": "231300b656745c85",
+    "_id": "6a6488b000d5281346d54eae",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\versace-dylan-blue-1784973488413.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\versace-dylan-blue-1784973488413.webp"
+    ]
+  },
+  {
+    "did": "1b6b393cfba729fc",
+    "_id": "6a6488b100d5281346d54eb0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\lancome-le-viest-edp-1784973489077.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\lancome-le-viest-edp-1784973489077.webp"
+    ]
+  },
+  {
+    "did": "eb45d1f9b1f449bc",
+    "_id": "6a6488b200d5281346d54eb2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\versace-eros-1784973489742.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\versace-eros-1784973489742.webp"
+    ]
+  },
+  {
+    "did": "ca210e5d0c809be5",
+    "_id": "6a6488b200d5281346d54eb6",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kayali-fluer-majesty-rose-1784973490448.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kayali-fluer-majesty-rose-1784973490448.webp"
+    ]
+  },
+  {
+    "did": "2511395f3a486142",
+    "_id": "6a6488b300d5281346d54eb9",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\versace-pour-homme-edt-1784973491145.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\versace-pour-homme-edt-1784973491145.webp"
+    ]
+  },
+  {
+    "did": "a9651932431a2a02",
+    "_id": "6a6488b400d5281346d54ebb",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kayali-eden-juicy-apple-1784973491854.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kayali-eden-juicy-apple-1784973491854.webp"
+    ]
+  },
+  {
+    "did": "8ebbe1a8212d640a",
+    "_id": "6a6488b500d5281346d54ebe",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\tomford-black-orchid-1784973492544.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\tomford-black-orchid-1784973492544.webp"
+    ]
+  },
+  {
+    "did": "bd1867d2e3325279",
+    "_id": "6a6488b500d5281346d54ec1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kayali-love-fest-burning-cherry-1784973493215.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kayali-love-fest-burning-cherry-1784973493215.webp"
+    ]
+  },
+  {
+    "did": "b48e67359cbba5b4",
+    "_id": "6a6488b600d5281346d54ec4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\tomford-noir-extreme-1784973493883.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\tomford-noir-extreme-1784973493883.webp"
+    ]
+  },
+  {
+    "did": "bcd7703ffdddcd60",
+    "_id": "6a6488b700d5281346d54ec6",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\tomford-ombre-leaather-1784973494562.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\tomford-ombre-leaather-1784973494562.webp"
+    ]
+  },
+  {
+    "did": "849d7476c1a6a707",
+    "_id": "6a6488b700d5281346d54eca",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\hermes-eau-givree-1784973495238.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\hermes-eau-givree-1784973495238.webp"
+    ]
+  },
+  {
+    "did": "d905cc61688fb89b",
+    "_id": "6a6488b800d5281346d54ecc",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kayali-eden-sparkling-lychee-1784973495915.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kayali-eden-sparkling-lychee-1784973495915.webp"
+    ]
+  },
+  {
+    "did": "9c32647189b1b0b9",
+    "_id": "6a6488b900d5281346d54ece",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\polo-black-edt-1784973496708.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\polo-black-edt-1784973496708.webp"
+    ]
+  },
+  {
+    "did": "02c2e068962bc819",
+    "_id": "6a6488b900d5281346d54ed2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kayali-wedding-silk-santal-1784973497374.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kayali-wedding-silk-santal-1784973497374.webp"
+    ]
+  },
+  {
+    "did": "015096ac9c05fb78",
+    "_id": "6a6488ba00d5281346d54ed5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\polo-blue-edp-1784973498042.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\polo-blue-edp-1784973498042.webp"
+    ]
+  },
+  {
+    "did": "14f8c5521381eab5",
+    "_id": "6a6488bb00d5281346d54ed7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kayali-yum-pistachio-gelato-1784973498704.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kayali-yum-pistachio-gelato-1784973498704.webp"
+    ]
+  },
+  {
+    "did": "f39257a0c455a5cc",
+    "_id": "6a6488bb00d5281346d54ed9",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kayali-yum-boujee-marshmallow-1784973499389.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kayali-yum-boujee-marshmallow-1784973499389.webp"
+    ]
+  },
+  {
+    "did": "a2dfdfa8b38b563c",
+    "_id": "6a6488bc00d5281346d54edc",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kayali-vanilla-28-1-1784973500090.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kayali-vanilla-28-1-1784973500090.webp"
+    ]
+  },
+  {
+    "did": "476067711ce4a9be",
+    "_id": "6a6488bd00d5281346d54edf",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\creed-aventus-1784973500785.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\creed-aventus-1784973500785.webp"
+    ]
+  },
+  {
+    "did": "50f7d06fb3e662d0",
+    "_id": "6a6488be00d5281346d54ee2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\JPG-SO-SCANDAL-1-1784973501486.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\JPG-SO-SCANDAL-1-1784973501486.webp"
+    ]
+  },
+  {
+    "did": "ee13c15282db2f1f",
+    "_id": "6a6488be00d5281346d54ee4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-divine-1784973502156.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-divine-1784973502156.webp"
+    ]
+  },
+  {
+    "did": "38a6f16ad7889fcb",
+    "_id": "6a6488bf00d5281346d54ee7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\creed-green-irish-tweed-1784973502823.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\creed-green-irish-tweed-1784973502823.webp"
+    ]
+  },
+  {
+    "did": "252770c251005ebc",
+    "_id": "6a6488bf00d5281346d54eea",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\prada-lhomme-edt-1784973503391.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\prada-lhomme-edt-1784973503391.webp"
+    ]
+  },
+  {
+    "did": "28018ea030bd529e",
+    "_id": "6a6488c000d5281346d54eed",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-le-belle-edp-1784973504077.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-le-belle-edp-1784973504077.webp"
+    ]
+  },
+  {
+    "did": "5a2da5afe1a4e055",
+    "_id": "6a6488c100d5281346d54ef0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ck-one-1-1784973504831.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ck-one-1-1784973504831.webp"
+    ]
+  },
+  {
+    "did": "3ed2e58a4c618208",
+    "_id": "6a6488c200d5281346d54ef3",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jimmy-choo-i-want-you-forever-1784973505550.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jimmy-choo-i-want-you-forever-1784973505550.webp"
+    ]
+  },
+  {
+    "did": "a0bfc7d2dbbd6600",
+    "_id": "6a6488c200d5281346d54ef5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\prada-luna-rossa-black-1784973506255.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\prada-luna-rossa-black-1784973506255.webp"
+    ]
+  },
+  {
+    "did": "96f82f5fed779c9b",
+    "_id": "6a6488c300d5281346d54ef8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ck-eternity-1-1784973506919.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ck-eternity-1-1784973506919.webp"
+    ]
+  },
+  {
+    "did": "0c56186ef1fab368",
+    "_id": "6a6488c400d5281346d54efb",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\prada-luna-rossa-ocean-1784973507600.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\prada-luna-rossa-ocean-1784973507600.webp"
+    ]
+  },
+  {
+    "did": "144a1905d4cb7cff",
+    "_id": "6a6488c400d5281346d54efe",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\chanel-allure-homme-eau-intense-1-1784973508270.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\chanel-allure-homme-eau-intense-1-1784973508270.webp"
+    ]
+  },
+  {
+    "did": "2e6275e8a861905e",
+    "_id": "6a6488c500d5281346d54f00",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\1-million-elixir-1784973508957.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\1-million-elixir-1784973508957.webp"
+    ]
+  },
+  {
+    "did": "4cbd6331e5d578cb",
+    "_id": "6a6488c600d5281346d54f02",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\CH-bad-boy-cobalt-electrique-1784973509759.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\CH-bad-boy-cobalt-electrique-1784973509759.webp"
+    ]
+  },
+  {
+    "did": "301671553961d0ea",
+    "_id": "6a6488c700d5281346d54f06",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\1-million-edt-1784973510551.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\1-million-edt-1784973510551.webp"
+    ]
+  },
+  {
+    "did": "e7906b505d66b139",
+    "_id": "6a6488c800d5281346d54f09",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\CH-bad-bou-cobalt-elixir-1784973511385.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\CH-bad-bou-cobalt-elixir-1784973511385.webp"
+    ]
+  },
+  {
+    "did": "262bbae333d45968",
+    "_id": "6a6488c800d5281346d54f0c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\CH-212-vip-black-1784973512213.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\CH-212-vip-black-1784973512213.webp"
+    ]
+  },
+  {
+    "did": "61bad73444a18293",
+    "_id": "6a6488c900d5281346d54f0f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\paco-rabanne-invictus-parfum-1784973513078.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\paco-rabanne-invictus-parfum-1784973513078.webp"
+    ]
+  },
+  {
+    "did": "eed3b06a5798e72e",
+    "_id": "6a6488ca00d5281346d54f12",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\CH-212-Nyc-men-1784973513905.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\CH-212-Nyc-men-1784973513905.webp"
+    ]
+  },
+  {
+    "did": "20d3ce8ff1f56221",
+    "_id": "6a6488cb00d5281346d54f14",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Paco-Rabanne-Invictus-Victory-Elixir-1784973514627.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Paco-Rabanne-Invictus-Victory-Elixir-1784973514627.webp"
+    ]
+  },
+  {
+    "did": "719e204b1a216415",
+    "_id": "6a6488cb00d5281346d54f18",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\LInterdit-Eau-de-Parfum-Rouge-Givenchy-1784973515335.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\LInterdit-Eau-de-Parfum-Rouge-Givenchy-1784973515335.webp"
+    ]
+  },
+  {
+    "did": "f391a47e23a1e168",
+    "_id": "6a6488cc00d5281346d54f1a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dng-light-blue-intense-female-1784973516137.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dng-light-blue-intense-female-1784973516137.webp"
+    ]
+  },
+  {
+    "did": "5cf1d8993c729de0",
+    "_id": "6a6488cd00d5281346d54f1d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\diptique-tamdao-1784973516856.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\diptique-tamdao-1784973516856.webp"
+    ]
+  },
+  {
+    "did": "b797974149825664",
+    "_id": "6a6488ce00d5281346d54f20",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dunhill-icon-1784973517576.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dunhill-icon-1784973517576.webp"
+    ]
+  },
+  {
+    "did": "7d33799ddddb7bab",
+    "_id": "6a6488ce00d5281346d54f23",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dng-the-one-edp-1784973518323.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dng-the-one-edp-1784973518323.webp"
+    ]
+  },
+  {
+    "did": "ad562a977fd519e7",
+    "_id": "6a6488cf00d5281346d54f25",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dng-light-blue-eau-intense-male-1784973519214.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dng-light-blue-eau-intense-male-1784973519214.webp"
+    ]
+  },
+  {
+    "did": "5adb76ac9989b32e",
+    "_id": "6a6488d000d5281346d54f27",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\boss-bottled-edt-1784973520051.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\boss-bottled-edt-1784973520051.webp"
+    ]
+  },
+  {
+    "did": "816260798a031aaa",
+    "_id": "6a6488d100d5281346d54f2b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\boss-bottled-absolu-1784973520758.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\boss-bottled-absolu-1784973520758.webp"
+    ]
+  },
+  {
+    "did": "b85545b59faa1337",
+    "_id": "6a6488d200d5281346d54f2e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\pdm-layton-1784973521465.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\pdm-layton-1784973521465.webp"
+    ]
+  },
+  {
+    "did": "6bcb146cf376b1fe",
+    "_id": "6a6488d200d5281346d54f30",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\office-for-him-1784973522256.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\office-for-him-1784973522256.webp"
+    ]
+  },
+  {
+    "did": "8c34614483a5f51c",
+    "_id": "6a6488d300d5281346d54f33",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\nishane-wulong-cha-1784973522967.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\nishane-wulong-cha-1784973522967.webp"
+    ]
+  },
+  {
+    "did": "e5deff8507d885a3",
+    "_id": "6a6488d400d5281346d54f37",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\givenchy-reserve-prieve-1784973523746.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\givenchy-reserve-prieve-1784973523746.webp"
+    ]
+  },
+  {
+    "did": "9217acc4a73e2cf1",
+    "_id": "6a6488d500d5281346d54f39",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Nishane-Hacivat-1784973524511.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Nishane-Hacivat-1784973524511.webp"
+    ]
+  },
+  {
+    "did": "ca67e842c92d1528",
+    "_id": "6a6488d600d5281346d54f3d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\nishane-ani-1784973525357.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\nishane-ani-1784973525357.webp"
+    ]
+  },
+  {
+    "did": "e2a782ad481658eb",
+    "_id": "6a6488d600d5281346d54f3f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\nishane-favonius-1784973526175.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\nishane-favonius-1784973526175.webp"
+    ]
+  },
+  {
+    "did": "b6aec1e22842ea7c",
+    "_id": "6a6488d700d5281346d54f42",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\nautica-voyage-1784973527022.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\nautica-voyage-1784973527022.webp"
+    ]
+  },
+  {
+    "did": "b61e10585389e7eb",
+    "_id": "6a6488d800d5281346d54f45",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mercedes-club-extreme-1784973527620.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mercedes-club-extreme-1784973527620.webp"
+    ]
+  },
+  {
+    "did": "a79ef7f2c7c186da",
+    "_id": "6a6488d800d5281346d54f48",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\montblanc-explorer-1784973528309.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\montblanc-explorer-1784973528309.webp"
+    ]
+  },
+  {
+    "did": "bcdae81aa4590bab",
+    "_id": "6a6488d900d5281346d54f4a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mancera-tonka-cola-1784973529000.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mancera-tonka-cola-1784973529000.webp"
+    ]
+  },
+  {
+    "did": "0ae2392deb92363f",
+    "_id": "6a6488da00d5281346d54f4c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\guerlain-ideal-lhomme-1784973529694.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\guerlain-ideal-lhomme-1784973529694.webp"
+    ]
+  },
+  {
+    "did": "d43223bfba6cb575",
+    "_id": "6a6488da00d5281346d54f50",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mancera-amore-caffe-1784973530420.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mancera-amore-caffe-1784973530420.webp"
+    ]
+  },
+  {
+    "did": "aedb720d7367de31",
+    "_id": "6a6488db00d5281346d54f52",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mancera-cedrat-boise-1784973531107.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mancera-cedrat-boise-1784973531107.webp"
+    ]
+  },
+  {
+    "did": "e5fdbcd2ce991db1",
+    "_id": "6a6488dc00d5281346d54f55",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mancera-cedrat-boise-intense-1784973531796.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mancera-cedrat-boise-intense-1784973531796.webp"
+    ]
+  },
+  {
+    "did": "74da5cb205102c72",
+    "_id": "6a6488dd00d5281346d54f58",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-le-beau-edt-1784973532482.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-le-beau-edt-1784973532482.webp"
+    ]
+  },
+  {
+    "did": "bfd37edf371d09e4",
+    "_id": "6a6488dd00d5281346d54f5b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-le-beau-le-parfum-1784973533205.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-le-beau-le-parfum-1784973533205.webp"
+    ]
+  },
+  {
+    "did": "97ac32196eec7f0d",
+    "_id": "6a6488de00d5281346d54f5e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-paradise-gaarden-1-1784973533920.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-paradise-gaarden-1-1784973533920.webp"
+    ]
+  },
+  {
+    "did": "c22e0000b9496bdd",
+    "_id": "6a6488df00d5281346d54f60",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-elixir-edp-1784973534640.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-elixir-edp-1784973534640.webp"
+    ]
+  },
+  {
+    "did": "258eb14b4c23170f",
+    "_id": "6a6488df00d5281346d54f64",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-elixir-absolu-1784973535371.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-elixir-absolu-1784973535371.webp"
+    ]
+  },
+  {
+    "did": "647b04eb06655918",
+    "_id": "6a6488e000d5281346d54f66",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-le-male-le-parfum-1784973536106.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-le-male-le-parfum-1784973536106.webp"
+    ]
+  },
+  {
+    "did": "8546241eb70e289e",
+    "_id": "6a6488e100d5281346d54f69",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\jpg-ultra-male-1784973536828.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\jpg-ultra-male-1784973536828.webp"
+    ]
+  },
+  {
+    "did": "9e76f109d5d684f9",
+    "_id": "6a6488e200d5281346d54f6c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\lv-imagiantion-1784973537574.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\lv-imagiantion-1784973537574.webp"
+    ]
+  },
+  {
+    "did": "c1f4b58812b9f0a1",
+    "_id": "6a6488e200d5281346d54f6f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mancera-french-riveire-1784973538297.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mancera-french-riveire-1784973538297.webp"
+    ]
+  },
+  {
+    "did": "f4f99479aeb34678",
+    "_id": "6a6488e300d5281346d54f71",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mancera-red-tobacco-1784973539090.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mancera-red-tobacco-1784973539090.webp"
+    ]
+  },
+  {
+    "did": "6bec104e2c08e413",
+    "_id": "6a6488e400d5281346d54f75",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mancera-instant-crush-1784973540007.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mancera-instant-crush-1784973540007.webp"
+    ]
+  },
+  {
+    "did": "bfb56ca4dcde4855",
+    "_id": "6a6488e500d5281346d54f77",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\replica-jazz-club-1784973540978.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\replica-jazz-club-1784973540978.webp"
+    ]
+  },
+  {
+    "did": "7f9c987b892b0570",
+    "_id": "6a6488e600d5281346d54f7a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lv-ombre-nomade-1784973541710.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lv-ombre-nomade-1784973541710.webp"
+    ]
+  },
+  {
+    "did": "ebe0af4f6b20f2bf",
+    "_id": "6a6488e700d5281346d54f7d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\replica-by-the-fireplace-1784973542434.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\replica-by-the-fireplace-1784973542434.webp"
+    ]
+  },
+  {
+    "did": "ad8b247f6f96c7ff",
+    "_id": "6a6488e700d5281346d54f80",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mfk-oud-satin-mood-1784973543278.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mfk-oud-satin-mood-1784973543278.webp"
+    ]
+  },
+  {
+    "did": "a358a8c32429f3a9",
+    "_id": "6a6488e800d5281346d54f83",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\LV-Limmensite-1784973544023.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\LV-Limmensite-1784973544023.webp"
+    ]
+  },
+  {
+    "did": "890a8106c1704876",
+    "_id": "6a6488e900d5281346d54f86",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mfk-grand-soir-1784973544772.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mfk-grand-soir-1784973544772.webp"
+    ]
+  },
+  {
+    "did": "e3d7ea5e811af92c",
+    "_id": "6a6488ea00d5281346d54f89",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mfk-rouge-540-extrairt-1784973545522.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mfk-rouge-540-extrairt-1784973545522.webp"
+    ]
+  },
+  {
+    "did": "f80f0d78053889fc",
+    "_id": "6a6488ea00d5281346d54f8b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\mfk-rouge-540-edp-1784973546291.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\mfk-rouge-540-edp-1784973546291.webp"
+    ]
+  },
+  {
+    "did": "aeac78e0c65a3e2e",
+    "_id": "6a6488eb00d5281346d54f8f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\chanel-eau-tendre-edp-1784973547030.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\chanel-eau-tendre-edp-1784973547030.webp"
+    ]
+  },
+  {
+    "did": "7bace74471858941",
+    "_id": "6a6488ec00d5281346d54f92",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\bentley-for-him-intense-1784973547773.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\bentley-for-him-intense-1784973547773.webp"
+    ]
+  },
+  {
+    "did": "debf3b8f7354c5e2",
+    "_id": "6a6488ed00d5281346d54f94",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dior-farhenheit-1784973548555.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dior-farhenheit-1784973548555.webp"
+    ]
+  },
+  {
+    "did": "4c55270f5da47c33",
+    "_id": "6a6488ee00d5281346d54f96",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dunhill-desire-red-1784973549327.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dunhill-desire-red-1784973549327.webp"
+    ]
+  },
+  {
+    "did": "e498987855cb61bd",
+    "_id": "6a6488ee00d5281346d54f9a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dunhill-desire-blue-1784973550227.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dunhill-desire-blue-1784973550227.webp"
+    ]
+  },
+  {
+    "did": "178386cb2f21e49b",
+    "_id": "6a6488f000d5281346d54f9d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\givenchy-society-1784973551259.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\givenchy-society-1784973551259.webp"
+    ]
+  },
+  {
+    "did": "433a18cd1cc290d2",
+    "_id": "6a6488f000d5281346d54fa0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\gucci-guilty-elixir-de-parfum-1784973552209.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\gucci-guilty-elixir-de-parfum-1784973552209.webp"
+    ]
+  },
+  {
+    "did": "7d56e502e7aa4aaf",
+    "_id": "6a6488f100d5281346d54fa2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\kenzo-homme-edt-intense-1784973553002.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\kenzo-homme-edt-intense-1784973553002.webp"
+    ]
+  },
+  {
+    "did": "2aa5c3b606c03913",
+    "_id": "6a6488f200d5281346d54fa6",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Aoud-Lemon-Mint-Mancera-1784973553741.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Aoud-Lemon-Mint-Mancera-1784973553741.webp"
+    ]
+  },
+  {
+    "did": "d5f0d39aed97f1ab",
+    "_id": "6a6488f300d5281346d54fa8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\pdm-oajan-1784973554500.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\pdm-oajan-1784973554500.webp"
+    ]
+  },
+  {
+    "did": "4e967361bb10da00",
+    "_id": "6a6488f300d5281346d54fac",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\pdm-altheier-1784973555264.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\pdm-altheier-1784973555264.webp"
+    ]
+  },
+  {
+    "did": "eb8bb55ee37db41c",
+    "_id": "6a6488f400d5281346d54fae",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\prada-radical-essence-1784973556004.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\prada-radical-essence-1784973556004.webp"
+    ]
+  },
+  {
+    "did": "da129da6bd26c917",
+    "_id": "6a6488f500d5281346d54fb0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\polo-blue-edt-1784973556725.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\polo-blue-edt-1784973556725.webp"
+    ]
+  },
+  {
+    "did": "8ee35eff070a6508",
+    "_id": "6a6488f600d5281346d54fb4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\amouage-interlude-man-1784973557495.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\amouage-interlude-man-1784973557495.webp"
+    ]
+  },
+  {
+    "did": "dec034247339ff5b",
+    "_id": "6a6488f600d5281346d54fb7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\amouage-reflection-man-1784973558304.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\amouage-reflection-man-1784973558304.webp"
+    ]
+  },
+  {
+    "did": "966ddd3da0de00e8",
+    "_id": "6a6488f700d5281346d54fb9",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\azzaro-wanted-by-nights-1784973559112.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\azzaro-wanted-by-nights-1784973559112.webp"
+    ]
+  },
+  {
+    "did": "f735f04037982c0f",
+    "_id": "6a6488f800d5281346d54fbb",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Atelier-Des-Ors-Pink-Me-Up-1784973559903.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Atelier-Des-Ors-Pink-Me-Up-1784973559903.webp"
+    ]
+  },
+  {
+    "did": "58006de56cf2eda6",
+    "_id": "6a6488f900d5281346d54fbf",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Ariana-Grande-Cloud-Pink-EDP-1784973560725.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Ariana-Grande-Cloud-Pink-EDP-1784973560725.webp"
+    ]
+  },
+  {
+    "did": "d6365a0e486f5334",
+    "_id": "6a6488fa00d5281346d54fc2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Billie-Eilish-Eilish-EDP-1784973561629.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Billie-Eilish-Eilish-EDP-1784973561629.webp"
+    ]
+  },
+  {
+    "did": "36cc7460a2fb0308",
+    "_id": "6a6488fb00d5281346d54fc5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\allure-homme-edition-blanchee-1784973562606.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\allure-homme-edition-blanchee-1784973562606.webp"
+    ]
+  },
+  {
+    "did": "0298add71c485f77",
+    "_id": "6a6488fc00d5281346d54fc9",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\LV-Pacific-Chill-1784973563799.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\LV-Pacific-Chill-1784973563799.webp"
+    ]
+  },
+  {
+    "did": "51d2fbfccb212c6c",
+    "_id": "6a6488fd00d5281346d54fcd",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\montale-arabian-tonka-1784973564729.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\montale-arabian-tonka-1784973564729.webp"
+    ]
+  },
+  {
+    "did": "5bda8fd28ee2bb91",
+    "_id": "6a6488fe00d5281346d54fcf",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Montale-Honey-AOUD-1784973565687.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Montale-Honey-AOUD-1784973565687.webp"
+    ]
+  },
+  {
+    "did": "6c2bd19edbf47bc7",
+    "_id": "6a6488ff00d5281346d54fd2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Nishane-Hundred-Silent-Ways-Extrait-de-Parfum-1-1784973566624.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Nishane-Hundred-Silent-Ways-Extrait-de-Parfum-1-1784973566624.webp"
+    ]
+  },
+  {
+    "did": "2faa063a67960dd4",
+    "_id": "6a64890000d5281346d54fd6",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\TomFord-Noir-Extreme-Parfum-1784973567606.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\TomFord-Noir-Extreme-Parfum-1784973567606.webp"
+    ]
+  },
+  {
+    "did": "6c29db5dc3826ca7",
+    "_id": "6a64890100d5281346d54fd8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\TomFord-Oud-Wood-1784973568544.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\TomFord-Oud-Wood-1784973568544.webp"
+    ]
+  },
+  {
+    "did": "682e1c1fe7cbb3f5",
+    "_id": "6a64890200d5281346d54fda",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\TomFord-Black-Tobacco-Vanille-1784973569430.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\TomFord-Black-Tobacco-Vanille-1784973569430.webp"
+    ]
+  },
+  {
+    "did": "cf772bb3ba13a5c6",
+    "_id": "6a64890300d5281346d54fde",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Byredo-Slow-Dance-EDP-1784973570333.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Byredo-Slow-Dance-EDP-1784973570333.webp"
+    ]
+  },
+  {
+    "did": "d4e80587312f519d",
+    "_id": "6a64890300d5281346d54fe1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\tommy-girl-edt-1784973571224.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\tommy-girl-edt-1784973571224.webp"
+    ]
+  },
+  {
+    "did": "df7e4ffb391edc05",
+    "_id": "6a64890400d5281346d54fe4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Viktor-Rolf-Flowerbomb-EDP-1784973572139.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Viktor-Rolf-Flowerbomb-EDP-1784973572139.webp"
+    ]
+  },
+  {
+    "did": "df458d22522cfc28",
+    "_id": "6a64890500d5281346d54fe7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\placeholder.jpg",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\placeholder.jpg"
+    ]
+  },
+  {
+    "did": "d10c8df6d3cba58a",
+    "_id": "6a64890600d5281346d54fea",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rasasi-Hawas-Diva-1784973573784.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rasasi-Hawas-Diva-1784973573784.webp"
+    ]
+  },
+  {
+    "did": "6fc2e87324e4744c",
+    "_id": "6a64890700d5281346d54fed",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lancome-Idole-Edp-1784973574562.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lancome-Idole-Edp-1784973574562.webp"
+    ]
+  },
+  {
+    "did": "94bfe8c831b6b16f",
+    "_id": "6a64890800d5281346d54ff0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\givenchy-irresistable-1784973575424.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\givenchy-irresistable-1784973575424.webp"
+    ]
+  },
+  {
+    "did": "da947ff2ff50c251",
+    "_id": "6a64890800d5281346d54ff2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dng-devotion-1784973576252.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dng-devotion-1784973576252.webp"
+    ]
+  },
+  {
+    "did": "34ed9cf36814fcb8",
+    "_id": "6a64890900d5281346d54ff6",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\dng-devation-edp-1784973577110.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\dng-devation-edp-1784973577110.webp"
+    ]
+  },
+  {
+    "did": "952eb6328c187616",
+    "_id": "6a64890a00d5281346d54ff9",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Vanilla-Powder-by-Matiere-Premiere-1784973577889.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Vanilla-Powder-by-Matiere-Premiere-1784973577889.webp"
+    ]
+  },
+  {
+    "did": "50460ecd194314a2",
+    "_id": "6a64890b00d5281346d54ffb",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ysl-myself-labsolu-1784973578676.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ysl-myself-labsolu-1784973578676.webp"
+    ]
+  },
+  {
+    "did": "c31940b6c39ea20a",
+    "_id": "6a64890c00d5281346d54ffd",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Byredo-Blanche-1784973579487.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Byredo-Blanche-1784973579487.webp"
+    ]
+  },
+  {
+    "did": "819a3a345b19ddd8",
+    "_id": "6a64890d00d5281346d55001",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Nebras-EDP-1784973580289.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Nebras-EDP-1784973580289.webp"
+    ]
+  },
+  {
+    "did": "c84007e6301c5090",
+    "_id": "6a64890d00d5281346d55004",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Teriaq-Intense-EDP-1784973581236.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Teriaq-Intense-EDP-1784973581236.webp"
+    ]
+  },
+  {
+    "did": "678c0a652373fa4f",
+    "_id": "6a64890e00d5281346d55006",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Nebras-ELIXIR-1784973582081.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Nebras-ELIXIR-1784973582081.webp"
+    ]
+  },
+  {
+    "did": "7197e304b503b897",
+    "_id": "6a64890f00d5281346d55009",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Eclaire-Eau-de-Parfum-1784973582873.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Eclaire-Eau-de-Parfum-1784973582873.webp"
+    ]
+  },
+  {
+    "did": "2f494db4ebcbd053",
+    "_id": "6a64891000d5281346d5500d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Angham-1784973583690.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Angham-1784973583690.webp"
+    ]
+  },
+  {
+    "did": "b96453c79cd6c7fc",
+    "_id": "6a64891100d5281346d55010",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Tharwah-Gold-1784973584493.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Tharwah-Gold-1784973584493.webp"
+    ]
+  },
+  {
+    "did": "af2e338d2fe8a02e",
+    "_id": "6a64891200d5281346d55013",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Yara-EDP-1784973585501.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Yara-EDP-1784973585501.webp"
+    ]
+  },
+  {
+    "did": "ff0c59212809c835",
+    "_id": "6a64891200d5281346d55015",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Yara-Candy-1784973586258.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Yara-Candy-1784973586258.webp"
+    ]
+  },
+  {
+    "did": "3df79bacde6b0aec",
+    "_id": "6a64891300d5281346d55019",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Yara-Moi-1784973587069.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Yara-Moi-1784973587069.webp"
+    ]
+  },
+  {
+    "did": "b167dbb210511ba0",
+    "_id": "6a64891400d5281346d5501c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Yara-Tous-1784973587904.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Yara-Tous-1784973587904.webp"
+    ]
+  },
+  {
+    "did": "587e16ec76d1f9f5",
+    "_id": "6a64891500d5281346d5501e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Rave-Now-Women-1784973588724.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Rave-Now-Women-1784973588724.webp"
+    ]
+  },
+  {
+    "did": "7e02007c15e5e0a9",
+    "_id": "6a64891600d5281346d55020",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Mayar-1784973589553.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Mayar-1784973589553.webp"
+    ]
+  },
+  {
+    "did": "b4f877aa99d5d7f1",
+    "_id": "6a64891700d5281346d55024",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Atheri-1784973590426.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Atheri-1784973590426.webp"
+    ]
+  },
+  {
+    "did": "28e1bbe2f1d91413",
+    "_id": "6a64891800d5281346d55027",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-de-Nuit-Bling-EDP-1-1784973591241.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-de-Nuit-Bling-EDP-1-1784973591241.webp"
+    ]
+  },
+  {
+    "did": "8f7ae3c6a0c3918f",
+    "_id": "6a64891800d5281346d5502a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Marshmallow-Blush-by-Paris-Corner-1784973592198.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Marshmallow-Blush-by-Paris-Corner-1784973592198.webp"
+    ]
+  },
+  {
+    "did": "8927ea822b0e1cb3",
+    "_id": "6a64891900d5281346d5502d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rasasi-Hawas-Pink-1784973593140.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rasasi-Hawas-Pink-1784973593140.webp"
+    ]
+  },
+  {
+    "did": "cb91fc5825b86b80",
+    "_id": "6a64891a00d5281346d55030",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rasasi-Hawas-Eclat-1784973593962.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rasasi-Hawas-Eclat-1784973593962.webp"
+    ]
+  },
+  {
+    "did": "2cfc9ed5b2b7665c",
+    "_id": "6a64891b00d5281346d55033",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Maison-Asrar-Vanilla-Voyage-1784973594871.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Maison-Asrar-Vanilla-Voyage-1784973594871.webp"
+    ]
+  },
+  {
+    "did": "16e192ab42a068dd",
+    "_id": "6a64891c00d5281346d55036",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Al-Haramain-Amber-Oud-Gold-Edition-1784973595677.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Al-Haramain-Amber-Oud-Gold-Edition-1784973595677.webp"
+    ]
+  },
+  {
+    "did": "94427f88ab26c1af",
+    "_id": "6a64891d00d5281346d55038",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Al-Haramain-Amber-Oud-Aqua-Dubai-1784973596672.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Al-Haramain-Amber-Oud-Aqua-Dubai-1784973596672.webp"
+    ]
+  },
+  {
+    "did": "8b7300c9f6dc18fe",
+    "_id": "6a64891e00d5281346d5503c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Ahmed-Al-Maghribi-Kaaf-1784973597530.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Ahmed-Al-Maghribi-Kaaf-1784973597530.webp"
+    ]
+  },
+  {
+    "did": "0520f00e184129c5",
+    "_id": "6a64891e00d5281346d5503f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Ahmed-Al-Maghribi-Kaaf-Noir-1784973598274.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Ahmed-Al-Maghribi-Kaaf-Noir-1784973598274.webp"
+    ]
+  },
+  {
+    "did": "d8c1ab0dec895617",
+    "_id": "6a64891f00d5281346d55041",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Intense-Man-EDT-1-1784973598966.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Intense-Man-EDT-1-1784973598966.webp"
+    ]
+  },
+  {
+    "did": "2d18e23445ac722b",
+    "_id": "6a64892000d5281346d55043",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Intense-Man-EDP-1-1784973599674.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Intense-Man-EDP-1-1784973599674.webp"
+    ]
+  },
+  {
+    "did": "909537d4b41c63eb",
+    "_id": "6a64892000d5281346d55046",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Intense-Man-Limited-Edition-Parfum-1-1784973600402.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Intense-Man-Limited-Edition-Parfum-1-1784973600402.webp"
+    ]
+  },
+  {
+    "did": "1ab613f625b13db6",
+    "_id": "6a64892100d5281346d55049",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Precieux-1-1784973601064.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Precieux-1-1784973601064.webp"
+    ]
+  },
+  {
+    "did": "43cf8925ab1be269",
+    "_id": "6a64892200d5281346d5504c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Urban-Man-Elixir-1-1784973601726.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Urban-Man-Elixir-1-1784973601726.webp"
+    ]
+  },
+  {
+    "did": "463e8b7f3d3c8aa4",
+    "_id": "6a64892200d5281346d5504f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Iconic-1-1784973602402.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Iconic-1-1784973602402.webp"
+    ]
+  },
+  {
+    "did": "44d1f657425a8acb",
+    "_id": "6a64892300d5281346d55051",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Untold-1-1784973603072.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Untold-1-1784973603072.webp"
+    ]
+  },
+  {
+    "did": "62a011b048703583",
+    "_id": "6a64892400d5281346d55055",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\afnan-9-pm-1784973603853.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\afnan-9-pm-1784973603853.webp"
+    ]
+  },
+  {
+    "did": "5c2ec62026a4ed93",
+    "_id": "6a64892500d5281346d55057",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\afnan-9-pm-night-out-1784973604671.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\afnan-9-pm-night-out-1784973604671.webp"
+    ]
+  },
+  {
+    "did": "086bbb84e35e0b70",
+    "_id": "6a64892500d5281346d5505b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\afnan-9-pm-rebel-1784973605370.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\afnan-9-pm-rebel-1784973605370.webp"
+    ]
+  },
+  {
+    "did": "bd06c6d05e61ad7e",
+    "_id": "6a64892600d5281346d5505d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\afnan-9-pm-elixir-1784973606068.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\afnan-9-pm-elixir-1784973606068.webp"
+    ]
+  },
+  {
+    "did": "0ed5dafc49861a3b",
+    "_id": "6a64892700d5281346d5505f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\afnan-supremacy-noi-1784973606776.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\afnan-supremacy-noi-1784973606776.webp"
+    ]
+  },
+  {
+    "did": "3a67e9a56fc7eaba",
+    "_id": "6a64892800d5281346d55063",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\afnan-supremacy-collectors-edition-1784973607474.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\afnan-supremacy-collectors-edition-1784973607474.webp"
+    ]
+  },
+  {
+    "did": "fd2df8b5bf6e9bdd",
+    "_id": "6a64892800d5281346d55066",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\afnan-turathi-blue-1784973608223.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\afnan-turathi-blue-1784973608223.webp"
+    ]
+  },
+  {
+    "did": "a26a4ceae6faabf0",
+    "_id": "6a64892900d5281346d55068",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Brandy-Oud-For-Excellence-1784973608978.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Brandy-Oud-For-Excellence-1784973608978.webp"
+    ]
+  },
+  {
+    "did": "d37884f7c38a073a",
+    "_id": "6a64892a00d5281346d5506a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Brandy-Salvage-EDP-1784973609734.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Brandy-Salvage-EDP-1784973609734.webp"
+    ]
+  },
+  {
+    "did": "0a4d414066effa16",
+    "_id": "6a64892b00d5281346d5506e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Brandy-Inspiration-1784973610465.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Brandy-Inspiration-1784973610465.webp"
+    ]
+  },
+  {
+    "did": "db79d5d73cf348a8",
+    "_id": "6a64892b00d5281346d55070",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Brandy-Ambre-Leather-1784973611177.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Brandy-Ambre-Leather-1784973611177.webp"
+    ]
+  },
+  {
+    "did": "e5b08f17d1f1afd9",
+    "_id": "6a64892c00d5281346d55073",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Aether-Extrait-de-Parfum-1784973611899.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Aether-Extrait-de-Parfum-1784973611899.webp"
+    ]
+  },
+  {
+    "did": "a41427404e09d8f9",
+    "_id": "6a64892d00d5281346d55076",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Atlantis-Extrait-de-Parfum-1784973612569.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Atlantis-Extrait-de-Parfum-1784973612569.webp"
+    ]
+  },
+  {
+    "did": "b4fbe42d591dbe1f",
+    "_id": "6a64892d00d5281346d55079",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Liquid-Brun-1784973613248.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Liquid-Brun-1784973613248.webp"
+    ]
+  },
+  {
+    "did": "7865c4413d265807",
+    "_id": "6a64892e00d5281346d5507c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Spectre-Ghost-1784973613937.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Spectre-Ghost-1784973613937.webp"
+    ]
+  },
+  {
+    "did": "dc752b5e6bee9cd2",
+    "_id": "6a64892f00d5281346d5507e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Vulcan-Feu-1784973614621.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Vulcan-Feu-1784973614621.webp"
+    ]
+  },
+  {
+    "did": "a9404ecd1a8a55da",
+    "_id": "6a64893000d5281346d55082",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Amber-Empire-1784973615567.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Amber-Empire-1784973615567.webp"
+    ]
+  },
+  {
+    "did": "a9ba8148505409a6",
+    "_id": "6a64893000d5281346d55084",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Khadlaj-Island-1784973616352.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Khadlaj-Island-1784973616352.webp"
+    ]
+  },
+  {
+    "did": "5ee825b151a8344b",
+    "_id": "6a64893100d5281346d55087",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Khadlaj-Island-Dream-1784973617031.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Khadlaj-Island-Dream-1784973617031.webp"
+    ]
+  },
+  {
+    "did": "01abd956d0e2890e",
+    "_id": "6a64893200d5281346d5508a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Khadlaj-Titan-1784973617693.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Khadlaj-Titan-1784973617693.webp"
+    ]
+  },
+  {
+    "did": "b87429a11b64a0fe",
+    "_id": "6a64893200d5281346d55091",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Khadlaj-Shiyaaka-Snow-1784973618376.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Khadlaj-Shiyaaka-Snow-1784973618376.webp"
+    ]
+  },
+  {
+    "did": "ef702db0eb9a28cb",
+    "_id": "6a64893300d5281346d55093",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-ASAD-EDP-1784973619052.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-ASAD-EDP-1784973619052.webp"
+    ]
+  },
+  {
+    "did": "acb268077fc17dac",
+    "_id": "6a64893400d5281346d55095",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-ASAD-Bourbon-1784973619756.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-ASAD-Bourbon-1784973619756.webp"
+    ]
+  },
+  {
+    "did": "b8780f5aa83687c8",
+    "_id": "6a64893400d5281346d55098",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Khamrah-Edp-1784973620439.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Khamrah-Edp-1784973620439.webp"
+    ]
+  },
+  {
+    "did": "daaf4c88f7ede2b3",
+    "_id": "6a64893500d5281346d5509b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Khamrah-Qahwa-1784973621123.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Khamrah-Qahwa-1784973621123.webp"
+    ]
+  },
+  {
+    "did": "e91fe9d7fb6ddfad",
+    "_id": "6a64893600d5281346d5509e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Khamrah-Dukhan-1784973621815.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Khamrah-Dukhan-1784973621815.webp"
+    ]
+  },
+  {
+    "did": "bbdedd595da382b6",
+    "_id": "6a64893700d5281346d550a1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Art-Of-Arabia-iii-1784973622497.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Art-Of-Arabia-iii-1784973622497.webp"
+    ]
+  },
+  {
+    "did": "72e15a3a6ce2f303",
+    "_id": "6a64893700d5281346d550a4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Art-Of-Universe-1784973623263.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Art-Of-Universe-1784973623263.webp"
+    ]
+  },
+  {
+    "did": "066ace18e2649c65",
+    "_id": "6a64893800d5281346d550a7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Dynasty-1784973623977.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Dynasty-1784973623977.webp"
+    ]
+  },
+  {
+    "did": "a1e47eab6c030e4f",
+    "_id": "6a64893900d5281346d550a9",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Mahir-Legacy-1784973624688.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Mahir-Legacy-1784973624688.webp"
+    ]
+  },
+  {
+    "did": "5f16904045013c06",
+    "_id": "6a64893a00d5281346d550ad",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Maison-Al-HAMRA-Daring-Blue-1784973625472.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Maison-Al-HAMRA-Daring-Blue-1784973625472.webp"
+    ]
+  },
+  {
+    "did": "af41e3cae1610b47",
+    "_id": "6a64893a00d5281346d550af",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Paris-Corner-Rifaaqat-Adron-1784973626157.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Paris-Corner-Rifaaqat-Adron-1784973626157.webp"
+    ]
+  },
+  {
+    "did": "c1c2bfe15d63bc99",
+    "_id": "6a64893b00d5281346d550b1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-HAWAS-For-Him-1784973626791.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-HAWAS-For-Him-1784973626791.webp"
+    ]
+  },
+  {
+    "did": "06cdf17ae970b1af",
+    "_id": "6a64893c00d5281346d550b5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-HAWAS-ICE-1784973627475.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-HAWAS-ICE-1784973627475.webp"
+    ]
+  },
+  {
+    "did": "9ff678e4426d0c2f",
+    "_id": "6a64893c00d5281346d550b8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-HAWAS-BLACK-1784973628179.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-HAWAS-BLACK-1784973628179.webp"
+    ]
+  },
+  {
+    "did": "2464a3c30e8c24f7",
+    "_id": "6a64893d00d5281346d550ba",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-HAWAS-KOBRA-1784973628863.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-HAWAS-KOBRA-1784973628863.webp"
+    ]
+  },
+  {
+    "did": "e4cb45f80c09cf3d",
+    "_id": "6a64893e00d5281346d550bc",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-HAWAS-MALIBU-1784973629547.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-HAWAS-MALIBU-1784973629547.webp"
+    ]
+  },
+  {
+    "did": "505f281325b05a3b",
+    "_id": "6a64893e00d5281346d550bf",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-HAWAS-FIRE-1784973630259.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-HAWAS-FIRE-1784973630259.webp"
+    ]
+  },
+  {
+    "did": "91498765b41067ba",
+    "_id": "6a64893f00d5281346d550c2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-HAWAS-ELIXIR-1784973630934.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-HAWAS-ELIXIR-1784973630934.webp"
+    ]
+  },
+  {
+    "did": "d6c8734a70a1dd5a",
+    "_id": "6a64894000d5281346d550c5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-Shuhrah-Elixir-1784973631621.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-Shuhrah-Elixir-1784973631621.webp"
+    ]
+  },
+  {
+    "did": "ca4e293869099ddb",
+    "_id": "6a64894000d5281346d550c8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\RASASI-Shuhrah-Boisee-1784973632299.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\RASASI-Shuhrah-Boisee-1784973632299.webp"
+    ]
+  },
+  {
+    "did": "52160af619fb085e",
+    "_id": "6a64894100d5281346d550ca",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rayhaan-Nocturono-Pour-Homme-EDP-1784973632986.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rayhaan-Nocturono-Pour-Homme-EDP-1784973632986.webp"
+    ]
+  },
+  {
+    "did": "ca3b3588fc9376aa",
+    "_id": "6a64894200d5281346d550cd",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\rayhaan-pacific-aura-1784973633634.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\rayhaan-pacific-aura-1784973633634.webp"
+    ]
+  },
+  {
+    "did": "1e3d4a3c17078053",
+    "_id": "6a64894200d5281346d550d0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\rayhaan-lion-1784973634281.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\rayhaan-lion-1784973634281.webp"
+    ]
+  },
+  {
+    "did": "d9bd01419d8ee842",
+    "_id": "6a64894300d5281346d550d3",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rayhaan-crimson-1784973634915.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rayhaan-crimson-1784973634915.webp"
+    ]
+  },
+  {
+    "did": "d3bb75e76535f475",
+    "_id": "6a64894400d5281346d550d6",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rayhaan-Aquatica-1-1784973635572.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rayhaan-Aquatica-1-1784973635572.webp"
+    ]
+  },
+  {
+    "did": "6348d2f1f8821a03",
+    "_id": "6a64894400d5281346d550d8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rayhaan-Elixir-1784973636201.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rayhaan-Elixir-1784973636201.webp"
+    ]
+  },
+  {
+    "did": "5008622f0ca98fd2",
+    "_id": "6a64894500d5281346d550da",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rayhaan-Terra-1784973636852.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rayhaan-Terra-1784973636852.webp"
+    ]
+  },
+  {
+    "did": "13a859fc9691f9dc",
+    "_id": "6a64894600d5281346d550de",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rayhaan-Obsidian-1784973637533.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rayhaan-Obsidian-1784973637533.webp"
+    ]
+  },
+  {
+    "did": "7645555f4fcd2b0c",
+    "_id": "6a64894600d5281346d550e1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rayhaan-Tiger-1784973638450.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rayhaan-Tiger-1784973638450.webp"
+    ]
+  },
+  {
+    "did": "ede90d945dc4642b",
+    "_id": "6a64894700d5281346d550e3",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Reef-33-EDP-1784973639114.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Reef-33-EDP-1784973639114.webp"
+    ]
+  },
+  {
+    "did": "dc95c56bf7681c67",
+    "_id": "6a64894800d5281346d550e5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\initio-oud-for-greatness-1784973639746.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\initio-oud-for-greatness-1784973639746.webp"
+    ]
+  },
+  {
+    "did": "3cb6f68e339c12db",
+    "_id": "6a64894900d5281346d550e8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Initio-MusK-therapy-1-1784973640481.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Initio-MusK-therapy-1-1784973640481.webp"
+    ]
+  },
+  {
+    "did": "7a2ae9fcc0537e2f",
+    "_id": "6a64894900d5281346d550eb",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\initio-side-effect-1784973641213.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\initio-side-effect-1784973641213.webp"
+    ]
+  },
+  {
+    "did": "bffa9a31840a1bc3",
+    "_id": "6a64894a00d5281346d550ee",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\PDM-Greenley-1784973641923.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\PDM-Greenley-1784973641923.webp"
+    ]
+  },
+  {
+    "did": "70b7350036b634ac",
+    "_id": "6a64894b00d5281346d550f1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\PDM-Sedley-1784973642650.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\PDM-Sedley-1784973642650.webp"
+    ]
+  },
+  {
+    "did": "178b2c1e929a673e",
+    "_id": "6a64894c00d5281346d550f4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\PDM-Castley-1784973643374.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\PDM-Castley-1784973643374.webp"
+    ]
+  },
+  {
+    "did": "b4d2cac5ca7ad57c",
+    "_id": "6a64894c00d5281346d550f7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lazy-Sunday-morning-1784973644262.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lazy-Sunday-morning-1784973644262.webp"
+    ]
+  },
+  {
+    "did": "1911fcb47b05151f",
+    "_id": "6a64894d00d5281346d550fb",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Asdaaf-Raneen-1784973645051.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Asdaaf-Raneen-1784973645051.webp"
+    ]
+  },
+  {
+    "did": "568322672b9928b7",
+    "_id": "6a64894e00d5281346d550fd",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-ASAD-Elixir-1784973645986.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-ASAD-Elixir-1784973645986.webp"
+    ]
+  },
+  {
+    "did": "85e3ffaf4845ec9e",
+    "_id": "6a64894f00d5281346d55101",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Angham-Second-Song-1784973647125.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Angham-Second-Song-1784973647125.webp"
+    ]
+  },
+  {
+    "did": "9dae40c10f36c6e7",
+    "_id": "6a64895100d5281346d55104",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ajmal-kuro-1784973648042.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ajmal-kuro-1784973648042.webp"
+    ]
+  },
+  {
+    "did": "b6694f9d5ad6bd49",
+    "_id": "6a64895200d5281346d55106",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Amouage-Beach-Hut-Man-1784973649253.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Amouage-Beach-Hut-Man-1784973649253.webp"
+    ]
+  },
+  {
+    "did": "18a8e7d836baa780",
+    "_id": "6a64895300d5281346d5510a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Amouage-Decision-1784973650485.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Amouage-Decision-1784973650485.webp"
+    ]
+  },
+  {
+    "did": "543ca5356e01732f",
+    "_id": "6a64895400d5281346d5510d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\DIPTYQUE-Do-Son-Eau-de-Parfum-1784973651657.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\DIPTYQUE-Do-Son-Eau-de-Parfum-1784973651657.webp"
+    ]
+  },
+  {
+    "did": "7a06d1a79dd36c82",
+    "_id": "6a64895500d5281346d55110",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\DIPTYQUE-Fleur-de-Peau-Eau-de-Parfum-1784973652573.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\DIPTYQUE-Fleur-de-Peau-Eau-de-Parfum-1784973652573.webp"
+    ]
+  },
+  {
+    "did": "c071d9b31a834d72",
+    "_id": "6a64895600d5281346d55114",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Acqua-di-Gio-Profumo-Giorgio-Arman-1784973653668.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Acqua-di-Gio-Profumo-Giorgio-Arman-1784973653668.webp"
+    ]
+  },
+  {
+    "did": "9a4b269a2676270c",
+    "_id": "6a64895700d5281346d55117",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Roja-Enigma-Pour-Homme-Parfum-Cologne-1784973654798.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Roja-Enigma-Pour-Homme-Parfum-Cologne-1784973654798.webp"
+    ]
+  },
+  {
+    "did": "135abeec3a205a91",
+    "_id": "6a64895800d5281346d5511a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Roja-Elysium-Eau-de-Parfum-1784973655736.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Roja-Elysium-Eau-de-Parfum-1784973655736.webp"
+    ]
+  },
+  {
+    "did": "78fdd7a455247c70",
+    "_id": "6a64895900d5281346d5511d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Sospiro-Vibrato-Eau-de-Parfum-1784973656688.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Sospiro-Vibrato-Eau-de-Parfum-1784973656688.webp"
+    ]
+  },
+  {
+    "did": "08c052649b53a73b",
+    "_id": "6a64895a00d5281346d55120",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Xerjoff-Alexandria-II-1784973657658.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Xerjoff-Alexandria-II-1784973657658.webp"
+    ]
+  },
+  {
+    "did": "ec1f227b7b5eba35",
+    "_id": "6a64895b00d5281346d55123",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Versace-Man-Eau-Fraiche-1784973658519.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Versace-Man-Eau-Fraiche-1784973658519.webp"
+    ]
+  },
+  {
+    "did": "a115810a5ea9a49d",
+    "_id": "6a64895c00d5281346d55125",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Yves-Saint-Laurent-YSL-La-Nuit-de-LHomme-EDP-1784973659426.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Yves-Saint-Laurent-YSL-La-Nuit-de-LHomme-EDP-1784973659426.webp"
+    ]
+  },
+  {
+    "did": "2f964e31597a9190",
+    "_id": "6a64895d00d5281346d55128",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Byredo-Mojave-Ghost-Eau-De-Parfum-1784973660343.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Byredo-Mojave-Ghost-Eau-De-Parfum-1784973660343.webp"
+    ]
+  },
+  {
+    "did": "a8fabdd284a53e6b",
+    "_id": "6a64895d00d5281346d5512c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Byredo-Gypsy-Water-Eau-de-Parfum-1784973661168.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Byredo-Gypsy-Water-Eau-de-Parfum-1784973661168.webp"
+    ]
+  },
+  {
+    "did": "70d6cd60b0597765",
+    "_id": "6a64895e00d5281346d5512e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Prada-Candy-EDP-1784973662129.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Prada-Candy-EDP-1784973662129.webp"
+    ]
+  },
+  {
+    "did": "c99529f7129e98e9",
+    "_id": "6a64895f00d5281346d55132",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\BVLGARI-Le-Gemme-Tygar-1784973662967.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\BVLGARI-Le-Gemme-Tygar-1784973662967.webp"
+    ]
+  },
+  {
+    "did": "88d589d2c6f98a64",
+    "_id": "6a64896000d5281346d55135",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\BDK-Rouge-Smoking-Extrait-1784973663870.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\BDK-Rouge-Smoking-Extrait-1784973663870.webp"
+    ]
+  },
+  {
+    "did": "31acbb3e3a78d81e",
+    "_id": "6a64896100d5281346d55138",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Parfums-de-Marly-PDM-Delina-Exclusif-Eau-de-Parfum-1784973664795.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Parfums-de-Marly-PDM-Delina-Exclusif-Eau-de-Parfum-1784973664795.webp"
+    ]
+  },
+  {
+    "did": "34d2ecf7224104d5",
+    "_id": "6a64896200d5281346d5513b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Viktor-Rolf-Spicebomb-Metallic-Musk-EDP-1784973665686.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Viktor-Rolf-Spicebomb-Metallic-Musk-EDP-1784973665686.webp"
+    ]
+  },
+  {
+    "did": "67f02145cef622e1",
+    "_id": "6a64896300d5281346d5513e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Ganymede-EDP-by-Marc-Antoine-Barrois-1784973666735.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Ganymede-EDP-by-Marc-Antoine-Barrois-1784973666735.webp"
+    ]
+  },
+  {
+    "did": "db78f0cab8c22a26",
+    "_id": "6a64896400d5281346d55142",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Mugler-Alien-EDP-1784973667712.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Mugler-Alien-EDP-1784973667712.webp"
+    ]
+  },
+  {
+    "did": "e7f4e82dc91bf2a0",
+    "_id": "6a64896500d5281346d55144",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Mugler-Alien-Goddess-EDP-1784973669018.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Mugler-Alien-Goddess-EDP-1784973669018.webp"
+    ]
+  },
+  {
+    "did": "f541f68f00d91a82",
+    "_id": "6a64896600d5281346d55146",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Vulcan-Black-Friday-EDP-1784973669902.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Vulcan-Black-Friday-EDP-1784973669902.webp"
+    ]
+  },
+  {
+    "did": "46762394d1b966ef",
+    "_id": "6a64896700d5281346d5514a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Incense-01-by-Swiss-Arabian-1784973670741.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Incense-01-by-Swiss-Arabian-1784973670741.webp"
+    ]
+  },
+  {
+    "did": "b12ae3a1760fe590",
+    "_id": "6a64896800d5281346d5514d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Yves-Saint-Laurent-YSL-Y-Iced-Cologne-EDP-1784973671502.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Yves-Saint-Laurent-YSL-Y-Iced-Cologne-EDP-1784973671502.webp"
+    ]
+  },
+  {
+    "did": "2eb06d223ebf5b43",
+    "_id": "6a64896900d5281346d55150",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Yves-Saint-Laurent-YSL-Libre-Vanille-Couture-1784973672351.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Yves-Saint-Laurent-YSL-Libre-Vanille-Couture-1784973672351.webp"
+    ]
+  },
+  {
+    "did": "9927a063ee222639",
+    "_id": "6a64896a00d5281346d55153",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Power-of-you-1784973673298.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Power-of-you-1784973673298.webp"
+    ]
+  },
+  {
+    "did": "f864af1a8bf6473d",
+    "_id": "6a64896b00d5281346d55156",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\burberry-goddess-edp-intense-1784973674175.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\burberry-goddess-edp-intense-1784973674175.webp"
+    ]
+  },
+  {
+    "did": "af28b137d94a9e01",
+    "_id": "6a64896b00d5281346d55159",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\20260502_131517-scaled-1784973675199.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\20260502_131517-scaled-1784973675199.webp"
+    ]
+  },
+  {
+    "did": "82987847ad5ed4cf",
+    "_id": "6a64896b00d5281346d5515b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\20260502_131444-scaled-1784973675415.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\20260502_131444-scaled-1784973675415.webp"
+    ]
+  },
+  {
+    "did": "d79477749d8904cc",
+    "_id": "6a64896b00d5281346d5515e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\20260502_133835-scaled-1784973675617.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\20260502_133835-scaled-1784973675617.webp"
+    ]
+  },
+  {
+    "did": "87bce885564c4f28",
+    "_id": "6a64896b00d5281346d55160",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\20260502_134002-scaled-1784973675816.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\20260502_134002-scaled-1784973675816.webp"
+    ]
+  },
+  {
+    "did": "fb068ecfb01a07da",
+    "_id": "6a64896c00d5281346d55162",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\20260502_134127-scaled-1784973676022.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\20260502_134127-scaled-1784973676022.webp"
+    ]
+  },
+  {
+    "did": "215421ab725b1962",
+    "_id": "6a64896d00d5281346d55164",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\virgin-1784973676216.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\virgin-1784973676216.webp"
+    ]
+  },
+  {
+    "did": "9c480a86d7bf62ba",
+    "_id": "6a64896e00d5281346d55168",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\silver-1784973677319.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\silver-1784973677319.webp"
+    ]
+  },
+  {
+    "did": "d85bc765ab027268",
+    "_id": "6a64896f00d5281346d5516b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\viking-1784973678330.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\viking-1784973678330.webp"
+    ]
+  },
+  {
+    "did": "39be9f63ff786856",
+    "_id": "6a64897000d5281346d5516d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Oud-Zarian-1784973679331.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Oud-Zarian-1784973679331.webp"
+    ]
+  },
+  {
+    "did": "a6090d569d2f878a",
+    "_id": "6a64897100d5281346d55171",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\absolu-aventus-1784973680340.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\absolu-aventus-1784973680340.webp"
+    ]
+  },
+  {
+    "did": "fe3a8535017c771a",
+    "_id": "6a64897200d5281346d55174",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\image_2026-06-15_233134390-1784973681492.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\image_2026-06-15_233134390-1784973681492.webp"
+    ]
+  },
+  {
+    "did": "ee75a0f4aa205f8a",
+    "_id": "6a64897300d5281346d55177",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\la-bomba-1784973682385.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\la-bomba-1784973682385.webp"
+    ]
+  },
+  {
+    "did": "0ffdc78c98957e50",
+    "_id": "6a64897400d5281346d5517a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\invictus-edt-1784973683327.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\invictus-edt-1784973683327.webp"
+    ]
+  },
+  {
+    "did": "1ce73c1f17dff9fc",
+    "_id": "6a64897400d5281346d5517d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\le-belle-le-parfum-1784973684217.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\le-belle-le-parfum-1784973684217.webp"
+    ]
+  },
+  {
+    "did": "41ba1f1106163045",
+    "_id": "6a64897500d5281346d55181",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Liquid-Brun-Limited-Edition-1784973685078.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Liquid-Brun-Limited-Edition-1784973685078.webp"
+    ]
+  },
+  {
+    "did": "03ca1d1cc7be1e25",
+    "_id": "6a64897600d5281346d55183",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Marwa-1784973685840.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Marwa-1784973685840.webp"
+    ]
+  },
+  {
+    "did": "81615106079123ec",
+    "_id": "6a64897600d5281346d55185",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\missoni-1784973686427.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\missoni-1784973686427.webp"
+    ]
+  },
+  {
+    "did": "892f49fe76182572",
+    "_id": "6a64897700d5281346d55188",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Opulent-Dubai-1784973687028.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Opulent-Dubai-1784973687028.webp"
+    ]
+  },
+  {
+    "did": "374b24cbdb218f4b",
+    "_id": "6a64897800d5281346d5518b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Tuxedo-1-1784973687750.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Tuxedo-1-1784973687750.webp"
+    ]
+  },
+  {
+    "did": "781c7f0cb5b60fbd",
+    "_id": "6a64897900d5281346d5518e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Hermes-EDT-1784973688570.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Hermes-EDT-1784973688570.webp"
+    ]
+  },
+  {
+    "did": "dc2a966f10237922",
+    "_id": "6a64897900d5281346d55190",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\polo-67-1784973689341.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\polo-67-1784973689341.webp"
+    ]
+  },
+  {
+    "did": "60ea81e00b6604ee",
+    "_id": "6a64897a00d5281346d55193",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Blue-talisman-1784973690082.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Blue-talisman-1784973690082.webp"
+    ]
+  },
+  {
+    "did": "09e005afa1d49fa7",
+    "_id": "6a64897b00d5281346d55196",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\AMBERFUL-1784973690885.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\AMBERFUL-1784973690885.webp"
+    ]
+  },
+  {
+    "did": "b775ad66d2fd1c05",
+    "_id": "6a64897c00d5281346d55199",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Intense-Man-Pure-Parfum-1-1784973691612.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Intense-Man-Pure-Parfum-1-1784973691612.webp"
+    ]
+  },
+  {
+    "did": "5997de37bdf46acd",
+    "_id": "6a64897c00d5281346d5519c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Royal-oud-1784973692333.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Royal-oud-1784973692333.webp"
+    ]
+  },
+  {
+    "did": "995a05af28713611",
+    "_id": "6a64897d00d5281346d5519f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\The-Noir-29-1784973693115.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\The-Noir-29-1784973693115.webp"
+    ]
+  },
+  {
+    "did": "64c181e38a35821c",
+    "_id": "6a64897e00d5281346d551a2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Al-Haramain-Amber-Oud-Carbon-Edition-1784973694006.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Al-Haramain-Amber-Oud-Carbon-Edition-1784973694006.webp"
+    ]
+  },
+  {
+    "did": "0d44e19504effc1c",
+    "_id": "6a64897f00d5281346d551a5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Al-Haramain-Amber-Oud-Tobacco-Edition-1784973694730.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Al-Haramain-Amber-Oud-Tobacco-Edition-1784973694730.webp"
+    ]
+  },
+  {
+    "did": "01ce60c8c875f6c8",
+    "_id": "6a64898000d5281346d551a8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Vanilla-Diorama-1784973695455.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Vanilla-Diorama-1784973695455.webp"
+    ]
+  },
+  {
+    "did": "fddc81b78f9f4a54",
+    "_id": "6a64898000d5281346d551aa",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\ysl-babycat-1784973696172.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\ysl-babycat-1784973696172.webp"
+    ]
+  },
+  {
+    "did": "5dfbfa82e2f5d554",
+    "_id": "6a64898100d5281346d551ad",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Gucci-intense-oud-1784973696945.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Gucci-intense-oud-1784973696945.webp"
+    ]
+  },
+  {
+    "did": "037f950b887b1b6f",
+    "_id": "6a64898200d5281346d551b0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Burlington-1784973697742.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Burlington-1784973697742.webp"
+    ]
+  },
+  {
+    "did": "e22e2e8417996461",
+    "_id": "6a64898300d5281346d551b3",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Roses-and-vanille-1784973698444.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Roses-and-vanille-1784973698444.webp"
+    ]
+  },
+  {
+    "did": "fd25446dc951390f",
+    "_id": "6a64898400d5281346d551b5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\image_2026-06-15_232137502-1784973699198.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\image_2026-06-15_232137502-1784973699198.webp"
+    ]
+  },
+  {
+    "did": "3aa5af8e39cd181a",
+    "_id": "6a64898400d5281346d551b8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\amouage-outlands-1784973700172.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\amouage-outlands-1784973700172.webp"
+    ]
+  },
+  {
+    "did": "390404ddae5c7aee",
+    "_id": "6a64898500d5281346d551bb",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rayhaan-Kiss-1784973700937.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rayhaan-Kiss-1784973700937.webp"
+    ]
+  },
+  {
+    "did": "67a4e6c4376ff28e",
+    "_id": "6a64898600d5281346d551be",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Maleka-1-1784973701681.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Maleka-1-1784973701681.webp"
+    ]
+  },
+  {
+    "did": "161ca0ac3cac6dec",
+    "_id": "6a64898700d5281346d551c1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Woman-EDP-1-1784973702594.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Woman-EDP-1-1784973702594.webp"
+    ]
+  },
+  {
+    "did": "0bae2837afd62ccb",
+    "_id": "6a64898700d5281346d551c4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Club-De-Nuit-Woman-Intense-1-1784973703333.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Club-De-Nuit-Woman-Intense-1-1784973703333.webp"
+    ]
+  },
+  {
+    "did": "fb7fa65d80eff4be",
+    "_id": "6a64898800d5281346d551c7",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\nitro-red-1784973704102.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\nitro-red-1784973704102.webp"
+    ]
+  },
+  {
+    "did": "ed4958172c103f92",
+    "_id": "6a64898900d5281346d551ca",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Rasasi-Hawas-Viper-1784973704807.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Rasasi-Hawas-Viper-1784973704807.webp"
+    ]
+  },
+  {
+    "did": "65fc1897871a057b",
+    "_id": "6a64898a00d5281346d551cd",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Khadlaj-Azure-Velvet-EDP-1784973705527.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Khadlaj-Azure-Velvet-EDP-1784973705527.webp"
+    ]
+  },
+  {
+    "did": "43c0a45f6499dd7e",
+    "_id": "6a64898a00d5281346d551cf",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Afnan-Lynked-Freedom-1784973706252.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Afnan-Lynked-Freedom-1784973706252.webp"
+    ]
+  },
+  {
+    "did": "29ea3bbacfcffa1b",
+    "_id": "6a64898b00d5281346d551d2",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\afnan-9-am-dive-1784973707019.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\afnan-9-am-dive-1784973707019.webp"
+    ]
+  },
+  {
+    "did": "fdd72e987c357858",
+    "_id": "6a64898c00d5281346d551d5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Maison-Asar-Muharib-EDP-1784973707737.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Maison-Asar-Muharib-EDP-1784973707737.webp"
+    ]
+  },
+  {
+    "did": "089ac16761e47215",
+    "_id": "6a64898d00d5281346d551d8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Azzure-Aoud-1784973708517.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Azzure-Aoud-1784973708517.webp"
+    ]
+  },
+  {
+    "did": "aedf8ae8b37b995c",
+    "_id": "6a64898d00d5281346d551da",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Encre-noire-sport-scaled-1784973709415.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Encre-noire-sport-scaled-1784973709415.webp"
+    ]
+  },
+  {
+    "did": "fe3382f3086a99d6",
+    "_id": "6a64898e00d5281346d551dc",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Absolute-chill-1784973710110.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Absolute-chill-1784973710110.webp"
+    ]
+  },
+  {
+    "did": "0fcc67e8915afcb4",
+    "_id": "6a64898f00d5281346d551e0",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Guld-orchid-1784973710739.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Guld-orchid-1784973710739.webp"
+    ]
+  },
+  {
+    "did": "6c54c6a10694ee69",
+    "_id": "6a64898f00d5281346d551e3",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Ameer-Al-Oudh-Intense-Oud-1784973711381.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Ameer-Al-Oudh-Intense-Oud-1784973711381.webp"
+    ]
+  },
+  {
+    "did": "7d865328960846d4",
+    "_id": "6a64899000d5281346d551e5",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Atlas-EDP-1784973712112.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Atlas-EDP-1784973712112.webp"
+    ]
+  },
+  {
+    "did": "9e091403b78b493c",
+    "_id": "6a64899100d5281346d551e8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Riffs-momento-1784973712918.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Riffs-momento-1784973712918.webp"
+    ]
+  },
+  {
+    "did": "d3926ed0ec030aab",
+    "_id": "6a64899200d5281346d551eb",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Khadlaj-Island-Vanilla-Dunes-1784973713633.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Khadlaj-Island-Vanilla-Dunes-1784973713633.webp"
+    ]
+  },
+  {
+    "did": "b4760ee8eaa8eefa",
+    "_id": "6a64899200d5281346d551ee",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Atralia-Elixir-1784973714370.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Atralia-Elixir-1784973714370.webp"
+    ]
+  },
+  {
+    "did": "95a7b7fc312aa4cb",
+    "_id": "6a64899300d5281346d551f1",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Tahara-Vanilla-1784973715061.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Tahara-Vanilla-1784973715061.webp"
+    ]
+  },
+  {
+    "did": "94975e66d1d0e8c7",
+    "_id": "6a64899400d5281346d551f4",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Rave-Now-1784973715711.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Rave-Now-1784973715711.webp"
+    ]
+  },
+  {
+    "did": "2ac148f33412bb63",
+    "_id": "6a64899400d5281346d551f6",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Mango-ice-1784973716351.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Mango-ice-1784973716351.webp"
+    ]
+  },
+  {
+    "did": "96f7a5b371a3ca5d",
+    "_id": "6a64899500d5281346d551f8",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Maison-Asrar-Thriller-III-Extrait-1784973716917.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Maison-Asrar-Thriller-III-Extrait-1784973716917.webp"
+    ]
+  },
+  {
+    "did": "98c414bd0ebd251a",
+    "_id": "6a64899600d5281346d551fc",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Zenith-Blue-EDP-1784973717596.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Zenith-Blue-EDP-1784973717596.webp"
+    ]
+  },
+  {
+    "did": "bfb78a8c0b5c16bf",
+    "_id": "6a64899600d5281346d551ff",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\rasasi-fattan-1784973718248.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\rasasi-fattan-1784973718248.webp"
+    ]
+  },
+  {
+    "did": "0fd3036cec60ba32",
+    "_id": "6a64899700d5281346d55201",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Vulcan-Baie-1784973718887.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Vulcan-Baie-1784973718887.webp"
+    ]
+  },
+  {
+    "did": "ea8cd8042459f217",
+    "_id": "6a64899800d5281346d55203",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\French-Avenue-Safari-Breeze-Extrait-1784973719513.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\French-Avenue-Safari-Breeze-Extrait-1784973719513.webp"
+    ]
+  },
+  {
+    "did": "3a81114310ab267c",
+    "_id": "6a64899800d5281346d55205",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Afnan-Modest-Une-EDP-1784973720162.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Afnan-Modest-Une-EDP-1784973720162.webp"
+    ]
+  },
+  {
+    "did": "2bfc5cef769f6e30",
+    "_id": "6a64899900d5281346d55209",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Issey-miyake-edt-1784973720829.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Issey-miyake-edt-1784973720829.webp"
+    ]
+  },
+  {
+    "did": "d56682abbffa6cfe",
+    "_id": "6a64899a00d5281346d5520c",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Drop-1784973721530.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Drop-1784973721530.webp"
+    ]
+  },
+  {
+    "did": "eb0789fb259d9631",
+    "_id": "6a64899b00d5281346d5520f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Eros-energy-1784973722274.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Eros-energy-1784973722274.webp"
+    ]
+  },
+  {
+    "did": "6aeb968f29fe2a36",
+    "_id": "6a64899b00d5281346d55212",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\stronger-with-you-sandalwood-armani-1784973723159.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\stronger-with-you-sandalwood-armani-1784973723159.webp"
+    ]
+  },
+  {
+    "did": "822e745ad8a82422",
+    "_id": "6a64899c00d5281346d55215",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Armaf-Dunescape-EDP-1784973724118.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Armaf-Dunescape-EDP-1784973724118.webp"
+    ]
+  },
+  {
+    "did": "714c189b4a39dac9",
+    "_id": "6a64899d00d5281346d55219",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\London-1784973725005.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\London-1784973725005.webp"
+    ]
+  },
+  {
+    "did": "636ab4df248b517b",
+    "_id": "6a64899e00d5281346d5521b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Al-Haramain-Amber-Oud-Ruby-Edition-1784973725819.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Al-Haramain-Amber-Oud-Ruby-Edition-1784973725819.webp"
+    ]
+  },
+  {
+    "did": "5514c70a97f549cf",
+    "_id": "6a64899f00d5281346d5521d",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Maison-Milan-1784973726794.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Maison-Milan-1784973726794.webp"
+    ]
+  },
+  {
+    "did": "d91a01d821fad4b1",
+    "_id": "6a6489a000d5281346d55221",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lattafa-Yara-Elixir-1784973727602.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lattafa-Yara-Elixir-1784973727602.webp"
+    ]
+  },
+  {
+    "did": "ef4ab8e1f06aaa5f",
+    "_id": "6a6489a100d5281346d55224",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Angel-Dust-1784973728346.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Angel-Dust-1784973728346.webp"
+    ]
+  },
+  {
+    "did": "2573df9b6be56cfb",
+    "_id": "6a6489a100d5281346d55226",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Eshal-Musk-1784973729138.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Eshal-Musk-1784973729138.webp"
+    ]
+  },
+  {
+    "did": "a3b1238f1f01d0c3",
+    "_id": "6a6489a200d5281346d55228",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Mon-Paris-1784973729886.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Mon-Paris-1784973729886.webp"
+    ]
+  },
+  {
+    "did": "9be88c07827b6b7b",
+    "_id": "6a6489a300d5281346d5522b",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Black-opium-1784973730608.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Black-opium-1784973730608.webp"
+    ]
+  },
+  {
+    "did": "b3945a350af9c92c",
+    "_id": "6a6489a400d5281346d5522f",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Si-intense-1784973731403.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Si-intense-1784973731403.webp"
+    ]
+  },
+  {
+    "did": "2082eef09873772e",
+    "_id": "6a6489a400d5281346d55232",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Si-edp-1784973732170.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Si-edp-1784973732170.webp"
+    ]
+  },
+  {
+    "did": "18d7b29e659f8ffc",
+    "_id": "6a6489a500d5281346d55235",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\My-devotion-scaled-1784973733064.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\My-devotion-scaled-1784973733064.webp"
+    ]
+  },
+  {
+    "did": "50989e7254d75a4e",
+    "_id": "6a6489a600d5281346d55238",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Lancome-tresor-1784973733820.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Lancome-tresor-1784973733820.webp"
+    ]
+  },
+  {
+    "did": "8df24dab116e99d4",
+    "_id": "6a6489a700d5281346d5523a",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Chloe-Nomade-1784973734603.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Chloe-Nomade-1784973734603.webp"
+    ]
+  },
+  {
+    "did": "61069ef0108c58c3",
+    "_id": "6a6489a800d5281346d5523e",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Eau-vive-1784973735401.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Eau-vive-1784973735401.webp"
+    ]
+  },
+  {
+    "did": "22aee04208726b8e",
+    "_id": "6a6489a800d5281346d55240",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Sospiro-Basso-1784973736148.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Sospiro-Basso-1784973736148.webp"
+    ]
+  },
+  {
+    "did": "cca9a679397c5f96",
+    "_id": "6a6489a900d5281346d55242",
+    "errors": [
+      "imageUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\Atomic-rose-1784973736891.webp",
+      "thumbnailUrl file not found: E:\\AAAAAAA\\backend\\uploads\\products\\thumbnails\\Atomic-rose-1784973736891.webp"
+    ]
+  }
+]

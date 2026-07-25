@@ -36,7 +36,7 @@ export const RouteTransition = ({ children }) => {
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, [location.pathname, location.search]);
+  }, [location.pathname]);
 
   return (
     <>

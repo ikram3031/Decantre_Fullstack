@@ -6,6 +6,9 @@ import { useApp } from '../context/AppContext';
 import { formatBDT } from '../utils/formatCurrency';
 import { ProductCard } from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/Skeleton';
+import menuData from '../data/menuData.json';
+
+const staticBrandHierarchy = menuData.brandHierarchy || {};
 
 export const Shop = () => {
   const {
@@ -73,10 +76,75 @@ export const Shop = () => {
     [categories, products]
   );
 
-  const brandOptions = useMemo(
-    () => [{ id: 'all', name: 'All', slug: 'All', product_count: products.length }, ...brands],
-    [brands, products]
-  );
+  // Group brands into Parent-Child hierarchy (Niche / Designer -> Alphabetic Ranges -> Brand items)
+  const structuredBrandHierarchy = useMemo(() => {
+    const nicheGroups = { 'A-E': [], 'F-J': [], 'K-O': [], 'P-T': [], 'U-Z': [] };
+    const designerGroups = { 'A-E': [], 'F-J': [], 'K-O': [], 'P-T': [], 'U-Z': [] };
+    const arabianGroups = { 'A-E': [], 'F-J': [], 'K-O': [], 'P-T': [], 'U-Z': [] };
+
+    const getGroup = (char) => {
+      if (char >= 'A' && char <= 'E') return 'A-E';
+      if (char >= 'F' && char <= 'J') return 'F-J';
+      if (char >= 'K' && char <= 'O') return 'K-O';
+      if (char >= 'P' && char <= 'T') return 'P-T';
+      return 'U-Z';
+    };
+
+    if (brands && brands.length > 0) {
+      brands.forEach((b) => {
+        const name = typeof b === 'string' ? b : (b.name || b.slug || '');
+        if (!name) return;
+        const brandObj = typeof b === 'object' ? b : {};
+        const firstChar = name.trim().charAt(0).toUpperCase();
+        const groupKey = getGroup(firstChar);
+        const type = (brandObj.type || brandObj.category || '').toLowerCase();
+
+        const item = { id: brandObj.id || name, name, slug: brandObj.slug || name };
+
+        if (type.includes('arabian') || type.includes('uae')) {
+          if (!arabianGroups[groupKey].some(i => i.name === name)) arabianGroups[groupKey].push(item);
+        } else if (type.includes('designer')) {
+          if (!designerGroups[groupKey].some(i => i.name === name)) designerGroups[groupKey].push(item);
+        } else {
+          if (!nicheGroups[groupKey].some(i => i.name === name)) nicheGroups[groupKey].push(item);
+        }
+      });
+    }
+
+    const filterEmpty = (groups, fallbackStatic) => {
+      const res = {};
+      Object.keys(groups).forEach((key) => {
+        if (groups[key].length > 0) {
+          groups[key].sort((a, b) => {
+            const nameA = typeof a === 'string' ? a : (a.name || '');
+            const nameB = typeof b === 'string' ? b : (b.name || '');
+            return nameA.localeCompare(nameB);
+          });
+          res[key] = groups[key];
+        }
+      });
+      // Fallback to static data if no dynamic brands matched
+      if (Object.keys(res).length === 0 && fallbackStatic) {
+        const fallbackRes = {};
+        Object.entries(fallbackStatic).forEach(([key, names]) => {
+          fallbackRes[key] = Array.isArray(names)
+            ? names.map(n => ({ id: n, name: n, slug: n.toLowerCase().replace(/\s+/g, '-') }))
+            : [];
+        });
+        return fallbackRes;
+      }
+      return res;
+    };
+
+    return [
+      { id: 'niche', name: 'Niche Perfumes', ranges: filterEmpty(nicheGroups, staticBrandHierarchy.niche?.ranges) },
+      { id: 'designer', name: 'Designer Fragrances', ranges: filterEmpty(designerGroups, staticBrandHierarchy.designer?.ranges) },
+      { id: 'arabian', name: 'Arabian & UAE Fragrances', ranges: filterEmpty(arabianGroups, staticBrandHierarchy.arabian?.ranges) }
+    ];
+  }, [brands]);
+
+  const [expandedParents, setExpandedParents] = useState({});
+  const toggleParent = (pId) => setExpandedParents(prev => ({ ...prev, [pId]: !prev[pId] }));
 
   // Sync URL query params to state
   useEffect(() => {
@@ -103,14 +171,6 @@ export const Shop = () => {
     }
   }, [searchParam, setSearchQuery]);
 
-  useEffect(() => {
-    if (typeof fetchCategories === 'function') {
-      fetchCategories({ skip: 0, limit: 50 });
-    }
-    if (typeof fetchBrands === 'function') {
-      fetchBrands({ skip: 0, limit: 50 });
-    }
-  }, [fetchCategories, fetchBrands]);
 
   useEffect(() => {
     if (typeof fetchProducts !== 'function') return;
@@ -126,6 +186,15 @@ export const Shop = () => {
     };
     const { sortBy, order } = sortMap[sortOrder] || sortMap.newest;
 
+    // Helper to normalize slug/name comparisons (e.g., 'For Him' -> 'for-him')
+    const toSlug = (str = '') => String(str).toLowerCase().trim().replace(/\s+/g, '-');
+
+    // Find selected category object to get its ID if available
+    const selectedCategoryObj = categories.find(
+      c => c.slug === selectedCategory || c.name === selectedCategory || c.id === selectedCategory || toSlug(c.slug || c.name) === toSlug(selectedCategory)
+    );
+    const categoryVal = selectedCategoryObj ? (selectedCategoryObj.id || selectedCategoryObj.slug || selectedCategoryObj.name) : selectedCategory;
+
     const opts = {
       skip: 0,
       limit: 20,
@@ -134,10 +203,14 @@ export const Shop = () => {
     };
 
     if (selectedCategory && selectedCategory !== 'All') {
-      opts.category = selectedCategory;
+      opts.category = categoryVal;
     }
     if (brandFilters.length === 1) {
-      opts.brand = brandFilters[0];
+      const targetBrand = brandFilters[0];
+      const selectedBrandObj = brands.find(
+        b => b.slug === targetBrand || b.name === targetBrand || b.id === targetBrand || toSlug(b.slug || b.name) === toSlug(targetBrand)
+      );
+      opts.brand = selectedBrandObj ? (selectedBrandObj.id || selectedBrandObj.slug || selectedBrandObj.name) : targetBrand;
     }
     if (searchQuery) {
       opts.q = searchQuery;
@@ -153,7 +226,7 @@ export const Shop = () => {
     };
 
     loadProducts();
-  }, [fetchProducts, selectedCategory, brandFilters, searchQuery, sortOrder]);
+  }, [fetchProducts, selectedCategory, brandFilters, searchQuery, sortOrder, categories, brands]);
 
   const handleBrandToggle = (brandSlug) => {
     const params = new URLSearchParams(searchParams);
@@ -166,7 +239,7 @@ export const Shop = () => {
         params.set('brand', brandSlug);
       }
     }
-    setSearchParams(params);
+    setSearchParams(params, { preventScrollReset: true });
   };
 
   const handleCategorySelect = (categorySlug) => {
@@ -176,13 +249,13 @@ export const Shop = () => {
     } else {
       params.set('category', categorySlug);
     }
-    setSearchParams(params);
+    setSearchParams(params, { preventScrollReset: true });
   };
 
   const handleClearBrands = () => {
     const params = new URLSearchParams(searchParams);
     params.delete('brand');
-    setSearchParams(params);
+    setSearchParams(params, { preventScrollReset: true });
   };
 
   const isLight = currentTheme === 'light';
@@ -200,22 +273,26 @@ export const Shop = () => {
         <div className="space-y-3">
           <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold block">Category</span>
           <div className="space-y-2">
-            {categoryOptions.map((category) => (
-              <button
-                key={category.id || category.slug}
-                onClick={() => handleCategorySelect(category.slug)}
-                className={`w-full text-left px-4 py-3 rounded-[4px] text-xs transition-all border cursor-pointer ${
-                  selectedCategory === category.slug
-                    ? 'border-gold bg-gold/10 text-gold font-semibold'
-                    : `${isLight ? 'border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black' : 'border-white/10 text-zinc-400 hover:border-gold/30 hover:text-white'}`
-                }`}
-              >
-                {category.name}
-                {category.product_count !== undefined && category.slug !== 'All' ? (
-                  <span className="text-[10px] text-zinc-500 ml-2">({category.product_count})</span>
-                ) : null}
-              </button>
-            ))}
+            {categoryOptions.map((category) => {
+              const catSlug = category.slug ? String(category.slug).toLowerCase().trim().replace(/\s+/g, '-') : category.slug;
+              const isSelected = selectedCategory === category.slug || String(selectedCategory).toLowerCase().trim().replace(/\s+/g, '-') === catSlug;
+              return (
+                <button
+                  key={category.id || category.slug}
+                  onClick={() => handleCategorySelect(catSlug || category.slug)}
+                  className={`w-full text-left px-4 py-3 rounded-[4px] text-xs transition-all border cursor-pointer ${
+                    isSelected
+                      ? 'border-gold bg-gold/10 text-gold font-semibold'
+                      : `${isLight ? 'border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black' : 'border-white/10 text-zinc-400 hover:border-gold/30 hover:text-white'}`
+                  }`}
+                >
+                  {category.name}
+                  {category.product_count !== undefined && category.slug !== 'All' ? (
+                    <span className="text-[10px] text-zinc-500 ml-2">({category.product_count})</span>
+                  ) : null}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -230,24 +307,56 @@ export const Shop = () => {
               Clear
             </button>
           </div>
-          <div className="space-y-2">
-            {brandOptions.map((brand) => (
-              <label key={brand.id || brand.slug} className={`flex items-center gap-3 text-xs cursor-pointer ${isLight ? 'text-zinc-700' : 'text-zinc-300'}`}>
-                <input
-                  type="checkbox"
-                  checked={brand.slug === 'All' ? brandFilters.length === 0 : brandFilters.includes(brand.slug)}
-                  onChange={() => {
-                    if (brand.slug === 'All') {
-                      setBrandFilters([]);
-                      return;
-                    }
-                    handleBrandToggle(brand.slug);
-                  }}
-                  className={`h-4 w-4 accent-gold rounded-[4px] border cursor-pointer ${isLight ? 'border-zinc-300 bg-zinc-50' : 'border-white/10 bg-luxury-dark'}`}
-                />
-                <span>{brand.name}</span>
-              </label>
-            ))}
+          <div className="space-y-3">
+            {structuredBrandHierarchy.map((parent) => {
+              const isParentExpanded = expandedParents[parent.id] === true;
+              const rangeKeys = Object.keys(parent.ranges);
+              if (rangeKeys.length === 0) return null;
+
+              return (
+                <div key={parent.id} className={`border rounded-[4px] overflow-hidden ${isLight ? 'border-zinc-200 bg-zinc-50' : 'border-white/10 bg-luxury-dark/40'}`}>
+                  <button
+                    type="button"
+                    onClick={() => toggleParent(parent.id)}
+                    className="w-full flex items-center justify-between p-2.5 text-xs font-semibold text-gold cursor-pointer"
+                  >
+                    <span>{parent.name}</span>
+                    <span className="text-zinc-400 font-bold">{isParentExpanded ? '−' : '+'}</span>
+                  </button>
+
+                  {isParentExpanded && (
+                    <div className="px-3 pb-3 space-y-3 border-t border-white/5 pt-2">
+                      {rangeKeys.map((range) => (
+                        <div key={range} className="space-y-1.5">
+                          <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-mono font-semibold block border-b border-white/5 pb-0.5">
+                            Range {range}
+                          </span>
+                          <div className="space-y-1.5 pl-1">
+                            {parent.ranges[range].map((brand) => {
+                              const brandSlug = String(brand.slug || brand.name).toLowerCase().trim().replace(/\s+/g, '-');
+                              const isChecked = brandFilters.some(
+                                b => b === brand.slug || b === brand.name || String(b).toLowerCase().trim().replace(/\s+/g, '-') === brandSlug
+                              );
+                              return (
+                                <label key={brand.id || brand.name} className={`flex items-center gap-2.5 text-xs cursor-pointer ${isLight ? 'text-zinc-700' : 'text-zinc-300'}`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={() => handleBrandToggle(brand.slug || brand.name)}
+                                    className={`h-3.5 w-3.5 accent-gold rounded-[3px] border cursor-pointer ${isLight ? 'border-zinc-300 bg-zinc-50' : 'border-white/10 bg-luxury-dark'}`}
+                                  />
+                                  <span className="truncate">{brand.name}</span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 

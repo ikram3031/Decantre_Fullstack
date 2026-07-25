@@ -107,7 +107,7 @@ export const ProductCard = ({
                   : (isLight ? 'bg-zinc-100 border-zinc-200 text-zinc-600 hover:text-zinc-900' : 'bg-black/60 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700')
               }`}
             >
-              {size}
+              {String(size).replace(/-/g, ' ')}
             </button>
           ))}
         </div>

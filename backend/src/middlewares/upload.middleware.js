@@ -1,31 +1,92 @@
+import sharp from 'sharp';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
+/*
+let globalProductCount = 0;
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Determine physical folder name based on fieldname
-    let folderName = 'uploads/products';
-    if (file.fieldname === 'gallery') {
-      folderName = 'uploads/product-gallery';
-    }
+    const batchNumber = Math.floor(globalProductCount / 50) + 1;
 
-    // Auto-create folder if it doesn't exist
+    const now = new Date();
+    const year = String(now.getFullYear()).slice(-2);
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${year}${month}${day}`;
+
+    const folderName = `uploads/products/${dateStr}-batch-${batchNumber}`;
+
     if (!fs.existsSync(folderName)) {
       fs.mkdirSync(folderName, { recursive: true });
     }
 
+    req.currentBatchFolder = `${dateStr}-batch-${batchNumber}`;
     cb(null, folderName);
   },
   filename: (req, file, cb) => {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    globalProductCount++;
+
     const ext = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+    const nameWithoutExt = path.basename(file.originalname, ext).replace(/\s+/g, '-');
+    const uniqueName = `${nameWithoutExt}-${Date.now()}${ext}`;
+
+    cb(null, uniqueName);
   }
 });
 
 const multerUpload = multer({ storage });
+*/
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const now = new Date();
+    
+    // YYMMDD ফরম্যাট তৈরি (যেমন: 260726)
+    const year = String(now.getFullYear()).slice(-2); // 2026 -> 26
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // July -> 07
+    const day = String(now.getDate()).padStart(2, '0'); // 26th -> 26
+    
+    const dateFolder = `${year}${month}${day}`; // Result: "260726"
+
+    // ডাইনামিক প্যাথ: uploads/products/260726
+    const dir = path.join(process.cwd(), `uploads/products/${dateFolder}`);
+
+    // ফোল্ডার না থাকলে অটোমেটিক তৈরি করবে
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    // ফাইলের মূল এক্সটেনশন ঠিক রেখে ইউনিক নাম জেনারেট
+    const ext = path.extname(file.originalname);
+    const nameWithoutExt = path.basename(file.originalname, ext).replace(/\s+/g, '-');
+    const uniqueName = `${nameWithoutExt}-${Date.now()}${ext}`;
+    
+    cb(null, uniqueName);
+  }
+});
+
+const multerUpload = multer({ storage: storage });
+
+const compressImageFile = async (file) => {
+  if (!file?.mimetype?.startsWith('image/')) return;
+
+  const outputBuffer = await sharp(file.path)
+    .rotate()
+    .resize({
+      width: 1000,
+      height: 1000,
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .toBuffer();
+
+  await fs.promises.writeFile(file.path, outputBuffer);
+};
 
 /**
  * Wrapper middleware to process file uploads and automatically inject the 
@@ -40,28 +101,44 @@ export const upload = (fields) => {
     ? multerUpload.fields(fields) 
     : multerUpload.single(fields);
 
-  return (req, res, next) => {
-    middleware(req, res, (err) => {
+  return async (req, res, next) => {
+    middleware(req, res, async (err) => {
       if (err) return next(err);
 
-      // 1. Handle Single File Upload
-      if (req.file) {
-        const relativePath = req.file.path.replace(/\\/g, '/'); // Convert Windows backslashes
-        req.file.url = relativePath.replace(/^uploads\//, '/content/'); // e.g. /content/products/filename.jpg
-      }
+      try {
+        const filesToProcess = [];
 
-      // 2. Handle Multiple Fields Upload
-      if (req.files) {
-        Object.keys(req.files).forEach((key) => {
-          req.files[key] = req.files[key].map((file) => {
-            const relativePath = file.path.replace(/\\/g, '/');
-            file.url = relativePath.replace(/^uploads\//, '/content/');
-            return file;
+        if (req.file) {
+          filesToProcess.push(req.file);
+        }
+
+        if (req.files) {
+          Object.keys(req.files).forEach((key) => {
+            req.files[key].forEach((file) => filesToProcess.push(file));
           });
-        });
-      }
+        }
 
-      next();
+        await Promise.all(filesToProcess.map(compressImageFile));
+
+        if (req.file) {
+          const relativePath = req.file.path.replace(/\\/g, '/');
+          req.file.url = relativePath.replace(/^uploads\//, '/content/');
+        }
+
+        if (req.files) {
+          Object.keys(req.files).forEach((key) => {
+            req.files[key] = req.files[key].map((file) => {
+              const relativePath = file.path.replace(/\\/g, '/');
+              file.url = relativePath.replace(/^uploads\//, '/content/');
+              return file;
+            });
+          });
+        }
+
+        next();
+      } catch (error) {
+        next(error);
+      }
     });
   };
 };

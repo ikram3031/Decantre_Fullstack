@@ -7,7 +7,7 @@ export const validateOrderPayload = (body) => {
     return ['Request body must be a valid JSON object'];
   }
 
-  const requiredFields = ['fullName', 'phone', 'email', 'address', 'city', 'thana', 'district', 'zip'];
+  const requiredFields = ['fullName', 'phone', 'email', 'address', 'district'];
 
   requiredFields.forEach((field) => {
     const value = body[field];

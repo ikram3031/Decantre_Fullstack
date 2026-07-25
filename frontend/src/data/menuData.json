@@ -36,7 +36,7 @@
     {
       "id": "brand",
       "label": "Brand",
-      "path": "/atelier",
+      "path": "/brand",
       "categories": [
         {
           "id": "niche",
