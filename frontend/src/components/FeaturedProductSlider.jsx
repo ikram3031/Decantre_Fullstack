@@ -2,27 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import luxuryPerfumeHero from '../assets/images/luxury_perfume_hero_1784311872347.jpg';
+import perfumeUnisex from '../assets/images/perfume_unisex_1784311906469.jpg';
+import perfumeForHer from '../assets/images/perfume_for_her_1784311895919.jpg';
 
 const featuredSlides = [
   {
     title: "DECANTRE DE MAJESTÉ",
     subtitle: "The Sovereign Golden Oud",
     description: "A breathtaking encounter between golden royal saffron, deep Cambodian oud, and burnished leather. Experience the peak of luxurious scent chemistry.",
-    bgImage: '/src/assets/images/luxury_perfume_hero_1784311872347.jpg',
+    bgImage: luxuryPerfumeHero,
     productId: 'oud-imperial'
   },
   {
     title: "SAFFRON MYSTIQUE",
     subtitle: "A Sacred Alchemy",
     description: "A modern classic designed in collaboration with elite French master perfumers. Deeply sophisticated, intensely persistent, and proudly unisex.",
-    bgImage: '/src/assets/images/perfume_unisex_1784311906469.jpg',
+    bgImage: perfumeUnisex,
     productId: 'saffron-mystique'
   },
   {
     title: "NECTAR DE SAPHIR",
     subtitle: "Unmatched Feminine Grace",
     description: "Crystalline rose buds drenched in sweet golden nectar and vanilla orchid. A vibrant aura that leaves an unforgettable trail of absolute elegance.",
-    bgImage: '/src/assets/images/perfume_for_her_1784311895919.jpg',
+    bgImage: perfumeForHer,
     productId: 'nectar-de-saphir'
   }
 ];

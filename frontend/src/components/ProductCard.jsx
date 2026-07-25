@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { formatBDT } from '../utils/formatCurrency';
 import { useApp } from '../context/AppContext';
+import defaultPerfumeImage from '../assets/images/perfume_for_him_1784311883603.jpg';
 
 export const ProductCard = ({
   product,
@@ -57,11 +58,11 @@ export const ProductCard = ({
         )}
         <Link to={`/product?did=${product.id}`} className="block w-full h-full">
           <img
-            src={product.image || (product.raw && product.raw.image) || '/src/assets/images/perfume_for_him_1784311883603.jpg'}
+            src={product.image || (product.raw && product.raw.image) || defaultPerfumeImage}
             alt={product.brand || product.category || 'Perfume'}
             className={`w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={() => setImageLoaded(true)}
-            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/src/assets/images/perfume_for_him_1784311883603.jpg'; setImageLoaded(true); }}
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = defaultPerfumeImage; setImageLoaded(true); }}
           />
         </Link>
       </div>

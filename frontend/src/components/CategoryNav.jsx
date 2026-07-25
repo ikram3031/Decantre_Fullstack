@@ -1,5 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import perfumeForHim from '../assets/images/perfume_for_him_1784311883603.jpg';
+import perfumeForHer from '../assets/images/perfume_for_her_1784311895919.jpg';
+import perfumeUnisex from '../assets/images/perfume_unisex_1784311906469.jpg';
 
 export const CategoryNav = ({ setSelectedCategory }) => {
   const navigate = useNavigate();
@@ -33,7 +36,7 @@ export const CategoryNav = ({ setSelectedCategory }) => {
         >
           <div className="absolute inset-0 bg-luxury-black">
             <img 
-              src="/src/assets/images/perfume_for_him_1784311883603.jpg" 
+              src={perfumeForHim} 
               alt="For Him Category" 
               className="w-full h-full object-cover object-center opacity-70 group-hover:opacity-85 group-hover:scale-105 transition-all duration-700"
               referrerPolicy="no-referrer"
@@ -61,7 +64,7 @@ export const CategoryNav = ({ setSelectedCategory }) => {
         >
           <div className="absolute inset-0 bg-luxury-black">
             <img 
-              src="/src/assets/images/perfume_for_her_1784311895919.jpg" 
+              src={perfumeForHer} 
               alt="For Her Category" 
               className="w-full h-full object-cover object-center opacity-70 group-hover:opacity-85 group-hover:scale-105 transition-all duration-700"
               referrerPolicy="no-referrer"
@@ -89,7 +92,7 @@ export const CategoryNav = ({ setSelectedCategory }) => {
         >
           <div className="absolute inset-0 bg-luxury-black">
             <img 
-              src="/src/assets/images/perfume_unisex_1784311906469.jpg" 
+              src={perfumeUnisex} 
               alt="Unisex Category" 
               className="w-full h-full object-cover object-center opacity-70 group-hover:opacity-85 group-hover:scale-105 transition-all duration-700"
               referrerPolicy="no-referrer"

@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { logger } from "./config/logger.js";
@@ -34,8 +35,7 @@ app.use(
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
-  // Serve the WordPress uploads folder statically
-  app.use("/uploads", express.static("uploads"));
+  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
   app.use((req, res, next) => {
     logger.info({ method: req.method, path: req.originalUrl }, "route hit");

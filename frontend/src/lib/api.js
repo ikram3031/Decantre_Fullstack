@@ -20,6 +20,8 @@ export const getImageBaseUrl = () => {
   return envImgUrl ? envImgUrl.replace(/\/$/, '') : getApiBaseUrl();
 };
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
@@ -29,7 +31,19 @@ const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
     return response;
   } catch (err) {
     clearTimeout(id);
-    throw new Error('Something went wrong');
+    throw err;
+  }
+};
+
+const fetchWithRetry = async (url, options = {}, timeout = 10000, maxAttempts = 3, attempt = 1) => {
+  try {
+    return await fetchWithTimeout(url, options, timeout);
+  } catch (err) {
+    if (attempt >= maxAttempts) {
+      throw new Error('Something went wrong');
+    }
+    await delay(250 * attempt);
+    return fetchWithRetry(url, options, timeout, maxAttempts, attempt + 1);
   }
 };
 
@@ -75,11 +89,11 @@ export async function fetchProducts(opts = {}) {
       body.sortBy = sortBy;
       body.order = order;
 
-      res = await fetchWithTimeout(`${apiBaseUrl}/api/v1/products`, {
+      res = await fetchWithRetry(`${apiBaseUrl}/api/v1/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-      }, 10000);
+      }, 10000, 3);
     } else {
       // GET — simple listing + optional free-text search
       const params = new URLSearchParams();
@@ -89,7 +103,7 @@ export async function fetchProducts(opts = {}) {
       params.set('sortBy', sortBy);
       params.set('order', order);
 
-      res = await fetchWithTimeout(`${apiBaseUrl}/api/v1/products?${params.toString()}`, {}, 10000);
+      res = await fetchWithRetry(`${apiBaseUrl}/api/v1/products?${params.toString()}`, {}, 10000, 3);
     }
   } catch (err) {
     throw new Error('Something went wrong');
@@ -120,9 +134,9 @@ export async function fetchProductDetails(slugOrId) {
   const apiBaseUrl = getApiBaseUrl();
   let res;
   try {
-    res = await fetchWithTimeout(`${apiBaseUrl}/api/v1/products/${slugOrId}`, {}, 8000);
+    res = await fetchWithRetry(`${apiBaseUrl}/api/v1/products/${slugOrId}`, {}, 8000, 3);
     if (!res.ok) {
-      res = await fetchWithTimeout(`${apiBaseUrl}/api/wp/products/${slugOrId}`, {}, 8000);
+      res = await fetchWithRetry(`${apiBaseUrl}/api/wp/products/${slugOrId}`, {}, 8000, 3);
     }
   } catch (err) {
     throw new Error('Something went wrong');
@@ -154,7 +168,7 @@ export async function fetchCategories(opts = {}) {
 
   let res;
   try {
-    res = await fetchWithTimeout(`${apiBaseUrl}/api/v1/categories?skip=${skip}&limit=${limit}`, {}, 8000);
+    res = await fetchWithRetry(`${apiBaseUrl}/api/v1/categories?skip=${skip}&limit=${limit}`, {}, 8000, 3);
   } catch (err) {
     throw new Error('Something went wrong');
   }
@@ -181,7 +195,7 @@ export async function fetchBrands(opts = {}) {
 
   let res;
   try {
-    res = await fetchWithTimeout(`${apiBaseUrl}/api/v1/brands?skip=${skip}&limit=${limit}`, {}, 8000);
+    res = await fetchWithRetry(`${apiBaseUrl}/api/v1/brands?skip=${skip}&limit=${limit}`, {}, 8000, 3);
   } catch (err) {
     throw new Error('Something went wrong');
   }

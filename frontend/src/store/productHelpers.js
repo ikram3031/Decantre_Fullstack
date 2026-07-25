@@ -28,7 +28,10 @@ export const normalizeProductImage = (rawImage = '') => {
     if (imageUrl.startsWith('/wp-content')) {
       return `https://decantrebd.com${imageUrl}`;
     }
-    // Relative path for proxied static content like /content/products/... or /uploads/...
+    if (imageUrl.startsWith('/uploads') || imageUrl.startsWith('/content')) {
+      const apiBaseUrl = getApiBaseUrl();
+      return apiBaseUrl ? `${apiBaseUrl}${imageUrl}` : imageUrl;
+    }
     return imageUrl;
   }
 
