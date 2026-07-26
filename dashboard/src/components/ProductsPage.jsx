@@ -36,39 +36,39 @@ export const ProductsPage = () => {
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/products');
-      return res.data;
+      const res = await apiClient.get('/products');
+      return res.data?.data || res.data || [];
     }
   });
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/categories');
-      return res.data;
+      const res = await apiClient.get('/categories');
+      return res.data?.data || res.data || [];
     }
   });
 
   const { data: brands = [] } = useQuery({
     queryKey: ['brands'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/brands');
-      return res.data;
+      const res = await apiClient.get('/brands');
+      return res.data?.data || res.data || [];
     }
   });
 
   const { data: tags = [] } = useQuery({
     queryKey: ['tags'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/tags');
-      return res.data;
+      const res = await apiClient.get('/tags');
+      return res.data?.data || res.data || [];
     }
   });
 
   // Mutators
   const addProductMutation = useMutation({
     mutationFn: async (newProd) => {
-      const res = await apiClient.post('/api/products', newProd);
+      const res = await apiClient.post('/products', newProd);
       return res.data;
     },
     onSuccess: () => {
@@ -79,7 +79,7 @@ export const ProductsPage = () => {
 
   const updateProductMutation = useMutation({
     mutationFn: async (data) => {
-      const res = await apiClient.put(`/api/products/${data.id}`, data.updates);
+      const res = await apiClient.put(`/products/${data.id}`, data.updates);
       return res.data;
     },
     onSuccess: () => {
@@ -90,7 +90,7 @@ export const ProductsPage = () => {
 
   const deleteProductMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await apiClient.delete(`/api/products/${id}`);
+      const res = await apiClient.delete(`/products/${id}`);
       return res.data;
     },
     onSuccess: () => {
@@ -109,6 +109,17 @@ export const ProductsPage = () => {
   const [brandFilter, setBrandFilter] = useState('all');
   const [seasonFilter, setSeasonFilter] = useState('all');
   const [stockFilter, setStockFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
+
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('asc');
+    }
+  };
 
   // WordPress-style Form State
   const [formName, setFormName] = useState('');
@@ -173,18 +184,24 @@ export const ProductsPage = () => {
   // Open Form to Edit
   const handleEdit = (prod) => {
     setEditingProduct(prod);
-    setFormName(prod.name);
-    setFormDescription(prod.description);
-    setFormShortDescription(prod.shortDescription || '');
-    setFormRegularPrice(prod.regularPrice);
-    setFormSalePrice(prod.salePrice);
-    setFormSku(prod.sku);
-    setFormStockQty(prod.stockQuantity);
-    setFormStockStatus(prod.stockStatus);
-    setFormLowStockThreshold(prod.lowStockThreshold);
-    setFormCategories([...prod.categories]);
-    setFormTags([...prod.tags]);
-    setFormImages([...prod.images]);
+    setFormName(prod.name || '');
+    setFormDescription(prod.description || '');
+    setFormShortDescription(prod.shortDescription || prod.short_description || '');
+    setFormRegularPrice(prod.regularPrice ?? prod.price ?? 0);
+    setFormSalePrice(prod.salePrice ?? prod.offerPrice ?? undefined);
+    setFormSku(prod.sku || prod.did || '');
+    setFormStockQty(prod.stockQuantity ?? prod.stock_quantity ?? 0);
+    setFormStockStatus(prod.stockStatus || prod.stock_status || 'instock');
+    setFormLowStockThreshold(prod.lowStockThreshold ?? 5);
+    setFormCategories(Array.isArray(prod.categories) ? [...prod.categories] : []);
+    setFormTags(Array.isArray(prod.tags) ? [...prod.tags] : []);
+    // Support both images array, image_url string, or thumbnail_url
+    const imgs = Array.isArray(prod.images) && prod.images.length > 0
+      ? prod.images
+      : prod.image_url ? [prod.image_url]
+      : prod.thumbnail_url ? [prod.thumbnail_url]
+      : [];
+    setFormImages(imgs);
     setFormBrand(prod.brand || '');
     setFormSeason(prod.season || 'All Seasons');
     setProductDataTab('general');
@@ -235,8 +252,7 @@ export const ProductsPage = () => {
   const handleAddCategoryQuick = () => {
     const trimmed = newCatInput.trim();
     if (trimmed) {
-      // Trigger API post to categories list
-      apiClient.post('/api/categories', { name: trimmed, parentId: null }).then((res) => {
+      apiClient.post('/categories', { name: trimmed, parentId: null }).then(() => {
         queryClient.invalidateQueries({ queryKey: ['categories'] });
         setFormCategories([...formCategories, trimmed]);
         setNewCatInput('');
@@ -248,7 +264,7 @@ export const ProductsPage = () => {
   const handleAddTagQuick = () => {
     const trimmed = newTagInput.trim();
     if (trimmed) {
-      apiClient.post('/api/tags', { name: trimmed }).then((res) => {
+      apiClient.post('/tags', { name: trimmed }).then(() => {
         queryClient.invalidateQueries({ queryKey: ['tags'] });
         if (!formTags.includes(trimmed)) {
           setFormTags([...formTags, trimmed]);
@@ -274,24 +290,52 @@ export const ProductsPage = () => {
   };
 
   // Filter products logic
-  const filteredProducts = products.filter((p) => {
+  const filteredProducts = Array.isArray(products) ? products.filter((p) => {
+    const stockStatus = p.stockStatus || p.stock_status || '';
     const matchesSearch =
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.sku.toLowerCase().includes(searchTerm.toLowerCase());
+      (p.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.sku || p.did || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
-      categoryFilter === 'all' || p.categories.includes(categoryFilter);
+      categoryFilter === 'all' || (Array.isArray(p.categories) && p.categories.some(
+        (c) => (typeof c === 'string' ? c : c?.name || c?.slug || '') === categoryFilter
+      ));
 
     const matchesBrand =
-      brandFilter === 'all' || p.brand === brandFilter;
+      brandFilter === 'all' ||
+      (typeof p.brand === 'string' ? p.brand : p.brand?.name || p.brand?.slug || '') === brandFilter;
 
     const matchesSeason =
       seasonFilter === 'all' || p.season === seasonFilter;
 
     const matchesStock =
-      stockFilter === 'all' || p.stockStatus === stockFilter;
+      stockFilter === 'all' || stockStatus === stockFilter;
 
     return matchesSearch && matchesCategory && matchesBrand && matchesSeason && matchesStock;
+  }) : [];
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    const getValue = (item) => {
+      switch (sortBy) {
+        case 'price':
+          return Number(item.salePrice ?? item.offerPrice ?? item.regularPrice ?? item.price ?? 0);
+        case 'stock':
+          return Number(item.stockQuantity ?? item.stock_quantity ?? 0);
+        default:
+          return (item.name || '').toString().toLowerCase();
+      }
+    };
+
+    const valueA = getValue(a);
+    const valueB = getValue(b);
+
+    if (typeof valueA === 'number' && typeof valueB === 'number') {
+      return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+    }
+
+    if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+    if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
   });
 
   const getStockBadge = (status, qty) => {
@@ -435,8 +479,34 @@ export const ProductsPage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  {/* Stock Filter */}
+                  {/* Sort selector */}
                   <div className="md:col-span-1">
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 pointer-events-none">
+                        <ArrowUpDown className="h-4 w-4" />
+                      </span>
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-950 rounded-xl text-xs outline-none transition appearance-none cursor-pointer font-semibold text-slate-700"
+                      >
+                        <option value="name">Name</option>
+                        <option value="price">Price</option>
+                        <option value="stock">Stock</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="md:col-span-1 flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      className="w-full px-3 py-2 bg-slate-950 text-white rounded-xl text-xs font-semibold"
+                    >
+                      {sortOrder === 'asc' ? 'Asc' : 'Desc'}
+                    </button>
+                  </div>
+                  {/* Stock Filter */}
+                  <div className="md:col-span-2">
                     <div className="relative">
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 pointer-events-none">
                         <PackageCheck className="h-4 w-4" />
@@ -463,7 +533,7 @@ export const ProductsPage = () => {
                     <div className="h-8 w-8 border-3 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />
                     <span className="text-xs text-slate-500 font-semibold">Loading product database...</span>
                   </div>
-                ) : filteredProducts.length > 0 ? (
+                ) : sortedProducts.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm text-slate-600">
                       <thead className="bg-slate-50 text-xs text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
@@ -478,37 +548,44 @@ export const ProductsPage = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {filteredProducts.map((p) => (
+                        {sortedProducts.map((p) => (
                           <tr key={p.id} className="hover:bg-slate-50/50 transition">
                             <td className="px-6 py-4.5">
                               <div className="flex items-center gap-4">
                                 <img
-                                  src={p.images[0] || UNSPLASH_LIBRARY[0]}
+                                  src={
+                                    (Array.isArray(p.images) && p.images[0]) ||
+                                    p.image_url || p.thumbnail_url ||
+                                    UNSPLASH_LIBRARY[0]
+                                  }
                                   alt={p.name}
                                   className="h-12 w-12 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
                                 />
                                 <div className="min-w-0">
                                   <p className="font-bold text-slate-950 text-sm truncate">{p.name}</p>
-                                  <p className="text-slate-400 text-[10px] mt-0.5 truncate max-w-xs" dangerouslySetInnerHTML={{ __html: p.shortDescription || p.description.replace(/<[^>]*>/g, '').slice(0, 50) + '...' }} />
+                                  <p className="text-slate-400 text-[10px] mt-0.5 truncate max-w-xs" dangerouslySetInnerHTML={{ __html: (p.shortDescription || p.short_description || (p.description || '').replace(/<[^>]*>/g, '').slice(0, 50) + '...') }} />
                                 </div>
                               </div>
                             </td>
                             <td className="px-6 py-4.5 font-mono text-xs font-semibold text-slate-600">
-                              {p.sku}
+                              {p.sku || p.did || '—'}
                             </td>
                             <td className="px-6 py-4.5">
                               <div className="space-y-1">
                                 <div className="flex flex-wrap gap-1 max-w-xs">
-                                  {p.categories.map((cat) => (
-                                    <span key={cat} className="text-[9px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
-                                      {cat}
-                                    </span>
-                                  ))}
+                                  {(Array.isArray(p.categories) ? p.categories : []).map((cat, i) => {
+                                    const label = typeof cat === 'string' ? cat : cat?.name || cat?.slug || String(cat);
+                                    return (
+                                      <span key={i} className="text-[9px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
+                                        {label}
+                                      </span>
+                                    );
+                                  })}
                                 </div>
-                                {p.brand && (
+                                {(p.brand || p.brand?.name) && (
                                   <p className="text-[10px] text-amber-600 font-bold flex items-center gap-0.5">
                                     <Award className="h-3 w-3 inline" />
-                                    {p.brand}
+                                    {typeof p.brand === 'string' ? p.brand : p.brand?.name || ''}
                                   </p>
                                 )}
                               </div>
@@ -520,16 +597,16 @@ export const ProductsPage = () => {
                               </span>
                             </td>
                             <td className="px-6 py-4.5">
-                              {getStockBadge(p.stockStatus, p.stockQuantity)}
+                              {getStockBadge(p.stockStatus || p.stock_status, p.stockQuantity ?? p.stock_quantity)}
                             </td>
                             <td className="px-6 py-4.5 text-right font-mono text-xs font-bold">
-                              {p.salePrice ? (
+                              {(p.salePrice || p.offerPrice) ? (
                                 <div className="flex flex-col items-end">
-                                  <span className="text-rose-600 font-extrabold">৳{p.salePrice}</span>
-                                  <span className="text-[10px] text-slate-400 line-through font-medium">৳{p.regularPrice}</span>
+                                  <span className="text-rose-600 font-extrabold">৳{p.salePrice || p.offerPrice}</span>
+                                  <span className="text-[10px] text-slate-400 line-through font-medium">৳{p.regularPrice || p.price}</span>
                                 </div>
                               ) : (
-                                <span className="text-slate-950 font-extrabold">৳{p.regularPrice}</span>
+                                <span className="text-slate-950 font-extrabold">৳{p.regularPrice || p.price || 0}</span>
                               )}
                             </td>
                             <td className="px-6 py-4.5 text-center relative" onClick={(e) => e.stopPropagation()}>

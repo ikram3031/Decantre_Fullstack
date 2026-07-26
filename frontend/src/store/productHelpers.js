@@ -92,17 +92,37 @@ export const resolveCategoryName = (catValue) => {
 
 export const resolveBrandName = (brandValue) => {
   if (!brandValue) return '';
-  if (typeof brandValue === 'object' && brandValue !== null) {
-    return brandValue.name || brandValue.title || brandValue.slug || '';
+  if (Array.isArray(brandValue)) {
+    for (const item of brandValue) {
+      const resolved = resolveBrandName(item);
+      if (resolved) return resolved;
+    }
+    return '';
   }
+  if (typeof brandValue === 'object' && brandValue !== null) {
+    const directName = brandValue.name || brandValue.title || brandValue.slug || '';
+    if (directName) return directName;
+
+    const lookupValue = String(brandValue.id || brandValue._id || brandValue.did || '').trim();
+    if (lookupValue) {
+      const cachedList = getCachedBrands();
+      const found = cachedList.find((b) => {
+        const candidates = [b._id, b.id, b.did, b.slug, b.name, b.title];
+        return candidates.some((candidate) => String(candidate || '').trim().toLowerCase() === lookupValue.toLowerCase());
+      });
+      if (found) return found.name || found.title || found.slug || lookupValue;
+      return lookupValue;
+    }
+    return '';
+  }
+
   const strVal = String(brandValue).trim();
   if (!strVal) return '';
   const cachedList = getCachedBrands();
-  const found = cachedList.find(b => 
-    String(b._id || b.id) === strVal || 
-    String(b.slug || '').toLowerCase() === strVal.toLowerCase() || 
-    String(b.name || '').toLowerCase() === strVal.toLowerCase()
-  );
+  const found = cachedList.find((b) => {
+    const candidates = [b._id, b.id, b.did, b.slug, b.name, b.title];
+    return candidates.some((candidate) => String(candidate || '').trim().toLowerCase() === strVal.toLowerCase());
+  });
   if (found) return found.name || found.title || found.slug || strVal;
   return strVal;
 };
@@ -113,9 +133,27 @@ const normalizeCategory = (product = {}) => {
 };
 
 const normalizeBrand = (product = {}) => {
-  const brandInput = product.brand || product.brandId || product.brand_id || (Array.isArray(product.brands) && product.brands.length > 0 ? product.brands[0] : null);
-  const resolved = resolveBrandName(brandInput);
-  if (resolved) return resolved;
+  const brandCandidates = [];
+
+  if (Array.isArray(product.brands) && product.brands.length > 0) {
+    brandCandidates.push(...product.brands);
+  }
+
+  brandCandidates.push(
+    product.brand,
+    product.brandName,
+    product.brand_name,
+    product.brandInfo,
+    product.brandData,
+    product.brandId,
+    product.brand_id,
+    product.brandDetails
+  );
+
+  for (const brandInput of brandCandidates) {
+    const resolved = resolveBrandName(brandInput);
+    if (resolved) return resolved;
+  }
   
   // Fallback: extract from product name if name is in "Brand - Product" or "Brand Product" format
   if (product.name || product.title) {

@@ -19,24 +19,24 @@ export const DashboardHome = () => {
   const { data: orders = [] } = useQuery({
     queryKey: ['orders'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/orders');
-      return res.data;
+      const res = await apiClient.get('/orders');
+      return res.data?.data || res.data || [];
     }
   });
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/products');
-      return res.data;
+      const res = await apiClient.get('/products');
+      return res.data?.data || res.data || [];
     }
   });
 
   const { data: customers = [] } = useQuery({
     queryKey: ['customers'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/customers');
-      return res.data;
+      const res = await apiClient.get('/members');
+      return res.data?.data || res.data || [];
     }
   });
 

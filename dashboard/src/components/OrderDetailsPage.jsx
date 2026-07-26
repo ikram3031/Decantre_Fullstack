@@ -34,7 +34,7 @@ export const OrderDetailsPage = () => {
   const { data: order, isLoading, error } = useQuery({
     queryKey: ['order', orderId],
     queryFn: async () => {
-      const res = await apiClient.get(`/api/orders/${orderId}`);
+      const res = await apiClient.get(`/orders/${orderId}`);
       return res.data;
     }
   });
@@ -42,7 +42,7 @@ export const OrderDetailsPage = () => {
   // Mutation to update order
   const updateOrderMutation = useMutation({
     mutationFn: async (updatedData) => {
-      const res = await apiClient.put(`/api/orders/${orderId}`, updatedData);
+      const res = await apiClient.put(`/orders/${orderId}`, updatedData);
       return res.data;
     },
     onSuccess: () => {
