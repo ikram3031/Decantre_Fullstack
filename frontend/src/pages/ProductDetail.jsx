@@ -428,7 +428,7 @@ export const ProductDetail = () => {
             <div className={`p-6 border ${isLight ? 'bg-zinc-50 border-zinc-200' : 'bg-zinc-950/80 border-gold/15'} rounded-sm space-y-6`}>
               <div className="flex items-center justify-between border-b border-gold/15 pb-3">
                 <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-gold flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-gold" /> Client Olfactory Reviews
+                  <MessageSquare className="w-4 h-4 text-gold" /> Customer Reviews
                 </h3>
                 <span className="text-xs font-mono text-zinc-400">{userReviews.length} Reviews</span>
               </div>

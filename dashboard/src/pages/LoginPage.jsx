@@ -95,9 +95,14 @@ const LoginPage = () => {
 										<Mail className="h-4.5 w-4.5" />
 									</span>
 									<input
-										type="email"
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
+									id="email"
+									name="email"
+									type="email"
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									autoComplete="email"
+									autoCapitalize="none"
+									autoCorrect="off"
 										className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-slate-950 rounded-xl text-slate-950 font-sans text-sm outline-none transition duration-150 shadow-xs"
 										placeholder="name@example.com"
 									/>
@@ -121,9 +126,12 @@ const LoginPage = () => {
 										<Lock className="h-4.5 w-4.5" />
 									</span>
 									<input
-										type="password"
-										value={password}
-										onChange={(e) => setPassword(e.target.value)}
+									id="password"
+									name="password"
+									type="password"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									autoComplete="current-password"
 										className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-slate-950 rounded-xl text-slate-950 font-sans text-sm outline-none transition duration-150 shadow-xs"
 										placeholder="••••••••"
 									/>
