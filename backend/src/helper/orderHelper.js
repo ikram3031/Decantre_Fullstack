@@ -1,3 +1,5 @@
+import { OrderModel } from '../models/order.model.js';
+
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 export const validateOrderPayload = (body) => {
@@ -31,9 +33,28 @@ export const validateOrderPayload = (body) => {
   return errors;
 };
 
-export const buildOrderNumber = () => {
+export const buildOrderNumber = async () => {
   const now = new Date();
-  const datePart = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-  const randomPart = Math.floor(100000 + Math.random() * 900000);
-  return `ORD-${datePart}-${randomPart}`;
+  const shortYear = String(now.getFullYear()).slice(-2);
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const prefix = `D${shortYear}${month}`;
+
+  const lastOrder = await OrderModel.findOne({
+    orderNumber: { $regex: `^${prefix}` }
+  })
+    .sort({ orderNumber: -1 })
+    .select('orderNumber')
+    .lean();
+
+  let nextSequence = 1;
+  if (lastOrder?.orderNumber) {
+    const existingSuffix = lastOrder.orderNumber.slice(prefix.length);
+    const parsed = parseInt(existingSuffix, 10);
+    if (!Number.isNaN(parsed)) {
+      nextSequence = parsed + 1;
+    }
+  }
+
+  const paddedSequence = String(nextSequence).padStart(3, '0');
+  return `${prefix}${paddedSequence}`;
 };

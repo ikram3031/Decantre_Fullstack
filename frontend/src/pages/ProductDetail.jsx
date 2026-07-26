@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { formatBDT } from '../utils/formatCurrency';
-import { mapRemoteProduct } from '../store/productHelpers';
+import { mapRemoteProduct, resolveBrandName, resolveCategoryName } from '../store/productHelpers';
 import { fetchProductDetails, fetchProducts } from '../lib/api';
 import { MoreProducts } from '../components/sections/MoreProducts';
 import { 
@@ -238,29 +238,6 @@ export const ProductDetail = () => {
                   referrerPolicy="no-referrer"
                 />
               </div>
-
-              {/* Decant Volume Thumbnails */}
-              {decantSwatches.length > 0 && (
-                <div className="grid grid-cols-4 gap-2.5">
-                  {decantSwatches.map((swatch) => (
-                    <button
-                      key={swatch.size}
-                      onClick={() => setSelectedSize(swatch.size)}
-                      className={`p-2 rounded-lg border text-center transition-all cursor-pointer flex flex-col items-center justify-between ${
-                        selectedSize === swatch.size
-                          ? 'border-gold bg-gold/15 text-gold font-bold shadow-md'
-                          : isLight 
-                            ? 'border-zinc-200 bg-zinc-50 text-zinc-600 hover:border-zinc-400' 
-                            : 'border-white/10 bg-zinc-900 text-zinc-400 hover:border-gold/30'
-                      }`}
-                    >
-                      <span className="text-[10px] font-mono font-bold">{swatch.label}</span>
-                      <span className="text-[8px] text-gold font-mono block">{formatBDT(swatch.price)}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-
             </div>
           </div>
 
@@ -270,18 +247,16 @@ export const ProductDetail = () => {
             {/* Category Link, Title & Brand */}
             <div className="space-y-2.5 border-b border-gold/15 pb-6">
               <Link
-                to={`/shop?category=${encodeURIComponent(product.category || 'All')}`}
-                className="text-[10px] uppercase tracking-[0.25em] text-gold font-sans font-bold hover:underline inline-block"
+                to={`/shop?category=${encodeURIComponent(resolveCategoryName(product.category) || 'All')}`}
+                className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.25em] text-gold hover:underline"
               >
-                Category: {product.category || 'Luxury Fragrance'}
+                {resolveCategoryName(product.category)}
               </Link>
-              
-              <h1 className={`text-2xl sm:text-4xl font-serif font-light tracking-wide ${isLight ? 'text-black' : 'text-white'}`}>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-medium leading-tight tracking-tight">
                 {product.name}
               </h1>
-
               <span className="text-xs uppercase tracking-widest text-zinc-400 font-sans font-medium block">
-                Brand: <strong className="text-gold font-semibold">{product.brand || 'Decantre'}</strong>
+                Brand: <strong className="text-gold font-semibold">{resolveBrandName(product.brand)}</strong>
               </span>
 
               {/* Star Rating */}

@@ -243,12 +243,32 @@ export const useAppStore = create((set, get) => {
     setIsCartOpen: (isOpen) => set((state) => ({
       isCartOpen: typeof isOpen === 'function' ? isOpen(state.isCartOpen) : isOpen
     })),
-    setUser: (user) => {
+    accessToken: localStorage.getItem('luxury_access_token') || null,
+    refreshToken: localStorage.getItem('luxury_refresh_token') || null,
+    setTokens: (accessToken, refreshToken) => {
+      set({ accessToken, refreshToken });
+      if (accessToken) {
+        localStorage.setItem('luxury_access_token', accessToken);
+      } else {
+        localStorage.removeItem('luxury_access_token');
+      }
+      if (refreshToken) {
+        localStorage.setItem('luxury_refresh_token', refreshToken);
+      } else {
+        localStorage.removeItem('luxury_refresh_token');
+      }
+    },
+    setUser: (user, tokens = null) => {
       set({ user });
       if (user) {
         localStorage.setItem('luxury_user', JSON.stringify(user));
       } else {
         localStorage.removeItem('luxury_user');
+      }
+      if (tokens) {
+        get().setTokens(tokens.accessToken, tokens.refreshToken);
+      } else if (user === null) {
+        get().setTokens(null, null);
       }
     },
     setAuthModal: (isOpen, mode = 'login') => set({

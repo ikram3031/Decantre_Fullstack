@@ -793,5 +793,14 @@ const mockAdapter = async (config) => {
 };
 
 export const apiClient = axios.create({
-  adapter: mockAdapter
+  baseURL: 'http://localhost:5092/api/v1',
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('admin_token');
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });

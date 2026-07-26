@@ -20,6 +20,8 @@ const userSchema = new Schema(
     passwordHash: { type: String, required: true, trim: true, select: false },
     refreshToken: { type: String, select: false },
     refreshTokenExpiresAt: { type: Date, select: false },
+    emailOtp: { type: String, trim: true, select: false },
+    emailOtpExpiresAt: { type: Date, select: false },
     role: { type: String, required: true, enum: USER_ROLES, default: "Store_manager" },
     isActive: { type: Boolean, default: true },
   },
@@ -34,6 +36,10 @@ const userSchema = new Schema(
         }
         delete ret._id;
         delete ret.passwordHash;
+        delete ret.emailOtp;
+        delete ret.emailOtpExpiresAt;
+        delete ret.refreshToken;
+        delete ret.refreshTokenExpiresAt;
         return ret;
       },
     },

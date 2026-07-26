@@ -1,6 +1,6 @@
-# Auth API Documentation
+# Users API Documentation
 
-This document describes the authentication endpoints for the backend.
+This document describes the users collection endpoints for the backend.
 
 ## Base URL
 
@@ -8,99 +8,150 @@ This document describes the authentication endpoints for the backend.
 http://localhost:4000/api/v1
 ```
 
-## Endpoints
+## Base Path
 
-### Login
-
-**Method:** POST
-
-**URL:** `/api/v1/auth/login`
-
-### Request Body
-
-```json
-{
-  "email": "admin@example.com",
-  "password": "securePassword123"
-}
-```
-
-### Success Response
-
-```json
-{
-  "status": "success",
-  "data": {
-    "user": {
-      "id": "64a8c9b3f8e3a5c1d2e7f0a1",
-      "name": "Admin User",
-      "email": "admin@example.com",
-      "role": "Super_Admin"
-    },
-    "accessToken": "<jwt-access-token>",
-    "refreshToken": "<refresh-token>"
-  }
-}
-```
-
-### Refresh Token
-
-**Method:** POST
-
-**URL:** `/api/v1/auth/refresh-token`
-
-### Request Body
-
-```json
-{
-  "refreshToken": "<refresh-token>"
-}
-```
-
-### Success Response
-
-```json
-{
-  "status": "success",
-  "data": {
-    "accessToken": "<new-jwt-access-token>",
-    "refreshToken": "<new-refresh-token>"
-  }
-}
-```
-
-### Logout
-
-**Method:** POST
-
-**URL:** `/api/v1/auth/logout`
-
-### Request Body
-
-```json
-{
-  "refreshToken": "<refresh-token>"
-}
-```
-
-### Success Response
-
-```json
-{
-  "status": "success",
-  "message": "Logged out successfully"
-}
-```
+`/api/v1/users`
 
 ## Notes
 
-- `accessToken` is a JWT used for authenticated requests.
-- Include JWT in secured requests with the header:
+These endpoints require a valid JWT token in the `Authorization` header:
 
 ```http
 Authorization: Bearer <accessToken>
 ```
 
-- `refreshToken` is a long-lived token issued at login and used to obtain a new access token.
-- Use `/api/v1/auth/refresh-token` when the access token expires.
-- Use `/api/v1/auth/logout` to invalidate the refresh token.
+## Endpoints
+
+### List Users
+
+**Method:** GET
+
+**URL:** `/api/v1/users`
+
+### Success Response
+
+```json
+{
+  "data": [
+    {
+      "id": "64a8c9b3f8e3a5c1d2e7f0a1",
+      "name": "Admin User",
+      "email": "admin@example.com",
+      "role": "Super_Admin",
+      "isActive": true,
+      "did": "user-did-123",
+      "createdAt": "2026-07-26T12:34:56.789Z",
+      "updatedAt": "2026-07-26T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get User by ID
+
+**Method:** GET
+
+**URL:** `/api/v1/users/:userId`
+
+### Success Response
+
+```json
+{
+  "data": {
+    "id": "64a8c9b3f8e3a5c1d2e7f0a1",
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "role": "Super_Admin",
+    "isActive": true,
+    "did": "user-did-123",
+    "createdAt": "2026-07-26T12:34:56.789Z",
+    "updatedAt": "2026-07-26T12:34:56.789Z"
+  }
+}
+```
+
+### Create User
+
+**Method:** POST
+
+**URL:** `/api/v1/users`
+
+### Request Body
+
+```json
+{
+  "name": "Admin User",
+  "email": "admin@example.com",
+  "password": "securePassword123",
+  "role": "Store_manager"
+}
+```
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "data": {
+    "id": "64a8c9b3f8e3a5c1d2e7f0a1",
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "role": "Store_manager",
+    "isActive": true,
+    "did": "user-did-123",
+    "createdAt": "2026-07-26T12:34:56.789Z",
+    "updatedAt": "2026-07-26T12:34:56.789Z"
+  }
+}
+```
+
+### Update User
+
+**Method:** PUT
+
+**URL:** `/api/v1/users/:userId`
+
+### Request Body
+
+```json
+{
+  "name": "Admin User Updated",
+  "email": "admin-updated@example.com",
+  "role": "Admin",
+  "password": "newSecurePassword123",
+  "isActive": true
+}
+```
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "data": {
+    "id": "64a8c9b3f8e3a5c1d2e7f0a1",
+    "name": "Admin User Updated",
+    "email": "admin-updated@example.com",
+    "role": "Admin",
+    "isActive": true,
+    "did": "user-did-123",
+    "createdAt": "2026-07-26T12:34:56.789Z",
+    "updatedAt": "2026-07-26T12:45:00.123Z"
+  }
+}
+```
+
+### Delete User
+
+**Method:** DELETE
+
+**URL:** `/api/v1/users/:userId`
+
+### Success Response
+
+```json
+{
+  "status": "success",
+  "message": "User deleted successfully"
+}
+```

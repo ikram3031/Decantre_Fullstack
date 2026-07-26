@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { formatBDT } from '../utils/formatCurrency';
 import { useApp } from '../context/AppContext';
+import { resolveBrandName, resolveCategoryName } from '../store/productHelpers';
 import defaultPerfumeImage from '../assets/images/perfume_for_him_1784311883603.jpg';
 
 export const ProductCard = ({
@@ -72,8 +73,8 @@ export const ProductCard = ({
         <div className="space-y-1">
           {/* Category / Brand Row */}
           <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.15em] font-sans font-semibold text-gold">
-            <span className="truncate max-w-[60%]">{product.brand || product.category || 'Fragrance'}</span>
-            <span className="text-zinc-400 font-normal truncate max-w-[38%] text-right">{product.category || 'Luxury'}</span>
+            <span className="truncate max-w-[60%]">{resolveBrandName(product.brand) || resolveCategoryName(product.category) || 'Fragrance'}</span>
+            <span className="text-zinc-400 font-normal truncate max-w-[38%] text-right">{resolveCategoryName(product.category)}</span>
           </div>
 
           {/* Product Name - 3 lines reserved */}

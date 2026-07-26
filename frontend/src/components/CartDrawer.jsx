@@ -44,101 +44,110 @@ export const CartDrawer = ({
         </div>
 
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-white/5 flex items-center justify-between bg-luxury-black">
+        <div className="p-3 sm:p-4 border-b border-white/5 flex items-center justify-between bg-luxury-black">
           <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gold shrink-0" />
-            <h2 className="text-[10px] sm:text-sm font-sans font-semibold tracking-wide sm:tracking-widest text-luxury-white uppercase truncate">
+            <h2 className="text-[10px] sm:text-xs font-sans font-semibold tracking-wide sm:tracking-widest text-luxury-white uppercase truncate">
               Your Cart
             </h2>
-            <span className="bg-gold/10 text-gold text-[9px] sm:text-[10px] font-sans font-semibold rounded-sm px-2 sm:px-2.5 py-0.5 ml-0.5 sm:ml-1 border border-gold/20 shrink-0">
+            <span className="bg-gold/10 text-gold text-[9px] sm:text-[10px] font-sans font-semibold rounded-sm px-2 py-0.5 ml-0.5 border border-gold/20 shrink-0">
               {cart.reduce((sum, item) => sum + item.quantity, 0)}
             </span>
           </div>
           <button 
             onClick={() => { setIsCartOpen(false); setIsCheckoutMode(false); }}
-            className="p-1.5 text-gold hover:text-white rounded-full bg-luxury-dark border-2 border-gold hover:border-gold transition-colors shrink-0 cursor-pointer"
+            className="p-1 text-gold hover:text-white rounded-full bg-luxury-dark border border-gold hover:border-gold transition-colors shrink-0 cursor-pointer"
           >
-            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Middle Section: Scrollable Items or Checkout Form */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3">
           
           {!isCheckoutMode ? (
             /* CART LIST VIEW */
             cart.length === 0 ? (
-              <div className="text-center py-20 space-y-4">
-                <ShoppingBag className="w-10 h-10 text-zinc-800 mx-auto" />
+              <div className="text-center py-12 space-y-3">
+                <ShoppingBag className="w-8 h-8 text-zinc-800 mx-auto" />
                 <p className="text-zinc-400 font-light text-xs font-serif">Your cart is currently empty.</p>
                 <p className="text-[10px] text-zinc-600">Select a signature scent from our list to fill your collection.</p>
                 <button 
                   onClick={() => setIsCartOpen(false)}
-                  className="mt-6 bg-transparent hover:bg-gold text-gold hover:text-black border border-gold text-[10px] font-sans font-bold tracking-widest uppercase py-3 px-6 rounded-sm transition-all cursor-pointer"
+                  className="mt-4 bg-transparent hover:bg-gold text-gold hover:text-black border border-gold text-[10px] font-sans font-bold tracking-widest uppercase py-2.5 px-5 rounded-sm transition-all cursor-pointer"
                 >
                   Browse Decants
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-2.5">
                 {cart.map((item) => (
                   <div 
                     key={item.id} 
                     id={`cart-item-${item.id}`}
-                    className="flex gap-4 p-4 bg-zinc-900/90 border border-zinc-700/60 hover:border-gold/30 rounded-sm relative group transition-all text-left shadow-md"
+                    className="p-2.5 bg-zinc-900/90 border border-zinc-800 rounded-sm relative group transition-all text-left shadow-md"
                   >
-                    {/* Remove item absolute x */}
-                    <button
-                      onClick={() => handleRemoveFromCart(item.id)}
-                      className="absolute top-3 right-3 text-zinc-400 hover:text-rose-400 p-1 border border-zinc-500 hover:border-rose-400 rounded-sm hover:bg-black transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                    
-                    {/* Product Thumbnail */}
-                    <div className="w-20 h-20 rounded-sm bg-black overflow-hidden shrink-0 border border-white/5">
-                      <img 
-                        src={item.product.image} 
-                        alt={item.product.name} 
-                        className="w-full h-full object-cover"
-                        referrerPolicy="no-referrer"
-                      />
+                    <div className="flex gap-2.5">
+                      {/* Product Thumbnail */}
+                      <div className="w-14 h-14 rounded-sm bg-black overflow-hidden shrink-0 border border-white/10">
+                        <img 
+                          src={item.product.image} 
+                          alt={item.product.name} 
+                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+
+                      {/* Item details */}
+                      <div className="flex-1 min-w-0 pr-6">
+                        <h4 className="text-xs font-sans font-semibold tracking-wide text-zinc-100 uppercase truncate">
+                          {item.product.name}
+                        </h4>
+                        
+                        <div className="flex items-center gap-1 text-[10px] text-gold font-sans mt-0.5">
+                          <span>{item.size}</span>
+                          {item.concentration && (
+                            <>
+                              <span className="text-zinc-600">•</span>
+                              <span className="truncate">{item.concentration}</span>
+                            </>
+                          )}
+                        </div>
+
+                        <div className="text-xs font-serif text-gold mt-0.5">
+                          {formatBDT(item.unitPrice)}
+                        </div>
+                      </div>
+
+                      {/* Remove button top right */}
+                      <button
+                        onClick={() => handleRemoveFromCart(item.id)}
+                        className="absolute top-2 right-2 text-zinc-400 hover:text-rose-400 p-1 border border-zinc-700 hover:border-rose-400 rounded-sm bg-black/50 transition-colors cursor-pointer shrink-0"
+                        aria-label="Remove item"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
 
-                    {/* Item specifics */}
-                    <div className="flex-1 space-y-1">
-                      <h4 className="text-xs font-sans font-semibold tracking-wider text-zinc-200 uppercase pr-6">
-                        {item.product.name}
-                      </h4>
-                      <div className="flex flex-wrap gap-x-2 text-[9px] text-gold font-sans font-light">
-                        <span>{item.size}</span>
-                        <span>•</span>
-                        <span>{item.concentration}</span>
-                      </div>
-                      <div className="text-xs font-serif font-light text-gold pt-1">
-                        {formatBDT(item.unitPrice)} <span className="text-[9px] text-zinc-500 font-sans">each</span>
-                      </div>
-
-                      {/* Qty selectors */}
-                      <div className="flex items-center gap-3 pt-2">
-                        <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-sans">Qty</span>
-                        <div className="flex items-center border border-white/5 bg-black rounded-sm overflow-hidden">
-                          <button 
-                            onClick={() => handleUpdateQty(item.id, -1)}
-                            className="p-1 px-2 text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
-                          >
-                            <Minus className="w-2.5 h-2.5" />
-                          </button>
-                          <span className="px-2 text-xs font-semibold text-zinc-200 select-none">
-                            {item.quantity}
-                          </span>
-                          <button 
-                            onClick={() => handleUpdateQty(item.id, 1)}
-                            className="p-1 px-2 text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
-                          >
-                            <Plus className="w-2.5 h-2.5" />
-                          </button>
-                        </div>
+                    {/* Quantity controls at bottom */}
+                    <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/5">
+                      <span className="text-[9px] text-zinc-400 uppercase tracking-wider font-sans">Quantity</span>
+                      <div className="flex items-center border border-zinc-700 bg-black rounded-sm overflow-hidden">
+                        <button 
+                          onClick={() => handleUpdateQty(item.id, -1)}
+                          className="px-2 py-0.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+                        >
+                          <Minus className="w-2.5 h-2.5" />
+                        </button>
+                        <span className="px-2 text-xs font-semibold text-zinc-200 select-none">
+                          {item.quantity}
+                        </span>
+                        <button 
+                          onClick={() => handleUpdateQty(item.id, 1)}
+                          className="px-2 py-0.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+                        >
+                          <Plus className="w-2.5 h-2.5" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -366,39 +375,33 @@ export const CartDrawer = ({
 
         {/* Bottom Footer Section: Pricing calculations (Hidden once order is complete) */}
         {!orderCompleted && cart.length > 0 && (
-          <div className="p-4 sm:p-6 bg-luxury-black border-t border-white/5 space-y-4 w-full max-w-full overflow-hidden">
-            
-
-
-            {/* Pricing Recalcs */}
-            <div className="space-y-2 text-xs font-sans font-light text-zinc-400 border-t border-white/5 pt-3 text-left">
-              <div className="flex justify-between items-center text-xs font-semibold text-luxury-white font-sans tracking-widest">
-                <span>CART TOTAL</span>
-                <span className="text-gold text-base font-bold font-mono">{formatBDT(Math.max(0, cartSubtotal - discountAmount))}</span>
-              </div>
+          <div className="p-3 sm:p-4 bg-[#080808] border-t border-white/10 space-y-2.5 w-full max-w-full overflow-hidden">
+            <div className="flex justify-between items-center gap-3 text-[11px] sm:text-xs font-sans uppercase tracking-[0.2em] text-zinc-400">
+              <span className="font-semibold text-zinc-300">Cart Total</span>
+              <span className="text-gold text-base font-bold font-mono">{formatBDT(Math.max(0, cartSubtotal - discountAmount))}</span>
             </div>
 
             {/* Primary Button action */}
             {!isCheckoutMode ? (
-              <div className="space-y-2">
+              <div className="grid gap-2">
                 <button
                   onClick={() => {
                     setIsCartOpen(false);
                     navigate('/checkout');
                   }}
-                  className="w-full bg-gold text-black hover:bg-gold/90 font-sans font-bold uppercase tracking-[0.25em] text-[11px] py-3.5 rounded-sm transition-all duration-300 shadow-xl flex items-center justify-center gap-2 group cursor-pointer"
+                  className="w-full h-10 bg-gold text-black hover:bg-gold/90 font-sans font-bold uppercase tracking-[0.2em] text-[10px] sm:text-[11px] rounded-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Proceed to Checkout</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <span className="whitespace-nowrap">Proceed to Checkout</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => {
                     setIsCartOpen(false);
                     navigate('/cart');
                   }}
-                  className="w-full bg-transparent border border-white/20 text-zinc-300 hover:text-white hover:border-gold/60 font-sans font-bold uppercase tracking-[0.2em] text-[10px] py-2.5 rounded-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full h-10 bg-zinc-950 border border-zinc-700 text-zinc-300 hover:border-gold/50 hover:text-white font-sans font-bold uppercase tracking-[0.2em] text-[10px] sm:text-[11px] rounded-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>View Full Cart</span>
+                  <span className="whitespace-nowrap">View Full Cart</span>
                 </button>
               </div>
             ) : null}

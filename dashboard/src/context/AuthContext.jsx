@@ -21,14 +21,24 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiClient.post('/api/login', { email, password });
-      const { token, user: loggedUser } = response.data;
-      
-      localStorage.setItem('admin_token', token);
+      const response = await apiClient.post('/auth/login', { email, password });
+      const json = response.data || {};
+      const { accessToken, refreshToken, user: loggedUser } = json.data || {};
+
+      if (!accessToken || !loggedUser) {
+        const msg = json?.message || 'Invalid login response from server';
+        setError(msg);
+        throw new Error(msg);
+      }
+
+      localStorage.setItem('admin_token', accessToken);
+      if (refreshToken) {
+        localStorage.setItem('admin_refresh_token', refreshToken);
+      }
       localStorage.setItem('admin_user', JSON.stringify(loggedUser));
       setUser(loggedUser);
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to login';
+      const msg = err.response?.data?.message || err.message || 'Failed to login';
       setError(msg);
       throw new Error(msg);
     } finally {

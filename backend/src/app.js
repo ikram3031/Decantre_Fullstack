@@ -9,6 +9,7 @@ import emailRouter from "./routes/EmailRoute.js";
 import ordersRouter from "./routes/OrdersRoute.js";
 import usersRouter from "./routes/UsersRoute.js";
 import authRouter from "./routes/AuthRoute.js";
+import membersRouter from "./routes/MembersRoute.js";
 // import exportRouter from "./routes/ExportRoute.js";
 import categoriesRouter from "./routes/CategoryRoute.js";
 import brandRouter from "./routes/BrandRoute.js";
@@ -52,6 +53,7 @@ app.use(
   // app.use("/api/v1/export", exportRouter);
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/users", usersRouter);
+  app.use("/api/v1/members", membersRouter);
   app.use("/api/v1/sendEmail", emailRouter);
   app.use("/api/v1/orders", ordersRouter);
   app.use("/api/v1/categories", categoriesRouter);

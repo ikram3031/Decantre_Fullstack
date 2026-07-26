@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { buildOrderNumber, validateOrderPayload } from '../helper/orderHelper.js';
 import { OrderModel } from '../models/order.model.js';
+import { MemberModel } from '../models/member.model.js';
 
 const { Types } = mongoose;
 
@@ -18,8 +19,11 @@ export const createOrder = async (req, res, next) => {
     }
 
     const orderData = {
-      orderNumber: buildOrderNumber(),
+      orderNumber: await buildOrderNumber(),
       status: 'received',
+      createdBy: payload.createdBy?.trim() || '',
+      updatedBy: '',
+      member: payload.memberId && Types.ObjectId.isValid(payload.memberId) ? payload.memberId : undefined,
       customer: {
         fullName: payload.fullName.trim(),
         phone: payload.phone.trim(),
@@ -49,6 +53,17 @@ export const createOrder = async (req, res, next) => {
     };
 
     const createdOrder = await OrderModel.create(orderData);
+
+    if (orderData.member) {
+      const memberUpdates = { $addToSet: { orders: createdOrder._id } };
+      if (payload.billingInfo && typeof payload.billingInfo === 'object') {
+        memberUpdates.$set = { ...(memberUpdates.$set || {}), billingInfo: payload.billingInfo };
+      }
+      if (payload.shippingInfo && typeof payload.shippingInfo === 'object') {
+        memberUpdates.$set = { ...(memberUpdates.$set || {}), shippingInfo: payload.shippingInfo };
+      }
+      await MemberModel.findByIdAndUpdate(orderData.member, memberUpdates, { new: true, runValidators: true });
+    }
 
     return res.status(201).json({
       status: 'success',
@@ -135,6 +150,9 @@ export const updateOrder = async (req, res, next) => {
     }
     if (payload.totals) {
       allowedUpdates.totals = payload.totals;
+    }
+    if (payload.updatedBy !== undefined) {
+      allowedUpdates.updatedBy = payload.updatedBy?.trim() || '';
     }
 
     const order = await OrderModel.findByIdAndUpdate(orderId, allowedUpdates, {

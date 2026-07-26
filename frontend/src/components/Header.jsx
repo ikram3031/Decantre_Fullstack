@@ -271,27 +271,13 @@ export const Header = ({
           {/* Search Icon */}
           <button 
             onClick={() => setIsSearchPanelOpen(true)}
-            className="hidden sm:flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
+            className="flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
             aria-label="Search"
           >
             <Search className="w-5 h-5 text-gold" />
           </button>
 
-          {/* Wishlist Icon */}
-          <button 
-            onClick={() => navigate('/wishlist')}
-            className="hidden sm:flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
-            aria-label="Wishlist"
-          >
-            <Heart className={`w-5 h-5 text-gold ${wishlist.length > 0 ? 'fill-gold' : ''}`} />
-            {wishlist.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-gold text-black rounded-full text-[9px] w-4 h-4 font-bold flex items-center justify-center shadow-md animate-pulse">
-                {wishlist.length}
-              </span>
-            )}
-          </button>
-
-          {/* Cart Icon - Replaced with pure Bag Icon, no text, no button background */}
+          {/* Cart Icon */}
           <button 
             id="header-cart-btn"
             onClick={() => setIsCartOpen(true)}
@@ -305,27 +291,6 @@ export const Header = ({
               </span>
             )}
           </button>
-
-          {/* Profile / Login Icon Next to Cart (Login icon in same gold color if not logged in) */}
-          {user ? (
-            <button 
-              onClick={() => setAuthModal(true, 'profile')}
-              className="hidden sm:flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
-              title={`Profile (${user.name})`}
-              aria-label="User Profile"
-            >
-              <User className="w-5 h-5 text-gold" />
-            </button>
-          ) : (
-            <button 
-              onClick={() => setAuthModal(true, 'login')}
-              className="hidden sm:flex p-1.5 text-gold hover:text-white transition-colors relative cursor-pointer items-center justify-center"
-              title="Login"
-              aria-label="User Login"
-            >
-              <LogIn className="w-5 h-5 text-gold" />
-            </button>
-          )}
         </div>
       </div>
 
@@ -720,46 +685,49 @@ export const Header = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -80 }}
             transition={{ type: 'tween', duration: 0.35, ease: 'easeInOut' }}
-            className="fixed top-0 inset-x-0 bg-[#0a0a0a] text-zinc-100 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.85)] py-8 sm:py-12 px-4 sm:px-6 border-b border-gold/30"
+            className="fixed top-0 inset-x-0 bg-[#0a0a0a] text-zinc-100 z-50 shadow-[0_15px_40px_rgba(0,0,0,0.85)] py-6 sm:py-8 px-4 sm:px-6 border-b border-gold/30"
           >
-            <div className="max-w-4xl mx-auto relative">
-              {/* Close Button */}
-              <button 
-                onClick={() => setIsSearchPanelOpen(false)}
-                className="absolute top-[-10px] sm:top-[-16px] right-1 sm:right-0 p-2 text-gold hover:text-white hover:bg-gold/10 border border-gold/40 rounded-full transition-colors cursor-pointer"
-                aria-label="Close search"
-              >
-                <X className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.5]" />
-              </button>
+            <div className="max-w-4xl mx-auto relative pt-2">
+              {/* Header inside search panel */}
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs uppercase tracking-[0.25em] font-serif text-gold font-semibold">
+                  Search Fragrances
+                </span>
+                <button 
+                  onClick={() => setIsSearchPanelOpen(false)}
+                  className="p-1.5 text-gold hover:text-white hover:bg-gold/10 border border-gold/40 rounded-full transition-colors cursor-pointer"
+                  aria-label="Close search"
+                >
+                  <X className="w-5 h-5 stroke-[1.5]" />
+                </button>
+              </div>
 
-              <div className="max-w-3xl mx-auto pt-2 sm:pt-4">
-                {/* Form Row */}
-                <div className="flex flex-row items-stretch border border-gold/40 focus-within:border-gold rounded-sm overflow-hidden shadow-lg">
-                  {/* Search Input */}
-                  <div className="relative flex-grow flex items-center bg-black">
-                    <input 
-                      type="text"
-                      placeholder={`Search "${placeholderText || 'Search'}"...`}
-                      value={localSearchVal}
-                      onChange={(e) => setLocalSearchVal(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handlePerformSearch();
-                        }
-                      }}
-                      className="w-full px-5 py-3.5 sm:py-4 text-xs sm:text-sm font-sans font-light placeholder-zinc-500 focus:outline-none bg-black text-zinc-100 border-none"
-                    />
-                  </div>
-
-                  {/* Search Button */}
-                  <button
-                    onClick={handlePerformSearch}
-                    className="bg-gold hover:bg-gold/80 text-black transition-all px-5 sm:px-8 py-3.5 sm:py-4 flex items-center justify-center gap-2 text-xs uppercase tracking-[0.25em] font-sans font-bold cursor-pointer shrink-0 border-none"
-                  >
-                    <Search className="w-4 h-4 shrink-0" />
-                    <span className="hidden sm:inline">Search</span>
-                  </button>
+              {/* Form Row */}
+              <div className="flex flex-row items-stretch border border-gold/40 focus-within:border-gold rounded-sm overflow-hidden shadow-lg">
+                {/* Search Input */}
+                <div className="relative flex-grow flex items-center bg-black">
+                  <input 
+                    type="text"
+                    placeholder={`Search "${placeholderText || 'Search'}"...`}
+                    value={localSearchVal}
+                    onChange={(e) => setLocalSearchVal(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handlePerformSearch();
+                      }
+                    }}
+                    className="w-full px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-sans font-light placeholder-zinc-500 focus:outline-none bg-black text-zinc-100 border-none"
+                  />
                 </div>
+
+                {/* Search Button */}
+                <button
+                  onClick={handlePerformSearch}
+                  className="bg-gold hover:bg-gold/80 text-black transition-all px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-bold cursor-pointer shrink-0 border-none"
+                >
+                  <Search className="w-4 h-4 shrink-0" />
+                  <span className="hidden sm:inline">Search</span>
+                </button>
               </div>
             </div>
           </motion.div>

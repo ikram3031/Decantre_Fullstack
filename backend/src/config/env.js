@@ -10,7 +10,8 @@ const envSchema = z.object({
   MONGODB_DB_NAME: z.string().min(1).default("perfume-store"),
   ACCESS_TOKEN_SECRET: z.string().min(20, "ACCESS_TOKEN_SECRET is required"),
   ACCESS_TOKEN_EXPIRES_IN: z.string().default("15m"),
-  REFRESH_TOKEN_EXPIRES_MS: z.coerce.number().int().positive().default(30 * 24 * 60 * 60 * 1000)
+  REFRESH_TOKEN_EXPIRES_MS: z.coerce.number().int().positive().default(30 * 24 * 60 * 60 * 1000),
+  ALLOW_SUPER_ADMIN_CREATION: z.coerce.boolean().default(false),
 });
 
 const parsed = envSchema.safeParse(process.env);
