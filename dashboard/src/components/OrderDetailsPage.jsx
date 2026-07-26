@@ -279,7 +279,7 @@ export const OrderDetailsPage = () => {
                     
                     {/* Item Price and Subtotal Breakdown */}
                     <div className="flex items-center gap-3 mt-2 text-xs text-slate-500 font-medium">
-                      <span>৳{item.price.toFixed(2)} each</span>
+                      <span>৳{Number(item.price || 0).toFixed(2)} each</span>
                       <span>•</span>
                       <span className="font-bold text-slate-800 font-mono">
                         Qty: {item.quantity}
@@ -317,7 +317,7 @@ export const OrderDetailsPage = () => {
                     </div>
                   ) : (
                     <div className="text-right self-center font-mono text-xs font-bold text-slate-950">
-                      ৳{(item.price * item.quantity).toFixed(2)}
+                      ৳{(Number(item.price || 0) * Number(item.quantity || 1)).toFixed(2)}
                     </div>
                   )}
                 </div>
@@ -329,7 +329,7 @@ export const OrderDetailsPage = () => {
               <div className="flex justify-between text-xs text-slate-500 font-medium">
                 <span>Subtotal</span>
                 <span className="font-mono font-bold text-slate-800">
-                  ৳{(!isEditing ? order.total : editItems.reduce((sum, item) => sum + item.price * item.quantity, 0)).toFixed(2)}
+                  ৳{Number(!isEditing ? (order.total || 0) : editItems.reduce((sum, item) => sum + (Number(item.price || 0) * Number(item.quantity || 1)), 0)).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-xs text-slate-500 font-medium">
@@ -340,7 +340,7 @@ export const OrderDetailsPage = () => {
               <div className="flex justify-between items-center">
                 <span className="text-sm font-bold text-slate-950">Total Order Amount</span>
                 <span className="text-lg font-black text-slate-950 font-mono">
-                  ৳{(!isEditing ? order.total : editItems.reduce((sum, item) => sum + item.price * item.quantity, 0)).toFixed(2)}
+                  ৳{Number(!isEditing ? (order.total || 0) : editItems.reduce((sum, item) => sum + (Number(item.price || 0) * Number(item.quantity || 1)), 0)).toFixed(2)}
                 </span>
               </div>
             </div>

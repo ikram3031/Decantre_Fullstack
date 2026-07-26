@@ -329,7 +329,7 @@ export const CustomersPage = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4.5 text-right font-mono text-xs font-bold text-emerald-700">
-                        ৳{totalSpent.toFixed(2)}
+                        ৳{Number(totalSpent || 0).toFixed(2)}
                       </td>
                       <td className="px-6 py-4.5 text-center">
                         <div className="flex items-center justify-center gap-2">

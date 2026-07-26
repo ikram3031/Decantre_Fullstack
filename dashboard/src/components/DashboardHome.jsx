@@ -28,7 +28,8 @@ export const DashboardHome = () => {
     queryKey: ['products'],
     queryFn: async () => {
       const res = await apiClient.get('/products');
-      return res.data?.data || res.data || [];
+      const data = res.data?.data || res.data || [];
+      return Array.isArray(data) ? data : [];
     }
   });
 
@@ -43,7 +44,7 @@ export const DashboardHome = () => {
   // Calculate high-level stats
   const totalRevenue = orders
     .filter((o) => o.status === 'completed' || o.status === 'processing')
-    .reduce((sum, o) => sum + o.total, 0);
+    .reduce((sum, o) => sum + Number(o.totals?.total ?? o.total ?? 0), 0);
 
   const pendingOrdersCount = orders.filter((o) => o.status === 'pending').length;
   const processingOrdersCount = orders.filter((o) => o.status === 'processing').length;
@@ -51,7 +52,7 @@ export const DashboardHome = () => {
   const stats = [
     {
       name: 'Total Revenue',
-      value: `$${totalRevenue.toLocaleString()}`,
+      value: `৳${totalRevenue.toLocaleString()}`,
       icon: DollarSign,
       color: 'bg-emerald-50 text-emerald-700 border-emerald-100',
       description: 'From completed & processing orders'
@@ -159,11 +160,11 @@ export const DashboardHome = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {orders.slice(0, 4).map((order) => (
-                  <tr key={order.id} className="hover:bg-slate-50/50 transition">
+                  <tr key={order._id || order.id} className="hover:bg-slate-50/50 transition">
                     <td className="px-6 py-4.5">
                       <Link
                         to="/orders/$orderId"
-                        params={{ orderId: order.id }}
+                        params={{ orderId: order._id || order.id }}
                         className="font-mono text-xs font-bold text-slate-900 hover:underline"
                       >
                         {order.orderNumber}
@@ -171,13 +172,17 @@ export const DashboardHome = () => {
                     </td>
                     <td className="px-6 py-4.5">
                       <div>
-                        <p className="font-semibold text-slate-900 text-xs">{order.customerName}</p>
-                        <p className="text-[10px] text-slate-400 font-mono mt-0.5">{order.customerEmail}</p>
+                        <p className="font-semibold text-slate-900 text-xs">
+                          {order.customerName || order.customer?.fullName || order.customer?.name || 'Guest Customer'}
+                        </p>
+                        <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                          {order.customerEmail || order.customer?.email || 'N/A'}
+                        </p>
                       </div>
                     </td>
                     <td className="px-6 py-4.5">{getStatusBadge(order.status)}</td>
                     <td className="px-6 py-4.5 text-right text-xs font-bold text-slate-900 font-mono">
-                      ${order.total.toFixed(2)}
+                      ৳{Number(order.totals?.total ?? order.total ?? 0).toFixed(2)}
                     </td>
                   </tr>
                 ))}

@@ -124,13 +124,12 @@ export const DashboardLayout = ({ children }) => {
             </button>
             
             {/* Quick Search */}
-            <div className="hidden md:flex items-center gap-2.5 max-w-sm w-64 bg-slate-100 border border-slate-200/50 px-3 py-1.5 rounded-xl text-slate-400">
+            <div className="hidden md:flex items-center gap-2.5 max-w-sm w-64 bg-slate-100 border border-slate-200/50 px-3 py-1.5 rounded-xl text-slate-400 focus-within:border-slate-400 focus-within:bg-white transition">
               <Search className="h-4 w-4 shrink-0" />
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder="Search orders, products..."
                 className="bg-transparent border-0 outline-none text-xs text-slate-900 w-full placeholder-slate-400"
-                disabled
               />
               <span className="text-[10px] bg-white border border-slate-200 px-1.5 py-0.5 rounded-md font-mono text-slate-500 shadow-xs">
                 ⌘K
@@ -139,13 +138,13 @@ export const DashboardLayout = ({ children }) => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl relative transition">
+            <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl relative transition" title="Notifications">
               <Bell className="h-4.5 w-4.5" />
               <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-rose-600 rounded-full border border-white" />
             </button>
 
             <a
-              href="https://images.unsplash.com"
+              href="http://localhost:8001"
               target="_blank"
               rel="noreferrer"
               className="hidden sm:flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/50 transition"

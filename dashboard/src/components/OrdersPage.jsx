@@ -27,6 +27,14 @@ import {
   ShoppingBag as CartIcon
 } from 'lucide-react';
 import { Badge } from './ui/Badge';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from './ui/table';
 
 export const OrdersPage = () => {
   const navigate = useNavigate();
@@ -37,7 +45,8 @@ export const OrdersPage = () => {
     queryKey: ['orders'],
     queryFn: async () => {
       const res = await apiClient.get('/orders');
-      return res.data;
+      const data = res.data?.data || res.data || [];
+      return Array.isArray(data) ? data : [];
     }
   });
 
@@ -45,7 +54,8 @@ export const OrdersPage = () => {
     queryKey: ['products'],
     queryFn: async () => {
       const res = await apiClient.get('/products');
-      return res.data;
+      const data = res.data?.data || res.data || [];
+      return Array.isArray(data) ? data : [];
     }
   });
 
@@ -320,13 +330,13 @@ export const OrdersPage = () => {
               <tr>
                 <td>${item.name}${item.size ? ` (${item.size})` : ''}</td>
                 <td class="text-right">${item.quantity}</td>
-                <td class="text-right">$${item.price.toFixed(2)}</td>
-                <td class="text-right">$${(item.price * item.quantity).toFixed(2)}</td>
+                <td class="text-right">৳${Number(item.price || 0).toFixed(2)}</td>
+                <td class="text-right">৳${(Number(item.price || 0) * Number(item.quantity || 1)).toFixed(2)}</td>
               </tr>
             `).join('')}
             <tr class="total-row">
-              <td colspan="2">TOTAL</td>
-              <td colspan="2" class="text-right">$${order.total.toFixed(2)}</td>
+              <td colspan="3" class="text-right">Total Amount:</td>
+              <td colspan="2" class="text-right">৳${Number(order.total || 0).toFixed(2)}</td>
             </tr>
           </tbody>
         </table>
@@ -444,17 +454,17 @@ export const OrdersPage = () => {
               <tr class="item">
                 <td>
                   <strong>${item.name}${item.size ? ` (${item.size})` : ''}</strong><br>
-                  <span style="font-size: 11px; color: #777;">Qty: ${item.quantity} @ $${item.price.toFixed(2)} each</span>
+                  <span style="font-size: 11px; color: #777;">Qty: ${item.quantity} @ ৳${Number(item.price || 0).toFixed(2)} each</span>
                 </td>
                 <td style="text-align: right;">
-                  $${(item.price * item.quantity).toFixed(2)}
+                  ৳${(Number(item.price || 0) * Number(item.quantity || 1)).toFixed(2)}
                 </td>
               </tr>
             `).join('')}
             
             <tr class="total">
               <td></td>
-              <td>Total: $${order.total.toFixed(2)}</td>
+              <td>Total: ৳${Number(order.total || 0).toFixed(2)}</td>
             </tr>
           </table>
           
@@ -600,11 +610,11 @@ export const OrdersPage = () => {
                     <div>
                       <p className="font-bold text-slate-800">{item.name}</p>
                       <p className="text-[10px] text-slate-400 mt-0.5 font-mono">
-                        Qty: {item.quantity} @ ${item.price.toFixed(2)} each
+                        Qty: {item.quantity} @ ৳{Number(item.price || 0).toFixed(2)} each
                       </p>
                     </div>
                     <span className="font-mono font-bold text-slate-950">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ৳{(Number(item.price || 0) * Number(item.quantity || 1)).toFixed(2)}
                     </span>
                   </div>
                 ))}
@@ -614,7 +624,7 @@ export const OrdersPage = () => {
             {/* Total */}
             <div className="border-t border-slate-200/60 pt-5 flex justify-between items-center">
               <span className="text-sm font-bold text-slate-800">Total Amount Charged</span>
-              <span className="text-lg font-mono font-black text-slate-950">${successOrder.total.toFixed(2)}</span>
+              <span className="text-lg font-mono font-black text-slate-950">৳{Number(successOrder.total || 0).toFixed(2)}</span>
             </div>
           </div>
 
@@ -817,7 +827,7 @@ export const OrdersPage = () => {
                           </div>
                           <div className="flex items-baseline justify-between gap-1 mt-1">
                             <span className="text-xs font-black text-slate-950">
-                              ৳{price.toFixed(2)}
+                              ৳{Number(price || 0).toFixed(2)}
                             </span>
                             
                             {availableStock <= 0 ? (
@@ -906,7 +916,7 @@ export const OrdersPage = () => {
                           <div className="min-w-0 flex-1">
                             <p className="text-xs font-bold text-slate-900 truncate">{item.product.name}</p>
                             <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-                              {item.selectedVariant ? `Size: ${item.selectedVariant.size}` : 'Standard'} · ৳{itemPrice.toFixed(2)}
+                              {item.selectedVariant ? `Size: ${item.selectedVariant.size}` : 'Standard'} · ৳{Number(itemPrice || 0).toFixed(2)}
                             </p>
                           </div>
                           
@@ -1133,72 +1143,78 @@ export const OrdersPage = () => {
             <span className="text-xs text-slate-500 font-semibold">Retrieving orders...</span>
           </div>
         ) : paginatedOrders.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-xs text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
-                <tr>
-                  <th className="px-6 py-4">Order</th>
-                  <th className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition select-none" onClick={() => handleSort('date')}>
-                    <div className="flex items-center gap-1.5">
-                      Date
-                      <ArrowUpDown className="h-3 w-3 text-slate-400" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-4">Customer</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Items</th>
-                  <th className="px-6 py-4 text-right cursor-pointer hover:bg-slate-100 transition select-none" onClick={() => handleSort('total')}>
-                    <div className="flex items-center justify-end gap-1.5">
-                      Total
-                      <ArrowUpDown className="h-3 w-3 text-slate-400" />
-                    </div>
-                  </th>
-                  <th className="px-6 py-4 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {paginatedOrders.map((order) => (
-                  <tr
-                    key={order.id}
-                    className="hover:bg-slate-50/50 transition duration-150 group cursor-pointer"
-                    onClick={() => navigate({ to: '/orders/$orderId', params: { orderId: order.id } })}
-                  >
-                    <td className="px-6 py-4.5 font-mono text-xs font-bold text-slate-950">
-                      {order.orderNumber}
-                    </td>
-                    <td className="px-6 py-4.5 text-xs text-slate-500 font-mono">
-                      {new Date(order.date).toLocaleDateString(undefined, {
+          <Table>
+            <TableHeader className="bg-slate-50">
+              <TableRow>
+                <TableHead className="w-[120px]">Order</TableHead>
+                <TableHead className="cursor-pointer hover:bg-slate-100 transition select-none" onClick={() => handleSort('date')}>
+                  <div className="flex items-center gap-1.5">
+                    Date
+                    <ArrowUpDown className="h-3 w-3 text-slate-400" />
+                  </div>
+                </TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Items</TableHead>
+                <TableHead className="text-right cursor-pointer hover:bg-slate-100 transition select-none" onClick={() => handleSort('total')}>
+                  <div className="flex items-center justify-end gap-1.5">
+                    Total
+                    <ArrowUpDown className="h-3 w-3 text-slate-400" />
+                  </div>
+                </TableHead>
+                <TableHead className="text-center w-[80px]">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedOrders.map((order) => (
+                <TableRow
+                  key={order._id || order.id}
+                  className="cursor-pointer"
+                  onClick={() => navigate({ to: '/orders/$orderId', params: { orderId: order._id || order.id } })}
+                >
+                  <TableCell className="font-mono text-xs font-bold text-slate-950">
+                    {order.orderNumber}
+                  </TableCell>
+                  <TableCell className="text-xs text-slate-500 font-mono">
+                    {(() => {
+                      const rawDate = order.date || order.createdAt;
+                      if (!rawDate) return '—';
+                      const parsed = new Date(rawDate);
+                      return isNaN(parsed.getTime()) ? '—' : parsed.toLocaleDateString(undefined, {
                         year: 'numeric',
                         month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </td>
-                    <td className="px-6 py-4.5">
-                      <div>
-                        <p className="font-bold text-slate-900 text-xs">{order.customerName}</p>
-                        <p className="text-[10px] text-slate-400 font-mono mt-0.5">{order.customerEmail}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4.5">{getStatusBadge(order.status)}</td>
-                    <td className="px-6 py-4.5">
-                      <span className="text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200/50 px-2 py-0.5 rounded-md font-mono">
-                        {order.items.reduce((sum, item) => sum + item.quantity, 0)} Items
-                      </span>
-                    </td>
-                    <td className="px-6 py-4.5 text-right font-mono text-xs font-bold text-slate-950">
-                      ৳{order.total.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4.5 text-center relative" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center justify-center">
-                        <button
-                          onClick={() => setOpenMenuId(openMenuId === order.id ? null : order.id)}
-                          className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition hover:text-slate-900 cursor-pointer"
-                          title="Actions"
-                        >
-                          <MoreVertical className="h-4.5 w-4.5" />
-                        </button>
+                        day: 'numeric'
+                      });
+                    })()}
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <p className="font-bold text-slate-900 text-xs">
+                        {order.customerName || order.customer?.fullName || order.customer?.name || 'Guest Customer'}
+                      </p>
+                      <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        {order.customerEmail || order.customer?.email || 'N/A'}
+                      </p>
+                    </div>
+                  </TableCell>
+                  <TableCell>{getStatusBadge(order.status)}</TableCell>
+                  <TableCell>
+                    <span className="text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200/50 px-2 py-0.5 rounded-md font-mono">
+                      {(Array.isArray(order.items) ? order.items : []).reduce((sum, item) => sum + Number(item.quantity || 1), 0)} Items
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-xs font-bold text-slate-950">
+                    ৳{Number(order.totals?.total ?? order.total ?? 0).toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-center relative" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-center">
+                      <button
+                        onClick={() => setOpenMenuId(openMenuId === order.id ? null : order.id)}
+                        className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition hover:text-slate-900 cursor-pointer"
+                        title="Actions"
+                      >
+                        <MoreVertical className="h-4.5 w-4.5" />
+                      </button>
 
                         {openMenuId === order.id && (
                           <>
@@ -1289,12 +1305,11 @@ export const OrdersPage = () => {
                           </>
                         )}
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </TableBody>
+            </Table>
         ) : (
           <div className="py-20 text-center flex flex-col items-center justify-center gap-2">
             <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100 text-slate-400">

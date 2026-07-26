@@ -23,7 +23,8 @@ import {
   MoreVertical,
   Award,
   Calendar,
-  Layers
+  Layers,
+  ArrowUpDown
 } from 'lucide-react';
 import { Badge } from './ui/Badge';
 import { TaxonomyManager } from './TaxonomyManager';
@@ -37,7 +38,8 @@ export const ProductsPage = () => {
     queryKey: ['products'],
     queryFn: async () => {
       const res = await apiClient.get('/products');
-      return res.data?.data || res.data || [];
+      const data = res.data?.data || res.data || [];
+      return Array.isArray(data) ? data : [];
     }
   });
 
@@ -45,7 +47,29 @@ export const ProductsPage = () => {
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await apiClient.get('/categories');
-      return res.data?.data || res.data || [];
+      const data = res.data?.data || res.data || [];
+      const catList = Array.isArray(data) ? data : [];
+      
+      // Store did and name in localStorage for instant mapping
+      try {
+        const catMap = {};
+        catList.forEach((c) => {
+          if (c.did && c.name) {
+            catMap[c.did] = c.name;
+          }
+          if (c.id && c.name) {
+            catMap[c.id] = c.name;
+          }
+          if (c._id && c.name) {
+            catMap[c._id] = c.name;
+          }
+        });
+        localStorage.setItem('category_did_map', JSON.stringify(catMap));
+      } catch (err) {
+        console.error('Error caching categories in localStorage:', err);
+      }
+      
+      return catList;
     }
   });
 
@@ -341,13 +365,29 @@ export const ProductsPage = () => {
   const getStockBadge = (status, qty) => {
     switch (status) {
       case 'instock':
-        return <Badge variant="success">In Stock ({qty})</Badge>;
+        return (
+          <span className="flex w-25 justify-center items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-900 text-white shadow-xs">
+            In Stock
+          </span>
+        );
       case 'outofstock':
-        return <Badge variant="danger">Out of Stock</Badge>;
+        return (
+          <span className="flex w-25 justify-center items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-600 text-white shadow-xs">
+            Out of Stock
+          </span>
+        );
       case 'onbackorder':
-        return <Badge variant="warning">On Backorder ({qty})</Badge>;
+        return (
+          <span className="flex w-25 justify-center items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-white shadow-xs">
+            On Backorder
+          </span>
+        );
       default:
-        return <Badge variant="neutral">{status}</Badge>;
+        return (
+          <span className="flex w-25 justify-center items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-600 text-white shadow-xs">
+            {status}
+          </span>
+        );
     }
   };
 
@@ -538,32 +578,46 @@ export const ProductsPage = () => {
                     <table className="w-full text-left text-sm text-slate-600">
                       <thead className="bg-slate-50 text-xs text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
                         <tr>
-                          <th className="px-6 py-4">Product</th>
+                          <th className="px-6 py-4 w-[280px] max-w-[280px]">Product</th>
                           <th className="px-6 py-4">SKU</th>
-                          <th className="px-6 py-4">Taxonomy</th>
-                          <th className="px-6 py-4">Season</th>
+                          <th className="px-6 py-4">Category</th>
                           <th className="px-6 py-4">Stock Status</th>
                           <th className="px-6 py-4 text-right">Price</th>
                           <th className="px-6 py-4 text-center">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {sortedProducts.map((p) => (
-                          <tr key={p.id} className="hover:bg-slate-50/50 transition">
-                            <td className="px-6 py-4.5">
-                              <div className="flex items-center gap-4">
+                        {sortedProducts.map((p) => {
+                          let cachedCatMap = {};
+                          try {
+                            cachedCatMap = JSON.parse(localStorage.getItem('category_did_map') || '{}');
+                          } catch (e) {}
+
+                          return (
+                          <tr key={p.id || p._id} className="hover:bg-slate-50/50 transition">
+                            <td className="px-6 py-4.5 w-[280px] max-w-[280px]">
+                              <div className="flex items-center gap-3 min-w-0">
                                 <img
-                                  src={
-                                    (Array.isArray(p.images) && p.images[0]) ||
-                                    p.image_url || p.thumbnail_url ||
-                                    UNSPLASH_LIBRARY[0]
-                                  }
+                                  src={(() => {
+                                    const raw = (Array.isArray(p.images) && p.images.length > 0
+                                      ? (typeof p.images[0] === 'string' ? p.images[0] : p.images[0]?.src || p.images[0]?.url)
+                                      : null) || p.image_url || p.thumbnail_url || p.image;
+                                    if (!raw || typeof raw !== 'string') return UNSPLASH_LIBRARY[0];
+                                    if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:')) return raw;
+                                    const backendHost = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:5092';
+                                    const baseUrl = backendHost.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
+                                    return `${baseUrl}${raw.startsWith('/') ? '' : '/'}${raw}`;
+                                  })()}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = UNSPLASH_LIBRARY[0];
+                                  }}
                                   alt={p.name}
-                                  className="h-12 w-12 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
+                                  className="h-10 w-10 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
                                 />
-                                <div className="min-w-0">
-                                  <p className="font-bold text-slate-950 text-sm truncate">{p.name}</p>
-                                  <p className="text-slate-400 text-[10px] mt-0.5 truncate max-w-xs" dangerouslySetInnerHTML={{ __html: (p.shortDescription || p.short_description || (p.description || '').replace(/<[^>]*>/g, '').slice(0, 50) + '...') }} />
+                                <div className="min-w-0 flex-1 overflow-hidden">
+                                  <p className="font-bold text-slate-950 text-xs truncate" title={p.name}>{p.name}</p>
+                                  <p className="text-slate-400 text-[10px] mt-0.5 truncate" title={(p.shortDescription || p.short_description || p.description || '').replace(/<[^>]*>/g, '')} dangerouslySetInnerHTML={{ __html: (p.shortDescription || p.short_description || (p.description || '').replace(/<[^>]*>/g, '').slice(0, 50) + '...') }} />
                                 </div>
                               </div>
                             </td>
@@ -571,32 +625,19 @@ export const ProductsPage = () => {
                               {p.sku || p.did || '—'}
                             </td>
                             <td className="px-6 py-4.5">
-                              <div className="space-y-1">
-                                <div className="flex flex-wrap gap-1 max-w-xs">
-                                  {(Array.isArray(p.categories) ? p.categories : []).map((cat, i) => {
-                                    const label = typeof cat === 'string' ? cat : cat?.name || cat?.slug || String(cat);
-                                    return (
-                                      <span key={i} className="text-[9px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
-                                        {label}
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                                {(p.brand || p.brand?.name) && (
-                                  <p className="text-[10px] text-amber-600 font-bold flex items-center gap-0.5">
-                                    <Award className="h-3 w-3 inline" />
-                                    {typeof p.brand === 'string' ? p.brand : p.brand?.name || ''}
-                                  </p>
-                                )}
+                              <div className="flex flex-wrap gap-1 max-w-xs">
+                                {(Array.isArray(p.categories) ? p.categories : [p.categories].filter(Boolean)).map((cat, i) => {
+                                  const didKey = typeof cat === 'string' ? cat : cat?.did || cat?.id || cat?._id;
+                                  const categoryName = cachedCatMap[didKey] || (typeof cat === 'string' ? (categories.find(c => c.did === cat || c.id === cat)?._name || cat) : cat?.name || cat?.slug || String(cat));
+                                  return (
+                                    <span key={i} className="text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200/60 px-2 py-0.5 rounded-md">
+                                      {categoryName}
+                                    </span>
+                                  );
+                                })}
                               </div>
                             </td>
-                            <td className="px-6 py-4.5">
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-700 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded-full font-mono">
-                                <Calendar className="h-3 w-3 text-teal-600" />
-                                {p.season || 'All Seasons'}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4.5">
+                            <td className="p-2">
                               {getStockBadge(p.stockStatus || p.stock_status, p.stockQuantity ?? p.stock_quantity)}
                             </td>
                             <td className="px-6 py-4.5 text-right font-mono text-xs font-bold">
@@ -651,7 +692,8 @@ export const ProductsPage = () => {
                               </div>
                             </td>
                           </tr>
-                        ))}
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
