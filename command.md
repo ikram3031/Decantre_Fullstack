@@ -90,9 +90,13 @@ docker compose -f docker-compose.dev.yml build --no-cache && docker compose -f d
 docker ps
 ```
 
-## 6. Notes
+## 7. MongoDB User Collection Drop & Super Admin Setup
 
-- The backend service is expected to run on port `5092`.
-- The frontend is configured to use the backend API on `http://144.79.218.126:5092`.
-- The dashboard also uses the same backend API endpoint.
-- Keep the `/opt/dev/uploads` directory writable so uploaded files can be stored correctly.
+```bash
+# Drop users collection in MongoDB container
+docker exec -it decantre-mongodb-dev mongosh -u admin -p 11223345 --authenticationDatabase admin --eval "db.getSiblingDB('perfume-store').users.drop()"
+
+# Re-create / update Super Admin user
+docker exec -it decantre-backend-dev node scripts/create-super-admin.js
+```
+

@@ -44,7 +44,7 @@ const LoginPage = () => {
 
 	useEffect(() => {
 		const loginEmail = "ikramul.web@gmail.com";
-		const loginPassword = "11223344";
+		const loginPassword = "111223344";
 		setEmail(loginEmail);
 		setPassword(loginPassword);
 	}, []);

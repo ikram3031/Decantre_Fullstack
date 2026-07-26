@@ -7,22 +7,21 @@ const name = "Developer";
 const password = "111223344";
 const role = "Super_Admin";
 
-async function createSuperAdmin() {
+const createSuperAdmin = async () => {
   try {
     await connectDatabase();
 
+    const passwordHash = await hashPassword(password);
     const existing = await UserModel.findOne({ email: email.toLowerCase().trim() });
     if (existing) {
-      console.log(`User with email ${email} already exists.`);
-      if (existing.role !== role) {
-        existing.role = role;
-        await existing.save();
-        console.log(`Updated existing user to role ${role}.`);
-      }
+      existing.role = role;
+      existing.passwordHash = passwordHash;
+      existing.isActive = true;
+      await existing.save();
+      console.log(`✅ Updated existing user ${email} password and role to ${role}.`);
       return;
     }
 
-    const passwordHash = await hashPassword(password);
     const user = await UserModel.create({
       name: name.trim(),
       email: email.toLowerCase().trim(),
@@ -44,6 +43,6 @@ async function createSuperAdmin() {
   } finally {
     await closeDatabase();
   }
-}
+};
 
 createSuperAdmin();
