@@ -318,10 +318,10 @@ export const AuthModal = () => {
           {/* Title Header */}
           <div className="text-center mb-8">
             <span className="text-[10px] uppercase tracking-[0.3em] text-gold font-sans font-semibold block mb-2">
-              Decantre Security
+              Decantre
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif font-light text-white tracking-widest uppercase">
-              {mode === 'profile' ? 'My Profile' : mode === 'otp' ? 'OTP Verification' : mode === 'login' ? 'Account Sign In' : 'Create Account'}
+              {mode === 'profile' ? 'My Profile' : mode === 'otp' ? 'OTP Verification' : mode === 'login' ? 'Member Login' : 'Become a Member'}
             </h2>
           </div>
 
@@ -502,7 +502,7 @@ export const AuthModal = () => {
 
               <div className="space-y-1.5">
                 <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-semibold block">
-                  Password Key
+                  Password
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
@@ -548,7 +548,7 @@ export const AuthModal = () => {
                   ) : (
                     <>
                       <ShieldCheck className="w-4 h-4" />
-                      <span>{mode === 'login' ? 'Request Session Entry' : 'Create Member Credentials'}</span>
+                      <span>{mode === 'login' ? 'Log In' : 'Become a Member'}</span>
                     </>
                   )}
                 </button>
@@ -562,7 +562,7 @@ export const AuthModal = () => {
                     onClick={() => setMode('register')}
                     className="text-[10px] uppercase tracking-widest text-zinc-500 hover:text-gold transition-colors font-sans cursor-pointer bg-transparent border-none outline-none"
                   >
-                    Don't have credentials? <span className="text-gold font-bold underline">Register here</span>
+                    Don't have an account? <span className="text-gold font-bold underline">Register here</span>
                   </button>
                 ) : (
                   <button

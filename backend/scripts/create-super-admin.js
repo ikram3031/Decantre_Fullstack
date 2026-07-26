@@ -2,8 +2,8 @@ import { connectDatabase, closeDatabase } from "../src/database/index.js";
 import { UserModel } from "../src/models/user.model.js";
 import { hashPassword } from "../src/utils/password.js";
 
-const email = "plexivia@gmail.com";
-const name = "Ikramul Hossen";
+const email = "ikramul.web@gmail.com";
+const name = "Developer";
 const password = "111223344";
 const role = "Super_Admin";
 

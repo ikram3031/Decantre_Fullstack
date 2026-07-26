@@ -6,7 +6,7 @@ export const ContactUs = () => {
   const { addToast } = useApp();
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
-  const [formSubject, setFormSubject] = useState('Boutique Appointment');
+  const [formSubject, setFormSubject] = useState('General Inquiry');
   const [formMessage, setFormMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,12 +45,12 @@ export const ContactUs = () => {
         
         {/* Page Header */}
         <div className="text-center space-y-4 mb-20 relative py-12 border-b border-gold/15">
-          <span className="text-[10px] uppercase tracking-[0.4em] text-gold font-sans font-medium block">The Private Liaison Bureau</span>
+          <span className="text-[10px] uppercase tracking-[0.4em] text-gold font-sans font-medium block">Get in Touch</span>
           <h1 className="text-3xl sm:text-5xl font-serif font-light text-luxury-white tracking-wide">
             CONTACT DECANTRE
           </h1>
           <p className="text-zinc-500 text-xs sm:text-sm font-sans font-light max-w-xl mx-auto leading-relaxed">
-            Reach out to our VIP concierge team. Book private fragrance blending sessions or inquire about bespoke commission bottles.
+            Our dedicated support team is here to assist you with any inquiries, product information, or assistance you may require. Please fill out the form below, and we will respond promptly.
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export const ContactUs = () => {
           {/* Salons Location Info list */}
           <div className="lg:col-span-5 space-y-8">
             <div className="space-y-2">
-              <span className="text-[10px] uppercase tracking-[0.4em] text-gold font-sans font-medium font-bold">Boutique Store</span>
+              <span className="text-[10px] uppercase tracking-[0.4em] text-gold font-sans font-medium font-bold">DECANTRE</span>
               <h2 className="text-2xl sm:text-3xl font-serif font-light text-luxury-white">OUR STORE LOCATION</h2>
               <div className="h-[1px] w-12 bg-gold/40 mt-3"></div>
             </div>
@@ -103,10 +103,10 @@ export const ContactUs = () => {
             <div className="space-y-2 border-b border-zinc-800 pb-4">
               <div className="flex items-center gap-2 text-gold">
                 <Sparkles className="w-4 h-4 animate-pulse" />
-                <span className="text-[9px] uppercase tracking-widest font-sans font-semibold">Concierge Dispatch</span>
+                <span className="text-[9px] uppercase tracking-widest font-sans font-semibold">How we can help</span>
               </div>
               <h3 className="text-lg font-serif font-light text-luxury-white">
-                TRANSMIT AN ENCRYPTED INQUIRY
+                Send us your Inquiry
               </h3>
             </div>
 
@@ -125,11 +125,11 @@ export const ContactUs = () => {
                   />
                 </div>
                 <div>
-                  <label className="text-[9px] uppercase tracking-widest text-zinc-400 block mb-2 font-semibold">Digital Correspondence Email</label>
+                  <label className="text-[9px] uppercase tracking-widest text-zinc-400 block mb-2 font-semibold">Email Address</label>
                   <input
                     type="email"
                     required
-                    placeholder="e.g. anastasia@noble.ru"
+                    placeholder="e.g. anastasia@example.com"
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
                     className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -144,28 +144,28 @@ export const ContactUs = () => {
                   onChange={(e) => setFormSubject(e.target.value)}
                   className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
                 >
-                  <option value="Boutique Appointment">Schedule Private Salon Appointment</option>
-                  <option value="Custom Formula Commission">Bespoke Fragrance Commission</option>
-                  <option value="Sovereign Registry Inquiries">Custody & Order Ledger Discretion</option>
-                  <option value="General Art Inquiries">Sourcing & Sillage Preservation Inquiry</option>
+                  <option value="General Inquiry">General Inquiry</option>
+                  <option value="Private Consultation">Private Consultation</option>
+                  <option value="Order Assistance">Order Assistance</option>
+                  <option value="Product Information">Product Information</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-[9px] uppercase tracking-widest text-zinc-400 block mb-2 font-semibold">Your Message / Request coordinates</label>
+                <label className="text-[9px] uppercase tracking-widest text-zinc-400 block mb-2 font-semibold">Your Message</label>
                 <textarea
                   required
                   rows="5"
-                  placeholder="Describe your requested scent parameters, preferred consultation times, or specific questions..."
+                  placeholder="Tell us about your request, preferred appointment date, or any fragrance questions."
                   value={formMessage}
                   onChange={(e) => setFormMessage(e.target.value)}
                   className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs p-4 outline-none rounded-sm font-sans leading-relaxed resize-none"
                 />
               </div>
 
-              <div className="flex justify-between items-center pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
                 <span className="text-[10px] text-zinc-500 font-sans font-light flex items-center gap-1.5">
-                  <HelpCircle className="w-3.5 h-3.5 text-gold/50" /> Fully Encrypted Communication Protocol
+                  <HelpCircle className="w-3.5 h-3.5 text-gold/50" /> We aim to respond within one business day.
                 </span>
 
                 <button
@@ -173,7 +173,7 @@ export const ContactUs = () => {
                   disabled={isSubmitting}
                   className="px-8 py-3.5 bg-gold hover:bg-gold/90 text-black text-[10px] font-sans font-bold uppercase tracking-widest rounded-sm transition-all duration-300 flex items-center gap-2 shadow-lg shadow-gold/5 disabled:opacity-50"
                 >
-                  {isSubmitting ? 'TRANSMITTING...' : 'TRANSMIT MESSAGE'}
+                  {isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}
                   <Send className="w-3 h-3 text-black" />
                 </button>
               </div>

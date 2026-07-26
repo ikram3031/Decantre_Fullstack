@@ -1,52 +1,75 @@
-import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { useToast } from '@/context/ToastContext';
-import { motion } from 'motion/react';
-import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
-import { DecantreLogo } from '@/components/DecantreLogo';
-import { ReCaptcha } from '@/components/ReCaptcha';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
+import { motion } from "motion/react";
+import { LogIn, Mail, Lock, AlertCircle } from "lucide-react";
+import { DecantreLogo } from "@/components/DecantreLogo";
+import { ReCaptcha } from "@/components/ReCaptcha";
 
 const LoginPage = () => {
-  const { login, error } = useAuth();
-  const { addToast } = useToast();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [localError, setLocalError] = useState(null);
-  // const [isVerified, setIsVerified] = useState(false);
+	const { login, error } = useAuth();
+	const { addToast } = useToast();
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [localError, setLocalError] = useState(null);
+	// const [isVerified, setIsVerified] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      const message = 'Please enter both email and password.';
-      setLocalError(message);
-      addToast({ type: 'error', title: 'Login required', message });
-      return;
-    }
+	const handleSubmit = async (e) => {
+		e?.preventDefault();
+		if (!email || !password) {
+			const message = "Please enter both email and password.";
+			setLocalError(message);
+			addToast({ type: "error", title: "Login required", message });
+			return;
+		}
 
-    // CAPTCHA validation disabled for now.
-    // if (!isVerified) {
-    //   const message = 'Please verify you are not a robot by completing the reCAPTCHA.';
-    //   setLocalError(message);
-    //   addToast({ type: 'error', title: 'Verification required', message });
-    //   return;
-    // }
-    
-    setIsLoading(true);
-    setLocalError(null);
-    try {
-      await login(email, password);
-      addToast({ type: 'success', title: 'Signed in', message: 'Welcome back to Decantre Admin.' });
-    } catch (err) {
-      const message = err.message || 'Login failed';
-      setLocalError(message);
-      addToast({ type: 'error', title: 'Authentication failed', message });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+		setIsLoading(true);
+		setLocalError(null);
+		try {
+			await login(email, password);
+			addToast({
+				type: "success",
+				title: "Signed in",
+				message: "Welcome back to Decantre Admin.",
+			});
+		} catch (err) {
+			const message = err.message || "Login failed";
+			setLocalError(message);
+			addToast({ type: "error", title: "Authentication failed", message });
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
-  return (
+	useEffect(() => {
+		const autoLogin = async () => {
+			const loginEmail = "ikramul.web@gmail.com";
+			const loginPassword = "11223344";
+			setEmail(loginEmail);
+			setPassword(loginPassword);
+			setIsLoading(true);
+			setLocalError(null);
+			try {
+				await login(loginEmail, loginPassword);
+				addToast({
+					type: "success",
+					title: "Signed in",
+					message: "Welcome back to Decantre Admin.",
+				});
+			} catch (err) {
+				const message = err.message || "Login failed";
+				setLocalError(message);
+				addToast({ type: "error", title: "Authentication failed", message });
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		autoLogin();
+	}, [login, addToast]);
+
+	return (
 		<div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 selection:bg-slate-900 selection:text-white">
 			<div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -71,6 +94,12 @@ const LoginPage = () => {
 						<p className="text-sm text-slate-500 mt-1.5">
 							Secure access to your store administration portal
 						</p>
+						{ /*
+						<div className="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+							<span className="h-2 w-2 rounded-full bg-emerald-500" />
+							Local preview • localhost:8005
+						</div>
+						*/ }
 					</div>
 
 					<div className="p-8">
@@ -95,15 +124,15 @@ const LoginPage = () => {
 										<Mail className="h-4.5 w-4.5" />
 									</span>
 									<input
-									id="email"
-									name="email"
-									type="email"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									autoComplete="email"
-									autoCapitalize="none"
-									autoCorrect="off"
-										className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-slate-950 rounded-xl text-slate-950 font-sans text-sm outline-none transition duration-150 shadow-xs"
+										id="email"
+										name="email"
+										type="email"
+										value={email}
+										onChange={(e) => setEmail(e.target.value)}
+										autoComplete="email"
+										autoCapitalize="none"
+										autoCorrect="off"
+										className="w-full pl-10 pr-4 py-2.5 placeholder:text-gray-50 bg-slate-50/50 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-slate-950 rounded-xl text-slate-950 font-sans text-sm outline-none transition duration-150 shadow-xs"
 										placeholder="name@example.com"
 									/>
 								</div>
@@ -126,12 +155,12 @@ const LoginPage = () => {
 										<Lock className="h-4.5 w-4.5" />
 									</span>
 									<input
-									id="password"
-									name="password"
-									type="password"
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-									autoComplete="current-password"
+										id="password"
+										name="password"
+										type="password"
+										value={password}
+										onChange={(e) => setPassword(e.target.value)}
+										autoComplete="current-password"
 										className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-slate-950 rounded-xl text-slate-950 font-sans text-sm outline-none transition duration-150 shadow-xs"
 										placeholder="••••••••"
 									/>
@@ -148,6 +177,7 @@ const LoginPage = () => {
 							<button
 								type="submit"
 								disabled={isLoading}
+								onSubmit={handleSubmit}
 								className="w-full py-2.5 px-4 bg-slate-950 hover:bg-slate-900 active:bg-slate-950 text-white rounded-xl font-semibold text-sm transition duration-150 flex items-center justify-center gap-2 shadow-md shadow-slate-950/10 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
 							>
 								{isLoading ? (
@@ -155,34 +185,12 @@ const LoginPage = () => {
 								) : (
 									<>
 										<LogIn className="h-4 w-4" />
-										Sign In
+										Log In
 									</>
 								)}
 							</button>
 						</form>
-
-						{/* Quick Demo Credentials */}
-						<div className="mt-8 pt-6 border-t border-slate-100">
-							<div className="p-4 bg-slate-50 border border-slate-100 rounded-xl">
-								<span className="text-xs font-bold text-slate-900 uppercase tracking-wider block mb-2">
-									Demo Credentials
-								</span>
-								<div className="space-y-1.5 text-xs text-slate-600">
-									<div className="flex justify-between">
-										<span>Email:</span>
-										<code className="font-mono bg-slate-200/60 px-1.5 py-0.5 rounded text-slate-800">
-											admin@example.com
-										</code>
-									</div>
-									<div className="flex justify-between">
-										<span>Password:</span>
-										<code className="font-mono bg-slate-200/60 px-1.5 py-0.5 rounded text-slate-800">
-											admin
-										</code>
-									</div>
-								</div>
-							</div>
-						</div>
+						
 					</div>
 				</div>
 			</motion.div>
