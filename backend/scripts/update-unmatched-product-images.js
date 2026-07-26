@@ -9,25 +9,10 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, "..");
 const uploadsDir = path.resolve(projectRoot, "uploads");
 const srcUploadsDir = path.resolve(projectRoot, "src", "uploads");
-const outputUploadsDir = srcUploadsDir;
+const outputDir = path.join(srcUploadsDir, "26072600");
 
 const PLACEHOLDER_PUBLIC_URL = "/uploads/260726/product_placeholder.webp";
 const failureLogPath = path.join(scriptDir, "failed-product-images.json");
-let globalProductCount = 0;
-
-const getBatchFolderName = () => {
-  const now = new Date();
-  const year = String(now.getFullYear()).slice(-2);
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  const dateStr = `${year}${month}${day}`;
-
-  globalProductCount += 1;
-  const batchNumber = Math.floor((globalProductCount - 1) / 50) + 1;
-  const paddedBatch = String(batchNumber).padStart(2, "0");
-
-  return `${dateStr}${paddedBatch}`;
-};
 
 const resolveStoredPath = (dbPath) => {
   if (!dbPath || typeof dbPath !== "string") return null;
@@ -65,7 +50,11 @@ const resolveStoredPath = (dbPath) => {
 
 const getSearchKeywords = (product, dbPath) => {
   const rawFilename = dbPath ? path.basename(dbPath.replace(/\\/g, "/").trim()) : "";
-  const rawBaseName = rawFilename ? path.basename(rawFilename, path.extname(rawFilename)) : "";
+  const rawBaseName =
+    rawFilename && rawFilename !== "product_placeholder.webp"
+      ? path.basename(rawFilename, path.extname(rawFilename))
+      : "";
+
   const withoutTimestamp = rawBaseName.replace(/-\d{10,}(-[a-z0-9]+)?$/i, "");
   const withoutRandomSuffix = withoutTimestamp.replace(/-([a-z0-9]{4,8})$/i, "");
   const withoutDimension = withoutRandomSuffix.replace(/-\d{1,4}x\d{1,4}/g, "");
@@ -100,22 +89,13 @@ const getSearchKeywords = (product, dbPath) => {
   return [...new Set(normalizedVariants)];
 };
 
-const findLocalSourceFile = (product, dbPath) => {
-  if ((!dbPath || typeof dbPath !== "string") && !product?.name) return null;
-
-  const directPathMatch = resolveStoredPath(dbPath);
-  if (directPathMatch) {
-    console.log(`[image-search] direct-path-match ${directPathMatch}`);
-    return directPathMatch;
+const findSourceByDbPathOrName = (product, dbPath) => {
+  if (dbPath && typeof dbPath === "string" && !dbPath.includes("product_placeholder.webp")) {
+    const directMatch = resolveStoredPath(dbPath);
+    if (directMatch) return directMatch;
   }
 
   const searchKeys = getSearchKeywords(product, dbPath);
-  console.log(
-    `[image-search] product=${product?.name || product?.did || product?._id || "unknown"} dbPath=${dbPath || "n/a"}`,
-    `keywords=${JSON.stringify(searchKeys)}`
-  );
-
-  const searchRoots = [uploadsDir];
   const matchedFiles = [];
 
   const walkDir = (dirPath) => {
@@ -132,9 +112,11 @@ const findLocalSourceFile = (product, dbPath) => {
         if (!entry.isFile()) continue;
 
         const fileName = entry.name.toLowerCase();
+        if (fileName === "product_placeholder.webp") continue;
+
         const matchedKey = searchKeys.find((key) => {
           const lowerKey = key.toLowerCase();
-          if (!lowerKey) return false;
+          if (!lowerKey || lowerKey === "product_placeholder" || lowerKey === "product_placeholder.webp") return false;
 
           const normalizedFileName = fileName.replace(/[^a-z0-9]+/g, "");
           const normalizedKey = lowerKey.replace(/[^a-z0-9]+/g, "");
@@ -145,8 +127,7 @@ const findLocalSourceFile = (product, dbPath) => {
             fileName.startsWith(lowerKey + "-") ||
             fileName.includes(lowerKey) ||
             normalizedFileName === normalizedKey ||
-            normalizedFileName.includes(normalizedKey) ||
-            normalizedKey.includes(normalizedFileName)
+            (normalizedKey.length >= 4 && (normalizedFileName.includes(normalizedKey) || normalizedKey.includes(normalizedFileName)))
           );
         });
 
@@ -159,13 +140,10 @@ const findLocalSourceFile = (product, dbPath) => {
     }
   };
 
-  for (const rootDir of searchRoots) {
-    walkDir(rootDir);
-  }
+  walkDir(uploadsDir);
 
   if (matchedFiles.length === 0) return null;
 
-  // Sort matched files by file size in descending order so we pick the highest resolution original image
   matchedFiles.sort((a, b) => {
     try {
       return fs.statSync(b).size - fs.statSync(a).size;
@@ -174,38 +152,7 @@ const findLocalSourceFile = (product, dbPath) => {
     }
   });
 
-  const bestMatch = matchedFiles[0];
-  console.log(`[image-search] selected largest match file="${path.basename(bestMatch)}" (size: ${fs.statSync(bestMatch).size} bytes) out of ${matchedFiles.length} candidates`);
-  return bestMatch;
-};
-
-const localPathToPublicUrl = (fullPath) => {
-  const relative = path.relative(outputUploadsDir, fullPath).replace(/\\/g, "/");
-  if (!relative) return "/uploads";
-  return `/uploads/${relative}`;
-};
-
-const slugify = (text) => {
-  if (!text) return "product";
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/[\s\W-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-};
-
-const createUploadDestinationPath = async (product, batchFolderName, field) => {
-  const destinationDir = path.join(outputUploadsDir, batchFolderName);
-  await fs.promises.mkdir(destinationDir, { recursive: true });
-
-  const productName = product?.name || product?.title || "product";
-  const productSlug = slugify(productName);
-  const did = product?.did || product?._id?.toString() || "id";
-  const prefix = field === "thumbnailUrl" ? "thumb_" : "product_";
-
-  const fileName = `${prefix}${productSlug}_${did}.webp`;
-  return path.join(destinationDir, fileName);
+  return matchedFiles[0];
 };
 
 const convertImageToWebp = async (sourcePath, options, outputPath) => {
@@ -223,7 +170,7 @@ const convertImageToWebp = async (sourcePath, options, outputPath) => {
       quality = 90;
     }
   } catch {
-    // fallback to default
+    // fallback
   }
 
   await sharp(sourcePath)
@@ -236,93 +183,118 @@ const convertImageToWebp = async (sourcePath, options, outputPath) => {
   return outputPath;
 };
 
-const processProductImages = async (product, batchFolderName) => {
-  const errors = [];
-  const updates = {};
-
-  for (const field of ["imageUrl", "thumbnailUrl"]) {
-    const currentValue = product[field];
-    if (!currentValue || typeof currentValue !== "string") continue;
-
-    try {
-      const localSource = findLocalSourceFile(product, currentValue);
-      if (!localSource) {
-        updates[field] = PLACEHOLDER_PUBLIC_URL;
-        console.log(`[placeholder] ${field} -> ${PLACEHOLDER_PUBLIC_URL}`);
-        continue;
-      }
-
-      const resizeOptions =
-        field === "thumbnailUrl"
-          ? { width: 600, height: 600, fit: "inside", withoutEnlargement: true }
-          : { width: 1200, height: 1200, fit: "inside", withoutEnlargement: true };
-
-      const destinationPath = await createUploadDestinationPath(product, batchFolderName, field);
-      const webpPath = await convertImageToWebp(localSource, resizeOptions, destinationPath);
-      updates[field] = localPathToPublicUrl(webpPath);
-    } catch (err) {
-      errors.push(`${field} conversion failed: ${err.message}`);
-    }
-  }
-
-  return { updates, errors };
-};
-
-const migrateProductImagePaths = async () => {
+const processUnmatchedProducts = async () => {
   await connectDatabase();
-  const failedProducts = [];
-  let productCount = 0;
-  let productSuccessCount = 0;
-  let productFailureCount = 0;
-  let totalImagesProcessed = 0;
-  let totalImagesFailed = 0;
+  await fs.promises.mkdir(outputDir, { recursive: true });
+
+  const failedProductsList = [];
+  let totalScanned = 0;
+  let totalRecovered = 0;
+  let totalFailed = 0;
 
   const cursor = ProductModel.find({
     $or: [
+      { imageUrl: { $regex: /product_placeholder\.webp/i } },
+      { thumbnailUrl: { $regex: /product_placeholder\.webp/i } },
       { imageUrl: { $exists: true, $ne: null, $ne: "" } },
       { thumbnailUrl: { $exists: true, $ne: null, $ne: "" } },
     ],
   }).cursor();
 
   for await (const product of cursor) {
-    productCount += 1;
-    const batchFolderName = getBatchFolderName();
-    const { updates, errors } = await processProductImages(product, batchFolderName);
+    totalScanned += 1;
+    const updates = {};
+    let hasRecoveredAny = false;
+    let stillHasPlaceholder = false;
 
-    const imagesProcessed = Object.keys(updates).length;
-    totalImagesProcessed += imagesProcessed;
-    totalImagesFailed += errors.length;
+    for (const field of ["imageUrl", "thumbnailUrl"]) {
+      const dbValue = product[field];
 
-    if (imagesProcessed > 0) {
+      const sourceFile = findSourceByDbPathOrName(product, dbValue);
+
+      if (sourceFile) {
+        try {
+          const resizeOptions =
+            field === "thumbnailUrl"
+              ? { width: 600, height: 600, fit: "inside", withoutEnlargement: true }
+              : { width: 1000, height: 1000, fit: "inside", withoutEnlargement: true };
+
+          const slugify = (text) => {
+            if (!text) return "product";
+            return text
+              .toString()
+              .toLowerCase()
+              .trim()
+              .replace(/[\s\W-]+/g, "-")
+              .replace(/^-+|-+$/g, "");
+          };
+
+          const productName = product?.name || product?.title || "product";
+          const productSlug = slugify(productName);
+          const did = product?.did || product?._id?.toString() || "id";
+          const prefix = field === "thumbnailUrl" ? "thumb_" : "product_";
+
+          const fileName = `${prefix}${productSlug}_${did}.webp`;
+
+          const destPath = path.join(outputDir, fileName);
+          const webpPath = await convertImageToWebp(sourceFile, resizeOptions, destPath);
+
+          const relativePublicUrl = `/uploads/26072600/${fileName}`;
+          updates[field] = relativePublicUrl;
+          hasRecoveredAny = true;
+          console.log(`[recovered] product did=${product.did || product._id} field=${field} -> ${relativePublicUrl}`);
+        } catch (err) {
+          console.error(`Error converting ${field} for did=${product.did}:`, err.message);
+          stillHasPlaceholder = true;
+        }
+      } else {
+        if (!dbValue || dbValue.includes("product_placeholder.webp")) {
+          stillHasPlaceholder = true;
+        }
+      }
+    }
+
+    if (Object.keys(updates).length > 0) {
       await ProductModel.updateOne({ _id: product._id }, { $set: updates });
     }
 
-    const pDid = product.did || product._id;
+    if (hasRecoveredAny && !stillHasPlaceholder) {
+      totalRecovered += 1;
+    }
 
-    if (errors.length === 0) {
-      productSuccessCount += 1;
-      console.log(`did: ${pDid}`);
-    } else {
-      productFailureCount += 1;
-      failedProducts.push({ did: pDid, _id: product._id?.toString?.() || null, errors });
-      console.log(`✖ product did=${pDid} failed: ${errors.join("; ")}`);
+    const currentImg = updates.imageUrl || product.imageUrl;
+    const currentThumb = updates.thumbnailUrl || product.thumbnailUrl;
+
+    if (
+      stillHasPlaceholder ||
+      !currentImg ||
+      !currentThumb ||
+      currentImg === PLACEHOLDER_PUBLIC_URL ||
+      currentThumb === PLACEHOLDER_PUBLIC_URL
+    ) {
+      totalFailed += 1;
+      failedProductsList.push({
+        did: product.did || product._id,
+        name: product.name || product.title || null,
+        _id: product._id?.toString() || null,
+        imageUrl: currentImg || null,
+        thumbnailUrl: currentThumb || null,
+      });
     }
   }
 
-  await fs.promises.writeFile(failureLogPath, JSON.stringify(failedProducts, null, 2), "utf-8");
+  await fs.promises.writeFile(failureLogPath, JSON.stringify(failedProductsList, null, 2), "utf-8");
 
-  console.log("\n=== Migration summary ===");
-  console.log(`Products scanned: ${productCount}`);
-  console.log(`Products succeeded: ${productSuccessCount}`);
-  console.log(`Products failed: ${productFailureCount}`);
-  console.log(`Images converted/updated: ${totalImagesProcessed}`);
-  console.log(`Image conversion errors: ${totalImagesFailed}`);
-  console.log(`Failed product list saved to: ${failureLogPath}`);
+  console.log("\n=== Unmatched Migration Summary ===");
+  console.log(`Products scanned: ${totalScanned}`);
+  console.log(`Products successfully updated/recovered: ${totalRecovered}`);
+  console.log(`Products remaining with placeholder (saved to log): ${totalFailed}`);
+  console.log(`Failed product log file: ${failureLogPath}`);
 
   await closeDatabase();
 };
 
-migrateProductImagePaths().catch((error) => {
-  console.error("Migration failed:", error);
+processUnmatchedProducts().catch((err) => {
+  console.error("Migration failed:", err);
   process.exit(1);
 });

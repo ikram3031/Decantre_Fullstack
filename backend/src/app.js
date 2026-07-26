@@ -36,6 +36,7 @@ app.use(
   app.use(express.urlencoded({ extended: false }));
 
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+  app.use("/src/uploads", express.static(path.join(process.cwd(), "src", "uploads")));
 
   app.use((req, res, next) => {
     logger.info({ method: req.method, path: req.originalUrl }, "route hit");
