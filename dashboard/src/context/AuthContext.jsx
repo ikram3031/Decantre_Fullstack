@@ -1,12 +1,35 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { apiClient } from '../api/apiClient';
 
 const AuthContext = createContext(undefined);
+
+const clearStoredAuth = () => {
+  localStorage.removeItem('admin_token');
+  localStorage.removeItem('admin_refresh_token');
+  localStorage.removeItem('admin_user');
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const logout = useCallback(() => {
+    clearStoredAuth();
+    setUser(null);
+  }, []);
+
+  useEffect(() => {
+    const handleLogoutEvent = () => {
+      logout();
+    };
+
+    window.addEventListener('dashboard-logout', handleLogoutEvent);
+
+    return () => {
+      window.removeEventListener('dashboard-logout', handleLogoutEvent);
+    };
+  }, [logout]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('admin_user');
@@ -23,7 +46,10 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await apiClient.post('/auth/login', { email, password });
       const json = response.data || {};
-      const { accessToken, refreshToken, user: loggedUser } = json.data || {};
+      const payload = json.data || json || {};
+      const accessToken = payload.accessToken || payload.token || payload.authToken;
+      const refreshToken = payload.refreshToken || payload.refresh_token || payload.refresh;
+      const loggedUser = payload.user || payload.userInfo || payload.profile;
 
       if (!accessToken || !loggedUser) {
         const msg = json?.message || 'Invalid login response from server';
@@ -46,11 +72,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('admin_token');
-    localStorage.removeItem('admin_user');
+  const logout = useCallback(() => {
+    clearStoredAuth();
     setUser(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, isLoading, login, logout, error }}>

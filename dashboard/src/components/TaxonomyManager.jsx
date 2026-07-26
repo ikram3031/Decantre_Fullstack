@@ -22,31 +22,31 @@ export const TaxonomyManager = () => {
   const { data: categories = [], isLoading: loadingCats } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/categories');
-      return res.data;
+      const res = await apiClient.get('/categories');
+      return res.data?.data || res.data || [];
     }
   });
 
   const { data: brands = [], isLoading: loadingBrands } = useQuery({
     queryKey: ['brands'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/brands');
-      return res.data;
+      const res = await apiClient.get('/brands');
+      return res.data?.data || res.data || [];
     }
   });
 
   const { data: tags = [], isLoading: loadingTags } = useQuery({
     queryKey: ['tags'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/tags');
-      return res.data;
+      const res = await apiClient.get('/tags');
+      return res.data?.data || res.data || [];
     }
   });
 
   // Mutators - Categories
   const addCategoryMutation = useMutation({
     mutationFn: async (newCat) => {
-      const res = await apiClient.post('/api/categories', newCat);
+      const res = await apiClient.post('/categories', newCat);
       return res.data;
     },
     onSuccess: () => {
@@ -58,7 +58,7 @@ export const TaxonomyManager = () => {
 
   const updateCategoryMutation = useMutation({
     mutationFn: async (data) => {
-      const res = await apiClient.put(`/api/categories/${data.id}`, { name: data.name, parentId: data.parentId });
+      const res = await apiClient.put(`/categories/${data.id}`, { name: data.name, parentId: data.parentId });
       return res.data;
     },
     onSuccess: () => {
@@ -69,7 +69,7 @@ export const TaxonomyManager = () => {
 
   const deleteCategoryMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await apiClient.delete(`/api/categories/${id}`);
+      const res = await apiClient.delete(`/categories/${id}`);
       return res.data;
     },
     onSuccess: () => {
@@ -80,7 +80,7 @@ export const TaxonomyManager = () => {
   // Mutators - Brands
   const addBrandMutation = useMutation({
     mutationFn: async (newBrand) => {
-      const res = await apiClient.post('/api/brands', newBrand);
+      const res = await apiClient.post('/brands', newBrand);
       return res.data;
     },
     onSuccess: () => {
@@ -92,7 +92,7 @@ export const TaxonomyManager = () => {
 
   const updateBrandMutation = useMutation({
     mutationFn: async (data) => {
-      const res = await apiClient.put(`/api/brands/${data.id}`, { name: data.name, parentId: data.parentId });
+      const res = await apiClient.put(`/brands/${data.id}`, { name: data.name, parentId: data.parentId });
       return res.data;
     },
     onSuccess: () => {
@@ -103,7 +103,7 @@ export const TaxonomyManager = () => {
 
   const deleteBrandMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await apiClient.delete(`/api/brands/${id}`);
+      const res = await apiClient.delete(`/brands/${id}`);
       return res.data;
     },
     onSuccess: () => {
@@ -114,7 +114,7 @@ export const TaxonomyManager = () => {
   // Mutators - Tags
   const addTagMutation = useMutation({
     mutationFn: async (newTag) => {
-      const res = await apiClient.post('/api/tags', newTag);
+      const res = await apiClient.post('/tags', newTag);
       return res.data;
     },
     onSuccess: () => {
@@ -125,7 +125,7 @@ export const TaxonomyManager = () => {
 
   const updateTagMutation = useMutation({
     mutationFn: async (data) => {
-      const res = await apiClient.put(`/api/tags/${data.id}`, { name: data.name });
+      const res = await apiClient.put(`/tags/${data.id}`, { name: data.name });
       return res.data;
     },
     onSuccess: () => {
@@ -136,7 +136,7 @@ export const TaxonomyManager = () => {
 
   const deleteTagMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await apiClient.delete(`/api/tags/${id}`);
+      const res = await apiClient.delete(`/tags/${id}`);
       return res.data;
     },
     onSuccess: () => {

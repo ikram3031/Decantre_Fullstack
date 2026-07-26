@@ -24,15 +24,15 @@ export const UsersPage = () => {
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/users');
-      return res.data;
+      const res = await apiClient.get('/users');
+      return res.data?.data || res.data || [];
     }
   });
 
   // Mutators
   const addUserMutation = useMutation({
     mutationFn: async (newUser) => {
-      const res = await apiClient.post('/api/users', newUser);
+      const res = await apiClient.post('/users', newUser);
       return res.data;
     },
     onSuccess: () => {
@@ -43,7 +43,7 @@ export const UsersPage = () => {
 
   const updateUserMutation = useMutation({
     mutationFn: async (data) => {
-      const res = await apiClient.put(`/api/users/${data.id}`, data.updates);
+      const res = await apiClient.put(`/users/${data.id}`, data.updates);
       return res.data;
     },
     onSuccess: () => {
@@ -54,7 +54,7 @@ export const UsersPage = () => {
 
   const deleteUserMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await apiClient.delete(`/api/users/${id}`);
+      const res = await apiClient.delete(`/users/${id}`);
       return res.data;
     },
     onSuccess: () => {
@@ -68,19 +68,32 @@ export const UsersPage = () => {
 
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
+
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('asc');
+    }
+  };
 
   // Fields State
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
-  const [formRole, setFormRole] = useState('Editor');
-  const [formStatus, setFormStatus] = useState('active');
+  const [formRole, setFormRole] = useState('Store_manager');
+  const [formPassword, setFormPassword] = useState('');
+  const [formIsActive, setFormIsActive] = useState(true);
 
   const handleOpenAdd = () => {
     setEditingUser(null);
     setFormName('');
     setFormEmail('');
-    setFormRole('Editor');
-    setFormStatus('active');
+    setFormRole('Store_manager');
+    setFormPassword('');
+    setFormIsActive(true);
     setIsModalOpen(true);
   };
 
@@ -89,7 +102,8 @@ export const UsersPage = () => {
     setFormName(user.name);
     setFormEmail(user.email);
     setFormRole(user.role);
-    setFormStatus(user.status);
+    setFormPassword('');
+    setFormIsActive(user.isActive !== false);
     setIsModalOpen(true);
   };
 
@@ -100,12 +114,21 @@ export const UsersPage = () => {
       return;
     }
 
+    if (!editingUser && !formPassword) {
+      alert('Password is required for new users.');
+      return;
+    }
+
     const payload = {
       name: formName,
       email: formEmail,
       role: formRole,
-      status: formStatus
+      isActive: formIsActive
     };
+
+    if (formPassword) {
+      payload.password = formPassword;
+    }
 
     if (editingUser) {
       updateUserMutation.mutate({ id: editingUser.id, updates: payload });
@@ -114,21 +137,34 @@ export const UsersPage = () => {
     }
   };
 
-  const filteredUsers = users.filter((u) => {
+  const filteredUsers = Array.isArray(users) ? users.filter((u) => {
     return (
-      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.role.toLowerCase().includes(searchTerm.toLowerCase())
+      u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.role?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  }) : [];
+
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    const valueA = (a[sortBy] ?? '').toString().toLowerCase();
+    const valueB = (b[sortBy] ?? '').toString().toLowerCase();
+    if (sortBy === 'createdAt') {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+    }
+    if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+    if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
   });
 
   const getRoleBadgeColor = (role) => {
     switch (role) {
-      case 'Administrator':
+      case 'Super_Admin':
         return 'bg-purple-50 text-purple-700 border border-purple-200';
-      case 'Shop Manager':
+      case 'Admin':
         return 'bg-blue-50 text-blue-700 border border-blue-200';
-      case 'Editor':
+      case 'Store_manager':
         return 'bg-amber-50 text-amber-700 border border-amber-200';
       default:
         return 'bg-slate-50 text-slate-700 border border-slate-200';
@@ -156,17 +192,38 @@ export const UsersPage = () => {
 
       {/* Filter and Search */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-xs p-5">
-        <div className="relative max-w-md">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-            <Search className="h-4.5 w-4.5" />
-          </span>
-          <input
-            type="text"
-            placeholder="Search by name, email, or role..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-950 rounded-xl text-sm outline-none transition"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="relative max-w-md">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+              <Search className="h-4.5 w-4.5" />
+            </span>
+            <input
+              type="text"
+              placeholder="Search by name, email, or role..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-950 rounded-xl text-sm outline-none transition"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sort by</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full max-w-[180px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-slate-950"
+            >
+              <option value="name">Name</option>
+              <option value="role">Role</option>
+              <option value="createdAt">Date Added</option>
+            </select>
+            <button
+              type="button"
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="px-3 py-2 bg-slate-950 text-white rounded-xl text-xs font-semibold"
+            >
+              {sortOrder === 'asc' ? 'Asc' : 'Desc'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -176,9 +233,9 @@ export const UsersPage = () => {
           <div className="h-8 w-8 border-3 border-slate-950/20 border-t-slate-950 rounded-full animate-spin" />
           <span className="text-xs text-slate-500 font-semibold">Loading users...</span>
         </div>
-      ) : filteredUsers.length > 0 ? (
+      ) : sortedUsers.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredUsers.map((u) => (
+          {sortedUsers.map((u) => (
             <div
               key={u.id}
               className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs hover:shadow-md transition duration-150 flex flex-col justify-between"
@@ -190,9 +247,9 @@ export const UsersPage = () => {
                     {u.role}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    <span className={`h-2 w-2 rounded-full ${u.status === 'active' ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                    <span className={`h-2 w-2 rounded-full ${u.isActive !== false ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                      {u.status}
+                      {u.isActive !== false ? 'active' : 'inactive'}
                     </span>
                   </div>
                 </div>
@@ -298,6 +355,19 @@ export const UsersPage = () => {
                 </div>
               </div>
 
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">
+                  Password {editingUser && <span className="text-[10px] text-slate-400 font-normal">(Leave blank to keep current)</span>}
+                </label>
+                <input
+                  type="password"
+                  placeholder={editingUser ? "••••••••" : "E.g. securePassword123"}
+                  value={formPassword}
+                  onChange={(e) => setFormPassword(e.target.value)}
+                  className="w-full bg-slate-50 hover:bg-slate-50 focus:bg-white border border-slate-200 focus:border-slate-950 rounded-xl px-3.5 py-2 text-xs outline-none transition font-semibold"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700">Role Selection</label>
@@ -306,18 +376,17 @@ export const UsersPage = () => {
                     onChange={(e) => setFormRole(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-slate-950 font-semibold cursor-pointer"
                   >
-                    <option value="Administrator">Administrator</option>
-                    <option value="Shop Manager">Shop Manager</option>
-                    <option value="Editor">Editor</option>
-                    <option value="Customer">Customer</option>
+                    <option value="Super_Admin">Super Admin</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Store_manager">Store Manager</option>
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-700">Status</label>
                   <select
-                    value={formStatus}
-                    onChange={(e) => setFormStatus(e.target.value)}
+                    value={formIsActive ? 'active' : 'inactive'}
+                    onChange={(e) => setFormIsActive(e.target.value === 'active')}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-slate-950 font-semibold cursor-pointer"
                   >
                     <option value="active">Active</option>

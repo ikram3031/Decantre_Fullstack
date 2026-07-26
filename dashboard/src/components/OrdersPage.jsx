@@ -36,7 +36,7 @@ export const OrdersPage = () => {
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/orders');
+      const res = await apiClient.get('/orders');
       return res.data;
     }
   });
@@ -44,7 +44,7 @@ export const OrdersPage = () => {
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/products');
+      const res = await apiClient.get('/products');
       return res.data;
     }
   });
@@ -52,15 +52,15 @@ export const OrdersPage = () => {
   const { data: customers = [] } = useQuery({
     queryKey: ['customers'],
     queryFn: async () => {
-      const res = await apiClient.get('/api/customers');
-      return res.data;
+      const res = await apiClient.get('/members');
+      return res.data?.data || res.data || [];
     }
   });
 
   // Mutators
   const updateOrderStatusMutation = useMutation({
     mutationFn: async (data) => {
-      const res = await apiClient.put(`/api/orders/${data.id}`, { status: data.status });
+      const res = await apiClient.put(`/orders/${data.id}`, { status: data.status });
       return res.data;
     },
     onSuccess: () => {
@@ -70,7 +70,7 @@ export const OrdersPage = () => {
 
   const deleteOrderMutation = useMutation({
     mutationFn: async (id) => {
-      const res = await apiClient.delete(`/api/orders/${id}`);
+      const res = await apiClient.delete(`/orders/${id}`);
       return res.data;
     },
     onSuccess: () => {
@@ -80,7 +80,7 @@ export const OrdersPage = () => {
 
   const createOrderMutation = useMutation({
     mutationFn: async (newOrderData) => {
-      const res = await apiClient.post('/api/orders', newOrderData);
+      const res = await apiClient.post('/orders/new-order', newOrderData);
       return res.data;
     },
     onSuccess: (data) => {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { motion } from 'motion/react';
 import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
 import { DecantreLogo } from './DecantreLogo';
@@ -7,8 +8,9 @@ import { ReCaptcha } from './ReCaptcha';
 
 export const LoginPage = () => {
   const { login, error } = useAuth();
-  const [email, setEmail] = useState('admin@example.com');
-  const [password, setPassword] = useState('admin');
+  const { addToast } = useToast();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [localError, setLocalError] = useState(null);
   const [isVerified, setIsVerified] = useState(false);
@@ -16,12 +18,16 @@ export const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setLocalError('Please enter both email and password.');
+      const message = 'Please enter both email and password.';
+      setLocalError(message);
+      addToast({ type: 'error', title: 'Login required', message });
       return;
     }
 
     if (!isVerified) {
-      setLocalError('Please verify you are not a robot by completing the reCAPTCHA.');
+      const message = 'Please verify you are not a robot by completing the reCAPTCHA.';
+      setLocalError(message);
+      addToast({ type: 'error', title: 'Verification required', message });
       return;
     }
     
@@ -29,8 +35,11 @@ export const LoginPage = () => {
     setLocalError(null);
     try {
       await login(email, password);
+      addToast({ type: 'success', title: 'Signed in', message: 'Welcome back to Decantre Admin.' });
     } catch (err) {
-      setLocalError(err.message || 'Login failed');
+      const message = err.message || 'Login failed';
+      setLocalError(message);
+      addToast({ type: 'error', title: 'Authentication failed', message });
     } finally {
       setIsLoading(false);
     }
