@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Mail, Lock, User, Key, ShieldCheck, ShoppingBag, LogOut, Award } from 'lucide-react';
+import { X, Mail, Lock, User, Key, ShieldCheck, ShoppingBag, LogOut, Award, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { loginUser, registerUser, verifyOTP, resendOTP, createMember } from '../lib/api';
 
 export const AuthModal = () => {
   const {
@@ -13,17 +14,34 @@ export const AuthModal = () => {
     addToast
   } = useApp();
 
-  const [mode, setMode] = useState(authModalMode); // 'login' | 'register' | 'profile'
+  const [mode, setMode] = useState(authModalMode); // 'login' | 'register' | 'otp' | 'profile'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // OTP State (6 Digits)
+  const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
+  const [resendTimer, setResendTimer] = useState(60);
+  const [isResending, setIsResending] = useState(false);
+  const otpInputsRef = useRef([]);
+
   // Synchronize internal state with global state trigger
   React.useEffect(() => {
     setMode(authModalMode);
   }, [authModalMode, isAuthModalOpen]);
+
+  // Resend OTP Countdown Timer
+  useEffect(() => {
+    let timer;
+    if (mode === 'otp' && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [mode, resendTimer]);
 
   if (!isAuthModalOpen) return null;
 
@@ -34,6 +52,93 @@ export const AuthModal = () => {
     setPassword('');
     setConfirmPassword('');
     setName('');
+    setOtpValues(['', '', '', '', '', '']);
+  };
+
+  const handleOTPChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...otpValues];
+    newOtp[index] = value.slice(-1);
+    setOtpValues(newOtp);
+
+    // Auto-advance to next input field
+    if (value && index < 5) {
+      otpInputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOTPKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
+      otpInputsRef.current[index - 1]?.focus();
+    }
+  };
+
+  const handleOTPPaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').trim();
+    if (!/^\d+$/.test(pastedData)) return;
+
+    const digits = pastedData.slice(0, 6).split('');
+    const newOtp = [...otpValues];
+    digits.forEach((digit, idx) => {
+      newOtp[idx] = digit;
+    });
+    setOtpValues(newOtp);
+
+    const focusIdx = Math.min(digits.length, 5);
+    otpInputsRef.current[focusIdx]?.focus();
+  };
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    const code = otpValues.join('');
+    if (code.length !== 6) {
+      addToast('Please enter the full 6-digit verification code.', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await verifyOTP({ email, otp: code });
+      const userData = response.user || response.data?.user || response.data || {};
+      const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
+      const refreshToken = response.refreshToken || response.data?.refreshToken;
+
+      const displayName = userData.name || name || email.split('@')[0];
+      const verifiedUser = {
+        name: displayName,
+        email: userData.email || email,
+        tier: userData.tier || 'Privé Connoisseur',
+        raw: userData
+      };
+
+      setUser(verifiedUser, { accessToken, refreshToken });
+      addToast(`OTP verified successfully! Welcome, ${displayName}.`, 'success');
+      handleClose();
+    } catch (err) {
+      const errorMsg = err.message || 'Verification failed. Invalid OTP code.';
+      addToast(errorMsg, 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOTPCode = async () => {
+    if (resendTimer > 0 || isResending) return;
+
+    setIsResending(true);
+    try {
+      await resendOTP({ email });
+      addToast('A new 6-digit verification code has been dispatched to your email.', 'success');
+      setResendTimer(60);
+      setOtpValues(['', '', '', '', '', '']);
+      otpInputsRef.current[0]?.focus();
+    } catch (err) {
+      addToast(err.message || 'Failed to resend verification code.', 'error');
+    } finally {
+      setIsResending(false);
+    }
   };
 
   const handleLogin = async (e) => {
@@ -42,33 +147,40 @@ export const AuthModal = () => {
       addToast('Please enter both your email and password.', 'error');
       return;
     }
-    if (password.length < 6) {
-      addToast('Security credentials must be at least 6 characters.', 'error');
-      return;
-    }
 
     setIsLoading(true);
-    // Realistic luxury loading simulation
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    setIsLoading(false);
+    try {
+      const response = await loginUser({ email, password });
+      
+      // If backend signals OTP required
+      if (response.requiresOtp || response.data?.requiresOtp) {
+        setMode('otp');
+        setResendTimer(60);
+        addToast('Verification required. Enter the 6-digit code sent to your email.', 'info');
+        return;
+      }
 
-    const displayName = email.split('@')[0];
-    const capitalizedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+      const userData = response.user || response.data?.user || response.data || {};
+      const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
+      const refreshToken = response.refreshToken || response.data?.refreshToken;
 
-    const loggedInUser = {
-      name: capitalizedName,
-      email: email,
-      tier: 'Elite Connoisseur',
-      memberSince: 'July 2026',
-      orders: [
-        { id: 'DEC-883192', date: '2026-07-15', total: 'BDT 12,450', status: 'Delivered' },
-        { id: 'DEC-941031', date: '2026-07-19', total: 'BDT 8,900', status: 'Processing' }
-      ]
-    };
+      const displayName = userData.name || userData.fullName || email.split('@')[0];
+      const loggedInUser = {
+        name: displayName,
+        email: userData.email || email,
+        tier: userData.tier || 'Elite Connoisseur',
+        raw: userData
+      };
 
-    setUser(loggedInUser);
-    addToast(`Welcome back to Decantre, ${capitalizedName}!`, 'success');
-    handleClose();
+      setUser(loggedInUser, { accessToken, refreshToken });
+      addToast(`Login successful! Welcome back, ${displayName}.`, 'success');
+      handleClose();
+    } catch (err) {
+      const errorMsg = err.message || 'Login failed. Please check your credentials.';
+      addToast(errorMsg, 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRegister = async (e) => {
@@ -82,25 +194,93 @@ export const AuthModal = () => {
       return;
     }
     if (password.length < 6) {
-      addToast('Security credentials must be at least 6 characters.', 'error');
+      addToast('Password must be at least 6 characters.', 'error');
       return;
     }
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
+    try {
+      const nameParts = name.trim().split(' ');
+      const firstName = nameParts[0] || name;
+      const lastName = nameParts.slice(1).join(' ') || name;
 
-    const registeredUser = {
-      name: name,
-      email: email,
-      tier: 'Privé Connoisseur',
-      memberSince: 'July 2026',
-      orders: []
-    };
+      // Local state fallbacks if not rendered in UI
+      const phoneVal = '';
+      const addressVal = '123 Main Street';
+      const cityVal = 'Dhaka';
+      const postcodeVal = '1207';
 
-    setUser(registeredUser);
-    addToast(`Welcome to the Decantre Inner Circle, ${name}!`, 'success');
-    handleClose();
+      const memberPayload = {
+        name,
+        email,
+        phone: phoneVal,
+        password,
+        billingInfo: {
+          firstName,
+          lastName,
+          company: '',
+          address1: addressVal,
+          address2: '',
+          district: cityVal,
+          city: cityVal,
+          state: cityVal,
+          postcode: postcodeVal,
+          country: 'Bangladesh',
+          email,
+          phone: phoneVal
+        },
+        shippingInfo: {
+          firstName,
+          lastName,
+          company: '',
+          address1: addressVal,
+          address2: '',
+          district: cityVal,
+          city: cityVal,
+          state: cityVal,
+          postcode: postcodeVal,
+          country: 'Bangladesh',
+          email,
+          phone: phoneVal
+        }
+      };
+
+      // Try creating member via Member API, fallback to registerUser
+      let response;
+      try {
+        response = await createMember(memberPayload);
+      } catch (err) {
+        response = await registerUser({ name, email, password });
+      }
+      
+      const userData = response.user || response.data || response;
+      const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
+      const refreshToken = response.refreshToken || response.data?.refreshToken;
+
+      if (accessToken || refreshToken) {
+        const displayName = userData.name || name;
+        const registeredUser = {
+          name: displayName,
+          email: userData.email || email,
+          phone: userData.phone || phone,
+          tier: 'Privé Connoisseur',
+          raw: userData
+        };
+        setUser(registeredUser, { accessToken, refreshToken });
+        addToast(`Welcome to Decantre, ${displayName}!`, 'success');
+        handleClose();
+      } else {
+        // Switch to OTP verification UI if backend requires verification
+        setMode('otp');
+        setResendTimer(60);
+        addToast('Account created! Please verify the 6-digit code sent to your email.', 'success');
+      }
+    } catch (err) {
+      const errorMsg = err.message || 'Registration failed. Please try again.';
+      addToast(errorMsg, 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleLogout = () => {
@@ -138,15 +318,83 @@ export const AuthModal = () => {
           {/* Title Header */}
           <div className="text-center mb-8">
             <span className="text-[10px] uppercase tracking-[0.3em] text-gold font-sans font-semibold block mb-2">
-              Decantre Membership
+              Decantre Security
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif font-light text-white tracking-widest uppercase">
-              {mode === 'profile' ? 'My Profile' : mode === 'login' ? 'Account Sign In' : 'Create Account'}
+              {mode === 'profile' ? 'My Profile' : mode === 'otp' ? 'OTP Verification' : mode === 'login' ? 'Account Sign In' : 'Create Account'}
             </h2>
           </div>
 
-          {/* Render Profile Content */}
-          {mode === 'profile' && user ? (
+          {/* Mode Render: OTP VERIFICATION VIEW */}
+          {mode === 'otp' ? (
+            <form onSubmit={handleVerifyOTP} className="space-y-6">
+              <div className="text-center space-y-2">
+                <p className="text-xs text-zinc-300 font-sans font-light leading-relaxed">
+                  Enter the 6-digit authentication code sent to:
+                </p>
+                <p className="text-xs font-mono text-gold font-semibold">{email}</p>
+              </div>
+
+              {/* 6 Digit Input Grid */}
+              <div className="flex justify-between items-center gap-2 py-2" onPaste={handleOTPPaste}>
+                {otpValues.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => (otpInputsRef.current[idx] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOTPChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleOTPKeyDown(idx, e)}
+                    className="w-11 h-13 text-center bg-black border border-zinc-700 focus:border-gold rounded-sm text-lg font-mono font-bold text-gold focus:outline-none transition-all shadow-inner"
+                  />
+                ))}
+              </div>
+
+              {/* Verification Button */}
+              <button
+                type="submit"
+                disabled={isLoading || otpValues.join('').length !== 6}
+                className="w-full py-4 bg-gradient-to-r from-gold via-[#DAA520] to-gold hover:opacity-90 disabled:opacity-40 text-black font-sans text-xs uppercase tracking-[0.25em] font-bold transition-all flex items-center justify-center gap-2 cursor-pointer border-none rounded-none shadow-lg"
+              >
+                {isLoading ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-black border-r-transparent animate-spin" />
+                ) : (
+                  <>
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Authorize Code</span>
+                  </>
+                )}
+              </button>
+
+              {/* Resend Controls */}
+              <div className="flex items-center justify-between pt-2 text-[11px] font-sans">
+                <button
+                  type="button"
+                  onClick={() => setMode('register')}
+                  className="text-zinc-500 hover:text-white flex items-center gap-1 cursor-pointer bg-transparent border-none"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResendOTPCode}
+                  disabled={resendTimer > 0 || isResending}
+                  className={`flex items-center gap-1.5 font-semibold bg-transparent border-none cursor-pointer ${
+                    resendTimer > 0 || isResending ? 'text-zinc-600 cursor-not-allowed' : 'text-gold hover:underline'
+                  }`}
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isResending ? 'animate-spin' : ''}`} />
+                  <span>
+                    {resendTimer > 0 ? `Resend Code (${resendTimer}s)` : 'Resend Code'}
+                  </span>
+                </button>
+              </div>
+            </form>
+          ) : mode === 'profile' && user ? (
             <div className="space-y-6">
               {/* Profile Card Summary */}
               <div className="p-5 border border-gold/15 bg-zinc-950/50 rounded-none relative overflow-hidden">
@@ -168,7 +416,7 @@ export const AuthModal = () => {
                 </div>
                 <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] font-mono text-zinc-500">
                   <span>MEMBER SINCE</span>
-                  <span className="text-zinc-300 font-sans uppercase tracking-widest">{user.memberSince}</span>
+                  <span className="text-zinc-300 font-sans uppercase tracking-widest">{user.memberSince || 'July 2026'}</span>
                 </div>
               </div>
 

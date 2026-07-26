@@ -55,32 +55,81 @@ export const normalizeProductBadges = (product = {}) => {
   return badges.sort((a, b) => (a.priority || 0) - (b.priority || 0));
 };
 
+const getCachedCategories = () => {
+  try {
+    const cached = localStorage.getItem('luxury_categories');
+    return cached ? JSON.parse(cached) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+const getCachedBrands = () => {
+  try {
+    const cached = localStorage.getItem('luxury_brands');
+    return cached ? JSON.parse(cached) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+export const resolveCategoryName = (catValue) => {
+  if (!catValue) return 'Unisex';
+  if (typeof catValue === 'object' && catValue !== null) {
+    return catValue.name || catValue.title || catValue.slug || 'Unisex';
+  }
+  const strVal = String(catValue).trim();
+  if (!strVal) return 'Unisex';
+  const cachedList = getCachedCategories();
+  const found = cachedList.find(c => 
+    String(c._id || c.id) === strVal || 
+    String(c.slug || '').toLowerCase() === strVal.toLowerCase() || 
+    String(c.name || '').toLowerCase() === strVal.toLowerCase()
+  );
+  if (found) return found.name || found.title || found.slug || strVal;
+  return strVal;
+};
+
+export const resolveBrandName = (brandValue) => {
+  if (!brandValue) return '';
+  if (typeof brandValue === 'object' && brandValue !== null) {
+    return brandValue.name || brandValue.title || brandValue.slug || '';
+  }
+  const strVal = String(brandValue).trim();
+  if (!strVal) return '';
+  const cachedList = getCachedBrands();
+  const found = cachedList.find(b => 
+    String(b._id || b.id) === strVal || 
+    String(b.slug || '').toLowerCase() === strVal.toLowerCase() || 
+    String(b.name || '').toLowerCase() === strVal.toLowerCase()
+  );
+  if (found) return found.name || found.title || found.slug || strVal;
+  return strVal;
+};
+
 const normalizeCategory = (product = {}) => {
-  if (Array.isArray(product.categories) && product.categories.length > 0) {
-    const cat = product.categories[0];
-    if (typeof cat === 'object' && cat !== null) {
-      return cat.name || cat.title || cat.slug || 'Unisex';
-    }
-    if (typeof cat === 'string') return cat;
-  }
-  if (typeof product.category === 'object' && product.category !== null) {
-    return product.category.name || 'Unisex';
-  }
-  if (typeof product.category === 'string') return product.category;
-  return 'Unisex';
+  const catInput = product.category || product.categoryId || product.category_id || (Array.isArray(product.categories) && product.categories.length > 0 ? product.categories[0] : null);
+  return resolveCategoryName(catInput);
 };
 
 const normalizeBrand = (product = {}) => {
-  if (Array.isArray(product.brands) && product.brands.length > 0) {
-    const b = product.brands[0];
-    if (typeof b === 'object' && b !== null) return b.name || 'Unknown Brand';
-    if (typeof b === 'string') return b;
+  const brandInput = product.brand || product.brandId || product.brand_id || (Array.isArray(product.brands) && product.brands.length > 0 ? product.brands[0] : null);
+  const resolved = resolveBrandName(brandInput);
+  if (resolved) return resolved;
+  
+  // Fallback: extract from product name if name is in "Brand - Product" or "Brand Product" format
+  if (product.name || product.title) {
+    const fullName = String(product.name || product.title).trim();
+    if (fullName.includes(' - ')) {
+      return fullName.split(' - ')[0].trim();
+    }
+    const words = fullName.split(' ');
+    if (words.length > 1) {
+      return words[0];
+    }
+    return fullName;
   }
-  if (typeof product.brand === 'object' && product.brand !== null) {
-    return product.brand.name || 'Unknown Brand';
-  }
-  if (typeof product.brand === 'string') return product.brand;
-  return 'Unknown Brand';
+  return '';
 };
 
 export const mapRemoteProduct = (product = {}) => {

@@ -249,3 +249,165 @@ export async function createOrder(orderPayload) {
   }
   return json;
 }
+
+/**
+ * Centralized API call for User Login
+ */
+export async function loginUser(credentials) {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/users/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials)
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    const errorMsg = json?.errors?.join(', ') || json?.message || json?.error || 'Login failed. Please check your credentials.';
+    throw new Error(errorMsg);
+  }
+  return json;
+}
+
+/**
+ * Centralized API call for User Registration
+ */
+export async function registerUser(userData) {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData)
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    const errorMsg = json?.errors?.join(', ') || json?.message || json?.error || 'Registration failed. Please try again.';
+    throw new Error(errorMsg);
+  }
+  return json;
+}
+
+/**
+ * Centralized API call for OTP Verification
+ */
+export async function verifyOTP(payload) {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/auth/verify-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    const errorMsg = json?.errors?.join(', ') || json?.message || json?.error || 'Invalid OTP code. Please try again.';
+    throw new Error(errorMsg);
+  }
+  return json;
+}
+
+/**
+ * Centralized API call to Resend OTP
+ */
+export async function resendOTP(payload) {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/auth/resend-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    const errorMsg = json?.errors?.join(', ') || json?.message || json?.error || 'Failed to resend OTP.';
+    throw new Error(errorMsg);
+  }
+  return json;
+}
+
+/**
+ * ==========================================
+ * MEMBERS API COLLECTION (/api/v1/members)
+ * ==========================================
+ */
+
+/**
+ * List Members (GET /api/v1/members)
+ */
+export async function fetchMembers() {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/members`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(json?.message || json?.error || 'Failed to fetch members list.');
+  }
+  return json?.data || (Array.isArray(json) ? json : []);
+}
+
+/**
+ * Get Member by ID (GET /api/v1/members/:memberId)
+ */
+export async function fetchMemberById(memberId) {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(json?.message || json?.error || 'Member not found.');
+  }
+  return json?.data || json;
+}
+
+/**
+ * Create Member (POST /api/v1/members)
+ */
+export async function createMember(memberPayload) {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/members`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(memberPayload)
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    const errorMsg = json?.errors?.join(', ') || json?.message || json?.error || 'Failed to create member.';
+    throw new Error(errorMsg);
+  }
+  return json?.data || json;
+}
+
+/**
+ * Update Member (PUT /api/v1/members/:memberId)
+ */
+export async function updateMember(memberId, updatePayload) {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatePayload)
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    const errorMsg = json?.errors?.join(', ') || json?.message || json?.error || 'Failed to update member.';
+    throw new Error(errorMsg);
+  }
+  return json?.data || json;
+}
+
+/**
+ * Delete Member (DELETE /api/v1/members/:memberId)
+ */
+export async function deleteMember(memberId) {
+  const apiBaseUrl = getApiBaseUrl();
+  const res = await fetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(json?.message || json?.error || 'Failed to delete member.');
+  }
+  return json;
+}
