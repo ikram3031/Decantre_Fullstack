@@ -72,11 +72,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = useCallback(() => {
-    clearStoredAuth();
-    setUser(null);
-  }, []);
-
   return (
     <AuthContext.Provider value={{ user, isLoading, login, logout, error }}>
       {children}
