@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { createMember, getMemberById, listMembers, updateMember, deleteMember, registerMember, verifyMemberOtp } from "../controllers/MembersController.js";
+import { createMember, getMemberById, listMembers, updateMember, deleteMember, registerMember, verifyMemberOtp, loginMember, resendMemberOtp } from "../controllers/MembersController.js";
 
 const membersRouter = Router();
 
 membersRouter.post("/register", registerMember);
+membersRouter.post("/login", loginMember);
 membersRouter.post("/verify-otp", verifyMemberOtp);
+membersRouter.post("/resend-otp", resendMemberOtp);
 membersRouter.post("/", createMember);
 membersRouter.get("/", listMembers);
 membersRouter.get("/:memberId", getMemberById);

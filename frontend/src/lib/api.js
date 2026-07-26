@@ -269,11 +269,11 @@ export async function createOrder(orderPayload) {
 }
 
 /**
- * User Login (Fixed Endpoint Path)
+ * Member Login (via /members/login)
  */
-export async function loginUser(credentials) {
+export async function loginMember(credentials) {
 	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/auth/login`, {
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/login`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(credentials),
@@ -291,14 +291,36 @@ export async function loginUser(credentials) {
 }
 
 /**
- * User Registration
+ * Resend Member OTP (via /members/resend-otp)
  */
-export async function registerUser(userData) {
+export async function resendMemberOtp(payload) {
 	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/auth/register`, {
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/resend-otp`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(userData),
+		body: JSON.stringify(payload),
+	});
+	const json = await res.json().catch(() => null);
+	if (!res.ok) {
+		const errorMsg =
+			json?.errors?.join(", ") ||
+			json?.message ||
+			json?.error ||
+			"Failed to resend OTP.";
+		throw new Error(errorMsg);
+	}
+	return json;
+}
+
+/**
+ * Register Member (via /members/register with OTP flow)
+ */
+export async function registerMember(memberPayload) {
+	const apiBaseUrl = getApiBaseUrl();
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/register`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(memberPayload),
 	});
 	const json = await res.json().catch(() => null);
 	if (!res.ok) {
@@ -313,11 +335,11 @@ export async function registerUser(userData) {
 }
 
 /**
- * OTP Verification
+ * Verify Member OTP (via /members/verify-otp)
  */
-export async function verifyOTP(payload) {
+export async function verifyMemberOtp(payload) {
 	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/auth/verify-otp`, {
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/verify-otp`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(payload),
@@ -328,29 +350,7 @@ export async function verifyOTP(payload) {
 			json?.errors?.join(", ") ||
 			json?.message ||
 			json?.error ||
-			"Invalid OTP code. Please try again.";
-		throw new Error(errorMsg);
-	}
-	return json;
-}
-
-/**
- * Resend OTP
- */
-export async function resendOTP(payload) {
-	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/auth/resend-otp`, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(payload),
-	});
-	const json = await res.json().catch(() => null);
-	if (!res.ok) {
-		const errorMsg =
-			json?.errors?.join(", ") ||
-			json?.message ||
-			json?.error ||
-			"Failed to resend OTP.";
+			"OTP verification failed.";
 		throw new Error(errorMsg);
 	}
 	return json;

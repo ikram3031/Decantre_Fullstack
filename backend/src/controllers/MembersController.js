@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import { MemberModel } from "../models/member.model.js";
-import { hashPassword } from "../utils/password.js";
+import { hashPassword, comparePassword } from "../utils/password.js";
+import jwt from "jsonwebtoken";
+import crypto from "node:crypto";
+import { env } from "../config/env.js";
 
 const { Types } = mongoose;
 
@@ -283,6 +286,94 @@ export const verifyMemberOtp = async (req, res, next) => {
           email: member.email,
           role: member.role,
         },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const loginMember = async (req, res, next) => {
+  try {
+    const { email, password } = req.body ?? {};
+    const normalizedEmail = typeof email === "string" ? email.toLowerCase().trim() : "";
+
+    if (!normalizedEmail || !password) {
+      return res.status(400).json({ status: "error", message: "Email and password are required" });
+    }
+
+    const member = await MemberModel.findOne({ email: normalizedEmail }).select("+passwordHash");
+    if (!member || !member.passwordHash) {
+      return res.status(401).json({ status: "error", message: "Invalid credentials" });
+    }
+
+    const isPasswordValid = await comparePassword(password, member.passwordHash);
+    if (!isPasswordValid) {
+      return res.status(401).json({ status: "error", message: "Invalid credentials" });
+    }
+
+    const refreshToken = crypto.randomBytes(48).toString("hex");
+    const refreshTokenExpiresAt = new Date(Date.now() + (env.REFRESH_TOKEN_EXPIRES_MS || 7 * 24 * 60 * 60 * 1000));
+    member.refreshToken = refreshToken;
+    member.refreshTokenExpiresAt = refreshTokenExpiresAt;
+    await member.save();
+
+    const accessToken = jwt.sign(
+      { userId: member.id, role: member.role, email: member.email },
+      env.ACCESS_TOKEN_SECRET,
+      { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "15m" },
+    );
+
+    res.json({
+      status: "success",
+      data: {
+        user: {
+          id: member.id,
+          name: member.name,
+          email: member.email,
+          phone: member.phone,
+          role: member.role,
+        },
+        accessToken,
+        accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "15m",
+        refreshToken,
+        refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resendMemberOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body ?? {};
+    const trimmedEmail = typeof email === "string" ? email.toLowerCase().trim() : "";
+
+    if (!trimmedEmail) {
+      return res.status(400).json({ status: "error", message: "Email is required" });
+    }
+
+    const member = await MemberModel.findOne({ email: trimmedEmail }).select("+emailOtp +emailOtpExpiresAt");
+    if (!member) {
+      return res.status(404).json({ status: "error", message: "No member found with this email" });
+    }
+
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+    member.emailOtp = otp;
+    member.emailOtpExpiresAt = otpExpires;
+    await member.save();
+
+    console.log(`Resend OTP for ${trimmedEmail}: ${otp}`);
+
+    res.json({
+      status: "success",
+      message: "A new OTP has been sent to your email.",
+      data: {
+        email: member.email,
+        expiresAt: otpExpires.toISOString(),
       },
     });
   } catch (error) {

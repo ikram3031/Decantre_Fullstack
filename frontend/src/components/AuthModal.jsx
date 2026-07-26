@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Mail, Lock, User, Key, ShieldCheck, ShoppingBag, LogOut, Award, ArrowLeft, RefreshCw } from 'lucide-react';
+import { X, Mail, Lock, User, Key, ShieldCheck, ShoppingBag, LogOut, Award, ArrowLeft, RefreshCw, Phone } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { loginUser, registerUser, verifyOTP, resendOTP, createMember } from '../lib/api';
+import { loginMember, registerMember, verifyMemberOtp, resendMemberOtp } from '../lib/api';
 
 export const AuthModal = () => {
   const {
@@ -19,6 +19,7 @@ export const AuthModal = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // OTP State (6 Digits)
@@ -52,6 +53,7 @@ export const AuthModal = () => {
     setPassword('');
     setConfirmPassword('');
     setName('');
+    setPhone('');
     setOtpValues(['', '', '', '', '', '']);
   };
 
@@ -100,7 +102,7 @@ export const AuthModal = () => {
 
     setIsLoading(true);
     try {
-      const response = await verifyOTP({ email, otp: code });
+      const response = await verifyMemberOtp({ email, otp: code });
       const userData = response.user || response.data?.user || response.data || {};
       const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
       const refreshToken = response.refreshToken || response.data?.refreshToken;
@@ -109,6 +111,7 @@ export const AuthModal = () => {
       const verifiedUser = {
         name: displayName,
         email: userData.email || email,
+        phone: userData.phone || phone,
         tier: userData.tier || 'Privé Connoisseur',
         raw: userData
       };
@@ -117,8 +120,8 @@ export const AuthModal = () => {
       addToast(`OTP verified successfully! Welcome, ${displayName}.`, 'success');
       handleClose();
     } catch (err) {
-      const errorMsg = err.message || 'Verification failed. Invalid OTP code.';
-      addToast(errorMsg, 'error');
+      // Show generic error for any backend failure
+      addToast('An unexpected error occurred. Please try again.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -129,13 +132,14 @@ export const AuthModal = () => {
 
     setIsResending(true);
     try {
-      await resendOTP({ email });
+      await resendMemberOtp({ email });
       addToast('A new 6-digit verification code has been dispatched to your email.', 'success');
       setResendTimer(60);
       setOtpValues(['', '', '', '', '', '']);
       otpInputsRef.current[0]?.focus();
     } catch (err) {
-      addToast(err.message || 'Failed to resend verification code.', 'error');
+      // Generic resend error
+      addToast('Failed to resend verification code. Please try again later.', 'error');
     } finally {
       setIsResending(false);
     }
@@ -150,7 +154,7 @@ export const AuthModal = () => {
 
     setIsLoading(true);
     try {
-      const response = await loginUser({ email, password });
+      const response = await loginMember({ email, password });
       
       // If backend signals OTP required
       if (response.requiresOtp || response.data?.requiresOtp) {
@@ -176,8 +180,8 @@ export const AuthModal = () => {
       addToast(`Login successful! Welcome back, ${displayName}.`, 'success');
       handleClose();
     } catch (err) {
-      const errorMsg = err.message || 'Login failed. Please check your credentials.';
-      addToast(errorMsg, 'error');
+      // Generic login error
+      addToast('Login failed. Please try again.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -185,7 +189,7 @@ export const AuthModal = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !phone || !password || !confirmPassword) {
       addToast('Please complete all fields.', 'error');
       return;
     }
@@ -200,58 +204,14 @@ export const AuthModal = () => {
 
     setIsLoading(true);
     try {
-      const nameParts = name.trim().split(' ');
-      const firstName = nameParts[0] || name;
-      const lastName = nameParts.slice(1).join(' ') || name;
-
-      // Local state fallbacks if not rendered in UI
-      const phoneVal = '';
-      const addressVal = '123 Main Street';
-      const cityVal = 'Dhaka';
-      const postcodeVal = '1207';
-
       const memberPayload = {
-        name,
-        email,
-        phone: phoneVal,
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
         password,
-        billingInfo: {
-          firstName,
-          lastName,
-          company: '',
-          address1: addressVal,
-          address2: '',
-          district: cityVal,
-          city: cityVal,
-          state: cityVal,
-          postcode: postcodeVal,
-          country: 'Bangladesh',
-          email,
-          phone: phoneVal
-        },
-        shippingInfo: {
-          firstName,
-          lastName,
-          company: '',
-          address1: addressVal,
-          address2: '',
-          district: cityVal,
-          city: cityVal,
-          state: cityVal,
-          postcode: postcodeVal,
-          country: 'Bangladesh',
-          email,
-          phone: phoneVal
-        }
       };
 
-      // Try creating member via Member API, fallback to registerUser
-      let response;
-      try {
-        response = await createMember(memberPayload);
-      } catch (err) {
-        response = await registerUser({ name, email, password });
-      }
+      const response = await registerMember(memberPayload);
       
       const userData = response.user || response.data || response;
       const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
@@ -276,8 +236,8 @@ export const AuthModal = () => {
         addToast('Account created! Please verify the 6-digit code sent to your email.', 'success');
       }
     } catch (err) {
-      const errorMsg = err.message || 'Registration failed. Please try again.';
-      addToast(errorMsg, 'error');
+      // Generic registration error
+      addToast('Registration failed. Please try again later.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -476,6 +436,25 @@ export const AuthModal = () => {
                       placeholder="e.g. Alexander Vance"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
+              {mode === 'register' && (
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-semibold block">
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <Phone className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
+                    <input
+                      type="tel"
+                      placeholder="e.g. 01712345678"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
                       required
                     />
