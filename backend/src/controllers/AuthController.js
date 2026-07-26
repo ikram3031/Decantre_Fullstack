@@ -97,37 +97,38 @@ export async function register(req, res, next) {
 export async function login(req, res, next) {
   try {
     const { email, password } = req.body ?? {};
+    const normalizedEmail = typeof email === "string" ? email.toLowerCase().trim() : "";
 
-    if (!email || !password) {
+    if (!normalizedEmail || !password) {
       return res.status(400).json({ status: "error", message: "Email and password are required" });
     }
 
-    const member = await MemberModel.findOne({ email: email.toLowerCase().trim() }).select("+passwordHash");
-    if (!member || !member.passwordHash) {
+    const user = await UserModel.findOne({ email: normalizedEmail }).select("+passwordHash");
+    if (!user || !user.passwordHash) {
       return res.status(401).json({ status: "error", message: "Invalid credentials" });
     }
 
-    const isPasswordValid = await comparePassword(password, member.passwordHash);
+    const isPasswordValid = await comparePassword(password, user.passwordHash);
     if (!isPasswordValid) {
       return res.status(401).json({ status: "error", message: "Invalid credentials" });
     }
 
     const refreshToken = createRefreshToken();
     const refreshTokenExpiresAt = new Date(Date.now() + env.REFRESH_TOKEN_EXPIRES_MS);
-    member.refreshToken = refreshToken;
-    member.refreshTokenExpiresAt = refreshTokenExpiresAt;
-    await member.save();
+    user.refreshToken = refreshToken;
+    user.refreshTokenExpiresAt = refreshTokenExpiresAt;
+    await user.save();
 
-    const accessToken = createAccessToken(member);
+    const accessToken = createAccessToken(user);
 
     res.json({
       status: "success",
       data: {
         user: {
-          id: member.id,
-          name: member.name,
-          email: member.email,
-          role: member.role,
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
         },
         accessToken,
         accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
@@ -195,7 +196,7 @@ export async function refreshToken(req, res, next) {
       return res.status(400).json({ status: "error", message: "refreshToken is required" });
     }
 
-    const user = await MemberModel.findOne({ refreshToken }).select("+refreshToken +refreshTokenExpiresAt");
+    const user = await UserModel.findOne({ refreshToken }).select("+refreshToken +refreshTokenExpiresAt");
     if (!user || !user.refreshTokenExpiresAt || user.refreshTokenExpiresAt < new Date()) {
       return res.status(401).json({ status: "error", message: "Invalid or expired refresh token" });
     }
@@ -233,7 +234,7 @@ export async function logout(req, res, next) {
       return res.status(400).json({ status: "error", message: "refreshToken is required" });
     }
 
-    const user = await MemberModel.findOne({ refreshToken }).select("+refreshToken +refreshTokenExpiresAt");
+    const user = await UserModel.findOne({ refreshToken }).select("+refreshToken +refreshTokenExpiresAt");
     if (user) {
       user.refreshToken = undefined;
       user.refreshTokenExpiresAt = undefined;

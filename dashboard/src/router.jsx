@@ -1,6 +1,6 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router';
 import { useAuth } from './context/AuthContext';
-import { LoginPage } from './components/LoginPage';
+import LoginPage from './pages/LoginPage';
 import { DashboardLayout } from './components/DashboardLayout';
 import { DashboardHome } from './components/DashboardHome';
 import { OrdersPage } from './components/OrdersPage';
