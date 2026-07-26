@@ -1,5 +1,28 @@
 # Dev Deployment Documentation
 
+## Server login 
+```
+ssh root@144.79.218.126
+```
+### Go to root
+```
+cd /opt/dev
+```
+### Single app deploy example
+```
+docker compose up -d --no-deps --build backend
+```
+```
+docker compose up -d --no-deps --build frontend
+```
+```
+docker compose up -d --no-deps --build dashboard
+```
+### All rerdeploy
+```
+make deploy
+```
+
 ## 1. Project Directory Structure
 
 Project root: `/opt/dev`

@@ -12,6 +12,8 @@ const SORT_FIELD_MAP = {
   stockStatus: "stockStatus",
 };
 
+const PLACEHOLDER_IMAGE_URL = "/uploads/product_placeholder.webp";
+
 const normalizeValue = (value) => {
   if (typeof value === "string") {
     return value.trim();
@@ -19,6 +21,8 @@ const normalizeValue = (value) => {
 
   return value;
 };
+
+const isPlaceholderImageUrl = (value) => typeof value === "string" && value.trim() === PLACEHOLDER_IMAGE_URL;
 
 export const serializeProduct = (product) => {
   const source = product?.toObject ? product.toObject() : product;
@@ -209,9 +213,14 @@ export const listProducts = async (req, res, next) => {
       filter = await buildProductFilter(req.body || {});
     }
 
+    const filteredQuery = {
+      ...filter,
+      imageUrl: { $ne: PLACEHOLDER_IMAGE_URL },
+    };
+
     const [total, rows] = await Promise.all([
-      ProductModel.countDocuments(filter),
-      ProductModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+      ProductModel.countDocuments(filteredQuery),
+      ProductModel.find(filteredQuery).sort(sort).skip(skip).limit(limit).lean(),
     ]);
 
     res.json({
@@ -238,7 +247,7 @@ export const getProduct = async (req, res, next) => {
 
     const product = await ProductModel.findOne(filter).lean();
 
-    if (!product) {
+    if (!product || isPlaceholderImageUrl(product.imageUrl)) {
       res.status(404).json({ status: "error", message: "Product not found" });
       return;
     }
