@@ -4,7 +4,7 @@ import { hashPassword } from "../utils/password.js";
 
 const { Types } = mongoose;
 
-function validateAddressPayload(address, sectionName) {
+const validateAddressPayload = (address, sectionName) => {
   const errors = [];
   const requiredFields = [
     "firstName",
@@ -32,9 +32,9 @@ function validateAddressPayload(address, sectionName) {
   });
 
   return errors;
-}
+};
 
-function validateMemberPayload(payload, billingInfo, shippingInfo) {
+const validateMemberPayload = (payload, billingInfo, shippingInfo) => {
   const errors = [];
   if (!payload.name || typeof payload.name !== "string" || !payload.name.trim()) {
     errors.push("name is required");
@@ -53,27 +53,27 @@ function validateMemberPayload(payload, billingInfo, shippingInfo) {
   errors.push(...validateAddressPayload(shippingInfo, "shippingInfo"));
 
   return errors;
-}
+};
 
-function sanitizeInfo(info) {
+const sanitizeInfo = (info) => {
   if (!info || typeof info !== "object") return {};
   return Object.entries(info).reduce((acc, [key, value]) => {
     if (value === undefined || value === null) return acc;
     acc[key] = typeof value === "string" ? value.trim() : value;
     return acc;
   }, {});
-}
+};
 
-export async function listMembers(req, res, next) {
+export const listMembers = async (req, res, next) => {
   try {
     const members = await MemberModel.find().lean();
     res.json({ status: "success", data: members });
   } catch (error) {
     next(error);
   }
-}
+};
 
-export async function getMemberById(req, res, next) {
+export const getMemberById = async (req, res, next) => {
   try {
     const { memberId } = req.params;
     if (!Types.ObjectId.isValid(memberId)) {
@@ -89,9 +89,9 @@ export async function getMemberById(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-export async function deleteMember(req, res, next) {
+export const deleteMember = async (req, res, next) => {
   try {
     const { memberId } = req.params;
     if (!Types.ObjectId.isValid(memberId)) {
@@ -107,9 +107,9 @@ export async function deleteMember(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-export async function createMember(req, res, next) {
+export const createMember = async (req, res, next) => {
   try {
     const payload = req.body ?? {};
     const validationErrors = validateMemberPayload(payload, payload.billingInfo, payload.shippingInfo);
@@ -135,9 +135,9 @@ export async function createMember(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-export async function updateMember(req, res, next) {
+export const updateMember = async (req, res, next) => {
   try {
     const { memberId } = req.params;
     if (!Types.ObjectId.isValid(memberId)) {
@@ -186,4 +186,106 @@ export async function updateMember(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
+
+export const registerMember = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, role } = req.body ?? {};
+
+    const trimmedName = typeof name === "string" ? name.trim() : "";
+    const trimmedEmail = typeof email === "string" ? email.toLowerCase().trim() : "";
+    const trimmedPassword = typeof password === "string" ? password : "";
+    const trimmedPhone = typeof phone === "string" ? phone.trim() : "";
+    const trimmedRole = typeof role === "string" ? role.trim() : "";
+
+    const errors = [];
+    if (!trimmedName) {
+      errors.push("name is required");
+    }
+    if (!trimmedEmail) {
+      errors.push("email is required");
+    }
+    if (!trimmedPhone) {
+      errors.push("phone is required");
+    }
+    if (!trimmedPassword || trimmedPassword.length < 6) {
+      errors.push("password is required and must be at least 6 characters");
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).json({ status: "error", message: "Invalid registration payload", errors });
+    }
+
+    const existingMember = await MemberModel.findOne({ email: trimmedEmail }).select("+emailOtp");
+    if (existingMember) {
+      return res.status(409).json({ status: "error", message: "A member with this email already exists" });
+    }
+
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+    const member = await MemberModel.create({
+      name: trimmedName,
+      email: trimmedEmail,
+      phone: trimmedPhone,
+      passwordHash: await hashPassword(trimmedPassword),
+      role: trimmedRole || "Customer",
+      emailOtp: otp,
+      emailOtpExpiresAt: otpExpires,
+      billingInfo: sanitizeInfo(req.body?.billingInfo),
+      shippingInfo: sanitizeInfo(req.body?.shippingInfo),
+    });
+
+    console.log(`Generated registration OTP for ${trimmedEmail}: ${otp}`);
+
+    return res.status(201).json({
+      status: "success",
+      message: "Registration started. Check the OTP sent to your email.",
+      data: {
+        id: member.id,
+        email: member.email,
+        expiresAt: otpExpires.toISOString(),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyMemberOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body ?? {};
+    const trimmedEmail = typeof email === "string" ? email.toLowerCase().trim() : "";
+    const trimmedOtp = typeof otp === "string" ? otp.trim() : "";
+
+    if (!trimmedEmail || !trimmedOtp) {
+      return res.status(400).json({ status: "error", message: "Email and otp are required" });
+    }
+
+    const member = await MemberModel.findOne({ email: trimmedEmail, emailOtp: trimmedOtp }).select("+passwordHash +emailOtp +emailOtpExpiresAt");
+    if (!member || !member.emailOtpExpiresAt || member.emailOtpExpiresAt < new Date()) {
+      return res.status(400).json({ status: "error", message: "Invalid or expired OTP" });
+    }
+
+    member.emailOtp = undefined;
+    member.emailOtpExpiresAt = undefined;
+    member.isEmailVerified = true;
+    member.emailVerifiedAt = new Date();
+    await member.save();
+
+    res.json({
+      status: "success",
+      message: "OTP verified successfully",
+      data: {
+        user: {
+          id: member.id,
+          name: member.name,
+          email: member.email,
+          role: member.role,
+        },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

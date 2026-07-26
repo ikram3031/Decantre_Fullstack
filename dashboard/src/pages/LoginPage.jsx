@@ -43,31 +43,11 @@ const LoginPage = () => {
 	};
 
 	useEffect(() => {
-		const autoLogin = async () => {
-			const loginEmail = "ikramul.web@gmail.com";
-			const loginPassword = "11223344";
-			setEmail(loginEmail);
-			setPassword(loginPassword);
-			setIsLoading(true);
-			setLocalError(null);
-			try {
-				await login(loginEmail, loginPassword);
-				addToast({
-					type: "success",
-					title: "Signed in",
-					message: "Welcome back to Decantre Admin.",
-				});
-			} catch (err) {
-				const message = err.message || "Login failed";
-				setLocalError(message);
-				addToast({ type: "error", title: "Authentication failed", message });
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		autoLogin();
-	}, [login, addToast]);
+		const loginEmail = "ikramul.web@gmail.com";
+		const loginPassword = "11223344";
+		setEmail(loginEmail);
+		setPassword(loginPassword);
+	}, []);
 
 	return (
 		<div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 selection:bg-slate-900 selection:text-white">
