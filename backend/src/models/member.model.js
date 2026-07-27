@@ -32,8 +32,6 @@ const memberSchema = new Schema(
         }
         delete ret._id;
         delete ret.passwordHash;
-        delete ret.emailOtp;
-        delete ret.emailOtpExpiresAt;
         delete ret.refreshToken;
         delete ret.refreshTokenExpiresAt;
         delete ret.emailVerifiedAt;

@@ -45,35 +45,41 @@ export const Shop = () => {
   const [brandFilters, setBrandFilters] = useState([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const pageSize = 20;
+  const visibleCount = Math.min(allProducts.length, totalProducts || allProducts.length);
 
-  // Compute dynamic min/max price boundaries from currently fetched products
+  // Compute dynamic min/max price boundaries from the currently loaded products
   const priceLimits = useMemo(() => {
-    const prices = products.map((p) => p.basePrice).filter((p) => p > 0);
+    const prices = allProducts.map((p) => p.basePrice).filter((p) => p > 0);
     if (prices.length === 0) return { min: 140, max: 25000 };
     return {
       min: Math.min(...prices),
       max: Math.max(...prices)
     };
-  }, [products]);
+  }, [allProducts]);
 
   // Sync initial max price selection with loaded products range
   useEffect(() => {
-    if (products.length > 0) {
-      const prices = products.map((p) => p.basePrice).filter((p) => p > 0);
+    if (allProducts.length > 0) {
+      const prices = allProducts.map((p) => p.basePrice).filter((p) => p > 0);
       if (prices.length > 0) {
         setMaxPrice(Math.max(...prices));
       }
     }
-  }, [products]);
+  }, [allProducts]);
 
   // Mapped client-side filter for the price range
   const displayedProducts = useMemo(() => {
-    return products.filter((prod) => prod.basePrice <= maxPrice);
-  }, [products, maxPrice]);
+    return allProducts.filter((prod) => prod.basePrice <= maxPrice);
+  }, [allProducts, maxPrice]);
 
   const categoryOptions = useMemo(
-    () => [{ id: 'all', name: 'All', slug: 'All', product_count: products.length }, ...categories],
-    [categories, products]
+    () => [{ id: 'all', name: 'All', slug: 'All', product_count: totalProducts || allProducts.length }, ...categories],
+    [categories, totalProducts, allProducts.length]
   );
 
   // Group brands into Parent-Child hierarchy (Niche / Designer -> Alphabetic Ranges -> Brand items)
@@ -172,10 +178,9 @@ export const Shop = () => {
   }, [searchParam, setSearchQuery]);
 
 
-  useEffect(() => {
+  const loadProductsPage = async (targetPage = 1, append = false) => {
     if (typeof fetchProducts !== 'function') return;
 
-    // Map frontend sort labels to API sortBy/order
     const sortMap = {
       newest: { sortBy: 'createdAt', order: 'desc' },
       oldest: { sortBy: 'createdAt', order: 'asc' },
@@ -186,18 +191,16 @@ export const Shop = () => {
     };
     const { sortBy, order } = sortMap[sortOrder] || sortMap.newest;
 
-    // Helper to normalize slug/name comparisons (e.g., 'For Him' -> 'for-him')
     const toSlug = (str = '') => String(str).toLowerCase().trim().replace(/\s+/g, '-');
 
-    // Find selected category object to get its ID if available
     const selectedCategoryObj = categories.find(
       c => c.slug === selectedCategory || c.name === selectedCategory || c.id === selectedCategory || toSlug(c.slug || c.name) === toSlug(selectedCategory)
     );
     const categoryVal = selectedCategoryObj ? (selectedCategoryObj.id || selectedCategoryObj.slug || selectedCategoryObj.name) : selectedCategory;
 
     const opts = {
-      skip: 0,
-      limit: 20,
+      skip: (targetPage - 1) * pageSize,
+      limit: pageSize,
       sortBy,
       order,
     };
@@ -216,17 +219,39 @@ export const Shop = () => {
       opts.q = searchQuery;
     }
 
-    const loadProducts = async () => {
-      setIsLoadingProducts(true);
-      try {
-        await fetchProducts(opts);
-      } finally {
-        setIsLoadingProducts(false);
-      }
-    };
+    setIsLoadingProducts(true);
+    try {
+      const result = await fetchProducts(opts);
+      const nextProducts = Array.isArray(result) ? result.filter((prod) => prod && prod.id) : [];
+      const totalRows = Array.isArray(result) && typeof result._totalRows === 'number' ? result._totalRows : nextProducts.length;
+      const nextTotalPages = Math.max(1, Math.ceil(totalRows / pageSize));
 
-    loadProducts();
+      if (append) {
+        setAllProducts((prev) => [...prev, ...nextProducts]);
+      } else {
+        setAllProducts(nextProducts);
+      }
+
+      setTotalProducts(totalRows);
+      setTotalPages(nextTotalPages);
+      setPage(targetPage);
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  };
+
+  useEffect(() => {
+    setAllProducts([]);
+    setPage(1);
+    setTotalPages(1);
+    setTotalProducts(0);
+    loadProductsPage(1, false);
   }, [fetchProducts, selectedCategory, brandFilters, searchQuery, sortOrder, categories, brands]);
+
+  const handlePageChange = (targetPage) => {
+    if (targetPage < 1 || targetPage > totalPages || targetPage === page) return;
+    loadProductsPage(targetPage, false);
+  };
 
   const handleBrandToggle = (brandSlug) => {
     const params = new URLSearchParams(searchParams);
@@ -471,7 +496,7 @@ export const Shop = () => {
           <div className="lg:col-span-3 space-y-8">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between border-b border-white/5 pb-4">
               <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
-                Displaying {displayedProducts.length} Premium Formulations
+                Displaying {visibleCount} of {totalProducts || visibleCount} Premium Formulations
               </span>
               <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
@@ -500,6 +525,32 @@ export const Shop = () => {
                 )}
               </div>
             </div>
+
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-white/5 pt-4">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
+                  Page {page} of {totalPages}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1 || isLoadingProducts}
+                    className="px-3 py-2 border border-gold/30 text-gold text-[10px] uppercase tracking-widest rounded-[4px] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= totalPages || isLoadingProducts}
+                    className="px-3 py-2 border border-gold/30 text-gold text-[10px] uppercase tracking-widest rounded-[4px] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Loading skeleton */}
             {isLoadingProducts && (

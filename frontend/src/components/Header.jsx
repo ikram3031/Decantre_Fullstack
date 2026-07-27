@@ -18,7 +18,7 @@ export const Header = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setSelectedCategory, user, setAuthModal, currentTheme, toggleTheme, brands, categories } = useApp();
+  const { setSelectedCategory, user, setAuthModal, currentTheme, toggleTheme, brands, categories, products } = useApp();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileShopExpanded, setIsMobileShopExpanded] = React.useState(false);
   const [isMobileBrandExpanded, setIsMobileBrandExpanded] = React.useState(false);
@@ -164,7 +164,37 @@ export const Header = ({
   // Top search panel states
   const [isSearchPanelOpen, setIsSearchPanelOpen] = React.useState(false);
   const [localSearchVal, setLocalSearchVal] = React.useState('');
+  const [debouncedSearchVal, setDebouncedSearchVal] = React.useState('');
   const [selectedSearchCategory, setSelectedSearchCategoryState] = React.useState('All');
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearchVal(localSearchVal.trim());
+    }, 250);
+
+    return () => window.clearTimeout(timer);
+  }, [localSearchVal]);
+
+  const searchDropdownItems = React.useMemo(() => {
+    const value = debouncedSearchVal.toLowerCase();
+    if (!value) return [];
+
+    return (products || [])
+      .filter((product) => {
+        const name = (product?.name || '').toLowerCase();
+        const brand = (product?.brand || product?.brandName || '').toLowerCase();
+        const description = (product?.description || '').toLowerCase();
+        const tags = (product?.tags || []).join(' ').toLowerCase();
+        return name.includes(value) || brand.includes(value) || description.includes(value) || tags.includes(value);
+      })
+      .slice(0, 6)
+      .map((product) => ({
+        id: product?.id || product?.slug || product?.name,
+        name: product?.name || 'Product',
+        subtitle: product?.brand || product?.brandName || 'Perfume',
+        slug: product?.slug || product?.id || product?.name,
+      }));
+  }, [debouncedSearchVal, products]);
 
   // Typewriter suggestion text inside search placeholder
   const searchSuggestions = React.useMemo(() => [
@@ -203,19 +233,30 @@ export const Header = ({
     return () => clearTimeout(timer);
   }, [placeholderText, isDeleting, suggestionIdx, searchSuggestions]);
 
-  const handlePerformSearch = () => {
+  const handlePerformSearch = (event) => {
+    if (event?.preventDefault) event.preventDefault();
+    const query = localSearchVal.trim();
+    if (!query) return;
+
     setIsSearchPanelOpen(false);
-    let url = `/shop?search=${encodeURIComponent(localSearchVal)}`;
+    let url = `/shop?search=${encodeURIComponent(query)}`;
     if (selectedSearchCategory !== 'All') {
       url += `&category=${encodeURIComponent(selectedSearchCategory)}`;
     }
     navigate(url);
   };
 
+  const handleSuggestionSelect = (item) => {
+    setLocalSearchVal(item.name);
+    setIsSearchPanelOpen(false);
+    if (item?.slug) {
+      navigate(`/product/${encodeURIComponent(item.slug)}`);
+    }
+  };
+
   const handleTrendingClick = (tag) => {
     setLocalSearchVal(tag);
     setIsSearchPanelOpen(false);
-    navigate(`/shop?search=${encodeURIComponent(tag)}`);
   };
 
   // Close mobile menu on click or route change
@@ -324,7 +365,7 @@ export const Header = ({
                 onChange={(e) => setLocalSearchVal(e.value ? e.value : e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    handlePerformSearch();
+                    handlePerformSearch(e);
                     setIsMobileMenuOpen(false);
                   }
                 }}
@@ -713,16 +754,35 @@ export const Header = ({
                     onChange={(e) => setLocalSearchVal(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
-                        handlePerformSearch();
+                        handlePerformSearch(e);
                       }
                     }}
                     className="w-full px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-sans font-light placeholder-zinc-500 focus:outline-none bg-black text-zinc-100 border-none"
                   />
+
+                  {localSearchVal.trim() && searchDropdownItems.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 z-20 border border-gold/20 bg-black/95 backdrop-blur rounded-sm shadow-2xl overflow-hidden">
+                      {searchDropdownItems.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleSuggestionSelect(item)}
+                          className="w-full flex items-center justify-between px-3 py-2.5 text-left text-xs text-zinc-300 hover:bg-gold/10 hover:text-gold transition-colors cursor-pointer"
+                        >
+                          <span className="truncate pr-3">{item.name}</span>
+                          <span className="text-[10px] uppercase tracking-widest text-zinc-500 whitespace-nowrap">
+                            {item.subtitle}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Search Button */}
                 <button
-                  onClick={handlePerformSearch}
+                  type="button"
+                  onClick={(e) => handlePerformSearch(e)}
                   className="bg-gold hover:bg-gold/80 text-black transition-all px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-bold cursor-pointer shrink-0 border-none"
                 >
                   <Search className="w-4 h-4 shrink-0" />
