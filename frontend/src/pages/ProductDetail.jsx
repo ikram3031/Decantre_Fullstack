@@ -287,7 +287,7 @@ export const ProductDetail = () => {
               <Truck className="w-5 h-5 text-gold shrink-0 mt-0.5" />
               <div className="text-xs font-sans leading-relaxed">
                 <strong className="text-gold font-bold uppercase tracking-wider block mb-0.5">Delivery Notice</strong>
-                Courier delivery: <span className="font-semibold text-white">৳80 Inside Dhaka (24–48h)</span>, <span className="font-semibold text-white">৳120 Outside Dhaka (48–72h)</span>. Cash on Delivery & In-Store Pickup available.
+                Courier delivery: <span className="font-semibold text-white">৳80 Inside Dhaka (24–48h)</span>, <span className="font-semibold text-white">৳120 Outside Dhaka (24–72h)</span>. Cash on Delivery & In-Store Pickup available.
               </div>
             </div>
 

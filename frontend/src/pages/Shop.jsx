@@ -6,6 +6,7 @@ import { useApp } from '../context/AppContext';
 import { formatBDT } from '../utils/formatCurrency';
 import { ProductCard } from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/Skeleton';
+import { Pagination } from '../components/ui/Pagination';
 import menuData from '../data/menuData.json';
 
 const staticBrandHierarchy = menuData.brandHierarchy || {};
@@ -49,8 +50,28 @@ export const Shop = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const pageSize = 20;
+  const [pageSize, setPageSize] = useState(() => {
+    if (typeof window === 'undefined') return 15;
+    const width = window.innerWidth;
+    if (width < 640) return 10;
+    if (width < 1024) return 12;
+    return 15;
+  });
   const visibleCount = Math.min(allProducts.length, totalProducts || allProducts.length);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const updatePageSize = () => {
+      const width = window.innerWidth;
+      setPageSize(width < 640 ? 10 : width < 1024 ? 12 : 15);
+    };
+
+    updatePageSize();
+    window.addEventListener('resize', updatePageSize);
+
+    return () => window.removeEventListener('resize', updatePageSize);
+  }, []);
 
   // Compute dynamic min/max price boundaries from the currently loaded products
   const priceLimits = useMemo(() => {
@@ -81,6 +102,8 @@ export const Shop = () => {
     () => [{ id: 'all', name: 'All', slug: 'All', product_count: totalProducts || allProducts.length }, ...categories],
     [categories, totalProducts, allProducts.length]
   );
+
+  const gridColumnsClass = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-6';
 
   // Group brands into Parent-Child hierarchy (Niche / Designer -> Alphabetic Ranges -> Brand items)
   const structuredBrandHierarchy = useMemo(() => {
@@ -311,9 +334,9 @@ export const Shop = () => {
                       : `${isLight ? 'border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black' : 'border-white/10 text-zinc-400 hover:border-gold/30 hover:text-white'}`
                   }`}
                 >
-                  {category.name}
-                  {category.product_count !== undefined && category.slug !== 'All' ? (
-                    <span className="text-[10px] text-zinc-500 ml-2">({category.product_count})</span>
+                  <span>{category.name}</span>
+                  {category.product_count !== undefined ? (
+                    <span className="ml-2 text-[10px] text-zinc-500">({category.product_count})</span>
                   ) : null}
                 </button>
               );
@@ -498,15 +521,42 @@ export const Shop = () => {
               <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
                 Displaying {visibleCount} of {totalProducts || visibleCount} Premium Formulations
               </span>
+{/* PREV NEXT BUTTON */}
+              {/* <div className="hidden lg:flex flex-1 items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1}
+                  className="h-9 w-[6rem] rounded-sm border border-gold/20 bg-transparent text-gold text-[10px] uppercase tracking-[0.25em] font-semibold transition-all hover:bg-gold/10 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Previous
+                </button>
+
+                <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
+                  Page {page} of {totalPages}
+                </span> 
+
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages}
+                  className="h-9 w-[6rem] rounded-sm border border-gold/20 bg-transparent text-gold text-[10px] uppercase tracking-[0.25em] font-semibold transition-all hover:bg-gold/10 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div> */}
+
               <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
                   <span>Sort</span>
                   <select
                     value={sortOrder}
                     onChange={(e) => setSortOrder(e.target.value)}
-                    className="bg-black border border-[#C5A059] text-[#C5A059] text-xs font-bold uppercase tracking-wider rounded-[4px] py-2 px-3 outline-none focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059] cursor-pointer"
+                    className="bg-black border border-[#C5A059] text-[#C5A059] text-[10px] font-semibold uppercase tracking-wide rounded-sm px-2 py-1 mr-1 outline-none focus:border-[#C5A059] focus:ring-1 focus:ring-[#C5A059] cursor-pointer"
+                    style={{ minWidth: '8rem' }}
                   >
                     <option value="newest" className="bg-[#C5A059] text-black font-bold">Newest first</option>
+                    <option value="oldest" className="bg-[#C5A059] text-black font-bold">Oldest first</option>
                     <option value="price-asc" className="bg-[#C5A059] text-black font-bold">Price low to high</option>
                     <option value="price-desc" className="bg-[#C5A059] text-black font-bold">Price high to low</option>
                   </select>
@@ -527,28 +577,17 @@ export const Shop = () => {
             </div>
 
             {totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-white/5 pt-4">
+              <div className="flex flex-col items-center gap-3 border-t border-white/5 pt-4 lg:hidden">
                 <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
                   Page {page} of {totalPages}
                 </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page === 1 || isLoadingProducts}
-                    className="px-3 py-2 border border-gold/30 text-gold text-[10px] uppercase tracking-widest rounded-[4px] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page >= totalPages || isLoadingProducts}
-                    className="px-3 py-2 border border-gold/30 text-gold text-[10px] uppercase tracking-widest rounded-[4px] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                  >
-                    Next
-                  </button>
-                </div>
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={(nextPage) => handlePageChange(nextPage)}
+                  isLight={isLight}
+                  className="justify-center"
+                />
               </div>
             )}
 
@@ -590,7 +629,7 @@ export const Shop = () => {
             )}
 
             {/* Perfume list */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
+            <div className={gridColumnsClass}>
               {!isLoadingProducts && displayedProducts.map((prod) => {
                 const currentSel = cardSelections[prod.id] || { size: '100ml', concentration: 'Eau de Parfum' };
                 return (
@@ -620,6 +659,21 @@ export const Shop = () => {
                 );
               })}
             </div>
+
+            {totalPages > 1 && (
+              <div className="flex flex-col items-center gap-3 border-t border-white/5 pt-4">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
+                  Page {page} of {totalPages}
+                </span>
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={(nextPage) => handlePageChange(nextPage)}
+                  isLight={isLight}
+                  className="justify-center"
+                />
+              </div>
+            )}
           </div>
         </div>
 

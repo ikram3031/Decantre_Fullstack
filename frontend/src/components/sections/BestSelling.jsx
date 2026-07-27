@@ -20,7 +20,7 @@ export const BestSelling = () => {
   const [filter, setFilter] = useState('All');
   const isLight = currentTheme === 'light';
 
-  // Filter bestsellers based on tab selection (shows exactly 6 items)
+  // Filter bestsellers based on tab selection (shows exactly 8 items on desktop)
   const filtered = useMemo(() => {
     const bSellers = products.filter(p => p.isBestSeller);
 
@@ -36,7 +36,7 @@ export const BestSelling = () => {
         });
         himItems = Array.from(new Set([...himItems, ...fallbacks]));
       }
-      return himItems.slice(0, 6);
+      return himItems.slice(0, 8);
     } else if (filter === 'For Her') {
       let herItems = bSellers.filter(p => {
         const cat = (p.category || '').toLowerCase();
@@ -49,11 +49,11 @@ export const BestSelling = () => {
         });
         herItems = Array.from(new Set([...herItems, ...fallbacks]));
       }
-      return herItems.slice(0, 6);
+      return herItems.slice(0, 8);
     }
 
     let pool = bSellers.length >= 6 ? bSellers : Array.from(new Set([...bSellers, ...products]));
-    return pool.slice(0, 6);
+    return pool.slice(0, 8);
   }, [products, filter]);
 
   return (
@@ -103,7 +103,7 @@ export const BestSelling = () => {
             No bestseller products available at the moment.
           </p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 pt-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 pt-2">
             {filtered.map((p) => {
               const currentSel = cardSelections[p.id] || { size: (p.variations && p.variations[0] && p.variations[0].size) || '100ml', concentration: 'Eau de Parfum' };
 

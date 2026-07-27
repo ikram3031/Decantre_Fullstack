@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Compass, Heart, ShoppingBag, Search, Menu, X, ChevronDown, ChevronUp, ChevronRight, User, LogIn, Sparkles } from 'lucide-react';
+import { Compass, Heart, ShoppingBag, Search, Menu, X, ChevronDown, ChevronUp, ChevronRight, User, LogIn, Sparkles, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '../context/AppContext';
+
 import menuData from '../data/menuData.json';
 
 const brandHierarchy = menuData.brandHierarchy;
@@ -18,7 +19,7 @@ export const Header = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setSelectedCategory, user, setAuthModal, currentTheme, toggleTheme, brands, categories, products } = useApp();
+  const { setSelectedCategory, user, setAuthModal, currentTheme, toggleTheme, brands, categories, products, setUser } = useApp();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isMobileShopExpanded, setIsMobileShopExpanded] = React.useState(false);
   const [isMobileBrandExpanded, setIsMobileBrandExpanded] = React.useState(false);
@@ -346,7 +347,7 @@ export const Header = ({
 
       {/* Full Screen Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-[#080808] text-zinc-100 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden min-h-screen flex flex-col font-sans animate-fade-in border-l border-gold/20 shadow-2xl">
+        <div style={{ WebkitOverflowScrolling: 'touch' }} className="fixed inset-0 z-50 h-screen bg-[#080808] text-zinc-100 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden overscroll-contain flex flex-col font-sans animate-fade-in border-l border-gold/20 shadow-2xl">
           {/* Top Bar Header */}
           <div className="border-b border-gold/20 bg-black/90 px-6 sm:px-12 py-4 flex items-center justify-between relative shrink-0">
             <button 
@@ -358,12 +359,12 @@ export const Header = ({
               <span className="text-[10px] uppercase font-mono tracking-widest text-gold hidden sm:inline">Close</span>
             </button>
 
-            <span className="absolute left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.3em] font-serif text-gold font-semibold">
-              DECANTRE MENU
-            </span>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center gap-2">
+              DECANTRE
+            </div>
           </div>
 
-          <div className="w-full max-w-2xl mx-auto px-6 sm:px-10 py-6 sm:py-8 space-y-6 flex-grow">
+          <div className="w-full max-w-2xl mx-auto px-6 sm:px-10 py-6 sm:py-8 space-y-6 flex-grow min-h-0 overflow-hidden">
             {/* Search Input Bar */}
             <div className="relative flex items-center bg-black border border-white/10 rounded-sm px-4 py-3 group focus-within:border-gold/50 transition-all">
               <Search className="w-4 h-4 text-gold shrink-0 mr-3" />
@@ -391,7 +392,7 @@ export const Header = ({
             </div>
 
             {/* Menu List - Exact Hierarchy match */}
-            <div className="pt-2 space-y-2">
+            <div style={{ WebkitOverflowScrolling: 'touch' }} className="pt-2 space-y-2 overflow-y-auto max-h-[calc(100vh-220px)]">
               <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-gold/60 block mb-2 font-sans">
                 NAVIGATION MENU
               </span>
@@ -447,7 +448,6 @@ export const Header = ({
                           className="w-full text-left py-2 px-3 text-xs text-zinc-300 hover:text-gold hover:bg-white/5 rounded-sm transition-all flex items-center justify-between cursor-pointer"
                         >
                           <span className="font-medium">{item.label}</span>
-                          <span className="text-[10px] text-zinc-500 font-mono italic">sub item</span>
                         </button>
                       ))}
                     </div>
@@ -511,7 +511,6 @@ export const Header = ({
                           className="w-full text-left py-2 px-3 text-xs text-zinc-300 hover:text-gold hover:bg-white/5 rounded-sm transition-all flex items-center justify-between cursor-pointer"
                         >
                           <span className="font-medium">{item.label}</span>
-                          <span className="text-[10px] text-zinc-500 font-mono italic">sub item</span>
                         </button>
                       ))}
                     </div>
@@ -546,16 +545,15 @@ export const Header = ({
                         return (
                           <div key={catId} className="bg-zinc-900/50 border border-white/5 rounded-sm overflow-hidden">
                             <div className="w-full flex items-center justify-between py-2 px-3 bg-zinc-900/90 hover:bg-zinc-800/90 transition-colors">
-                              <button
-                                onClick={() => {
-                                  navigate(`/shop?${buildQueryString({ brand: cat.name.toLowerCase() })}`);
-                                  handleNavLinkClick();
-                                }}
-                                className="text-xs font-semibold text-zinc-200 hover:text-gold text-left cursor-pointer flex-grow flex items-center justify-between pr-2"
-                              >
-                                <span>{cat.name}</span>
-                                <span className="text-[10px] text-zinc-500 font-mono italic font-normal">sub item</span>
-                              </button>
+                                <button
+                                  onClick={() => {
+                                    navigate(`/shop?${buildQueryString({ brand: cat.name.toLowerCase() })}`);
+                                    handleNavLinkClick();
+                                  }}
+                                  className="text-xs font-semibold text-zinc-200 hover:text-gold text-left cursor-pointer flex-grow flex items-center justify-between pr-2"
+                                >
+                                  <span>{cat.name}</span>
+                                </button>
                               <button
                                 onClick={() => toggleNode(`brand-${catId}`)}
                                 className="p-1 text-zinc-400 hover:text-gold cursor-pointer"
@@ -572,13 +570,12 @@ export const Header = ({
                                   return (
                                     <div key={range} className="bg-zinc-950/70 border border-white/5 rounded-sm overflow-hidden">
                                       <div className="w-full flex items-center justify-between py-1.5 px-3 bg-zinc-900/60">
-                                        <button
-                                          onClick={() => toggleNode(rangeKey)}
-                                          className="text-[11px] font-semibold text-gold/90 hover:text-gold text-left cursor-pointer flex-grow flex items-center justify-between pr-2"
-                                        >
-                                          <span>{range}</span>
-                                          <span className="text-[10px] text-zinc-500 font-mono italic font-normal">sub item</span>
-                                        </button>
+                                          <button
+                                            onClick={() => toggleNode(rangeKey)}
+                                            className="text-[11px] font-semibold text-gold/90 hover:text-gold text-left cursor-pointer flex-grow flex items-center justify-between pr-2"
+                                          >
+                                            <span>{range}</span>
+                                          </button>
                                         <button
                                           onClick={() => toggleNode(rangeKey)}
                                           className="p-1 text-zinc-400 cursor-pointer"
@@ -599,7 +596,6 @@ export const Header = ({
                                               className="w-full text-left py-1 px-2 text-[11px] text-zinc-300 hover:text-gold hover:bg-white/5 rounded-xs transition-colors flex items-center justify-between cursor-pointer font-sans"
                                             >
                                               <span>{brandName}</span>
-                                              <span className="text-[9px] text-zinc-500 font-mono italic">sub item</span>
                                             </button>
                                           ))}
                                         </div>
@@ -682,21 +678,31 @@ export const Header = ({
 
                 {/* USER PROFILE OR LOGIN / REGISTER */}
                 {user ? (
-                  <button 
-                    onClick={() => {
-                      setAuthModal(true, 'profile');
-                      handleNavLinkClick();
-                    }} 
-                    className="text-left py-2.5 px-3.5 bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 rounded-sm transition-all flex items-center justify-between cursor-pointer"
-                  >
-                    <span className="flex items-center gap-2 font-serif tracking-widest text-xs sm:text-sm">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        setAuthModal(true, 'profile');
+                        handleNavLinkClick();
+                      }}
+                      className="flex-1 text-left py-2.5 px-3.5 bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 rounded-sm transition-all flex items-center gap-2 cursor-pointer"
+                    >
                       <User className="w-4 h-4 text-gold" />
-                      MY ACCOUNT ({user.name})
-                    </span>
-                    <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 bg-gold text-black font-bold">
-                      {user.tier}
-                    </span>
-                  </button>
+                      <span className="flex-1 min-w-0 font-serif tracking-widest text-xs sm:text-sm truncate">MY ACCOUNT ({user.name})</span>
+                      <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 bg-gold text-black font-bold ml-2">{user.tier}</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setUser(null);
+                        if (addToast) addToast('You have been signed out.', 'info');
+                        handleNavLinkClick();
+                      }}
+                      className="p-2 bg-transparent border border-white/10 rounded-sm text-gold hover:text-white hover:bg-white/5 transition-colors"
+                      title="Sign out"
+                    >
+                      <LogOut className="w-4 h-4 text-gold" />
+                    </button>
+                  </div>
                 ) : (
                   <div className="pt-2 pb-2 space-y-2">
                     <div className="grid grid-cols-2 gap-3">
