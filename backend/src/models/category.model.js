@@ -12,6 +12,8 @@ const categorySchema = new Schema(
     imageUrl: { type: String, trim: true, default: "" },
     productCount: { type: Number, default: 0, min: 0 },
     parent: { type: Schema.Types.ObjectId, ref: "Category", default: null },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    updatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
   {
     timestamps: true,

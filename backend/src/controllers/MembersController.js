@@ -7,6 +7,16 @@ import { env } from "../config/env.js";
 
 const { Types } = mongoose;
 
+const hasAddressData = (address) => {
+  if (!address || typeof address !== "object") return false;
+
+  return Object.entries(address).some(([key, value]) => {
+    if (key === "company" || key === "address2") return false;
+    if (typeof value === "string") return value.trim() !== "";
+    return value !== undefined && value !== null;
+  });
+};
+
 const validateAddressPayload = (address, sectionName) => {
   const errors = [];
   const requiredFields = [
@@ -23,8 +33,11 @@ const validateAddressPayload = (address, sectionName) => {
   ];
 
   if (!address || typeof address !== "object") {
-    errors.push(`${sectionName} is required`);
-    return errors;
+    return [];
+  }
+
+  if (!hasAddressData(address)) {
+    return [];
   }
 
   requiredFields.forEach((field) => {
@@ -52,8 +65,12 @@ const validateMemberPayload = (payload, billingInfo, shippingInfo) => {
     errors.push("password is required and must be at least 6 characters");
   }
 
-  errors.push(...validateAddressPayload(billingInfo, "billingInfo"));
-  errors.push(...validateAddressPayload(shippingInfo, "shippingInfo"));
+  if (payload.billingInfo !== undefined) {
+    errors.push(...validateAddressPayload(billingInfo, "billingInfo"));
+  }
+  if (payload.shippingInfo !== undefined) {
+    errors.push(...validateAddressPayload(shippingInfo, "shippingInfo"));
+  }
 
   return errors;
 };
@@ -165,14 +182,14 @@ export const updateMember = async (req, res, next) => {
       }
       updates.passwordHash = await hashPassword(payload.password);
     }
-    if (payload.billingInfo) {
+    if (payload.billingInfo !== undefined) {
       const billingErrors = validateAddressPayload(payload.billingInfo, "billingInfo");
       if (billingErrors.length > 0) {
         return res.status(400).json({ status: "error", message: "Invalid billing information", errors: billingErrors });
       }
       updates.billingInfo = sanitizeInfo(payload.billingInfo);
     }
-    if (payload.shippingInfo) {
+    if (payload.shippingInfo !== undefined) {
       const shippingErrors = validateAddressPayload(payload.shippingInfo, "shippingInfo");
       if (shippingErrors.length > 0) {
         return res.status(400).json({ status: "error", message: "Invalid shipping information", errors: shippingErrors });

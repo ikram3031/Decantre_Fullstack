@@ -24,6 +24,8 @@ const userSchema = new Schema(
     emailOtpExpiresAt: { type: Date, select: false },
     role: { type: String, required: true, enum: USER_ROLES, default: "Store_manager" },
     isActive: { type: Boolean, default: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    updatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
   {
     timestamps: true,

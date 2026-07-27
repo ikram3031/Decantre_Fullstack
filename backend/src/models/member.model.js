@@ -3,40 +3,6 @@ import { generateDid } from "../utils/generateDid.js";
 
 const { models } = mongoose;
 
-const billingInfoSchema = new Schema(
-  {
-    firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
-    company: { type: String, trim: true, default: "" },
-    address1: { type: String, required: true, trim: true },
-    address2: { type: String, trim: true, default: "" },
-    district: { type: String, required: true, trim: true },
-    city: { type: String, required: true, trim: true },
-    state: { type: String, required: true, trim: true },
-    postcode: { type: String, required: true, trim: true },
-    email: { type: String, required: true, trim: true, lowercase: true },
-    phone: { type: String, required: true, trim: true },
-  },
-  { _id: false },
-);
-
-const shippingInfoSchema = new Schema(
-  {
-    firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
-    company: { type: String, trim: true, default: "" },
-    address1: { type: String, required: true, trim: true },
-    address2: { type: String, trim: true, default: "" },
-    district: { type: String, required: true, trim: true },
-    city: { type: String, required: true, trim: true },
-    state: { type: String, required: true, trim: true },
-    postcode: { type: String, required: true, trim: true },
-    email: { type: String, required: true, trim: true, lowercase: true },
-    phone: { type: String, required: true, trim: true },
-  },
-  { _id: false },
-);
-
 const memberSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -52,9 +18,8 @@ const memberSchema = new Schema(
     emailVerifiedAt: { type: Date, select: false },
     refreshToken: { type: String, trim: true, select: false },
     refreshTokenExpiresAt: { type: Date, select: false },
-    billingInfo: { type: billingInfoSchema, default: () => ({}) },
-    shippingInfo: { type: shippingInfoSchema, default: () => ({}) },
-    orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    updatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
   {
     timestamps: true,
