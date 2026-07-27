@@ -127,7 +127,7 @@ export const Breadcrumb = ({ items }) => {
       const prod = products.find(p => String(p.id) === String(didParam));
       breadcrumbItems.push({ label: 'Shop', link: '/shop' });
       if (prod && prod.category) {
-        breadcrumbItems.push({ label: prod.category, link: `/shop?category=${encodeURIComponent(prod.category)}` });
+        breadcrumbItems.push({ label: prod.category, link: `/shop?${new URLSearchParams({ category: prod.category }).toString()}` });
       }
       breadcrumbItems.push({ label: prod ? prod.name : 'Product Details' });
     } else if (routeMap[path]) {

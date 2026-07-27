@@ -203,7 +203,7 @@ export const CartDrawer = ({
                       <input 
                         type="text" 
                         required
-                        placeholder="Lord / Lady Winston Churchill"
+                        placeholder=""
                         value={shippingInfo.fullName}
                         onChange={(e) => setShippingInfo({...shippingInfo, fullName: e.target.value})}
                         className="w-full bg-black border border-white/5 rounded-sm px-3 py-2 text-xs font-light text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-gold/50"
@@ -215,7 +215,7 @@ export const CartDrawer = ({
                       <input 
                         type="email" 
                         required
-                        placeholder="name@eminent.com"
+                        placeholder=""
                         value={shippingInfo.email}
                         onChange={(e) => setShippingInfo({...shippingInfo, email: e.target.value})}
                         className="w-full bg-black border border-white/5 rounded-sm px-3 py-2 text-xs font-light text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-gold/50"
@@ -227,7 +227,7 @@ export const CartDrawer = ({
                       <input 
                         type="text" 
                         required
-                        placeholder="77 Belgrave Square"
+                        placeholder=""
                         value={shippingInfo.address}
                         onChange={(e) => setShippingInfo({...shippingInfo, address: e.target.value})}
                         className="w-full bg-black border border-white/5 rounded-sm px-3 py-2 text-xs font-light text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-gold/50"
@@ -240,7 +240,7 @@ export const CartDrawer = ({
                         <input 
                           type="text" 
                           required
-                          placeholder="London"
+                          placeholder=""
                           value={shippingInfo.city}
                           onChange={(e) => setShippingInfo({...shippingInfo, city: e.target.value})}
                           className="w-full bg-black border border-white/5 rounded-sm px-3 py-2 text-xs font-light text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-gold/50"
@@ -251,7 +251,7 @@ export const CartDrawer = ({
                         <input 
                           type="text" 
                           required
-                          placeholder="SW1X 8QB"
+                          placeholder=""
                           value={shippingInfo.postalCode}
                           onChange={(e) => setShippingInfo({...shippingInfo, postalCode: e.target.value})}
                           className="w-full bg-black border border-white/5 rounded-sm px-3 py-2 text-xs font-light text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-gold/50"
@@ -271,7 +271,7 @@ export const CartDrawer = ({
                       <input 
                         type="text" 
                         required
-                        placeholder="LORD WINDSOR"
+                        placeholder=""
                         value={shippingInfo.cardName}
                         onChange={(e) => setShippingInfo({...shippingInfo, cardName: e.target.value})}
                         className="w-full bg-black border border-white/5 rounded-sm px-3 py-2 text-xs font-light text-zinc-100 placeholder-zinc-700 focus:outline-none focus:border-gold/50"
@@ -283,7 +283,7 @@ export const CartDrawer = ({
                       <input 
                         type="text" 
                         required
-                        placeholder="4000 1234 5678 9010"
+                        placeholder=""
                         maxLength={19}
                         value={shippingInfo.cardNumber}
                         onChange={(e) => setShippingInfo({...shippingInfo, cardNumber: e.target.value})}
@@ -298,7 +298,7 @@ export const CartDrawer = ({
                         <input 
                           type="text" 
                           required
-                          placeholder="08 / 29"
+                          placeholder=""
                           maxLength={5}
                           value={shippingInfo.cardExpiry}
                           onChange={(e) => setShippingInfo({...shippingInfo, cardExpiry: e.target.value})}
@@ -310,7 +310,7 @@ export const CartDrawer = ({
                         <input 
                           type="password" 
                           required
-                          placeholder="***"
+                            placeholder=""
                           maxLength={4}
                           value={shippingInfo.cardCvv}
                           onChange={(e) => setShippingInfo({...shippingInfo, cardCvv: e.target.value})}

@@ -1,7 +1,7 @@
 import { UserModel, USER_ROLES } from "../models/user.model.js";
 import { hashPassword } from "../utils/password.js";
 
-function validateCreateUserPayload(payload) {
+const validateCreateUserPayload = (payload) => {
   const errors = [];
 
   if (!payload.name || typeof payload.name !== "string" || !payload.name.trim()) {
@@ -23,7 +23,7 @@ function validateCreateUserPayload(payload) {
   return errors;
 }
 
-function validateUpdateUserPayload(payload) {
+const validateUpdateUserPayload = (payload) => {
   const errors = [];
 
   if (!payload.name || typeof payload.name !== "string" || !payload.name.trim()) {
@@ -45,7 +45,7 @@ function validateUpdateUserPayload(payload) {
   return errors;
 }
 
-export async function listUsers(req, res, next) {
+export const listUsers = async (req, res, next) => {
   try {
     const users = await UserModel.find().lean();
     res.json({ data: users });
@@ -54,7 +54,7 @@ export async function listUsers(req, res, next) {
   }
 }
 
-export async function getUserById(req, res, next) {
+export const getUserById = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await UserModel.findById(userId).lean();
@@ -69,7 +69,7 @@ export async function getUserById(req, res, next) {
   }
 }
 
-function validateUserPayload(payload) {
+const validateUserPayload = (payload) => {
   const errors = [];
 
   if (!payload.name || typeof payload.name !== "string" || !payload.name.trim()) {
@@ -87,7 +87,7 @@ function validateUserPayload(payload) {
   return errors;
 }
 
-export async function createUser(req, res, next) {
+export const createUser = async (req, res, next) => {
   try {
     const payload = req.body ?? {};
     const validationErrors = validateCreateUserPayload(payload);
@@ -114,7 +114,7 @@ export async function createUser(req, res, next) {
   }
 }
 
-export async function updateUser(req, res, next) {
+export const updateUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const payload = req.body ?? {};
@@ -153,7 +153,7 @@ export async function updateUser(req, res, next) {
   }
 }
 
-export async function deleteUser(req, res, next) {
+export const deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await UserModel.findByIdAndDelete(userId).lean();

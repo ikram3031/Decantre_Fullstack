@@ -149,7 +149,7 @@ export const Reviews = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Baron Alexis"
+                    placeholder=""
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
                     className="w-full bg-black/40 border border-white/10 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -159,7 +159,7 @@ export const Reviews = () => {
                   <label className="text-[9px] uppercase tracking-widest text-zinc-400 block mb-2">Your Location</label>
                   <input
                     type="text"
-                    placeholder="e.g. Monaco, France"
+                    placeholder=""
                     value={formLocation}
                     onChange={(e) => setFormLocation(e.target.value)}
                     className="w-full bg-black/40 border border-white/10 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -203,7 +203,7 @@ export const Reviews = () => {
                 <textarea
                   required
                   rows="4"
-                  placeholder="Share details about the scent evolution, sillage, longevity, or overall aura..."
+                  placeholder=""
                   value={formText}
                   onChange={(e) => setFormText(e.target.value)}
                   className="w-full bg-black/40 border border-white/10 focus:border-gold/60 text-zinc-200 text-xs p-4 outline-none rounded-sm font-sans leading-relaxed resize-none"

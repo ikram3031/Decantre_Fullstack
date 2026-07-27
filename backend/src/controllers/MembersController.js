@@ -84,12 +84,6 @@ const sanitizeInfo = (info) => {
   }, {});
 };
 
-const canManageMembers = (user) => {
-  if (!user) return false;
-  const role = typeof user.role === "string" ? user.role.toLowerCase() : "";
-  return role === "super_admin" || role === "admin" || role === "store_manager";
-};
-
 export const listMembers = async (req, res, next) => {
   try {
     const members = await MemberModel.find().lean();
@@ -119,10 +113,6 @@ export const getMemberById = async (req, res, next) => {
 
 export const deleteMember = async (req, res, next) => {
   try {
-    if (!canManageMembers(req.user)) {
-      return res.status(403).json({ status: "error", message: "Only super admins and store admins can delete members" });
-    }
-
     const { memberId } = req.params;
     if (!Types.ObjectId.isValid(memberId)) {
       return res.status(400).json({ status: "error", message: "Invalid member ID" });
@@ -169,10 +159,6 @@ export const createMember = async (req, res, next) => {
 
 export const updateMember = async (req, res, next) => {
   try {
-    if (!canManageMembers(req.user)) {
-      return res.status(403).json({ status: "error", message: "Only super admins and store admins can update members" });
-    }
-
     const { memberId } = req.params;
     if (!Types.ObjectId.isValid(memberId)) {
       return res.status(400).json({ status: "error", message: "Invalid member ID" });

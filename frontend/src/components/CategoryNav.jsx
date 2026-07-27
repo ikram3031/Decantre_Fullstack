@@ -9,7 +9,7 @@ export const CategoryNav = ({ setSelectedCategory }) => {
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    navigate(`/shop?category=${encodeURIComponent(category)}`);
+    navigate(`/shop?${new URLSearchParams({ category }).toString()}`);
   };
 
   return (

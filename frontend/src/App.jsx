@@ -15,6 +15,7 @@ import { Wishlist } from './pages/Wishlist';
 import { Cart } from './pages/Cart';
 import { Checkout } from './pages/Checkout';
 import { ThankYou } from './pages/ThankYou';
+import { SearchResults } from './pages/SearchResults';
 import { NotFound } from './pages/NotFound';
 import { ContactUs } from './pages/ContactUs';
 import { AboutUs } from './pages/AboutUs';
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="season" element={<Season />} />
             <Route path="combo" element={<Combo />} />
             <Route path="shop" element={<Shop />} />
+            <Route path="search" element={<SearchResults />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="product" element={<ProductDetail />} />
             <Route path="cart" element={<Cart />} />

@@ -56,7 +56,7 @@ export const MoreProducts = ({ title = "More Fragrances You May Like", category,
             {title}
           </h3>
           <Link
-            to={category ? `/shop?category=${encodeURIComponent(category)}` : '/shop'}
+            to={category ? `/shop?${new URLSearchParams({ category }).toString()}` : '/shop'}
             className="text-xs uppercase tracking-widest text-gold hover:underline font-bold flex items-center gap-1.5 shrink-0"
           >
             <span>View All</span>

@@ -136,6 +136,7 @@ export const Header = ({
     'full-bottles': false
   });
 
+  // Toggle a mobile menu node open or closed
   const toggleNode = (nodeId) => {
     setExpandedNodes((prev) => ({
       ...prev,
@@ -156,9 +157,13 @@ export const Header = ({
   const [mobileExpandedCat, setMobileExpandedCat] = React.useState(null);
   const [mobileExpandedRange, setMobileExpandedRange] = React.useState(null);
 
+  // Build a query string from search parameters
+  const buildQueryString = (params) => new URLSearchParams(params).toString();
+
+  // Navigate to shop filtered by selected brand
   const handleBrandClick = (brandName) => {
     setActiveDropdown(null);
-    navigate(`/shop?brand=${encodeURIComponent(brandName)}`);
+    navigate(`/shop?${buildQueryString({ brand: brandName })}`);
   };
 
   // Top search panel states
@@ -233,19 +238,22 @@ export const Header = ({
     return () => clearTimeout(timer);
   }, [placeholderText, isDeleting, suggestionIdx, searchSuggestions]);
 
+  // Submit the header search and navigate to the search results page
   const handlePerformSearch = (event) => {
     if (event?.preventDefault) event.preventDefault();
     const query = localSearchVal.trim();
     if (!query) return;
 
     setIsSearchPanelOpen(false);
-    let url = `/shop?search=${encodeURIComponent(query)}`;
+    const params = new URLSearchParams();
+    params.set('search', query);
     if (selectedSearchCategory !== 'All') {
-      url += `&category=${encodeURIComponent(selectedSearchCategory)}`;
+      params.set('category', selectedSearchCategory);
     }
-    navigate(url);
+    navigate(`/search?${params.toString()}`);
   };
 
+  // Update search input from suggestion and go to the product page if available
   const handleSuggestionSelect = (item) => {
     setLocalSearchVal(item.name);
     setIsSearchPanelOpen(false);
@@ -254,6 +262,7 @@ export const Header = ({
     }
   };
 
+  // Apply a trending search tag and close the panel
   const handleTrendingClick = (tag) => {
     setLocalSearchVal(tag);
     setIsSearchPanelOpen(false);
@@ -539,7 +548,7 @@ export const Header = ({
                             <div className="w-full flex items-center justify-between py-2 px-3 bg-zinc-900/90 hover:bg-zinc-800/90 transition-colors">
                               <button
                                 onClick={() => {
-                                  navigate(`/shop?brand=${encodeURIComponent(cat.name.toLowerCase())}`);
+                                  navigate(`/shop?${buildQueryString({ brand: cat.name.toLowerCase() })}`);
                                   handleNavLinkClick();
                                 }}
                                 className="text-xs font-semibold text-zinc-200 hover:text-gold text-left cursor-pointer flex-grow flex items-center justify-between pr-2"

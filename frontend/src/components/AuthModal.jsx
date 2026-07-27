@@ -433,7 +433,7 @@ export const AuthModal = () => {
                     <User className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
                     <input
                       type="text"
-                      placeholder="e.g. Alexander Vance"
+                      placeholder=""
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
@@ -452,7 +452,7 @@ export const AuthModal = () => {
                     <Phone className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
                     <input
                       type="tel"
-                      placeholder="e.g. 01712345678"
+                      placeholder=""
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
@@ -470,7 +470,7 @@ export const AuthModal = () => {
                   <Mail className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
                   <input
                     type="email"
-                    placeholder="name@exclusive.com"
+                    placeholder=""
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
@@ -487,7 +487,7 @@ export const AuthModal = () => {
                   <Lock className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
                   <input
                     type="password"
-                    placeholder="••••••••"
+                    placeholder=""
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
@@ -505,7 +505,7 @@ export const AuthModal = () => {
                     <Key className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
                     <input
                       type="password"
-                      placeholder="••••••••"
+                      placeholder=""
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"

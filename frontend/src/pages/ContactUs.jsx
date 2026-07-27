@@ -118,7 +118,7 @@ export const ContactUs = () => {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Countess Anastasia"
+                    placeholder=""
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
                     className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -129,7 +129,7 @@ export const ContactUs = () => {
                   <input
                     type="email"
                     required
-                    placeholder="e.g. anastasia@example.com"
+                    placeholder=""
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
                     className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -156,7 +156,7 @@ export const ContactUs = () => {
                 <textarea
                   required
                   rows="5"
-                  placeholder="Tell us about your request, preferred appointment date, or any fragrance questions."
+                  placeholder=""
                   value={formMessage}
                   onChange={(e) => setFormMessage(e.target.value)}
                   className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs p-4 outline-none rounded-sm font-sans leading-relaxed resize-none"

@@ -9,7 +9,7 @@ import { logger } from "../config/logger.js";
  *   - skip (default 0): number of documents to skip
  *   - limit (default 10): maximum number of documents to return
  */
-export async function getBrands(req, res) {
+export const getBrands = async (req, res) => {
   const skip = parseInt(req.query.skip, 10) || 0;
   const limit = parseInt(req.query.limit, 10) || 10;
   try {

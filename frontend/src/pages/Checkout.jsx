@@ -144,7 +144,7 @@ export const Checkout = () => {
                     <input 
                       type="text" 
                       required
-                      placeholder="e.g. Tanvir Ahmed"
+                      placeholder=""
                       value={fullName}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, fullName: e.target.value })}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -159,7 +159,7 @@ export const Checkout = () => {
                     <input 
                       type="email" 
                       required
-                      placeholder="tanvir@example.com"
+                      placeholder=""
                       value={email}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -174,7 +174,7 @@ export const Checkout = () => {
                     <input
                       type="tel"
                       required
-                      placeholder="017XXXXXXXX"
+                      placeholder=""
                       value={phone}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -188,7 +188,7 @@ export const Checkout = () => {
                     </label>
                     <input 
                       type="text" 
-                      placeholder="House No, Road No, Area"
+                      placeholder=""
                       value={address}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -202,7 +202,7 @@ export const Checkout = () => {
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Dhanmondi"
+                      placeholder=""
                       value={thana}
                       onChange={(e) => setShippingInfo({ ...shippingInfo, thana: e.target.value })}
                       className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -299,7 +299,7 @@ export const Checkout = () => {
                       <input
                         type="text"
                         required={!sameAsBilling}
-                        placeholder="e.g. Recipient Full Name"
+                        placeholder=""
                         value={shipFullName || ''}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, fullName: e.target.value })}
                         className="w-full bg-black/50 border border-white/15 focus:border-gold text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -314,7 +314,7 @@ export const Checkout = () => {
                       <input
                         type="tel"
                         required={!sameAsBilling}
-                        placeholder="e.g. 017XXXXXXXX"
+                        placeholder=""
                         value={shipPhone || ''}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
                         className="w-full bg-black/50 border border-white/15 focus:border-gold text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -328,7 +328,7 @@ export const Checkout = () => {
                       </label>
                       <input
                         type="text"
-                        placeholder="House No, Road No, Area"
+                        placeholder=""
                         value={shipAddress}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, address: e.target.value })}
                         className="w-full bg-black/50 border border-white/15 focus:border-gold text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -342,7 +342,7 @@ export const Checkout = () => {
                       </label>
                       <input
                         type="text"
-                        placeholder="e.g. Gulshan"
+                        placeholder=""
                         value={shipThana}
                         onChange={(e) => setShippingAddress({ ...shippingAddress, thana: e.target.value })}
                         className="w-full bg-black/50 border border-white/15 focus:border-gold text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
@@ -749,7 +749,7 @@ export const Checkout = () => {
                             <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1 font-semibold">Bank Name / Details</label>
                             <input
                               type="text"
-                              placeholder="e.g. City Bank, EBL"
+                              placeholder=""
                               value={paymentDetails?.bankName || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, bankName: e.target.value })}
                               className="w-full bg-black border border-white/15 focus:border-gold text-zinc-200 text-xs px-3 py-2.5 outline-none rounded-sm"
@@ -760,7 +760,7 @@ export const Checkout = () => {
                             <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1 font-semibold">Bank Account / Reference ID</label>
                             <input
                               type="text"
-                              placeholder="Your Account No. or Reference"
+                              placeholder=""
                               value={paymentDetails?.bankAccountNumber || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, bankAccountNumber: e.target.value })}
                               className="w-full bg-black border border-white/15 focus:border-gold text-zinc-200 text-xs px-3 py-2.5 outline-none rounded-sm font-mono"
@@ -774,7 +774,7 @@ export const Checkout = () => {
                             </label>
                             <input
                               type="number"
-                              placeholder="e.g. 1000"
+                              placeholder=""
                               value={paymentDetails?.bankAmount || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, bankAmount: e.target.value })}
                               className="w-full bg-black border border-gold/50 focus:border-gold text-gold text-xs px-3 py-2.5 outline-none rounded-sm font-mono font-bold"
@@ -815,7 +815,7 @@ export const Checkout = () => {
                             <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1 font-semibold">bKash Number</label>
                             <input
                               type="tel"
-                              placeholder="017XXXXXXXX"
+                              placeholder=""
                               value={paymentDetails?.bkashNumber || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, bkashNumber: e.target.value })}
                               className="w-full bg-black border border-pink-500/30 focus:border-pink-500 text-zinc-200 text-xs px-3 py-2.5 outline-none rounded-sm font-mono"
@@ -826,7 +826,7 @@ export const Checkout = () => {
                             <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1 font-semibold">bKash Transaction ID</label>
                             <input
                               type="text"
-                              placeholder="8N7A6D5EE7M"
+                              placeholder=""
                               value={paymentDetails?.bkashTxnId || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, bkashTxnId: e.target.value })}
                               className="w-full bg-black border border-pink-500/30 focus:border-pink-500 text-zinc-200 text-xs px-3 py-2.5 outline-none rounded-sm font-mono"
@@ -840,7 +840,7 @@ export const Checkout = () => {
                             </label>
                             <input
                               type="number"
-                              placeholder="e.g. 1000"
+                              placeholder=""
                               value={paymentDetails?.bkashAmount || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, bkashAmount: e.target.value })}
                               className="w-full bg-black border border-pink-500/50 focus:border-pink-400 text-pink-300 text-xs px-3 py-2.5 outline-none rounded-sm font-mono font-bold"
@@ -881,7 +881,7 @@ export const Checkout = () => {
                             <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1 font-semibold">Nagad Number</label>
                             <input
                               type="tel"
-                              placeholder="017XXXXXXXX"
+                              placeholder=""
                               value={paymentDetails?.nagadNumber || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, nagadNumber: e.target.value })}
                               className="w-full bg-black border border-orange-500/30 focus:border-orange-500 text-zinc-200 text-xs px-3 py-2.5 outline-none rounded-sm font-mono"
@@ -892,7 +892,7 @@ export const Checkout = () => {
                             <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1 font-semibold">Nagad Transaction ID</label>
                             <input
                               type="text"
-                              placeholder="8N7A6D5EE7M"
+                              placeholder=""
                               value={paymentDetails?.nagadTxnId || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, nagadTxnId: e.target.value })}
                               className="w-full bg-black border border-orange-500/30 focus:border-orange-500 text-zinc-200 text-xs px-3 py-2.5 outline-none rounded-sm font-mono"
@@ -906,7 +906,7 @@ export const Checkout = () => {
                             </label>
                             <input
                               type="number"
-                              placeholder="e.g. 1000"
+                              placeholder=""
                               value={paymentDetails?.nagadAmount || ''}
                               onChange={(e) => setPaymentDetails({ ...paymentDetails, nagadAmount: e.target.value })}
                               className="w-full bg-black border border-orange-500/50 focus:border-orange-400 text-orange-300 text-xs px-3 py-2.5 outline-none rounded-sm font-mono font-bold"
@@ -935,7 +935,7 @@ export const Checkout = () => {
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      placeholder="e.g. GOLDEN20, MAJESTY"
+                      placeholder=""
                       value={promoCode || ''}
                       onChange={(e) => setPromoCode(e.target.value)}
                       className="flex-1 bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-xs font-mono text-zinc-200 px-3.5 py-2.5 outline-none rounded-sm transition-all uppercase placeholder:normal-case placeholder:text-zinc-500"

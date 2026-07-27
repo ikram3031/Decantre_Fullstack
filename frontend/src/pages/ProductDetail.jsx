@@ -247,7 +247,7 @@ export const ProductDetail = () => {
             {/* Category Link, Title & Brand */}
             <div className="space-y-2.5 border-b border-gold/15 pb-6">
               <Link
-                to={`/shop?category=${encodeURIComponent(resolveCategoryName(product.category) || 'All')}`}
+                to={`/shop?${new URLSearchParams({ category: resolveCategoryName(product.category) || 'All' }).toString()}`}
                 className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.25em] text-gold hover:underline"
               >
                 {resolveCategoryName(product.category)}
@@ -454,7 +454,7 @@ export const ProductDetail = () => {
                   <textarea
                     rows={3}
                     required
-                    placeholder="Share your experience with sillage, projection, and notes..."
+                    placeholder=""
                     value={reviewText}
                     onChange={(e) => setReviewText(e.target.value)}
                     className="w-full bg-black border border-white/10 focus:border-gold text-xs text-zinc-200 p-3 rounded-sm outline-none font-sans"
