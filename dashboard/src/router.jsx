@@ -1,13 +1,13 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router';
 import { useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
-import { DashboardLayout } from './components/DashboardLayout';
-import { DashboardHome } from './components/DashboardHome';
-import { OrdersPage } from './components/OrdersPage';
-import { OrderDetailsPage } from './components/OrderDetailsPage';
-import { ProductsPage } from './components/ProductsPage';
-import { CustomersPage } from './components/CustomersPage';
-import { UsersPage } from './components/UsersPage';
+import { DashboardLayout } from './pages/DashboardLayout';
+import { DashboardHome } from './pages/DashboardHome';
+import { OrdersPage } from './pages/OrdersPage';
+import { OrderDetailsPage } from './pages/OrderDetailsPage';
+import { ProductsPage } from './pages/ProductsPage';
+import { CustomersPage } from './pages/CustomersPage';
+import { UsersPage } from './pages/UsersPage';
 
 // 1. Define Root Route
 const rootRoute = createRootRoute({

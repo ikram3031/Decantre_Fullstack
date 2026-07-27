@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const DecantreLogo = ({
+export const AppLogo = ({
   className = 'h-16 w-16 text-slate-950',
   strokeWidth = 3.5,
 }) => {

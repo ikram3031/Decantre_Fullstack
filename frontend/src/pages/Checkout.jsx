@@ -53,6 +53,53 @@ export const Checkout = () => {
 
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    if (!user) return;
+
+    const valueFor = (key) =>
+      user?.[key] ||
+      user?.raw?.[key] ||
+      user?.raw?.address?.[key] ||
+      user?.raw?.shippingAddress?.[key] ||
+      user?.raw?.billingInfo?.[key] ||
+      user?.raw?.shippingInfo?.[key] ||
+      user?.raw?.profile?.[key] ||
+      "";
+
+    const updates = {};
+    if (!shippingInfo.fullName && (user.name || valueFor("fullName"))) updates.fullName = user.name || valueFor("fullName");
+    if (!shippingInfo.email && valueFor("email")) updates.email = valueFor("email");
+    if (!shippingInfo.phone && valueFor("phone")) updates.phone = valueFor("phone");
+    if (!shippingInfo.address && valueFor("address")) updates.address = valueFor("address");
+    if (!shippingInfo.thana && valueFor("thana")) updates.thana = valueFor("thana");
+    if (!shippingInfo.district && valueFor("district")) updates.district = valueFor("district");
+    if (!shippingInfo.city && valueFor("city")) updates.city = valueFor("city");
+    if (!shippingInfo.zip && (valueFor("zip") || valueFor("postcode"))) {
+      updates.zip = valueFor("zip") || valueFor("postcode");
+    }
+
+    if (Object.keys(updates).length > 0) {
+      setShippingInfo((prev) => ({ ...prev, ...updates }));
+    }
+  }, [user, shippingInfo, setShippingInfo]);
+
+  React.useEffect(() => {
+    if (!sameAsBilling) return;
+    if (!shippingInfo.fullName && !shippingInfo.address && !shippingInfo.district) return;
+    if (shippingAddress.fullName || shippingAddress.address || shippingAddress.district) return;
+
+    setShippingAddress((prev) => ({
+      ...prev,
+      fullName: shippingInfo.fullName,
+      phone: shippingInfo.phone,
+      address: shippingInfo.address,
+      city: shippingInfo.city,
+      thana: shippingInfo.thana,
+      district: shippingInfo.district,
+      zip: shippingInfo.zip,
+    }));
+  }, [sameAsBilling, shippingInfo, shippingAddress.fullName, shippingAddress.address, shippingAddress.district, setShippingAddress]);
+
   const [agreedToTerms, setAgreedToTerms] = React.useState(false);
   const [isDistrictOpen, setIsDistrictOpen] = React.useState(false);
   const [isShipDistrictOpen, setIsShipDistrictOpen] = React.useState(false);

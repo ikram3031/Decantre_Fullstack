@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useRouter, useRouterState } from '@tanstack/react-router';
-import { DecantreLogo } from './DecantreLogo';
+import { AppLogo } from '../components/AppLogo';
 import {
   ShoppingBag,
   Boxes,
@@ -27,7 +27,7 @@ export const DashboardLayout = ({ children }) => {
     { name: 'Dashboard', href: '/', icon: Compass },
     { name: 'Orders', href: '/orders', icon: ShoppingBag },
     { name: 'Products', href: '/products', icon: Boxes },
-    { name: 'Customers', href: '/customers', icon: UserCheck },
+    { name: 'Members', href: '/customers', icon: UserCheck },
     { name: 'Users', href: '/users', icon: Users },
   ];
 
@@ -59,7 +59,7 @@ export const DashboardLayout = ({ children }) => {
         <div className="h-16 px-6 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-slate-950 rounded-lg flex items-center justify-center shadow-xs">
-              <DecantreLogo className="h-5 w-5 text-white" strokeWidth={3.8} />
+              <AppLogo className="h-5 w-5 text-white" strokeWidth={3.8} />
             </div>
             <span className="font-bold text-slate-950 tracking-tight text-lg">Decantre</span>
           </div>

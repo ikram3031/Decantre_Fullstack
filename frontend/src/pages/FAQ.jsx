@@ -219,10 +219,10 @@ export const FAQ = () => {
           </p>
           <div className="pt-2">
             <a 
-              href="tel:+8801869151550" 
+              href="/contact-us" 
               className="inline-block border border-gold bg-gold hover:bg-gold/80 text-black px-6 py-3 text-xs uppercase font-sans font-bold tracking-widest transition-all rounded-xs shadow-md"
             >
-              Contact Support
+              Contact Us
             </a>
           </div>
         </div>

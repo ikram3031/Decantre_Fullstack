@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '../context/AuthContext';
 import { apiClient } from '../api/apiClient';
 import {
   Plus,
@@ -17,17 +18,32 @@ import {
   CheckCircle2,
   UserCheck
 } from 'lucide-react';
-import { Badge } from './ui/Badge';
+import { Badge } from '../components/ui/Badge';
 
 export const UsersPage = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { data: users = [], isLoading } = useQuery({
+  const { data: usersData = { items: [], total: 0 }, isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
       const res = await apiClient.get('/users');
-      return res.data?.data || res.data || [];
-    }
+      const rawData = res.data;
+      let items = [];
+      let total = 0;
+
+      if (Array.isArray(rawData)) {
+        items = rawData;
+        total = rawData.length;
+      } else if (rawData && typeof rawData === 'object') {
+        items = Array.isArray(rawData.data) ? rawData.data : (Array.isArray(rawData.items) ? rawData.items : []);
+        total = rawData.meta?.total ?? rawData.total ?? rawData.count ?? items.length;
+      }
+
+      return { items, total };
+    },
+    enabled: !!user
   });
+  const users = usersData.items;
 
   // Mutators
   const addUserMutation = useMutation({

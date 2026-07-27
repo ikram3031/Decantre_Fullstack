@@ -13,7 +13,7 @@ export const Badge = ({ children, variant = 'default', className = '' }) => {
   };
 
   return (
-    <span className={`${baseStyle} ${variants[variant]} ${className}`}>
+    <span className={`flex items-center justify-center ${baseStyle} ${variants[variant]} ${className} w-25 max-w-25 truncate text-center`} title={children}>
       {children}
     </span>
   );

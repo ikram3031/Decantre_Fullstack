@@ -574,6 +574,7 @@ export const useAppStore = create((set, get) => {
 
         const json = await apiCreateOrder(payload);
 
+        get().saveCart([]);
         set({
           isProcessingOrder: false,
           orderCompleted: true,

@@ -3,7 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { motion } from "motion/react";
 import { LogIn, Mail, Lock, AlertCircle } from "lucide-react";
-import { DecantreLogo } from "@/components/DecantreLogo";
+import { AppLogo } from "@/components/AppLogo";
 import { ReCaptcha } from "@/components/ReCaptcha";
 
 const LoginPage = () => {
@@ -63,7 +63,7 @@ const LoginPage = () => {
 					{/* Header */}
 					<div className="px-8 pt-8 pb-6 text-center border-b border-slate-100 bg-slate-50/50">
 						<div className="mx-auto h-17 w-17 rounded-full mb-3 flex items-center justify-center bg-black">
-							<DecantreLogo
+							<AppLogo
 								className="h-16 w-16 rounded-full"
 								strokeWidth={3.2}
 							/>

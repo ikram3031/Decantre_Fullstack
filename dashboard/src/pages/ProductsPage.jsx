@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '../context/AuthContext';
 import { apiClient } from '../api/apiClient';
 import {
   Plus,
@@ -26,22 +27,45 @@ import {
   Layers,
   ArrowUpDown
 } from 'lucide-react';
-import { Badge } from './ui/Badge';
-import { TaxonomyManager } from './TaxonomyManager';
+import { Badge } from '../components/ui/Badge';
+import { Pagination } from '../components/ui/Pagination';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '../components/ui/table';
+import { TaxonomyManager } from '../components/TaxonomyManager';
 
 export const ProductsPage = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [currentPageTab, setCurrentPageTab] = useState('catalog');
 
   // Queries
-  const { data: products = [], isLoading } = useQuery({
+  const { data: productsData = { items: [], total: 0 }, isLoading } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
       const res = await apiClient.get('/products');
-      const data = res.data?.data || res.data || [];
-      return Array.isArray(data) ? data : [];
-    }
+      const rawData = res.data;
+      let items = [];
+      let total = 0;
+
+      if (Array.isArray(rawData)) {
+        items = rawData;
+        total = rawData.length;
+      } else if (rawData && typeof rawData === 'object') {
+        items = Array.isArray(rawData.data) ? rawData.data : (Array.isArray(rawData.items) ? rawData.items : []);
+        total = rawData.meta?.total ?? rawData.total ?? rawData.count ?? items.length;
+      }
+
+      return { items, total };
+    },
+    enabled: !!user
   });
+  const products = productsData.items;
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
@@ -70,7 +94,8 @@ export const ProductsPage = () => {
       }
       
       return catList;
-    }
+    },
+    enabled: !!user
   });
 
   const { data: brands = [] } = useQuery({
@@ -78,7 +103,8 @@ export const ProductsPage = () => {
     queryFn: async () => {
       const res = await apiClient.get('/brands');
       return res.data?.data || res.data || [];
-    }
+    },
+    enabled: !!user
   });
 
   const { data: tags = [] } = useQuery({
@@ -86,7 +112,8 @@ export const ProductsPage = () => {
     queryFn: async () => {
       const res = await apiClient.get('/tags');
       return res.data?.data || res.data || [];
-    }
+    },
+    enabled: !!user
   });
 
   // Mutators
@@ -353,14 +380,18 @@ export const ProductsPage = () => {
     const valueA = getValue(a);
     const valueB = getValue(b);
 
-    if (typeof valueA === 'number' && typeof valueB === 'number') {
-      return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
-    }
-
     if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
     if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
     return 0;
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const isFiltered = searchTerm.trim() !== '' || categoryFilter !== 'all' || brandFilter !== 'all' || seasonFilter !== 'all' || stockFilter !== 'all';
+  const totalItems = isFiltered ? sortedProducts.length : (productsData.total || sortedProducts.length);
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = sortedProducts.slice(startIndex, startIndex + itemsPerPage);
 
   const getStockBadge = (status, qty) => {
     switch (status) {
@@ -575,127 +606,127 @@ export const ProductsPage = () => {
                   </div>
                 ) : sortedProducts.length > 0 ? (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-slate-600">
-                      <thead className="bg-slate-50 text-xs text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
-                        <tr>
-                          <th className="px-6 py-4 w-[280px] max-w-[280px]">Product</th>
-                          <th className="px-6 py-4">SKU</th>
-                          <th className="px-6 py-4">Category</th>
-                          <th className="px-6 py-4">Stock Status</th>
-                          <th className="px-6 py-4 text-right">Price</th>
-                          <th className="px-6 py-4 text-center">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {sortedProducts.map((p) => {
+                    <Table className="w-full text-left text-sm text-slate-600">
+                      <TableHeader className="bg-slate-50">
+                        <TableRow>
+                          <TableHead className="w-[280px] max-w-[280px]">Product</TableHead>
+                          <TableHead>SKU</TableHead>
+                          <TableHead>Category</TableHead>
+                          <TableHead>Stock Status</TableHead>
+                          <TableHead className="text-right">Price</TableHead>
+                          <TableHead className="text-center">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody className="divide-y divide-slate-100">
+                        {paginatedProducts.map((p) => {
                           let cachedCatMap = {};
                           try {
                             cachedCatMap = JSON.parse(localStorage.getItem('category_did_map') || '{}');
                           } catch (e) {}
 
                           return (
-                          <tr key={p.id || p._id} className="hover:bg-slate-50/50 transition">
-                            <td className="px-6 py-4.5 w-[280px] max-w-[280px]">
-                              <div className="flex items-center gap-3 min-w-0">
-                                <img
-                                  src={(() => {
-                                    const raw = (Array.isArray(p.images) && p.images.length > 0
-                                      ? (typeof p.images[0] === 'string' ? p.images[0] : p.images[0]?.src || p.images[0]?.url)
-                                      : null) || p.image_url || p.thumbnail_url || p.image;
-                                    if (!raw || typeof raw !== 'string') return UNSPLASH_LIBRARY[0];
-                                    if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:')) return raw;
-                                    const backendHost = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:5092';
-                                    const baseUrl = backendHost.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
-                                    return `${baseUrl}${raw.startsWith('/') ? '' : '/'}${raw}`;
-                                  })()}
-                                  onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = UNSPLASH_LIBRARY[0];
-                                  }}
-                                  alt={p.name}
-                                  className="h-10 w-10 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
-                                />
-                                <div className="min-w-0 flex-1 overflow-hidden">
-                                  <p className="font-bold text-slate-950 text-xs truncate" title={p.name}>{p.name}</p>
-                                  <p className="text-slate-400 text-[10px] mt-0.5 truncate" title={(p.shortDescription || p.short_description || p.description || '').replace(/<[^>]*>/g, '')} dangerouslySetInnerHTML={{ __html: (p.shortDescription || p.short_description || (p.description || '').replace(/<[^>]*>/g, '').slice(0, 50) + '...') }} />
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4.5 font-mono text-xs font-semibold text-slate-600">
-                              {p.sku || p.did || '—'}
-                            </td>
-                            <td className="px-6 py-4.5">
-                              <div className="flex flex-wrap gap-1 max-w-xs">
-                                {(Array.isArray(p.categories) ? p.categories : [p.categories].filter(Boolean)).map((cat, i) => {
-                                  const didKey = typeof cat === 'string' ? cat : cat?.did || cat?.id || cat?._id;
-                                  const categoryName = cachedCatMap[didKey] || (typeof cat === 'string' ? (categories.find(c => c.did === cat || c.id === cat)?._name || cat) : cat?.name || cat?.slug || String(cat));
-                                  return (
-                                    <span key={i} className="text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-200/60 px-2 py-0.5 rounded-md">
-                                      {categoryName}
-                                    </span>
-                                  );
-                                })}
-                              </div>
-                            </td>
-                            <td className="p-2">
-                              {getStockBadge(p.stockStatus || p.stock_status, p.stockQuantity ?? p.stock_quantity)}
-                            </td>
-                            <td className="px-6 py-4.5 text-right font-mono text-xs font-bold">
-                              {(p.salePrice || p.offerPrice) ? (
-                                <div className="flex flex-col items-end">
-                                  <span className="text-rose-600 font-extrabold">৳{p.salePrice || p.offerPrice}</span>
-                                  <span className="text-[10px] text-slate-400 line-through font-medium">৳{p.regularPrice || p.price}</span>
-                                </div>
-                              ) : (
-                                <span className="text-slate-950 font-extrabold">৳{p.regularPrice || p.price || 0}</span>
-                              )}
-                            </td>
-                            <td className="px-6 py-4.5 text-center relative" onClick={(e) => e.stopPropagation()}>
-                              <div className="flex items-center justify-center">
-                                <button
-                                  onClick={() => setOpenMenuId(openMenuId === p.id ? null : p.id)}
-                                  className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition hover:text-slate-900 cursor-pointer"
-                                  title="Actions"
-                                >
-                                  <MoreVertical className="h-4.5 w-4.5" />
-                                </button>
-
-                                {openMenuId === p.id && (
-                                  <>
-                                    <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
-                                    <div className="absolute right-6 mt-2 w-36 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-20 text-left animate-in fade-in slide-in-from-top-1 duration-100">
-                                      <button
-                                        onClick={() => {
-                                          setOpenMenuId(null);
-                                          handleEdit(p);
-                                        }}
-                                        className="flex items-center gap-2 w-full px-3.5 py-2 text-xs text-slate-700 hover:bg-slate-50 font-semibold cursor-pointer transition"
-                                      >
-                                        <Edit2 className="h-3.5 w-3.5 text-slate-400" />
-                                        Update Option
-                                      </button>
-                                      <button
-                                        onClick={() => {
-                                          setOpenMenuId(null);
-                                          if (confirm('Are you sure you want to delete this product?')) {
-                                            deleteProductMutation.mutate(p.id);
-                                          }
-                                        }}
-                                        className="flex items-center gap-2 w-full px-3.5 py-2 text-xs text-rose-600 hover:bg-rose-50 font-semibold cursor-pointer transition"
-                                      >
-                                        <Trash2 className="h-3.5 w-3.5 text-rose-400" />
-                                        Delete Option
-                                      </button>
+                            <TableRow key={p.id || p._id} className="hover:bg-slate-50/50 transition">
+                              <TableCell className="px-6 py-4.5 w-[280px] max-w-[280px]">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <img
+                                    src={(() => {
+                                      const raw = (Array.isArray(p.images) && p.images.length > 0
+                                        ? (typeof p.images[0] === 'string' ? p.images[0] : p.images[0]?.src || p.images[0]?.url)
+                                        : null) || p.image_url || p.thumbnail_url || p.image;
+                                      if (!raw || typeof raw !== 'string') return UNSPLASH_LIBRARY[0];
+                                      if (raw.startsWith('http://') || raw.startsWith('https://') || raw.startsWith('data:')) return raw;
+                                      return UNSPLASH_LIBRARY[0];
+                                    })()}
+                                    alt={p.name}
+                                    className="h-10 w-10 rounded-xl object-cover border border-slate-100 bg-slate-50 shrink-0"
+                                  />
+                                  <div className="min-w-0 flex-1">
+                                    <p className="font-bold text-slate-900 text-xs truncate" title={p.name}>
+                                      {p.name}
+                                    </p>
+                                    <div className="flex items-center gap-1.5 mt-0.5">
+                                      <span className="text-[10px] text-slate-400 font-mono">
+                                        ID: {p.id || p._id || 'N/A'}
+                                      </span>
                                     </div>
-                                  </>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell className="font-mono text-xs font-bold text-slate-950">
+                                {p.sku || p.did || '—'}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-wrap gap-1 max-w-[180px]">
+                                  {(Array.isArray(p.categories) && p.categories.length > 0 ? p.categories : ['Uncategorized']).map((c, i) => {
+                                    const catDidOrName = typeof c === 'string' ? c : c?.name || c?.slug || c?.did || '';
+                                    const displayName = cachedCatMap[catDidOrName] || catDidOrName || 'Uncategorized';
+                                    return (
+                                      <span key={i} className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">
+                                        {displayName}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </TableCell>
+                              <TableCell className="p-2">
+                                {getStockBadge(p.stockStatus || p.stock_status, p.stockQuantity ?? p.stock_quantity)}
+                              </TableCell>
+                              <TableCell className="px-6 py-4.5 text-right font-mono text-xs font-bold">
+                                {(p.salePrice || p.offerPrice) ? (
+                                  <div className="flex flex-col items-end">
+                                    <span className="text-rose-600 font-extrabold">৳{p.salePrice || p.offerPrice}</span>
+                                    <span className="text-[10px] text-slate-400 line-through font-medium">৳{p.regularPrice || p.price}</span>
+                                  </div>
+                                ) : (
+                                  <span className="text-slate-950 font-extrabold">৳{p.regularPrice || p.price || 0}</span>
                                 )}
-                              </div>
-                            </td>
-                          </tr>
+                              </TableCell>
+                              <TableCell className="px-6 py-4.5 text-center relative" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex items-center justify-center">
+                                  <button
+                                    onClick={() => setOpenMenuId(openMenuId === p.id ? null : p.id)}
+                                    className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition hover:text-slate-900 cursor-pointer"
+                                    title="Actions"
+                                  >
+                                    <MoreVertical className="h-4.5 w-4.5" />
+                                  </button>
+
+                                  {openMenuId === p.id && (
+                                    <>
+                                      <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
+                                      <div className="absolute right-6 mt-2 w-36 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-20 text-left animate-in fade-in slide-in-from-top-1 duration-100">
+                                        <button
+                                          onClick={() => {
+                                            setOpenMenuId(null);
+                                            handleEdit(p);
+                                          }}
+                                          className="flex items-center gap-2 w-full px-3.5 py-2 text-xs text-slate-700 hover:bg-slate-50 font-semibold cursor-pointer transition"
+                                        >
+                                          <Edit2 className="h-3.5 w-3.5 text-slate-400" />
+                                          Update Option
+                                        </button>
+                                        <button
+                                          onClick={() => {
+                                            setOpenMenuId(null);
+                                            if (confirm('Are you sure you want to delete this product?')) {
+                                              deleteProductMutation.mutate(p.id);
+                                            }
+                                          }}
+                                          className="flex items-center gap-2 w-full px-3.5 py-2 text-xs text-rose-600 hover:bg-rose-50 font-semibold cursor-pointer transition"
+                                        >
+                                          <Trash2 className="h-3.5 w-3.5 text-rose-400" />
+                                          Delete Option
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              </TableCell>
+                            </TableRow>
                           );
                         })}
-                      </tbody>
-                    </table>
+                      </TableBody>
+                    </Table>
                   </div>
                 ) : (
                   <div className="py-20 text-center flex flex-col items-center justify-center gap-2">
@@ -704,6 +735,24 @@ export const ProductsPage = () => {
                     </div>
                     <p className="text-sm font-bold text-slate-900">No products found</p>
                     <p className="text-xs text-slate-400">Try adjusting your filters or add a new product.</p>
+                  </div>
+                )}
+                
+                {/* Pagination controls */}
+                {totalItems > 0 && (
+                  <div className="border-t border-slate-100 px-6 py-4 flex items-center justify-between">
+                    <span className="text-xs text-slate-500 font-medium">
+                      Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
+                      <span className="font-semibold text-slate-900">
+                        {Math.min(startIndex + itemsPerPage, totalItems)}
+                      </span>{' '}
+                      of <span className="font-semibold text-slate-900">{totalItems}</span> products
+                    </span>
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
                   </div>
                 )}
               </div>

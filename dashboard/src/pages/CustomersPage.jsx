@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '../context/AuthContext';
 import { apiClient } from '../api/apiClient';
 import {
   Search,
@@ -20,17 +21,32 @@ import {
   TrendingUp,
   CreditCard
 } from 'lucide-react';
-import { Badge } from './ui/Badge';
+import { Badge } from '../components/ui/Badge';
 
 export const CustomersPage = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { data: customers = [], isLoading } = useQuery({
+  const { data: customersData = { items: [], total: 0 }, isLoading } = useQuery({
     queryKey: ['customers'],
     queryFn: async () => {
       const res = await apiClient.get('/members');
-      return res.data?.data || res.data || [];
-    }
+      const rawData = res.data;
+      let items = [];
+      let total = 0;
+
+      if (Array.isArray(rawData)) {
+        items = rawData;
+        total = rawData.length;
+      } else if (rawData && typeof rawData === 'object') {
+        items = Array.isArray(rawData.data) ? rawData.data : (Array.isArray(rawData.items) ? rawData.items : []);
+        total = rawData.meta?.total ?? rawData.total ?? rawData.count ?? items.length;
+      }
+
+      return { items, total };
+    },
+    enabled: !!user
   });
+  const customers = customersData.items;
 
   const addCustomerMutation = useMutation({
     mutationFn: async (newUser) => {
@@ -226,9 +242,9 @@ export const CustomersPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-950 tracking-tight font-sans">Customers</h1>
+          <h1 className="text-2xl font-bold text-slate-950 tracking-tight font-sans">Members</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Analyze customer lifetime value, update contact details, and manage billing profiles.
+            Analyze member lifetime value, update contact details, and manage billing profiles.
           </p>
         </div>
         <div className="flex items-center gap-3 self-start sm:self-auto">
@@ -240,7 +256,7 @@ export const CustomersPage = () => {
             className="flex items-center gap-1.5 px-4 py-2 bg-slate-950 hover:bg-slate-900 active:bg-slate-950 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition"
           >
             <Plus className="h-4.5 w-4.5" />
-            Add Customer
+            Add Member
           </button>
         </div>
       </div>

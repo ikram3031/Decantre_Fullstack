@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '../context/AuthContext';
 import { apiClient } from '../api/apiClient';
 import {
   Plus,
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 
 export const TaxonomyManager = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('categories');
 
@@ -24,7 +26,8 @@ export const TaxonomyManager = () => {
     queryFn: async () => {
       const res = await apiClient.get('/categories');
       return res.data?.data || res.data || [];
-    }
+    },
+    enabled: !!user
   });
 
   const { data: brands = [], isLoading: loadingBrands } = useQuery({
@@ -32,7 +35,8 @@ export const TaxonomyManager = () => {
     queryFn: async () => {
       const res = await apiClient.get('/brands');
       return res.data?.data || res.data || [];
-    }
+    },
+    enabled: !!user
   });
 
   const { data: tags = [], isLoading: loadingTags } = useQuery({
@@ -40,7 +44,8 @@ export const TaxonomyManager = () => {
     queryFn: async () => {
       const res = await apiClient.get('/tags');
       return res.data?.data || res.data || [];
-    }
+    },
+    enabled: !!user
   });
 
   // Mutators - Categories
@@ -327,10 +332,10 @@ export const TaxonomyManager = () => {
               </form>
             </div>
 
-            {/* Right Column: Hierarchical List */}
+            {/* Right Column: Table List */}
             <div className="md:col-span-3 space-y-4 border-t md:border-t-0 md:border-l border-slate-100 md:pl-8 pt-6 md:pt-0">
               <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                <h3 className="text-sm font-bold text-slate-900">Categories Hierarchy</h3>
+                <h3 className="text-sm font-bold text-slate-900">Categories</h3>
                 <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
                   {categories.length} Categories
                 </span>
@@ -343,90 +348,35 @@ export const TaxonomyManager = () => {
               ) : categories.length === 0 ? (
                 <p className="text-xs text-slate-400 py-6 text-center italic">No categories created yet.</p>
               ) : (
-                <div className="space-y-3 max-h-[450px] overflow-y-auto pr-2">
-                  {/* Root level Categories */}
-                  {getSubcategories(null).map((cat) => (
-                    <div key={cat.id} className="border border-slate-100 rounded-xl p-3 bg-slate-50/20 space-y-2">
-                      <div className="flex justify-between items-center">
-                        {editingCatId === cat.id ? (
-                          <div className="flex items-center gap-2 flex-1 mr-4">
-                            <input
-                              type="text"
-                              value={editCatName}
-                              onChange={(e) => setEditCatName(e.target.value)}
-                              className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-medium focus:border-slate-950 outline-none flex-1"
-                            />
-                            <button
-                              onClick={() => handleUpdateCategory(cat.id)}
-                              className="p-1 bg-slate-950 hover:bg-slate-900 text-white rounded-lg transition"
-                            >
-                              <Check className="h-3 w-3" />
-                            </button>
-                            <button
-                              onClick={() => setEditingCatId(null)}
-                              className="p-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <FolderOpen className="h-4 w-4 text-slate-400" />
-                            <span className="text-xs font-bold text-slate-950">{cat.name}</span>
-                            <span className="text-[10px] font-mono text-slate-400">/{cat.slug}</span>
-                          </div>
-                        )}
-
-                        {editingCatId !== cat.id && (
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => startEditCategory(cat)}
-                              className="p-1 text-slate-500 hover:bg-white border border-transparent hover:border-slate-200 rounded-lg transition"
-                            >
-                              <Edit2 className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (confirm('Are you sure you want to delete this category? Subcategories will become top-level.')) {
-                                  deleteCategoryMutation.mutate(cat.id);
-                                }
-                              }}
-                              className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Subcategories (Level 2) */}
-                      <div className="pl-6 space-y-1.5 border-l border-slate-200/60 ml-2">
-                        {getSubcategories(cat.id).map((sub) => (
-                          <div key={sub.id} className="flex justify-between items-center py-1.5 px-2 bg-white rounded-lg border border-slate-100/80">
-                            {editingCatId === sub.id ? (
-                              <div className="flex items-center gap-2 flex-1 mr-4">
+                <div className="overflow-hidden rounded-xl border border-slate-200">
+                  <table className="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 w-12">
+                          <input type="checkbox" className="rounded border-slate-300" />
+                        </th>
+                        <th className="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Name</th>
+                        <th className="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Slug</th>
+                        <th className="px-3 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-500">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 bg-white">
+                      {categories.map((cat) => (
+                        <tr key={cat.id} className="hover:bg-slate-50/60">
+                          <td className="px-3 py-3">
+                            <input type="checkbox" className="rounded border-slate-300" />
+                          </td>
+                          <td className="px-3 py-3">
+                            {editingCatId === cat.id ? (
+                              <div className="flex items-center gap-2">
                                 <input
                                   type="text"
                                   value={editCatName}
                                   onChange={(e) => setEditCatName(e.target.value)}
-                                  className="bg-white border border-slate-200 rounded-lg px-2 py-0.5 text-xs font-medium focus:border-slate-950 outline-none flex-1"
+                                  className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-medium focus:border-slate-950 outline-none w-full"
                                 />
-                                <select
-                                  value={editCatParentId}
-                                  onChange={(e) => setEditCatParentId(e.target.value)}
-                                  className="bg-white border border-slate-200 rounded-lg px-2 py-0.5 text-xs outline-none focus:border-slate-950"
-                                >
-                                  <option value="">None (Top-Level)</option>
-                                  {categories
-                                    .filter((c) => c.id !== sub.id && !c.parentId)
-                                    .map((c) => (
-                                      <option key={c.id} value={c.id}>
-                                        {c.name}
-                                      </option>
-                                    ))}
-                                </select>
                                 <button
-                                  onClick={() => handleUpdateCategory(sub.id)}
+                                  onClick={() => handleUpdateCategory(cat.id)}
                                   className="p-1 bg-slate-950 hover:bg-slate-900 text-white rounded-lg transition"
                                 >
                                   <Check className="h-3 w-3" />
@@ -439,38 +389,41 @@ export const TaxonomyManager = () => {
                                 </button>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-1.5">
-                                <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                                <span className="text-xs font-medium text-slate-800">{sub.name}</span>
-                                <span className="text-[10px] font-mono text-slate-400">/{sub.slug}</span>
+                              <div className="flex items-center gap-2">
+                                <FolderOpen className="h-4 w-4 text-slate-400" />
+                                <span className="text-xs font-semibold text-slate-900">{cat.name}</span>
                               </div>
                             )}
-
-                            {editingCatId !== sub.id && (
-                              <div className="flex gap-1">
+                          </td>
+                          <td className="px-3 py-3">
+                            <span className="text-[11px] font-mono text-slate-500">/{cat.slug}</span>
+                          </td>
+                          <td className="px-3 py-3 text-right">
+                            {editingCatId !== cat.id && (
+                              <div className="flex justify-end gap-1">
                                 <button
-                                  onClick={() => startEditCategory(sub)}
-                                  className="p-1 text-slate-500 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-lg transition"
+                                  onClick={() => startEditCategory(cat)}
+                                  className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition"
                                 >
                                   <Edit2 className="h-3.5 w-3.5" />
                                 </button>
                                 <button
                                   onClick={() => {
-                                    if (confirm('Are you sure you want to delete this subcategory?')) {
-                                      deleteCategoryMutation.mutate(sub.id);
+                                    if (confirm('Are you sure you want to delete this category?')) {
+                                      deleteCategoryMutation.mutate(cat.id);
                                     }
                                   }}
-                                  className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </button>
                               </div>
                             )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>
@@ -525,10 +478,10 @@ export const TaxonomyManager = () => {
               </form>
             </div>
 
-            {/* Right Column: Brands List */}
+            {/* Right Column: Brands Table */}
             <div className="md:col-span-3 space-y-4 border-t md:border-t-0 md:border-l border-slate-100 md:pl-8 pt-6 md:pt-0">
               <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                <h3 className="text-sm font-bold text-slate-900">Brands & Sub-brands</h3>
+                <h3 className="text-sm font-bold text-slate-900">Brands</h3>
                 <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
                   {brands.length} Brands
                 </span>
@@ -541,89 +494,35 @@ export const TaxonomyManager = () => {
               ) : brands.length === 0 ? (
                 <p className="text-xs text-slate-400 py-6 text-center italic">No brands created yet.</p>
               ) : (
-                <div className="space-y-3 max-h-[450px] overflow-y-auto pr-2">
-                  {getSubbrands(null).map((brand) => (
-                    <div key={brand.id} className="border border-slate-100 rounded-xl p-3 bg-slate-50/20 space-y-2">
-                      <div className="flex justify-between items-center">
-                        {editingBrandId === brand.id ? (
-                          <div className="flex items-center gap-2 flex-1 mr-4">
-                            <input
-                              type="text"
-                              value={editBrandName}
-                              onChange={(e) => setEditBrandName(e.target.value)}
-                              className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-medium focus:border-slate-950 outline-none flex-1"
-                            />
-                            <button
-                              onClick={() => handleUpdateBrand(brand.id)}
-                              className="p-1 bg-slate-950 hover:bg-slate-900 text-white rounded-lg transition"
-                            >
-                              <Check className="h-3 w-3" />
-                            </button>
-                            <button
-                              onClick={() => setEditingBrandId(null)}
-                              className="p-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Award className="h-4 w-4 text-amber-500 shrink-0" />
-                            <span className="text-xs font-bold text-slate-950">{brand.name}</span>
-                            <span className="text-[10px] font-mono text-slate-400">/{brand.slug}</span>
-                          </div>
-                        )}
-
-                        {editingBrandId !== brand.id && (
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => startEditBrand(brand)}
-                              className="p-1 text-slate-500 hover:bg-white border border-transparent hover:border-slate-200 rounded-lg transition"
-                            >
-                              <Edit2 className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (confirm('Are you sure you want to delete this brand? Sub-brands will become top-level.')) {
-                                  deleteBrandMutation.mutate(brand.id);
-                                }
-                              }}
-                              className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Sub-brands */}
-                      <div className="pl-6 space-y-1.5 border-l border-slate-200/60 ml-2">
-                        {getSubbrands(brand.id).map((sub) => (
-                          <div key={sub.id} className="flex justify-between items-center py-1.5 px-2 bg-white rounded-lg border border-slate-100/80">
-                            {editingBrandId === sub.id ? (
-                              <div className="flex items-center gap-2 flex-1 mr-4">
+                <div className="overflow-hidden rounded-xl border border-slate-200">
+                  <table className="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead className="bg-slate-50">
+                      <tr>
+                        <th className="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 w-12">
+                          <input type="checkbox" className="rounded border-slate-300" />
+                        </th>
+                        <th className="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Name</th>
+                        <th className="px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Slug</th>
+                        <th className="px-3 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-slate-500">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 bg-white">
+                      {brands.map((brand) => (
+                        <tr key={brand.id} className="hover:bg-slate-50/60">
+                          <td className="px-3 py-3">
+                            <input type="checkbox" className="rounded border-slate-300" />
+                          </td>
+                          <td className="px-3 py-3">
+                            {editingBrandId === brand.id ? (
+                              <div className="flex items-center gap-2">
                                 <input
                                   type="text"
                                   value={editBrandName}
                                   onChange={(e) => setEditBrandName(e.target.value)}
-                                  className="bg-white border border-slate-200 rounded-lg px-2 py-0.5 text-xs font-medium focus:border-slate-950 outline-none flex-1"
+                                  className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-medium focus:border-slate-950 outline-none w-full"
                                 />
-                                <select
-                                  value={editBrandParentId}
-                                  onChange={(e) => setEditBrandParentId(e.target.value)}
-                                  className="bg-white border border-slate-200 rounded-lg px-2 py-0.5 text-xs outline-none focus:border-slate-950"
-                                >
-                                  <option value="">None (Top-Level)</option>
-                                  {brands
-                                    .filter((b) => b.id !== sub.id && !b.parentId)
-                                    .map((b) => (
-                                      <option key={b.id} value={b.id}>
-                                        {b.name}
-                                      </option>
-                                    ))}
-                                </select>
                                 <button
-                                  onClick={() => handleUpdateBrand(sub.id)}
+                                  onClick={() => handleUpdateBrand(brand.id)}
                                   className="p-1 bg-slate-950 hover:bg-slate-900 text-white rounded-lg transition"
                                 >
                                   <Check className="h-3 w-3" />
@@ -636,38 +535,41 @@ export const TaxonomyManager = () => {
                                 </button>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-1.5">
-                                <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                                <span className="text-xs font-medium text-slate-800">{sub.name}</span>
-                                <span className="text-[10px] font-mono text-slate-400">/{sub.slug}</span>
+                              <div className="flex items-center gap-2">
+                                <Award className="h-4 w-4 text-amber-500 shrink-0" />
+                                <span className="text-xs font-semibold text-slate-900">{brand.name}</span>
                               </div>
                             )}
-
-                            {editingBrandId !== sub.id && (
-                              <div className="flex gap-1">
+                          </td>
+                          <td className="px-3 py-3">
+                            <span className="text-[11px] font-mono text-slate-500">/{brand.slug}</span>
+                          </td>
+                          <td className="px-3 py-3 text-right">
+                            {editingBrandId !== brand.id && (
+                              <div className="flex justify-end gap-1">
                                 <button
-                                  onClick={() => startEditBrand(sub)}
-                                  className="p-1 text-slate-500 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-lg transition"
+                                  onClick={() => startEditBrand(brand)}
+                                  className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition"
                                 >
                                   <Edit2 className="h-3.5 w-3.5" />
                                 </button>
                                 <button
                                   onClick={() => {
-                                    if (confirm('Are you sure you want to delete this sub-brand?')) {
-                                      deleteBrandMutation.mutate(sub.id);
+                                    if (confirm('Are you sure you want to delete this brand?')) {
+                                      deleteBrandMutation.mutate(brand.id);
                                     }
                                   }}
-                                  className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </button>
                               </div>
                             )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>

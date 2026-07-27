@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from '@tanstack/react-router';
+import { useAuth } from '../context/AuthContext';
 import { apiClient } from '../api/apiClient';
 import {
   ChevronLeft,
@@ -22,9 +23,10 @@ import {
   MessageSquare,
   Sparkles
 } from 'lucide-react';
-import { Badge } from './ui/Badge';
+import { Badge } from '../components/ui/Badge';
 
 export const OrderDetailsPage = () => {
+  const { user } = useAuth();
   const { orderId } = useParams({ from: '/orders/$orderId' });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -36,7 +38,8 @@ export const OrderDetailsPage = () => {
     queryFn: async () => {
       const res = await apiClient.get(`/orders/${orderId}`);
       return res.data;
-    }
+    },
+    enabled: !!user
   });
 
   // Mutation to update order
@@ -227,7 +230,7 @@ export const OrderDetailsPage = () => {
             <div className="flex flex-col gap-1 sm:items-end">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Status</span>
               {!isEditing ? (
-                <div className="mt-1">{getStatusBadge(order.status)}</div>
+                <div className="mt-1 w-24">{getStatusBadge(order.status)}</div>
               ) : (
                 <select
                   value={editStatus}

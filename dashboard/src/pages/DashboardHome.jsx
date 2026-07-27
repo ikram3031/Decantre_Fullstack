@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '../context/AuthContext';
 import { apiClient } from '../api/apiClient';
 import { Link } from '@tanstack/react-router';
 import {
@@ -13,15 +14,17 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
-import { Badge } from './ui/Badge';
+import { Badge } from '../components/ui/Badge';
 
 export const DashboardHome = () => {
+  const { user } = useAuth();
   const { data: orders = [] } = useQuery({
     queryKey: ['orders'],
     queryFn: async () => {
       const res = await apiClient.get('/orders');
       return res.data?.data || res.data || [];
-    }
+    },
+    enabled: !!user
   });
 
   const { data: products = [] } = useQuery({
@@ -30,7 +33,8 @@ export const DashboardHome = () => {
       const res = await apiClient.get('/products');
       const data = res.data?.data || res.data || [];
       return Array.isArray(data) ? data : [];
-    }
+    },
+    enabled: !!user
   });
 
   const { data: customers = [] } = useQuery({
@@ -38,7 +42,8 @@ export const DashboardHome = () => {
     queryFn: async () => {
       const res = await apiClient.get('/members');
       return res.data?.data || res.data || [];
-    }
+    },
+    enabled: !!user
   });
 
   // Calculate high-level stats
@@ -72,7 +77,7 @@ export const DashboardHome = () => {
       description: `${products.filter((p) => p.stockQuantity === 'outofstock').length} out of stock`
     },
     {
-      name: 'Total Customers',
+      name: 'Total Members',
       value: customers.length.toString(),
       icon: Users,
       color: 'bg-sky-50 text-sky-700 border-sky-100',
@@ -180,7 +185,9 @@ export const DashboardHome = () => {
                         </p>
                       </div>
                     </td>
-                    <td className="px-6 py-4.5">{getStatusBadge(order.status)}</td>
+                    <td className="px-6 py-4.5">
+                      <div className="w-24">{getStatusBadge(order.status)}</div>
+                    </td>
                     <td className="px-6 py-4.5 text-right text-xs font-bold text-slate-900 font-mono">
                       ৳{Number(order.totals?.total ?? order.total ?? 0).toFixed(2)}
                     </td>
