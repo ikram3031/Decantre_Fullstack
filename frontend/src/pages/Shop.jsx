@@ -654,7 +654,7 @@ export const Shop = () => {
                     handleOpenProductDetail={handleOpenProductDetail}
                     handleAddToCart={handleAddToCart}
                     calculateItemPrice={calculateItemPrice}
-                    hideMobileVariations={true}
+                    isLargeCard={false}
                   />
                 );
               })}

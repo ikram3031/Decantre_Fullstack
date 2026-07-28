@@ -21,6 +21,8 @@ export const AuthModal = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
 
   // OTP State (6 Digits)
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
@@ -55,6 +57,40 @@ export const AuthModal = () => {
     setName('');
     setPhone('');
     setOtpValues(['', '', '', '', '', '']);
+  };
+
+  const validateEmail = (value) => {
+    const trimmed = (value || '').trim();
+    if (!trimmed) return 'Email address is required.';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(trimmed) ? '' : 'Please enter a valid email address.';
+  };
+
+  const normalizePhoneValue = (value) => {
+    const raw = (value || '').toString().trim();
+    if (!raw) return '';
+
+    const digitsOnly = raw.replace(/[^\d+]/g, '');
+    if (digitsOnly.startsWith('+880')) return digitsOnly;
+    if (digitsOnly.startsWith('880')) return `+${digitsOnly}`;
+    if (digitsOnly.startsWith('01')) return `+880${digitsOnly.slice(1)}`;
+    if (/^1[3-8]\d{8}$/.test(digitsOnly)) return `+880${digitsOnly}`;
+    return digitsOnly;
+  };
+
+  const validatePhoneValue = (value) => {
+    const normalized = normalizePhoneValue(value);
+    if (!normalized) return 'Phone number is required.';
+    const phoneRegex = /^\+8801[3-8]\d{8}$/;
+    return phoneRegex.test(normalized)
+      ? ''
+      : 'Please enter a valid Bangladeshi number in format +8801[3-8]XXXXXXXX.';
+  };
+
+  const handlePhoneChange = (value) => {
+    const normalized = normalizePhoneValue(value);
+    setPhone(normalized);
+    setPhoneError(validatePhoneValue(normalized));
   };
 
   const handleOTPChange = (index, value) => {
@@ -189,8 +225,22 @@ export const AuthModal = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    const emailValidationError = validateEmail(email);
+    const phoneValidationError = validatePhoneValue(phone);
+    setEmailError(emailValidationError);
+    setPhoneError(phoneValidationError);
+
     if (!name || !email || !phone || !password || !confirmPassword) {
       addToast('Please complete all fields.', 'error');
+      return;
+    }
+    if (emailValidationError) {
+      addToast('Please enter a valid email address.', 'error');
+      return;
+    }
+    if (phoneValidationError) {
+      addToast('Please enter a valid Bangladeshi phone number in format +8801[3-8]XXXXXXXX.', 'error');
       return;
     }
     if (password !== confirmPassword) {
@@ -204,10 +254,11 @@ export const AuthModal = () => {
 
     setIsLoading(true);
     try {
+      const normalizedPhone = normalizePhoneValue(phone);
       const memberPayload = {
         name: name.trim(),
         email: email.trim(),
-        phone: phone.trim(),
+        phone: normalizedPhone,
         password,
       };
 
@@ -452,12 +503,14 @@ export const AuthModal = () => {
                     <Phone className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
                     <input
                       type="tel"
-                      placeholder=""
+                      placeholder="+8801712345678"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      onBlur={(e) => setPhoneError(validatePhoneValue(e.target.value))}
+                      className={`w-full bg-zinc-800/80 border ${phoneError ? 'border-rose-500' : 'border-zinc-700/80'} focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500`}
                       required
                     />
+                    {phoneError && <p className="mt-1.5 text-[10px] text-rose-400">{phoneError}</p>}
                   </div>
                 </div>
               )}
@@ -472,10 +525,15 @@ export const AuthModal = () => {
                     type="email"
                     placeholder=""
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError(validateEmail(e.target.value));
+                    }}
+                    onBlur={(e) => setEmailError(validateEmail(e.target.value))}
+                    className={`w-full bg-zinc-800/80 border ${emailError ? 'border-rose-500' : 'border-zinc-700/80'} focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500`}
                     required
                   />
+                  {emailError && <p className="mt-1.5 text-[10px] text-rose-400">{emailError}</p>}
                 </div>
               </div>
 

@@ -37,7 +37,7 @@ export const ProductCard = ({
       id={`product-card-${product.id}`}
       className={`group flex flex-col h-full ${
         isLight ? 'bg-white border-zinc-200 hover:border-gold/60 text-black shadow-sm hover:shadow-md' : 'bg-luxury-dark/90 border-gold/20 hover:border-gold/60 text-white shadow-xl hover:shadow-gold/10'
-      } rounded-[6px] p-3 sm:p-3 transition-all duration-300 relative`}>
+      } rounded-[6px] p-2 sm:p-3 transition-all duration-300 relative`}
     >
 
 
@@ -53,7 +53,7 @@ export const ProductCard = ({
       </button>
 
       {/* Image container */}
-      <div className="relative aspect-square rounded-sm overflow-hidden bg-[#0a0a0a] mb-2 flex-shrink-0">
+      <div className="relative aspect-square rounded-sm overflow-hidden bg-[#0a0a0a] mb-1 flex-shrink-0">
         {!imageLoaded && (
           <div className="absolute inset-0 bg-zinc-900/80 animate-pulse z-10" />
         )}
@@ -80,7 +80,7 @@ export const ProductCard = ({
           {/* Product Name - 3 lines reserved */}
           <Link to={`/product?did=${product.id}`} className="block hover:opacity-80 transition-opacity my-1">
             <h3 
-              className={`text-xs sm:text-sm font-serif font-medium leading-snug line-clamp-3 min-h-[3.6em] text-center ${isLight ? 'text-zinc-900' : 'text-zinc-100'} hover:text-gold`} 
+              className={`text-xs sm:text-sm font-serif font-medium pt-2 leading-snug line-clamp-3 min-h-[3.6em] text-center ${isLight ? 'text-zinc-900' : 'text-zinc-100'} hover:text-gold`} 
               title={product.name}
             >
               {product.name}
@@ -90,8 +90,8 @@ export const ProductCard = ({
       </div>
 
       {/* SELECTION CONTROLS (Size / Variants - up to 6 or more) */}
-      <div className={`${hideMobileVariations ? 'hidden sm:block' : 'block'} border-t border-white/10 pt-1.5 flex-shrink-0`}>
-        <div className="flex flex-wrap justify-start gap-1 sm:gap-1.5">
+      <div className={`${hideMobileVariations ? 'hidden sm:block' : 'block'} border-t border-white/10 pt-1 flex-shrink-0`}>
+        <div className="grid grid-cols-3 gap-1">
           {Array.from(new Set(
             (product.variations && product.variations.length > 0
               ? product.variations.map(v => v.size)
@@ -102,7 +102,7 @@ export const ProductCard = ({
               key={size}
               type="button"
               onClick={() => onSizeChange(size)}
-              className={`w-1/3 sm:w-auto text-center px-0.5 py-1 rounded-[3px] text-[11px] font-sans font-medium transition-all duration-200 border cursor-pointer ${
+              className={`w-full text-center py-1 rounded-sm text-[11px] font-sans font-medium transition-all duration-200 border cursor-pointer ${
                 currentSel.size === size
                   ? (isLight ? 'bg-black text-white border-black' : 'bg-gold text-black border-gold font-bold')
                   : (isLight ? 'bg-zinc-100 border-zinc-200 text-zinc-600 hover:text-zinc-900' : 'bg-black/60 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700')

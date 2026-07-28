@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Compass, Heart, ShoppingBag, Search, Menu, X, ChevronDown, ChevronUp, ChevronRight, User, LogIn, Sparkles, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '../context/AppContext';
+import SearchDropdown from './SearchDropdown';
 
 import menuData from '../data/menuData.json';
 
@@ -381,6 +382,16 @@ export const Header = ({
                 }}
                 className="w-full text-xs sm:text-sm font-light placeholder-zinc-500 bg-transparent focus:outline-none text-zinc-100"
               />
+                  {/* Async search dropdown */}
+                  <SearchDropdown
+                    query={localSearchVal}
+                    onSelect={(item) => {
+                      handleSuggestionSelect(item);
+                      setIsMobileMenuOpen(false);
+                      setLocalSearchVal('');
+                    }}
+                    maxResults={6}
+                  />
               {localSearchVal && (
                 <button 
                   onClick={() => setLocalSearchVal('')} 
@@ -697,10 +708,11 @@ export const Header = ({
                         if (addToast) addToast('You have been signed out.', 'info');
                         handleNavLinkClick();
                       }}
-                      className="p-2 bg-transparent border border-white/10 rounded-sm text-gold hover:text-white hover:bg-white/5 transition-colors"
+                      className="w-[30%] min-w-[90px] flex items-center justify-center gap-2 px-3 py-2 bg-transparent border border-white/10 rounded-sm text-gold hover:text-white hover:bg-white/5 transition-colors"
                       title="Sign out"
                     >
                       <LogOut className="w-4 h-4 text-gold" />
+                      <span className="text-[11px] uppercase tracking-widest">Logout</span>
                     </button>
                   </div>
                 ) : (
@@ -775,23 +787,15 @@ export const Header = ({
                     className="w-full px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-sans font-light placeholder-zinc-500 focus:outline-none bg-black text-zinc-100 border-none"
                   />
 
-                  {localSearchVal.trim() && searchDropdownItems.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 z-20 border border-gold/20 bg-black/95 backdrop-blur rounded-sm shadow-2xl overflow-hidden">
-                      {searchDropdownItems.map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => handleSuggestionSelect(item)}
-                          className="w-full flex items-center justify-between px-3 py-2.5 text-left text-xs text-zinc-300 hover:bg-gold/10 hover:text-gold transition-colors cursor-pointer"
-                        >
-                          <span className="truncate pr-3">{item.name}</span>
-                          <span className="text-[10px] uppercase tracking-widest text-zinc-500 whitespace-nowrap">
-                            {item.subtitle}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <SearchDropdown
+                    query={localSearchVal}
+                    onSelect={(item) => {
+                      handleSuggestionSelect(item);
+                      setIsSearchPanelOpen(false);
+                      setLocalSearchVal('');
+                    }}
+                    maxResults={6}
+                  />
                 </div>
 
                 {/* Search Button */}

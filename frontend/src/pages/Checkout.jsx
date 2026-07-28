@@ -103,13 +103,83 @@ export const Checkout = () => {
   const [agreedToTerms, setAgreedToTerms] = React.useState(false);
   const [isDistrictOpen, setIsDistrictOpen] = React.useState(false);
   const [isShipDistrictOpen, setIsShipDistrictOpen] = React.useState(false);
+  const [emailError, setEmailError] = React.useState('');
+  const [phoneError, setPhoneError] = React.useState('');
+  const [shipPhoneError, setShipPhoneError] = React.useState('');
+
+  const validateEmail = (value) => {
+    const trimmed = (value || '').trim();
+    if (!trimmed) return 'Email address is required.';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(trimmed) ? '' : 'Please enter a valid email address.';
+  };
+
+  const normalizePhoneValue = (value) => {
+    const raw = (value || '').toString().trim();
+    if (!raw) return '';
+
+    const digitsOnly = raw.replace(/[^\d+]/g, '');
+    if (digitsOnly.startsWith('+880')) return digitsOnly;
+    if (digitsOnly.startsWith('880')) return `+${digitsOnly}`;
+    if (digitsOnly.startsWith('01')) return `+880${digitsOnly.slice(1)}`;
+    if (/^1[3-8]\d{8}$/.test(digitsOnly)) return `+880${digitsOnly}`;
+    return digitsOnly;
+  };
+
+  const validatePhoneValue = (value) => {
+    const normalized = normalizePhoneValue(value);
+    if (!normalized) return 'Phone number is required.';
+    const phoneRegex = /^\+8801[3-8]\d{8}$/;
+    return phoneRegex.test(normalized)
+      ? ''
+      : 'Please enter a valid Bangladeshi number in format +8801[3-8]XXXXXXXX.';
+  };
+
+  const handleBillingPhoneChange = (value) => {
+    const normalized = normalizePhoneValue(value);
+    setShippingInfo((prev) => ({ ...prev, phone: normalized }));
+    setPhoneError(validatePhoneValue(normalized));
+  };
+
+  const handleShippingPhoneChange = (value) => {
+    const normalized = normalizePhoneValue(value);
+    setShippingAddress((prev) => ({ ...prev, phone: normalized }));
+    setShipPhoneError(validatePhoneValue(normalized));
+  };
 
   const onFormSubmit = (e) => {
     e.preventDefault();
+
+    const emailValidationError = validateEmail(email);
+    const phoneValidationError = validatePhoneValue(phone);
+    const shippingPhoneValidationError = paymentMethod !== 'instore' && !sameAsBilling
+      ? validatePhoneValue(shipPhone || '')
+      : '';
+
+    setEmailError(emailValidationError);
+    setPhoneError(phoneValidationError);
+    setShipPhoneError(shippingPhoneValidationError);
+
     if (!agreedToTerms) {
       addToast('Please read and agree to the website terms and conditions to place your order.', 'error');
       return;
     }
+
+    if (emailValidationError) {
+      addToast('Please enter a valid email address.', 'error');
+      return;
+    }
+
+    if (phoneValidationError) {
+      addToast('Please enter a valid Bangladeshi phone number in format +8801[3-8]XXXXXXXX.', 'error');
+      return;
+    }
+
+    if (shippingPhoneValidationError) {
+      addToast('Please enter a valid recipient phone number in format +8801[3-8]XXXXXXXX.', 'error');
+      return;
+    }
+
     handleCheckoutSubmit(e);
   };
 
@@ -208,9 +278,14 @@ export const Checkout = () => {
                       required
                       placeholder=""
                       value={email}
-                      onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
-                      className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
+                      onChange={(e) => {
+                        setShippingInfo({ ...shippingInfo, email: e.target.value });
+                        setEmailError(validateEmail(e.target.value));
+                      }}
+                      onBlur={(e) => setEmailError(validateEmail(e.target.value))}
+                      className={`w-full bg-zinc-800/80 border ${emailError ? 'border-rose-500' : 'border-zinc-700/80'} focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans`}
                     />
+                    {emailError && <p className="mt-1.5 text-[10px] text-rose-400">{emailError}</p>}
                   </div>
 
                   {/* Contact Phone */}
@@ -221,11 +296,13 @@ export const Checkout = () => {
                     <input
                       type="tel"
                       required
-                      placeholder=""
+                      placeholder="+8801712345678"
                       value={phone}
-                      onChange={(e) => setShippingInfo({ ...shippingInfo, phone: e.target.value })}
-                      className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
+                      onChange={(e) => handleBillingPhoneChange(e.target.value)}
+                      onBlur={(e) => setPhoneError(validatePhoneValue(e.target.value))}
+                      className={`w-full bg-zinc-800/80 border ${phoneError ? 'border-rose-500' : 'border-zinc-700/80'} focus:border-gold/60 text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans`}
                     />
+                    {phoneError && <p className="mt-1.5 text-[10px] text-rose-400">{phoneError}</p>}
                   </div>
 
                   {/* Street Address */}
@@ -361,11 +438,13 @@ export const Checkout = () => {
                       <input
                         type="tel"
                         required={!sameAsBilling}
-                        placeholder=""
+                        placeholder="+8801712345678"
                         value={shipPhone || ''}
-                        onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
-                        className="w-full bg-black/50 border border-white/15 focus:border-gold text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans"
+                        onChange={(e) => handleShippingPhoneChange(e.target.value)}
+                        onBlur={(e) => setShipPhoneError(validatePhoneValue(e.target.value))}
+                        className={`w-full bg-black/50 border ${shipPhoneError ? 'border-rose-500' : 'border-white/15'} focus:border-gold text-zinc-200 text-xs px-4 py-3 outline-none rounded-sm font-sans`}
                       />
+                      {shipPhoneError && <p className="mt-1.5 text-[10px] text-rose-400">{shipPhoneError}</p>}
                     </div>
 
                     {/* Shipping Street Address */}
@@ -520,7 +599,7 @@ export const Checkout = () => {
 
                       {paymentMethod === 'instore' && (
                         <div className="text-[11px] text-amber-300 font-sans italic bg-amber-950/30 p-2.5 border border-amber-500/20 rounded-sm">
-                          In-Store Pickup selected.
+                          Office Pickup selected.
                         </div>
                       )}
                     </div>
@@ -547,23 +626,19 @@ export const Checkout = () => {
               </div>
 
               {/* New Customer Banner */}
-              <div className="bg-zinc-900/90 border border-zinc-700/60 p-6 rounded-sm space-y-3 shadow-xl">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <h4 className="text-xs sm:text-sm font-sans font-bold uppercase tracking-wider text-luxury-white flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-gold shrink-0" />
-                      <span>New Customer?</span>
-                    </h4>
-                    <p className="text-xs text-zinc-300 font-sans font-light leading-relaxed">
-                      Create an account to enjoy discounts & offers on your purchases.
-                    </p>
-                  </div>
-
-                  {user ? (
-                    <div className="bg-gold/10 border border-gold/30 px-3.5 py-2 rounded-xs text-[11px] font-mono text-gold whitespace-nowrap self-start sm:self-center">
-                      ✓ Account: {user.name || user.email}
+              {!user && (
+                <div className="bg-zinc-900/90 border border-zinc-700/60 p-6 rounded-sm space-y-3 shadow-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <h4 className="text-xs sm:text-sm font-sans font-bold uppercase tracking-wider text-luxury-white flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-gold shrink-0" />
+                        <span>New Customer?</span>
+                      </h4>
+                      <p className="text-xs text-zinc-300 font-sans font-light leading-relaxed">
+                        Create an account to enjoy discounts & offers on your purchases.
+                      </p>
                     </div>
-                  ) : (
+
                     <button
                       type="button"
                       onClick={() => setAuthModal(true, 'register')}
@@ -571,9 +646,10 @@ export const Checkout = () => {
                     >
                       Create Account
                     </button>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
+
             </div>
 
             {/* Right Column: Payment Method Selection & Order Summary Sidebar */}
@@ -691,12 +767,18 @@ export const Checkout = () => {
                 {paymentMethod === 'instore' && (
                   <div className="p-3.5 bg-amber-950/20 border border-amber-500/30 rounded-sm space-y-2 text-left">
                     <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
-                      <Store className="w-4 h-4 text-amber-400" /> In-Store Pickup Instruction
+                      <Store className="w-4 h-4 text-amber-400" /> Office Pickup Instruction
                     </div>
                     <div className="flex items-start gap-2 text-[11px] text-amber-200/90 font-sans leading-relaxed">
                       <PhoneCall className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                       <span>
-                        Before visiting our store for pickup Please call us to confirm product availability & stock: <a href="tel:+8801869151550" className="underline font-bold text-amber-300">+880 1869-151550</a>
+                        Before visiting our office for pickup please call us to confirm product availability & stock: <a href="tel:+8801869151550" className="underline font-bold text-amber-300">+880 1869-151550</a>
+                        <div className="mt-2 text-[11px] text-amber-200">
+                          <strong className="text-amber-300">Office Address:</strong> Ground Floor, House 20, Road 10, Sector 13, Uttara, Dhaka
+                        </div>
+                        <div className="mt-1 text-[11px]">
+                          <a href="https://maps.app.goo.gl/33jAhzCYG5gZ8K8y6" target="_blank" rel="noopener noreferrer" className="underline text-amber-300">see in map</a>
+                        </div>
                       </span>
                     </div>
                   </div>
