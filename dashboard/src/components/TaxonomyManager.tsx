@@ -9,19 +9,37 @@ import {
   Award,
   Trash2,
   Edit2,
-  ChevronRight,
-  Layers,
   X,
   Check
 } from 'lucide-react';
 
-export const TaxonomyManager = () => {
+export interface CategoryItem {
+  id: string | number;
+  name: string;
+  slug?: string;
+  parentId?: string | number | null;
+}
+
+export interface BrandItem {
+  id: string | number;
+  name: string;
+  slug?: string;
+  parentId?: string | number | null;
+}
+
+export interface TagItem {
+  id: string | number;
+  name: string;
+  slug?: string;
+}
+
+export const TaxonomyManager: React.FC = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('categories');
+  const [activeTab, setActiveTab] = useState<'categories' | 'brands' | 'tags'>('categories');
 
   // Queries
-  const { data: categories = [], isLoading: loadingCats } = useQuery({
+  const { data: categories = [], isLoading: loadingCats } = useQuery<CategoryItem[]>({
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await apiClient.get('/categories');
@@ -30,7 +48,7 @@ export const TaxonomyManager = () => {
     enabled: !!user
   });
 
-  const { data: brands = [], isLoading: loadingBrands } = useQuery({
+  const { data: brands = [], isLoading: loadingBrands } = useQuery<BrandItem[]>({
     queryKey: ['brands'],
     queryFn: async () => {
       const res = await apiClient.get('/brands');
@@ -39,7 +57,7 @@ export const TaxonomyManager = () => {
     enabled: !!user
   });
 
-  const { data: tags = [], isLoading: loadingTags } = useQuery({
+  const { data: tags = [], isLoading: loadingTags } = useQuery<TagItem[]>({
     queryKey: ['tags'],
     queryFn: async () => {
       const res = await apiClient.get('/tags');
@@ -50,7 +68,7 @@ export const TaxonomyManager = () => {
 
   // Mutators - Categories
   const addCategoryMutation = useMutation({
-    mutationFn: async (newCat) => {
+    mutationFn: async (newCat: { name: string; parentId: string | number | null }) => {
       const res = await apiClient.post('/categories', newCat);
       return res.data;
     },
@@ -62,7 +80,7 @@ export const TaxonomyManager = () => {
   });
 
   const updateCategoryMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: { id: string | number; name: string; parentId: string | number | null }) => {
       const res = await apiClient.put(`/categories/${data.id}`, { name: data.name, parentId: data.parentId });
       return res.data;
     },
@@ -73,7 +91,7 @@ export const TaxonomyManager = () => {
   });
 
   const deleteCategoryMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string | number) => {
       const res = await apiClient.delete(`/categories/${id}`);
       return res.data;
     },
@@ -84,7 +102,7 @@ export const TaxonomyManager = () => {
 
   // Mutators - Brands
   const addBrandMutation = useMutation({
-    mutationFn: async (newBrand) => {
+    mutationFn: async (newBrand: { name: string; parentId: string | number | null }) => {
       const res = await apiClient.post('/brands', newBrand);
       return res.data;
     },
@@ -96,7 +114,7 @@ export const TaxonomyManager = () => {
   });
 
   const updateBrandMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: { id: string | number; name: string; parentId: string | number | null }) => {
       const res = await apiClient.put(`/brands/${data.id}`, { name: data.name, parentId: data.parentId });
       return res.data;
     },
@@ -107,7 +125,7 @@ export const TaxonomyManager = () => {
   });
 
   const deleteBrandMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string | number) => {
       const res = await apiClient.delete(`/brands/${id}`);
       return res.data;
     },
@@ -118,7 +136,7 @@ export const TaxonomyManager = () => {
 
   // Mutators - Tags
   const addTagMutation = useMutation({
-    mutationFn: async (newTag) => {
+    mutationFn: async (newTag: { name: string }) => {
       const res = await apiClient.post('/tags', newTag);
       return res.data;
     },
@@ -129,7 +147,7 @@ export const TaxonomyManager = () => {
   });
 
   const updateTagMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: { id: string | number; name: string }) => {
       const res = await apiClient.put(`/tags/${data.id}`, { name: data.name });
       return res.data;
     },
@@ -140,7 +158,7 @@ export const TaxonomyManager = () => {
   });
 
   const deleteTagMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string | number) => {
       const res = await apiClient.delete(`/tags/${id}`);
       return res.data;
     },
@@ -152,38 +170,38 @@ export const TaxonomyManager = () => {
   // Local Form States
   const [newCatName, setNewCatName] = useState('');
   const [newCatParentId, setNewCatParentId] = useState('');
-  const [editingCatId, setEditingCatId] = useState(null);
+  const [editingCatId, setEditingCatId] = useState<string | number | null>(null);
   const [editCatName, setEditCatName] = useState('');
   const [editCatParentId, setEditCatParentId] = useState('');
 
   const [newBrandName, setNewBrandName] = useState('');
   const [newBrandParentId, setNewBrandParentId] = useState('');
-  const [editingBrandId, setEditingBrandId] = useState(null);
+  const [editingBrandId, setEditingBrandId] = useState<string | number | null>(null);
   const [editBrandName, setEditBrandName] = useState('');
   const [editBrandParentId, setEditBrandParentId] = useState('');
 
   const [newTagName, setNewTagName] = useState('');
-  const [editingTagId, setEditingTagId] = useState(null);
+  const [editingTagId, setEditingTagId] = useState<string | number | null>(null);
   const [editTagName, setEditTagName] = useState('');
 
-  const startEditCategory = (cat) => {
+  const startEditCategory = (cat: CategoryItem) => {
     setEditingCatId(cat.id);
     setEditCatName(cat.name);
-    setEditCatParentId(cat.parentId || '');
+    setEditCatParentId(cat.parentId ? String(cat.parentId) : '');
   };
 
-  const startEditBrand = (br) => {
+  const startEditBrand = (br: BrandItem) => {
     setEditingBrandId(br.id);
     setEditBrandName(br.name);
-    setEditBrandParentId(br.parentId || '');
+    setEditBrandParentId(br.parentId ? String(br.parentId) : '');
   };
 
-  const startEditTag = (t) => {
+  const startEditTag = (t: TagItem) => {
     setEditingTagId(t.id);
     setEditTagName(t.name);
   };
 
-  const handleAddCategory = (e) => {
+  const handleAddCategory = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCatName.trim()) return;
     addCategoryMutation.mutate({
@@ -192,7 +210,7 @@ export const TaxonomyManager = () => {
     });
   };
 
-  const handleUpdateCategory = (id) => {
+  const handleUpdateCategory = (id: string | number) => {
     if (!editCatName.trim()) return;
     updateCategoryMutation.mutate({
       id,
@@ -201,7 +219,7 @@ export const TaxonomyManager = () => {
     });
   };
 
-  const handleAddBrand = (e) => {
+  const handleAddBrand = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBrandName.trim()) return;
     addBrandMutation.mutate({
@@ -210,7 +228,7 @@ export const TaxonomyManager = () => {
     });
   };
 
-  const handleUpdateBrand = (id) => {
+  const handleUpdateBrand = (id: string | number) => {
     if (!editBrandName.trim()) return;
     updateBrandMutation.mutate({
       id,
@@ -219,7 +237,7 @@ export const TaxonomyManager = () => {
     });
   };
 
-  const handleAddTag = (e) => {
+  const handleAddTag = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTagName.trim()) return;
     addTagMutation.mutate({
@@ -227,21 +245,12 @@ export const TaxonomyManager = () => {
     });
   };
 
-  const handleUpdateTag = (id) => {
+  const handleUpdateTag = (id: string | number) => {
     if (!editTagName.trim()) return;
     updateTagMutation.mutate({
       id,
       name: editTagName.trim()
     });
-  };
-
-  // Hierarchy Helpers
-  const getSubcategories = (parentId) => {
-    return categories.filter((c) => c.parentId === parentId);
-  };
-
-  const getSubbrands = (parentId) => {
-    return brands.filter((b) => b.parentId === parentId);
   };
 
   return (
@@ -311,7 +320,7 @@ export const TaxonomyManager = () => {
                   >
                     <option value="">None (Top-Level Category)</option>
                     {categories
-                      .filter((c) => !c.parentId) // Only top level as parents for simplicity
+                      .filter((c) => !c.parentId)
                       .map((c) => (
                         <option key={c.id} value={c.id}>
                           {c.name}

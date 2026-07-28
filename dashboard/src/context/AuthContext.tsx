@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { apiClient } from '../api/apiClient';
+import { AuthContextType, UserProfile } from '../types';
 
-const AuthContext = createContext(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const clearStoredAuth = () => {
   localStorage.removeItem('admin_token');
@@ -9,10 +10,14 @@ const clearStoredAuth = () => {
   localStorage.removeItem('admin_user');
 };
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const logout = useCallback(() => {
     clearStoredAuth();
@@ -35,12 +40,16 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem('admin_user');
     const storedToken = localStorage.getItem('admin_token');
     if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        setUser(null);
+      }
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
     setError(null);
     try {
@@ -63,7 +72,7 @@ export const AuthProvider = ({ children }) => {
       }
       localStorage.setItem('admin_user', JSON.stringify(loggedUser));
       setUser(loggedUser);
-    } catch (err) {
+    } catch (err: any) {
       const msg = err.response?.data?.message || err.message || 'Failed to login';
       setError(msg);
       throw new Error(msg);
@@ -79,7 +88,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');

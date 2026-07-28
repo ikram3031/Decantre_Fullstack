@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '../context/AuthContext';
-import { apiClient } from '../api/apiClient';
+import { useAuth } from '../src/context/AuthContext';
+import { apiClient } from '../src/api/apiClient';
 import {
   Search,
   Users,

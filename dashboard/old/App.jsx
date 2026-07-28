@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
-import { AuthProvider } from './context/AuthContext.jsx';
-import { ToastProvider } from './context/ToastContext.jsx';
-import { router } from './router.jsx';
+import { AuthProvider } from '../src/context/AuthContext.js';
+import { ToastProvider } from '../src/context/ToastContext.js';
+import { router } from '../src/router.js';
 
 // Create a client
 const queryClient = new QueryClient({

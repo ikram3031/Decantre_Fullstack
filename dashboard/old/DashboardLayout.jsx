@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../src/context/AuthContext';
 import { Link, useRouter, useRouterState } from '@tanstack/react-router';
-import { AppLogo } from '../components/AppLogo';
+import { AppLogo } from '../src/components/AppLogo';
 import {
   ShoppingBag,
   Boxes,

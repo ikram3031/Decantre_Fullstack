@@ -10,15 +10,14 @@ import {
   Users,
   TrendingUp,
   ArrowRight,
-  Clock,
   CheckCircle,
-  AlertCircle
 } from 'lucide-react';
-import { Badge } from '../components/ui/Badge';
+import { Badge } from '../components/custom/Badge';
+import { Customer, Order, Product } from '../types';
 
-export const DashboardHome = () => {
+export const DashboardHome: React.FC = () => {
   const { user } = useAuth();
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [] } = useQuery<Order[]>({
     queryKey: ['orders'],
     queryFn: async () => {
       const res = await apiClient.get('/orders');
@@ -27,7 +26,7 @@ export const DashboardHome = () => {
     enabled: !!user
   });
 
-  const { data: products = [] } = useQuery({
+  const { data: products = [] } = useQuery<Product[]>({
     queryKey: ['products'],
     queryFn: async () => {
       const res = await apiClient.get('/products');
@@ -37,7 +36,7 @@ export const DashboardHome = () => {
     enabled: !!user
   });
 
-  const { data: customers = [] } = useQuery({
+  const { data: customers = [] } = useQuery<Customer[]>({
     queryKey: ['customers'],
     queryFn: async () => {
       const res = await apiClient.get('/members');
@@ -74,7 +73,7 @@ export const DashboardHome = () => {
       value: products.length.toString(),
       icon: Boxes,
       color: 'bg-amber-50 text-amber-700 border-amber-100',
-      description: `${products.filter((p) => p.stockQuantity === 'outofstock').length} out of stock`
+      description: `${products.filter((p: any) => p.stockQuantity === 'outofstock' || p.stock === 0).length} out of stock`
     },
     {
       name: 'Total Members',
@@ -85,7 +84,7 @@ export const DashboardHome = () => {
     }
   ];
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status?: string) => {
     switch (status) {
       case 'completed':
         return <Badge variant="success">Completed</Badge>;
@@ -96,7 +95,7 @@ export const DashboardHome = () => {
       case 'cancelled':
         return <Badge variant="danger">Cancelled</Badge>;
       default:
-        return <Badge variant="neutral">{status}</Badge>;
+        return <Badge variant="neutral">{status || 'Unknown'}</Badge>;
     }
   };
 
@@ -164,35 +163,38 @@ export const DashboardHome = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {orders.slice(0, 4).map((order) => (
-                  <tr key={order._id || order.id} className="hover:bg-slate-50/50 transition">
-                    <td className="px-6 py-4.5">
-                      <Link
-                        to="/orders/$orderId"
-                        params={{ orderId: order._id || order.id }}
-                        className="font-mono text-xs font-bold text-slate-900 hover:underline"
-                      >
-                        {order.orderNumber}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4.5">
-                      <div>
-                        <p className="font-semibold text-slate-900 text-xs">
-                          {order.customerName || order.customer?.fullName || order.customer?.name || 'Guest Customer'}
-                        </p>
-                        <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-                          {order.customerEmail || order.customer?.email || 'N/A'}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4.5">
-                      <div className="w-24">{getStatusBadge(order.status)}</div>
-                    </td>
-                    <td className="px-6 py-4.5 text-right text-xs font-bold text-slate-900 font-mono">
-                      ৳{Number(order.totals?.total ?? order.total ?? 0).toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
+                {orders.slice(0, 4).map((order) => {
+                  const orderId = order._id || order.id || '';
+                  return (
+                    <tr key={orderId} className="hover:bg-slate-50/50 transition">
+                      <td className="px-6 py-4.5">
+                        <Link
+                          to="/orders/$orderId"
+                          params={{ orderId: String(orderId) }}
+                          className="font-mono text-xs font-bold text-slate-900 hover:underline"
+                        >
+                          {order.orderNumber}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4.5">
+                        <div>
+                          <p className="font-semibold text-slate-900 text-xs">
+                            {order.customerName || order.customer?.fullName || order.customer?.name || 'Guest Customer'}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-mono mt-0.5">
+                            {order.customerEmail || order.customer?.email || 'N/A'}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4.5">
+                        <div className="w-24">{getStatusBadge(order.status)}</div>
+                      </td>
+                      <td className="px-6 py-4.5 text-right text-xs font-bold text-slate-900 font-mono">
+                        ৳{Number(order.totals?.total ?? order.total ?? 0).toFixed(2)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -206,11 +208,11 @@ export const DashboardHome = () => {
           </div>
           <div className="p-6 flex-1 space-y-4 overflow-y-auto">
             {products
-              .filter((p) => p.stockQuantity <= p.lowStockThreshold)
-              .map((prod) => (
-                <div key={prod.id} className="flex items-center gap-4 p-3.5 bg-slate-50 border border-slate-100 rounded-xl">
+              .filter((p: any) => Number(p.stockQuantity ?? p.stock ?? 0) <= Number(p.lowStockThreshold ?? 5))
+              .map((prod: any) => (
+                <div key={prod.id || prod._id} className="flex items-center gap-4 p-3.5 bg-slate-50 border border-slate-100 rounded-xl">
                   <img
-                    src={prod.images[0]}
+                    src={prod.images?.[0] || prod.image || 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=150&q=80'}
                     alt={prod.name}
                     className="h-11 w-11 rounded-lg object-cover border border-slate-200 bg-white"
                   />
@@ -224,12 +226,12 @@ export const DashboardHome = () => {
                         ? 'bg-rose-100 text-rose-800' 
                         : 'bg-amber-100 text-amber-800'
                     }`}>
-                      {prod.stockQuantity} Left
+                      {prod.stockQuantity ?? prod.stock ?? 0} Left
                     </span>
                   </div>
                 </div>
               ))}
-            {products.filter((p) => p.stockQuantity <= p.lowStockThreshold).length === 0 && (
+            {products.filter((p: any) => Number(p.stockQuantity ?? p.stock ?? 0) <= Number(p.lowStockThreshold ?? 5)).length === 0 && (
               <div className="text-center py-8">
                 <CheckCircle className="h-8 w-8 text-emerald-500 mx-auto mb-2" />
                 <p className="text-xs font-semibold text-slate-800">All stocks optimal</p>

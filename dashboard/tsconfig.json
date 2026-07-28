@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@lib": ["./src/lib"]
+    }
+  },
+  "include": ["src", "old/OrdersTable.jsx", "old/OrdersFilters.jsx", "old/invoiceUtils.js", "old/Pagination.jsx", "old/Badge.jsx", "old/TaxonomyManager.jsx", "old/ReCaptcha.jsx", "old/AppLogo.jsx", "old/utils.js", "old/table.jsx", "old/POSCheckoutView.jsx", "old/OrderSuccessReceipt.jsx", "old/AuthContext.jsx", "old/ToastContext.jsx", "old/CustomersPage.jsx", "old/DashboardHome.jsx", "old/DashboardLayout.jsx", "old/LoginPage.jsx", "old/OrderDetailsPage.jsx", "old/OrdersPage.jsx", "old/ProductsPage.jsx", "old/UsersPage.jsx", "old/App.jsx", "old/main.jsx", "old/router.jsx"]
+}

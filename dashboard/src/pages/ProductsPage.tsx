@@ -5,30 +5,23 @@ import { apiClient } from '../api/apiClient';
 import {
   Plus,
   Search,
-  Filter,
   Boxes,
   Edit2,
   Trash2,
   X,
   Upload,
-  Image as ImageIcon,
   Tag as TagIcon,
   FolderOpen,
   DollarSign,
   PackageCheck,
   ChevronLeft,
-  ChevronRight,
-  Sparkles,
-  ExternalLink,
-  ChevronDown,
   MoreVertical,
   Award,
   Calendar,
-  Layers,
   ArrowUpDown
 } from 'lucide-react';
-import { Badge } from '../components/ui/Badge';
-import { Pagination } from '../components/ui/Pagination';
+import { Badge } from '../components/custom/Badge';
+import { Pagination } from '../components/custom/Pagination';
 import {
   Table,
   TableHeader,
@@ -38,19 +31,20 @@ import {
   TableCell,
 } from '../components/ui/table';
 import { TaxonomyManager } from '../components/TaxonomyManager';
+import { Product } from '../types';
 
-export const ProductsPage = () => {
+export const ProductsPage: React.FC = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [currentPageTab, setCurrentPageTab] = useState('catalog');
+  const [currentPageTab, setCurrentPageTab] = useState<'catalog' | 'taxonomies'>('catalog');
 
   // Queries
-  const { data: productsData = { items: [], total: 0 }, isLoading } = useQuery({
+  const { data: productsData = { items: [], total: 0 }, isLoading } = useQuery<{ items: Product[]; total: number }>({
     queryKey: ['products'],
     queryFn: async () => {
       const res = await apiClient.get('/products');
       const rawData = res.data;
-      let items = [];
+      let items: Product[] = [];
       let total = 0;
 
       if (Array.isArray(rawData)) {
@@ -67,16 +61,15 @@ export const ProductsPage = () => {
   });
   const products = productsData.items;
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [] } = useQuery<any[]>({
     queryKey: ['categories'],
     queryFn: async () => {
       const res = await apiClient.get('/categories');
       const data = res.data?.data || res.data || [];
       const catList = Array.isArray(data) ? data : [];
       
-      // Store did and name in localStorage for instant mapping
       try {
-        const catMap = {};
+        const catMap: Record<string, string> = {};
         catList.forEach((c) => {
           if (c.did && c.name) {
             catMap[c.did] = c.name;
@@ -98,7 +91,7 @@ export const ProductsPage = () => {
     enabled: !!user
   });
 
-  const { data: brands = [] } = useQuery({
+  const { data: brands = [] } = useQuery<any[]>({
     queryKey: ['brands'],
     queryFn: async () => {
       const res = await apiClient.get('/brands');
@@ -107,7 +100,7 @@ export const ProductsPage = () => {
     enabled: !!user
   });
 
-  const { data: tags = [] } = useQuery({
+  const { data: tags = [] } = useQuery<any[]>({
     queryKey: ['tags'],
     queryFn: async () => {
       const res = await apiClient.get('/tags');
@@ -118,7 +111,7 @@ export const ProductsPage = () => {
 
   // Mutators
   const addProductMutation = useMutation({
-    mutationFn: async (newProd) => {
+    mutationFn: async (newProd: Partial<Product>) => {
       const res = await apiClient.post('/products', newProd);
       return res.data;
     },
@@ -129,7 +122,7 @@ export const ProductsPage = () => {
   });
 
   const updateProductMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: { id: string | number; updates: Partial<Product> }) => {
       const res = await apiClient.put(`/products/${data.id}`, data.updates);
       return res.data;
     },
@@ -140,7 +133,7 @@ export const ProductsPage = () => {
   });
 
   const deleteProductMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string | number) => {
       const res = await apiClient.delete(`/products/${id}`);
       return res.data;
     },
@@ -151,8 +144,8 @@ export const ProductsPage = () => {
 
   // Pages / Views State
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
-  const [openMenuId, setOpenMenuId] = useState(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | number | null>(null);
 
   // Filters State
   const [searchTerm, setSearchTerm] = useState('');
@@ -161,37 +154,28 @@ export const ProductsPage = () => {
   const [seasonFilter, setSeasonFilter] = useState('all');
   const [stockFilter, setStockFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState('asc');
-
-  const handleSort = (field) => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortOrder('asc');
-    }
-  };
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   // WordPress-style Form State
   const [formName, setFormName] = useState('');
   const [formDescription, setFormDescription] = useState('');
   const [formShortDescription, setFormShortDescription] = useState('');
-  const [formRegularPrice, setFormRegularPrice] = useState(0);
-  const [formSalePrice, setFormSalePrice] = useState(undefined);
+  const [formRegularPrice, setFormRegularPrice] = useState<number>(0);
+  const [formSalePrice, setFormSalePrice] = useState<number | undefined>(undefined);
   const [formSku, setFormSku] = useState('');
-  const [formStockQty, setFormStockQty] = useState(0);
+  const [formStockQty, setFormStockQty] = useState<number>(0);
   const [formStockStatus, setFormStockStatus] = useState('instock');
-  const [formLowStockThreshold, setFormLowStockThreshold] = useState(5);
-  const [formCategories, setFormCategories] = useState([]);
-  const [formTags, setFormTags] = useState([]);
-  const [formImages, setFormImages] = useState([]);
+  const [formLowStockThreshold, setFormLowStockThreshold] = useState<number>(5);
+  const [formCategories, setFormCategories] = useState<string[]>([]);
+  const [formTags, setFormTags] = useState<string[]>([]);
+  const [formImages, setFormImages] = useState<string[]>([]);
   const [formBrand, setFormBrand] = useState('');
   const [formSeason, setFormSeason] = useState('All Seasons');
   
   // Custom states inside form
   const [newTagInput, setNewTagInput] = useState('');
   const [newCatInput, setNewCatInput] = useState('');
-  const [productDataTab, setProductDataTab] = useState('general');
+  const [productDataTab, setProductDataTab] = useState<'general' | 'inventory' | 'attributes'>('general');
 
   // Mock upload selector state
   const [mockGalleryOpen, setMockGalleryOpen] = useState(false);
@@ -233,7 +217,7 @@ export const ProductsPage = () => {
   };
 
   // Open Form to Edit
-  const handleEdit = (prod) => {
+  const handleEdit = (prod: any) => {
     setEditingProduct(prod);
     setFormName(prod.name || '');
     setFormDescription(prod.description || '');
@@ -246,7 +230,6 @@ export const ProductsPage = () => {
     setFormLowStockThreshold(prod.lowStockThreshold ?? 5);
     setFormCategories(Array.isArray(prod.categories) ? [...prod.categories] : []);
     setFormTags(Array.isArray(prod.tags) ? [...prod.tags] : []);
-    // Support both images array, image_url string, or thumbnail_url
     const imgs = Array.isArray(prod.images) && prod.images.length > 0
       ? prod.images
       : prod.image_url ? [prod.image_url]
@@ -260,14 +243,14 @@ export const ProductsPage = () => {
   };
 
   // Save/Publish
-  const handlePublish = (e) => {
+  const handlePublish = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName) {
       alert('Product title is required.');
       return;
     }
 
-    const payload = {
+    const payload: any = {
       name: formName,
       description: formDescription,
       shortDescription: formShortDescription,
@@ -284,15 +267,15 @@ export const ProductsPage = () => {
       images: formImages.length > 0 ? formImages : [UNSPLASH_LIBRARY[0]],
     };
 
-    if (editingProduct) {
-      updateProductMutation.mutate({ id: editingProduct.id, updates: payload });
+    const prodId = editingProduct?.id || editingProduct?._id;
+    if (editingProduct && prodId) {
+      updateProductMutation.mutate({ id: prodId, updates: payload });
     } else {
       addProductMutation.mutate(payload);
     }
   };
 
-  // Category selection handler
-  const handleCategoryToggle = (catName) => {
+  const handleCategoryToggle = (catName: string) => {
     if (formCategories.includes(catName)) {
       setFormCategories(formCategories.filter((c) => c !== catName));
     } else {
@@ -311,7 +294,6 @@ export const ProductsPage = () => {
     }
   };
 
-  // Tag manipulation
   const handleAddTagQuick = () => {
     const trimmed = newTagInput.trim();
     if (trimmed) {
@@ -325,23 +307,23 @@ export const ProductsPage = () => {
     }
   };
 
-  const handleRemoveTag = (tag) => {
+  const handleRemoveTag = (tag: string) => {
     setFormTags(formTags.filter((t) => t !== tag));
   };
 
-  const handleSelectMockImage = (url) => {
+  const handleSelectMockImage = (url: string) => {
     if (!formImages.includes(url)) {
       setFormImages([...formImages, url]);
     }
     setMockGalleryOpen(false);
   };
 
-  const handleRemoveImage = (idx) => {
+  const handleRemoveImage = (idx: number) => {
     setFormImages(formImages.filter((_, i) => i !== idx));
   };
 
   // Filter products logic
-  const filteredProducts = Array.isArray(products) ? products.filter((p) => {
+  const filteredProducts = Array.isArray(products) ? products.filter((p: any) => {
     const stockStatus = p.stockStatus || p.stock_status || '';
     const matchesSearch =
       (p.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -349,7 +331,7 @@ export const ProductsPage = () => {
 
     const matchesCategory =
       categoryFilter === 'all' || (Array.isArray(p.categories) && p.categories.some(
-        (c) => (typeof c === 'string' ? c : c?.name || c?.slug || '') === categoryFilter
+        (c: any) => (typeof c === 'string' ? c : c?.name || c?.slug || '') === categoryFilter
       ));
 
     const matchesBrand =
@@ -365,8 +347,8 @@ export const ProductsPage = () => {
     return matchesSearch && matchesCategory && matchesBrand && matchesSeason && matchesStock;
   }) : [];
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const getValue = (item) => {
+  const sortedProducts = [...filteredProducts].sort((a: any, b: any) => {
+    const getValue = (item: any) => {
       switch (sortBy) {
         case 'price':
           return Number(item.salePrice ?? item.offerPrice ?? item.regularPrice ?? item.price ?? 0);
@@ -393,7 +375,7 @@ export const ProductsPage = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = sortedProducts.slice(startIndex, startIndex + itemsPerPage);
 
-  const getStockBadge = (status, qty) => {
+  const getStockBadge = (status?: string, qty?: number) => {
     switch (status) {
       case 'instock':
         return (
@@ -416,7 +398,7 @@ export const ProductsPage = () => {
       default:
         return (
           <span className="flex w-25 justify-center items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-600 text-white shadow-xs">
-            {status}
+            {status || 'Unknown'}
           </span>
         );
     }
@@ -502,8 +484,8 @@ export const ProductsPage = () => {
                         className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-950 rounded-xl text-xs outline-none transition appearance-none cursor-pointer font-semibold text-slate-700"
                       >
                         <option value="all">All Categories</option>
-                        {categories.map((cat) => (
-                          <option key={cat.id} value={cat.name}>{cat.name}</option>
+                        {categories.map((cat: any) => (
+                          <option key={cat.id || cat._id} value={cat.name}>{cat.name}</option>
                         ))}
                       </select>
                     </div>
@@ -521,8 +503,8 @@ export const ProductsPage = () => {
                         className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-950 rounded-xl text-xs outline-none transition appearance-none cursor-pointer font-semibold text-slate-700"
                       >
                         <option value="all">All Brands</option>
-                        {brands.map((b) => (
-                          <option key={b.id} value={b.name}>{b.name}</option>
+                        {brands.map((b: any) => (
+                          <option key={b.id || b._id} value={b.name}>{b.name}</option>
                         ))}
                       </select>
                     </div>
@@ -618,14 +600,15 @@ export const ProductsPage = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody className="divide-y divide-slate-100">
-                        {paginatedProducts.map((p) => {
-                          let cachedCatMap = {};
+                        {paginatedProducts.map((p: any) => {
+                          const prodId = p.id || p._id;
+                          let cachedCatMap: Record<string, string> = {};
                           try {
                             cachedCatMap = JSON.parse(localStorage.getItem('category_did_map') || '{}');
                           } catch (e) {}
 
                           return (
-                            <TableRow key={p.id || p._id} className="hover:bg-slate-50/50 transition">
+                            <TableRow key={prodId} className="hover:bg-slate-50/50 transition">
                               <TableCell className="px-6 py-4.5 w-[280px] max-w-[280px]">
                                 <div className="flex items-center gap-3 min-w-0">
                                   <img
@@ -646,7 +629,7 @@ export const ProductsPage = () => {
                                     </p>
                                     <div className="flex items-center gap-1.5 mt-0.5">
                                       <span className="text-[10px] text-slate-400 font-mono">
-                                        ID: {p.id || p._id || 'N/A'}
+                                        ID: {prodId || 'N/A'}
                                       </span>
                                     </div>
                                   </div>
@@ -657,7 +640,7 @@ export const ProductsPage = () => {
                               </TableCell>
                               <TableCell>
                                 <div className="flex flex-wrap gap-1 max-w-[180px]">
-                                  {(Array.isArray(p.categories) && p.categories.length > 0 ? p.categories : ['Uncategorized']).map((c, i) => {
+                                  {(Array.isArray(p.categories) && p.categories.length > 0 ? p.categories : ['Uncategorized']).map((c: any, i: number) => {
                                     const catDidOrName = typeof c === 'string' ? c : c?.name || c?.slug || c?.did || '';
                                     const displayName = cachedCatMap[catDidOrName] || catDidOrName || 'Uncategorized';
                                     return (
@@ -684,14 +667,14 @@ export const ProductsPage = () => {
                               <TableCell className="px-6 py-4.5 text-center relative" onClick={(e) => e.stopPropagation()}>
                                 <div className="flex items-center justify-center">
                                   <button
-                                    onClick={() => setOpenMenuId(openMenuId === p.id ? null : p.id)}
+                                    onClick={() => setOpenMenuId(openMenuId === prodId ? null : prodId)}
                                     className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition hover:text-slate-900 cursor-pointer"
                                     title="Actions"
                                   >
                                     <MoreVertical className="h-4.5 w-4.5" />
                                   </button>
 
-                                  {openMenuId === p.id && (
+                                  {openMenuId === prodId && (
                                     <>
                                       <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
                                       <div className="absolute right-6 mt-2 w-36 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-20 text-left animate-in fade-in slide-in-from-top-1 duration-100">
@@ -709,7 +692,7 @@ export const ProductsPage = () => {
                                           onClick={() => {
                                             setOpenMenuId(null);
                                             if (confirm('Are you sure you want to delete this product?')) {
-                                              deleteProductMutation.mutate(p.id);
+                                              deleteProductMutation.mutate(prodId);
                                             }
                                           }}
                                           className="flex items-center gap-2 w-full px-3.5 py-2 text-xs text-rose-600 hover:bg-rose-50 font-semibold cursor-pointer transition"
@@ -1073,8 +1056,8 @@ export const ProductsPage = () => {
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-slate-950 font-semibold cursor-pointer text-slate-700"
                 >
                   <option value="">No Brand Selected</option>
-                  {brands.map((br) => (
-                    <option key={br.id} value={br.name}>
+                  {brands.map((br: any) => (
+                    <option key={br.id || br._id} value={br.name}>
                       {br.parentId ? `└─ ${br.name}` : br.name}
                     </option>
                   ))}
@@ -1130,8 +1113,8 @@ export const ProductsPage = () => {
                   {categories.length === 0 ? (
                     <p className="text-[11px] text-slate-400 italic">No categories available.</p>
                   ) : (
-                    categories.map((cat) => (
-                      <label key={cat.id} className="flex items-center gap-2.5 text-xs text-slate-700 font-medium cursor-pointer">
+                    categories.map((cat: any) => (
+                      <label key={cat.id || cat._id} className="flex items-center gap-2.5 text-xs text-slate-700 font-medium cursor-pointer">
                         <input
                           type="checkbox"
                           checked={formCategories.includes(cat.name)}

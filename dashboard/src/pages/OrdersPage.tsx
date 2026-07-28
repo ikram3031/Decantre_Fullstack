@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../api/apiClient';
-import { Plus, ShoppingBag } from 'lucide-react';
-import { Pagination } from '../components/ui/Pagination';
+import { Plus } from 'lucide-react';
+import { Pagination } from '../components/custom/Pagination';
 
 // Extracted components
-import { printInvoice, downloadInvoice } from '../components/orders/invoiceUtils';
+import { printInvoice, downloadInvoice, InvoiceOrder } from '../lib/invoiceUtils';
 import { OrderSuccessReceipt } from '../components/orders/OrderSuccessReceipt';
-import { POSCheckoutView } from '../components/orders/POSCheckoutView';
+import { POSCheckoutView, CartItem } from '../components/orders/POSCheckoutView';
 import { OrdersTable } from '../components/orders/OrdersTable';
 import { OrdersFilters } from '../components/orders/OrdersFilters';
+import { Customer, Order, Product } from '../types';
 
-export const OrdersPage = () => {
+export const OrdersPage: React.FC = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   
@@ -21,17 +22,17 @@ export const OrdersPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date');
-  const [sortOrder, setSortOrder] = useState('desc');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   // POS Checkout Flow States
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
-  const [successOrder, setSuccessOrder] = useState(null);
+  const [successOrder, setSuccessOrder] = useState<any | null>(null);
   
-  const [cartItems, setCartItems] = useState([]);
-  const [selectedVariants, setSelectedVariants] = useState({});
-  const [customerType, setCustomerType] = useState('guest');
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [selectedVariants, setSelectedVariants] = useState<Record<string | number, string | number>>({});
+  const [customerType, setCustomerType] = useState<'guest' | 'existing'>('guest');
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
@@ -42,7 +43,7 @@ export const OrdersPage = () => {
   const [productSearch, setProductSearch] = useState('');
 
   // Queries
-  const { data: ordersData = { items: [], total: 0 }, isLoading } = useQuery({
+  const { data: ordersData = { items: [], total: 0 }, isLoading } = useQuery<{ items: Order[]; total: number }>({
     queryKey: ['orders', currentPage, itemsPerPage],
     queryFn: async () => {
       const res = await apiClient.get('/orders', {
@@ -53,7 +54,7 @@ export const OrdersPage = () => {
         }
       });
       const rawData = res.data;
-      let items = [];
+      let items: Order[] = [];
       let total = 0;
 
       if (Array.isArray(rawData)) {
@@ -70,7 +71,7 @@ export const OrdersPage = () => {
   });
   const orders = ordersData.items;
 
-  const { data: products = [] } = useQuery({
+  const { data: products = [] } = useQuery<Product[]>({
     queryKey: ['products'],
     queryFn: async () => {
       const res = await apiClient.get('/products');
@@ -80,7 +81,7 @@ export const OrdersPage = () => {
     enabled: !!user
   });
 
-  const { data: customers = [] } = useQuery({
+  const { data: customers = [] } = useQuery<Customer[]>({
     queryKey: ['customers'],
     queryFn: async () => {
       const res = await apiClient.get('/members');
@@ -91,7 +92,7 @@ export const OrdersPage = () => {
 
   // Mutators
   const updateOrderStatusMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: { id: string | number; status: string }) => {
       const res = await apiClient.put(`/orders/${data.id}`, { status: data.status });
       return res.data;
     },
@@ -101,7 +102,7 @@ export const OrdersPage = () => {
   });
 
   const deleteOrderMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string | number) => {
       const res = await apiClient.delete(`/orders/${id}`);
       return res.data;
     },
@@ -111,7 +112,7 @@ export const OrdersPage = () => {
   });
 
   const createOrderMutation = useMutation({
-    mutationFn: async (newOrderData) => {
+    mutationFn: async (newOrderData: any) => {
       const res = await apiClient.post('/orders/new-order', newOrderData);
       return res.data;
     },
@@ -132,21 +133,23 @@ export const OrdersPage = () => {
   });
 
   // Cart operations
-  const getSelectedVariant = (product) => {
+  const getSelectedVariant = (product: Product) => {
     if (!product.variants || product.variants.length === 0) return undefined;
-    const selectedId = selectedVariants[product.id];
-    return product.variants.find(v => v.id === selectedId) || product.variants[0];
+    const prodId = product.id || product._id || '';
+    const selectedId = selectedVariants[prodId];
+    return product.variants.find((v: any) => v.id === selectedId) || product.variants[0];
   };
 
-  const addToCart = (product, selectedVariant) => {
+  const addToCart = (product: Product, selectedVariant?: any) => {
     const variantToUse = selectedVariant || getSelectedVariant(product);
+    const prodId = product.id || product._id;
     
     const existingIdx = cartItems.findIndex(
-      (item) => item.product.id === product.id && 
+      (item) => (item.product.id || item.product._id) === prodId && 
                 (!variantToUse || item.selectedVariant?.id === variantToUse.id)
     );
 
-    const maxStock = variantToUse ? variantToUse.stockQuantity : product.stockQuantity;
+    const maxStock = variantToUse ? (variantToUse.stockQuantity ?? variantToUse.stock ?? 0) : (product.stockQuantity ?? product.stock ?? 0);
 
     if (existingIdx !== -1) {
       const updated = [...cartItems];
@@ -165,11 +168,11 @@ export const OrdersPage = () => {
     }
   };
 
-  const updateCartQty = (productId, variantId, delta) => {
+  const updateCartQty = (productId: string | number, variantId: string | number | undefined, delta: number) => {
     const updated = cartItems.map((item) => {
-      const match = item.product.id === productId && (!variantId || item.selectedVariant?.id === variantId);
+      const match = (item.product.id || item.product._id) === productId && (!variantId || item.selectedVariant?.id === variantId);
       if (match) {
-        const maxStock = item.selectedVariant ? item.selectedVariant.stockQuantity : item.product.stockQuantity;
+        const maxStock = item.selectedVariant ? (item.selectedVariant.stockQuantity ?? item.selectedVariant.stock ?? 0) : (item.product.stockQuantity ?? item.product.stock ?? 0);
         const newQty = item.quantity + delta;
         if (newQty > maxStock) {
           alert(`Cannot select more than ${maxStock} items.`);
@@ -182,8 +185,8 @@ export const OrdersPage = () => {
     setCartItems(updated);
   };
 
-  const removeFromCart = (productId, variantId) => {
-    setCartItems(cartItems.filter((item) => !(item.product.id === productId && (!variantId || item.selectedVariant?.id === variantId))));
+  const removeFromCart = (productId: string | number, variantId?: string | number) => {
+    setCartItems(cartItems.filter((item) => !((item.product.id || item.product._id) === productId && (!variantId || item.selectedVariant?.id === variantId))));
   };
 
   const handleConfirmOrder = () => {
@@ -192,21 +195,21 @@ export const OrdersPage = () => {
       return;
     }
 
-    let customerId = 'guest';
+    let customerId: string | number = 'guest';
     let customerName = guestName.trim();
     let customerEmail = guestEmail.trim();
     let phone = guestPhone.trim();
 
     if (customerType === 'existing') {
-      const selectedCust = customers.find((c) => c.id === selectedCustomerId);
+      const selectedCust = customers.find((c: any) => (c.id || c._id) === selectedCustomerId);
       if (!selectedCust) {
         alert('Please select a customer.');
         return;
       }
-      customerId = selectedCust.id;
-      customerName = selectedCust.name;
-      customerEmail = selectedCust.email;
-      phone = selectedCust.phone;
+      customerId = selectedCust.id || selectedCust._id || '';
+      customerName = selectedCust.name || '';
+      customerEmail = selectedCust.email || '';
+      phone = selectedCust.phone || '';
     } else {
       if (!customerName) {
         alert('Please enter guest customer name.');
@@ -215,16 +218,16 @@ export const OrdersPage = () => {
     }
 
     const items = cartItems.map((item) => ({
-      productId: item.product.id,
+      productId: item.product.id || item.product._id,
       name: item.product.name,
       size: item.selectedVariant?.size,
       quantity: item.quantity,
-      price: item.selectedVariant ? item.selectedVariant.price : (item.product.salePrice ?? item.product.regularPrice),
-      image: item.product.images?.[0]
+      price: item.selectedVariant ? item.selectedVariant.price : (item.product.salePrice ?? item.product.regularPrice ?? item.product.price ?? 0),
+      image: item.product.images?.[0] || item.product.image
     }));
 
     const total = cartItems.reduce((sum, item) => {
-      const price = item.selectedVariant ? item.selectedVariant.price : (item.product.salePrice ?? item.product.regularPrice);
+      const price = item.selectedVariant ? item.selectedVariant.price : (item.product.salePrice ?? item.product.regularPrice ?? item.product.price ?? 0);
       return sum + (price * item.quantity);
     }, 0);
 
@@ -253,17 +256,17 @@ export const OrdersPage = () => {
   };
 
   // Filtering, sorting, pagination
-  const filteredOrders = orders.filter((order) => {
+  const filteredOrders = orders.filter((order: any) => {
     const matchesSearch =
-      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase());
+      (order.orderNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (order.customerName || order.customer?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (order.customerEmail || order.customer?.email || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
 
     let matchesDate = true;
     if (dateFilter !== 'all') {
-      const orderDate = new Date(order.date);
+      const orderDate = new Date(order.date || order.createdAt);
       const now = new Date();
       if (dateFilter === '7days') {
         const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
@@ -277,13 +280,15 @@ export const OrdersPage = () => {
     return matchesSearch && matchesStatus && matchesDate;
   });
 
-  const sortedOrders = [...filteredOrders].sort((a, b) => {
+  const sortedOrders = [...filteredOrders].sort((a: any, b: any) => {
     if (sortBy === 'date') {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
+      const dateA = new Date(a.date || a.createdAt).getTime();
+      const dateB = new Date(b.date || b.createdAt).getTime();
       return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     } else {
-      return sortOrder === 'asc' ? a.total - b.total : b.total - a.total;
+      const totalA = Number(a.totals?.total ?? a.total ?? 0);
+      const totalB = Number(b.totals?.total ?? b.total ?? 0);
+      return sortOrder === 'asc' ? totalA - totalB : totalB - totalA;
     }
   });
 
@@ -293,7 +298,7 @@ export const OrdersPage = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = isFiltered ? sortedOrders.slice(startIndex, startIndex + itemsPerPage) : sortedOrders;
 
-  const handleSort = (field) => {
+  const handleSort = (field: string) => {
     if (sortBy === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {

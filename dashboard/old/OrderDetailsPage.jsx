@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link, useNavigate } from '@tanstack/react-router';
-import { useAuth } from '../context/AuthContext';
-import { apiClient } from '../api/apiClient';
+import { useAuth } from '../src/context/AuthContext';
+import { apiClient } from '../src/api/apiClient';
 import {
   ChevronLeft,
   Calendar,
@@ -69,8 +69,14 @@ export const OrderDetailsPage = () => {
     if (order) {
       setEditStatus(order.status);
       setEditNotes(order.notes || '');
-      setEditItems([...order.items]);
-      setShippingAddress({ ...order.shippingAddress });
+      setEditItems(Array.isArray(order.items) ? [...order.items] : []);
+      setShippingAddress({
+        street: order.shippingAddress?.street || '',
+        city: order.shippingAddress?.city || '',
+        state: order.shippingAddress?.state || '',
+        postcode: order.shippingAddress?.postcode || '',
+        country: order.shippingAddress?.country || ''
+      });
       setEditComment('');
       setIsEditing(true);
     }
@@ -257,12 +263,12 @@ export const OrderDetailsPage = () => {
                 Order Summary
               </h2>
               <span className="text-xs font-semibold text-slate-600 bg-white border border-slate-200/60 px-2.5 py-1 rounded-full font-mono shadow-xs">
-                {isEditing ? editItems.length : order.items.length} unique products
+                {isEditing ? editItems.length : (Array.isArray(order.items) ? order.items.length : 0)} unique products
               </span>
             </div>
 
             <div className="divide-y divide-slate-100">
-              {(!isEditing ? order.items : editItems).map((item, idx) => (
+              {(Array.isArray(!isEditing ? order.items : editItems) ? (!isEditing ? order.items : editItems) : []).map((item, idx) => (
                 <div key={idx} className="p-6 flex gap-4 items-start hover:bg-slate-50/30 transition">
                   <img
                     src={item.image || 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=300&q=80'}
@@ -387,19 +393,19 @@ export const OrderDetailsPage = () => {
                   <User className="h-4.5 w-4.5 text-slate-600" />
                 </div>
                 <div>
-                  <p className="font-bold text-slate-950">{order.customerName}</p>
-                  <p className="text-slate-400 font-semibold font-mono mt-0.5">{order.customerId}</p>
+                <p className="text-xs font-bold text-slate-950">{order.customerName || 'Guest Customer'}</p>
+                  <p className="text-slate-400 font-semibold font-mono mt-0.5">{order.customerId || 'N/A'}</p>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-600">
                   <Mail className="h-4 w-4 text-slate-400" />
-                  <span>{order.customerEmail}</span>
+                  <span>{order.customerEmail || 'Not provided'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-600">
                   <Phone className="h-4 w-4 text-slate-400" />
-                  <span>+1 (555) 234-5678</span>
+                  <span>{order.customerPhone || 'N/A'}</span>
                 </div>
               </div>
             </div>
@@ -414,8 +420,8 @@ export const OrderDetailsPage = () => {
                   <p className="text-xs text-slate-600 leading-relaxed font-medium flex items-start gap-1.5">
                     <MapPin className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
                     <span>
-                      {order.shippingAddress.street}, {order.shippingAddress.city}, <br />
-                      {order.shippingAddress.state} {order.shippingAddress.postcode}, {order.shippingAddress.country}
+                      {order.shippingAddress?.street || 'N/A'}, {order.shippingAddress?.city || 'N/A'}, <br />
+                      {order.shippingAddress?.state || 'N/A'} {order.shippingAddress?.postcode || 'N/A'}, {order.shippingAddress?.country || 'N/A'}
                     </span>
                   </p>
                 ) : (

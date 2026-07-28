@@ -1,3 +1,4 @@
+import React from 'react';
 import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router';
 import { useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
@@ -11,7 +12,7 @@ import { UsersPage } from './pages/UsersPage';
 
 // 1. Define Root Route
 const rootRoute = createRootRoute({
-  component: () => {
+  component: function RootComponent() {
     const { user, isLoading } = useAuth();
 
     if (isLoading) {
@@ -87,5 +88,11 @@ export const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
 });
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 export default router;
