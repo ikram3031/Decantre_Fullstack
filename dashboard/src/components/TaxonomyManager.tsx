@@ -12,8 +12,7 @@ import {
   X,
   Check
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { TaxonomyEditorDrawer, type TaxonomyEditorAction, type TaxonomyEditorMode } from '@/components/TaxonomyEditorDrawer';
+import type { TaxonomyEditorAction, TaxonomyEditorMode } from '@/components/TaxonomyEditorDrawer';
 
 export interface CategoryItem {
   id: string | number;
@@ -99,6 +98,70 @@ export const TaxonomyManager: React.FC = () => {
   const closeDrawer = () => {
     setDrawerOpen(false);
     setDrawerEditId(null);
+  };
+
+  const [newCatName, setNewCatName] = useState('');
+  const [newCatParentId, setNewCatParentId] = useState<string>('');
+  const [editingCatId, setEditingCatId] = useState<string | number | null>(null);
+  const [editCatName, setEditCatName] = useState('');
+
+  const [newBrandName, setNewBrandName] = useState('');
+  const [newBrandParentId, setNewBrandParentId] = useState<string>('');
+  const [editingBrandId, setEditingBrandId] = useState<string | number | null>(null);
+  const [editBrandName, setEditBrandName] = useState('');
+
+  const handleAddCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCatName.trim()) return;
+
+    addCategoryMutation.mutate({
+      name: newCatName.trim(),
+      parentId: newCatParentId ? newCatParentId : null
+    });
+  };
+
+  const handleUpdateCategory = (id: string | number) => {
+    if (!editCatName.trim()) return;
+
+    const category = categories.find((cat) => cat.id === id);
+
+    updateCategoryMutation.mutate({
+      id,
+      name: editCatName.trim(),
+      parentId: category?.parentId ?? null
+    });
+  };
+
+  const startEditCategory = (category: CategoryItem) => {
+    setEditingCatId(category.id);
+    setEditCatName(category.name);
+  };
+
+  const handleAddBrand = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newBrandName.trim()) return;
+
+    addBrandMutation.mutate({
+      name: newBrandName.trim(),
+      parentId: newBrandParentId ? newBrandParentId : null
+    });
+  };
+
+  const handleUpdateBrand = (id: string | number) => {
+    if (!editBrandName.trim()) return;
+
+    const brand = brands.find((brandItem) => brandItem.id === id);
+
+    updateBrandMutation.mutate({
+      id,
+      name: editBrandName.trim(),
+      parentId: brand?.parentId ?? null
+    });
+  };
+
+  const startEditBrand = (brand: BrandItem) => {
+    setEditingBrandId(brand.id);
+    setEditBrandName(brand.name);
   };
 
   const categoryParentOptions = categories
