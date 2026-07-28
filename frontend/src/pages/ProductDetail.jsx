@@ -124,14 +124,18 @@ export const ProductDetail = () => {
   // Dynamic variations directly from API
   const decantSwatches = React.useMemo(() => {
     if (product && Array.isArray(product.variations) && product.variations.length > 0) {
-      return product.variations.map((v) => ({
-        size: v.size || 'Standard',
-        label: String(v.size || '').replace(/-/g, ' '),
-        price: v.price,
-        originalPrice: v.originalPrice,
-        sprays: v.size ? `~${parseInt(v.size) * 15 || 50} Sprays` : '',
-        raw: v
-      }));
+      return product.variations.map((v) => {
+        const rawSize = String(v.size || 'Standard');
+        const sizeNumber = parseInt(rawSize.replace(/[^0-9]/g, ''), 10);
+        return {
+          size: rawSize,
+          label: rawSize.replace(/-/g, ' '),
+          price: v.price,
+          originalPrice: v.originalPrice,
+          sprays: sizeNumber ? `~${sizeNumber * 15} Sprays` : '',
+          raw: v
+        };
+      });
     }
     return [];
   }, [product]);
@@ -322,6 +326,9 @@ export const ProductDetail = () => {
                     >
                       <span className="text-xs font-mono font-bold block">{swatch.label}</span>
                       <span className="text-[11px] text-gold font-mono font-semibold block mt-1">{formatBDT(swatch.price)}</span>
+                      {swatch.sprays && (
+                        <span className="text-[10px] text-zinc-400 font-mono block mt-2">{swatch.sprays}</span>
+                      )}
                     </button>
                   );
                 })}
@@ -476,7 +483,7 @@ export const ProductDetail = () => {
                     onClick={() => setAuthModal(true, 'login')}
                     className="px-6 py-2.5 border border-gold text-gold hover:bg-gold hover:text-black text-xs font-sans font-bold uppercase tracking-widest rounded-sm transition-all cursor-pointer"
                   >
-                    Log In to Write a Review
+                    Log In
                   </button>
                 </div>
               )}
@@ -561,22 +568,36 @@ export const ProductDetail = () => {
             </p>
 
             <div className="space-y-2.5 pt-1 font-mono text-xs">
-              <div className="flex justify-between items-center p-3 rounded-sm bg-black border border-white/10">
-                <span className="font-bold text-gold">3ML Decant</span>
-                <span className="text-zinc-300">~45+ Sprays</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-sm bg-black border border-white/10">
-                <span className="font-bold text-gold">5ML Decant</span>
-                <span className="text-zinc-300">~75+ Sprays</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-sm bg-black border border-white/10">
-                <span className="font-bold text-gold">10ML Decant</span>
-                <span className="text-zinc-300">~150+ Sprays</span>
-              </div>
-              <div className="flex justify-between items-center p-3 rounded-sm bg-gold/15 border border-gold/40">
-                <span className="font-bold text-gold">15ML Decant (Best Value)</span>
-                <span className="text-gold font-bold">~225+ Sprays</span>
-              </div>
+              {decantSwatches.length > 0 ? (
+                decantSwatches.map((swatch) => (
+                  <div
+                    key={swatch.size}
+                    className={`flex justify-between items-center p-3 rounded-sm border ${swatch.size === selectedSize ? 'bg-gold/15 border-gold/40' : 'bg-black border-white/10'}`}
+                  >
+                    <span className="font-bold text-gold">{swatch.label}</span>
+                    <span className="text-zinc-300">{swatch.sprays}</span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex justify-between items-center p-3 rounded-sm bg-black border border-white/10">
+                    <span className="font-bold text-gold">3ML Decant</span>
+                    <span className="text-zinc-300">~45+ Sprays</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 rounded-sm bg-black border border-white/10">
+                    <span className="font-bold text-gold">5ML Decant</span>
+                    <span className="text-zinc-300">~75+ Sprays</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 rounded-sm bg-black border border-white/10">
+                    <span className="font-bold text-gold">10ML Decant</span>
+                    <span className="text-zinc-300">~150+ Sprays</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 rounded-sm bg-gold/15 border border-gold/40">
+                    <span className="font-bold text-gold">15ML Decant (Best Value)</span>
+                    <span className="text-gold font-bold">~225+ Sprays</span>
+                  </div>
+                </>
+              )}
             </div>
 
             <button 

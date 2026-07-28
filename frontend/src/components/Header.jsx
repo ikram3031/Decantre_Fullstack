@@ -689,17 +689,17 @@ export const Header = ({
 
                 {/* USER PROFILE OR LOGIN / REGISTER */}
                 {user ? (
-                  <div className="flex items-center gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => {
-                        setAuthModal(true, 'profile');
+                        navigate('/account');
                         handleNavLinkClick();
                       }}
-                      className="flex-1 text-left py-2.5 px-3.5 bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 rounded-sm transition-all flex items-center gap-2 cursor-pointer"
+                      className="w-full text-left py-2.5 px-3.5 bg-gold/10 hover:bg-gold/20 text-gold border border-gold/30 rounded-sm transition-all flex items-center gap-2 cursor-pointer"
                     >
                       <User className="w-4 h-4 text-gold" />
-                      <span className="flex-1 min-w-0 font-serif tracking-widest text-xs sm:text-sm truncate">MY ACCOUNT ({user.name})</span>
-                      <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 bg-gold text-black font-bold ml-2">{user.tier}</span>
+                      <span className="flex-1 min-w-0 font-serif tracking-widest text-xs sm:text-sm truncate">MY ACCOUNT</span>
+                      {/* <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 bg-gold text-black font-bold ml-2">{user.tier}</span> */}
                     </button>
 
                     <button
@@ -708,7 +708,7 @@ export const Header = ({
                         if (addToast) addToast('You have been signed out.', 'info');
                         handleNavLinkClick();
                       }}
-                      className="w-[30%] min-w-[90px] flex items-center justify-center gap-2 px-3 py-2 bg-transparent border border-white/10 rounded-sm text-gold hover:text-white hover:bg-white/5 transition-colors"
+                      className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-transparent border border-white/10 rounded-sm text-gold hover:text-white hover:bg-white/5 transition-colors"
                       title="Sign out"
                     >
                       <LogOut className="w-4 h-4 text-gold" />

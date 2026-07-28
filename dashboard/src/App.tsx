@@ -4,6 +4,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { router } from './router';
+import { ThemeProvider } from './components/theme-provider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,11 +18,13 @@ const queryClient = new QueryClient({
 export default function App(): React.ReactElement {
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
       <ToastProvider>
         <AuthProvider>
           <RouterProvider router={router} />
         </AuthProvider>
       </ToastProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

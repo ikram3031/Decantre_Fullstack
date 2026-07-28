@@ -303,7 +303,7 @@ export const AuthModal = () => {
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+        className="fixed inset-0 z-[999] flex items-start sm:items-center justify-center p-4 pt-10 sm:pt-0 bg-black/80 backdrop-blur-md"
         onClick={handleClose}
       >
         <motion.div
@@ -311,7 +311,7 @@ export const AuthModal = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-          className="relative w-full max-w-md bg-zinc-900/95 border border-zinc-700/80 rounded-sm overflow-hidden shadow-2xl p-6 sm:p-8"
+          className="relative w-full max-w-md max-h-[calc(100vh-2rem)] bg-zinc-900/95 border border-zinc-700/80 rounded-sm overflow-hidden shadow-2xl p-6 sm:p-8 overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Decorative Top Accent Line */}

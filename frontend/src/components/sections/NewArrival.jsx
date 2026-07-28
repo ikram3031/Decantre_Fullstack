@@ -21,14 +21,10 @@ export const NewArrival = () => {
 
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 640) {
-                setVisibleCount(1);
-            } else if (window.innerWidth < 1024) {
-                setVisibleCount(2);
-            } else if (window.innerWidth < 1280) {
-                setVisibleCount(3);
+            if (window.innerWidth < 768) {
+                setVisibleCount(6);
             } else {
-                setVisibleCount(4);
+                setVisibleCount(12);
             }
         };
         handleResize();
@@ -37,7 +33,7 @@ export const NewArrival = () => {
     }, []);
 
     // Show exactly 9 products maximum
-    const items = filteredProducts.slice(0, 9);
+    const items = filteredProducts.slice(0, 15);
     const maxIndex = Math.max(0, items.length - visibleCount);
     const safeCurrentIndex = Math.min(currentIndex, maxIndex);
 
@@ -139,7 +135,7 @@ export const NewArrival = () => {
                                     return (
                                         <div 
                                             key={prod.id} 
-                                            className="flex-shrink-0 px-2 sm:px-3"
+                                            className="flex-shrink-0"
                                             style={{ width: `${100 / visibleCount}%` }}
                                         >
                                             <ProductCard
@@ -152,7 +148,7 @@ export const NewArrival = () => {
                                                 handleOpenProductDetail={handleOpenProductDetail}
                                                 handleAddToCart={handleAddToCart}
                                                 calculateItemPrice={calculateItemPrice}
-                                                isLargeCard={true} // large carousel card -> 2 lines for description
+                                                isLargeCard={false}
                                             />
                                         </div>
                                     );

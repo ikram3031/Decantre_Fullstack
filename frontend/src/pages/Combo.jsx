@@ -11,7 +11,7 @@ export const Combo = () => {
         <Breadcrumb />
 
         {/* Coming Soon Card */}
-        <div className="flex-1 flex items-center justify-center py-16 sm:py-24">
+        <div className="flex-1 flex items-center justify-center py-16 sm:py-12">
           <div className="relative max-w-2xl w-full mx-auto text-center space-y-8">
 
             {/* Background glow */}

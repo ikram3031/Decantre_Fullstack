@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export const NotFound = () => {
   return (
-    <div className="py-24 sm:py-36 bg-luxury-black animate-fade-in text-center flex flex-col justify-center items-center">
+    <div className="py-12 sm:py-36 bg-luxury-black animate-fade-in text-center flex flex-col justify-center items-center">
       <div className="max-w-md px-4 space-y-6">
         
         {/* Visual Scent Vaporizer icon */}

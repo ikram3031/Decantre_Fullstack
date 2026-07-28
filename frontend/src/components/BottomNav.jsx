@@ -73,7 +73,13 @@ export const BottomNav = () => {
 
         {/* Account / Login */}
         <button 
-          onClick={() => setAuthModal(true, user ? 'profile' : 'login')}
+          onClick={() => {
+            if (user) {
+              navigate('/account');
+            } else {
+              setAuthModal(true, 'login');
+            }
+          }}
           className="flex flex-col items-center gap-1 p-1 transition-colors text-gold/70 hover:text-gold cursor-pointer"
         >
           <User className="w-5 h-5" />

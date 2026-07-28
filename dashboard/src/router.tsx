@@ -34,6 +34,17 @@ const rootRoute = createRootRoute({
       </DashboardLayout>
     );
   },
+  errorComponent({ error }) {
+    return (
+      <div className="min-h-screen bg-rose-50 text-rose-900 flex flex-col items-center justify-center p-6 gap-4">
+        <h1 className="text-xl font-bold">Something went wrong</h1>
+        <p className="text-sm text-rose-700 max-w-lg text-center">An unexpected error occurred while rendering the app.</p>
+        <pre className="whitespace-pre-wrap text-xs bg-white border border-rose-200 rounded-2xl p-4 text-rose-800 max-w-xl overflow-x-auto">
+          {String(error)}
+        </pre>
+      </div>
+    );
+  },
 });
 
 // 2. Define Child Routes

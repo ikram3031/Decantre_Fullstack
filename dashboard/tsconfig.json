@@ -5,6 +5,8 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -12,6 +14,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "ignoreDeprecations": "6.0",
     "jsx": "react-jsx",
 
     /* Linting */
@@ -28,5 +31,5 @@
       "@lib": ["./src/lib"]
     }
   },
-  "include": ["src", "old/OrdersTable.jsx", "old/OrdersFilters.jsx", "old/invoiceUtils.js", "old/Pagination.jsx", "old/Badge.jsx", "old/TaxonomyManager.jsx", "old/ReCaptcha.jsx", "old/AppLogo.jsx", "old/utils.js", "old/table.jsx", "old/POSCheckoutView.jsx", "old/OrderSuccessReceipt.jsx", "old/AuthContext.jsx", "old/ToastContext.jsx", "old/CustomersPage.jsx", "old/DashboardHome.jsx", "old/DashboardLayout.jsx", "old/LoginPage.jsx", "old/OrderDetailsPage.jsx", "old/OrdersPage.jsx", "old/ProductsPage.jsx", "old/UsersPage.jsx", "old/App.jsx", "old/main.jsx", "old/router.jsx"]
+  "include": ["src", "old/OrdersTable.jsx", "old/OrdersFilters.jsx", "old/invoiceUtils.js", "old/Pagination.jsx", "old/Badge.jsx", "old/TaxonomyManager.jsx", "old/ReCaptcha.jsx", "old/AppLogo.jsx", "old/utils.js", "old/table.jsx", "old/POSCheckoutView.jsx", "old/OrderSuccessReceipt.jsx", "old/AuthContext.jsx", "old/ToastContext.jsx", "old/CustomersPage.jsx", "old/DashboardHome.jsx", "old/DashboardLayout.jsx", "old/LoginPage.jsx", "old/OrderDetailsPage.jsx", "old/OrdersPage.jsx", "old/ProductsPage.jsx", "old/UsersPage.jsx", "old/App.jsx", "old/main.jsx", "old/router.jsx", "old/theme-provider.jsx"]
 }

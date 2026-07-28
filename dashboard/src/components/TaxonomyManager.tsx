@@ -12,6 +12,8 @@ import {
   X,
   Check
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { TaxonomyEditorDrawer, type TaxonomyEditorAction, type TaxonomyEditorMode } from '@/components/TaxonomyEditorDrawer';
 
 export interface CategoryItem {
   id: string | number;
@@ -65,6 +67,72 @@ export const TaxonomyManager: React.FC = () => {
     },
     enabled: !!user
   });
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerMode, setDrawerMode] = useState<TaxonomyEditorMode>('categories');
+  const [drawerAction, setDrawerAction] = useState<TaxonomyEditorAction>('add');
+  const [drawerInitialName, setDrawerInitialName] = useState('');
+  const [drawerInitialParentId, setDrawerInitialParentId] = useState('');
+  const [drawerEditId, setDrawerEditId] = useState<string | number | null>(null);
+
+  const openAddDrawer = (mode: TaxonomyEditorMode) => {
+    setDrawerMode(mode);
+    setDrawerAction('add');
+    setDrawerEditId(null);
+    setDrawerInitialName('');
+    setDrawerInitialParentId('');
+    setDrawerOpen(true);
+  };
+
+  const openEditDrawer = (
+    mode: TaxonomyEditorMode,
+    item: CategoryItem | BrandItem
+  ) => {
+    setDrawerMode(mode);
+    setDrawerAction('edit');
+    setDrawerEditId(item.id);
+    setDrawerInitialName(item.name);
+    setDrawerInitialParentId(item.parentId ? String(item.parentId) : '');
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+    setDrawerEditId(null);
+  };
+
+  const categoryParentOptions = categories
+    .filter((cat) => !cat.parentId)
+    .map((cat) => ({ id: cat.id, name: cat.name }));
+
+  const brandParentOptions = brands
+    .filter((brand) => !brand.parentId)
+    .map((brand) => ({ id: brand.id, name: brand.name }));
+
+  const handleSaveDrawer = (payload: { name: string; parentId: string | null }) => {
+    if (drawerMode === 'categories') {
+      if (drawerAction === 'add') {
+        addCategoryMutation.mutate(payload);
+      } else if (drawerEditId !== null) {
+        updateCategoryMutation.mutate({
+          id: drawerEditId,
+          name: payload.name,
+          parentId: payload.parentId
+        });
+      }
+    } else {
+      if (drawerAction === 'add') {
+        addBrandMutation.mutate(payload);
+      } else if (drawerEditId !== null) {
+        updateBrandMutation.mutate({
+          id: drawerEditId,
+          name: payload.name,
+          parentId: payload.parentId
+        });
+      }
+    }
+    closeDrawer();
+  };
 
   // Mutators - Categories
   const addCategoryMutation = useMutation({
@@ -167,74 +235,13 @@ export const TaxonomyManager: React.FC = () => {
     }
   });
 
-  // Local Form States
-  const [newCatName, setNewCatName] = useState('');
-  const [newCatParentId, setNewCatParentId] = useState('');
-  const [editingCatId, setEditingCatId] = useState<string | number | null>(null);
-  const [editCatName, setEditCatName] = useState('');
-  const [editCatParentId, setEditCatParentId] = useState('');
-
-  const [newBrandName, setNewBrandName] = useState('');
-  const [newBrandParentId, setNewBrandParentId] = useState('');
-  const [editingBrandId, setEditingBrandId] = useState<string | number | null>(null);
-  const [editBrandName, setEditBrandName] = useState('');
-  const [editBrandParentId, setEditBrandParentId] = useState('');
-
   const [newTagName, setNewTagName] = useState('');
   const [editingTagId, setEditingTagId] = useState<string | number | null>(null);
   const [editTagName, setEditTagName] = useState('');
 
-  const startEditCategory = (cat: CategoryItem) => {
-    setEditingCatId(cat.id);
-    setEditCatName(cat.name);
-    setEditCatParentId(cat.parentId ? String(cat.parentId) : '');
-  };
-
-  const startEditBrand = (br: BrandItem) => {
-    setEditingBrandId(br.id);
-    setEditBrandName(br.name);
-    setEditBrandParentId(br.parentId ? String(br.parentId) : '');
-  };
-
   const startEditTag = (t: TagItem) => {
     setEditingTagId(t.id);
     setEditTagName(t.name);
-  };
-
-  const handleAddCategory = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCatName.trim()) return;
-    addCategoryMutation.mutate({
-      name: newCatName.trim(),
-      parentId: newCatParentId || null
-    });
-  };
-
-  const handleUpdateCategory = (id: string | number) => {
-    if (!editCatName.trim()) return;
-    updateCategoryMutation.mutate({
-      id,
-      name: editCatName.trim(),
-      parentId: editCatParentId || null
-    });
-  };
-
-  const handleAddBrand = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newBrandName.trim()) return;
-    addBrandMutation.mutate({
-      name: newBrandName.trim(),
-      parentId: newBrandParentId || null
-    });
-  };
-
-  const handleUpdateBrand = (id: string | number) => {
-    if (!editBrandName.trim()) return;
-    updateBrandMutation.mutate({
-      id,
-      name: editBrandName.trim(),
-      parentId: editBrandParentId || null
-    });
   };
 
   const handleAddTag = (e: React.FormEvent) => {

@@ -158,6 +158,9 @@ export const OrderDetailsPage: React.FC = () => {
     }
   };
 
+  // Items to display (safe guard)
+  const itemsToShow = !isEditing ? (Array.isArray(order.items) ? order.items : []) : (editItems || []);
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300 max-w-5xl mx-auto">
       {/* Top breadcrumbs */}
@@ -266,7 +269,7 @@ export const OrderDetailsPage: React.FC = () => {
             </div>
 
             <div className="divide-y divide-slate-100">
-              {(Array.isArray(!isEditing ? order.items : editItems) ? (!isEditing ? order.items : editItems) : []).map((item: any, idx: number) => (
+              {itemsToShow.map((item: any, idx: number) => (
                 <div key={idx} className="p-6 flex gap-4 items-start hover:bg-slate-50/30 transition">
                   <img
                     src={item.image || 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=300&q=80'}

@@ -1,6 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ProductCard } from '../ProductCard';
 import { useApp } from '../../context/AppContext';
+
+const getVisibleCount = () => {
+
+  if (window.innerWidth < 768) {return 6;}
+  else {return 12}
+};
 
 export const BestSelling = () => {
   const { 
@@ -18,9 +24,19 @@ export const BestSelling = () => {
   } = useApp();
 
   const [filter, setFilter] = useState('All');
+  const [visibleCount, setVisibleCount] = useState(getVisibleCount);
   const isLight = currentTheme === 'light';
 
-  // Filter bestsellers based on tab selection (shows exactly 8 items on desktop)
+  useEffect(() => {
+    const handleResize = () => setVisibleCount(getVisibleCount());
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Filter bestsellers based on tab selection and current viewport size
   const filtered = useMemo(() => {
     const bSellers = products.filter(p => p.isBestSeller);
 
@@ -53,8 +69,8 @@ export const BestSelling = () => {
     }
 
     let pool = bSellers.length >= 6 ? bSellers : Array.from(new Set([...bSellers, ...products]));
-    return pool.slice(0, 8);
-  }, [products, filter]);
+    return pool.slice(0, visibleCount);
+  }, [products, filter, visibleCount]);
 
   return (
     <section id="our-bestsellers" className={`py-8 sm:py-12 border-t ${isLight ? 'bg-zinc-50/50 border-zinc-200' : 'bg-[#030303] border-gold/15'}`}>
@@ -91,7 +107,7 @@ export const BestSelling = () => {
           })}
         </div>
 
-        {/* Product Grid: 6 items shown (3 cols x 2 rows on md/lg, 2 cols x 3 rows on sm) */}
+        {/* Product Grid */}
         {productsError ? (
           <div className="p-8 border border-amber-500/20 bg-amber-500/5 rounded-sm text-center my-4 space-y-2">
             <p className="text-amber-400 font-sans text-xs tracking-wide">
@@ -103,7 +119,7 @@ export const BestSelling = () => {
             No bestseller products available at the moment.
           </p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 pt-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 pt-2">
             {filtered.map((p) => {
               const currentSel = cardSelections[p.id] || { size: (p.variations && p.variations[0] && p.variations[0].size) || '100ml', concentration: 'Eau de Parfum' };
 

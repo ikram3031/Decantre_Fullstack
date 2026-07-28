@@ -41,7 +41,7 @@ export const Cart = () => {
         </div>
 
         {cart.length === 0 ? (
-          <div className="text-center py-24 border border-dashed border-gold/15 rounded-sm bg-luxury-dark/10">
+          <div className="text-center py-12 border border-dashed border-gold/15 rounded-sm bg-luxury-dark/10">
             <ShoppingBag className="w-12 h-12 text-gold/40 mx-auto mb-4 animate-pulse" />
             <h3 className="text-lg font-serif font-light text-zinc-300 mb-2">Your Cart is Empty</h3>
             <p className="text-zinc-500 text-xs font-sans font-light max-w-xs mx-auto mb-8">

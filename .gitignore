@@ -29,3 +29,7 @@ Thumbs.db
 # IDE files
 .vscode/
 .idea/
+
+# Exclude dashboard changes from git tracking
+/dashboard/
+**/dashboard/
