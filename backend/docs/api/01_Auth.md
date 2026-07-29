@@ -1,7 +1,9 @@
 #
+
 This document outlines the complete implementation of the authentication system for the E-commerce ERP & Inventory Dashboard, leveraging **Zustand**, **Axios**, and **TypeScript/JavaScript** with the backend API base URL: `http://144.79.218.126:5092`.
 
 #
+
 ## 1. Environment Setup
 
 Configure your environment variables in the root directory of your React/Vite application by creating or updating the `.env` file:
@@ -17,18 +19,18 @@ VITE_API_BASE_URL=http://144.79.218.126:5092
 The centralized Axios instance handles automated injection of Access Tokens into requests, and seamless handling of expired tokens via the Refresh Token endpoint.
 
 ```javascript
-import axios from 'axios';
+import axios from "axios";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Request Interceptor: Attach Bearer Token if available
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem("accessToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -44,37 +46,39 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) throw new Error('No refresh token available');
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) throw new Error("No refresh token available");
 
         // Request new access token using refresh token
-        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/refresh-token`, {
-          refreshToken,
-        });
+        const res = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh-token`,
+          {
+            refreshToken,
+          },
+        );
 
         const { accessToken, refreshToken: newRefreshToken } = res.data.data;
 
         // Save updated tokens
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
 
         // Retry original request with new token
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
         // If refresh fails, clear storage and redirect to login
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
 
     return Promise.reject(error);
-  }
+  },
 );
-
 ```
 
 ---
@@ -84,23 +88,26 @@ api.interceptors.response.use(
 Manage global user state, login state changes, and logout sequences cleanly with Zustand.
 
 ```javascript
-import { create } from 'zustand';
-import { api } from '../api/axios';
+import { create } from "zustand";
+import { api } from "../api/axios";
 
 export const useAuthStore = create((set) => ({
-  user: JSON.parse(localStorage.getItem('user')) || null,
-  accessToken: localStorage.getItem('accessToken') || null,
-  refreshToken: localStorage.getItem('refreshToken') || null,
-  isAuthenticated: !!localStorage.getItem('accessToken'),
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  accessToken: localStorage.getItem("accessToken") || null,
+  refreshToken: localStorage.getItem("refreshToken") || null,
+  isAuthenticated: !!localStorage.getItem("accessToken"),
 
   login: async (email, password) => {
     try {
-      const response = await api.post('/api/auth/login', { email, password });
+      const response = await api.post("/api/v1/auth/login", {
+        email,
+        password,
+      });
       const { user, accessToken, refreshToken } = response.data.data;
 
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
 
       set({
         user,
@@ -113,23 +120,23 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Login failed',
+        message: error.response?.data?.message || "Login failed",
       };
     }
   },
 
   logout: async () => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
-        await api.post('/api/auth/logout', { refreshToken });
+        await api.post("/api/v1/auth/logout", { refreshToken });
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
 
       set({
         user: null,
@@ -140,7 +147,6 @@ export const useAuthStore = create((set) => ({
     }
   },
 }));
-
 ```
 
 ---
@@ -150,15 +156,14 @@ export const useAuthStore = create((set) => ({
 Restrict dashboard and internal ERP screens from unauthenticated visitors.
 
 ```jsx
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore";
 
 export const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
-
 ```
 
 ---
@@ -168,27 +173,26 @@ export const ProtectedRoute = () => {
 Integrate authentication guards within your application routing configuration.
 
 ```jsx
-import { createBrowserRouter } from 'react-router-dom';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import DashboardHome from './pages/DashboardHome';
-import Login from './pages/Login';
+import { createBrowserRouter } from "react-router-dom";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import DashboardHome from "./pages/DashboardHome";
+import Login from "./pages/Login";
 
 export const router = createBrowserRouter([
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
     element: <ProtectedRoute />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: <DashboardHome />,
       },
     ],
   },
 ]);
-
 ```
 
 """
@@ -196,7 +200,7 @@ export const router = createBrowserRouter([
 with open("auth_documentation.md", "w", encoding="utf-8") as f:
 f.write(markdown_content)
 
-```
+````
 
 আপনার প্রজেক্টের জন্য কমপ্লিট এবং প্রফেশনাল **Authentication Documentation** একটি Markdown ফাইলে (`auth_documentation.md`) জেনरेट করা হয়েছে।
 
@@ -219,7 +223,7 @@ Configure your environment variables in the root directory of your React/Vite ap
 ```env
 VITE_API_BASE_URL=[http://144.79.218.126:5092](http://144.79.218.126:5092)
 
-```
+````
 
 ---
 
@@ -228,18 +232,18 @@ VITE_API_BASE_URL=[http://144.79.218.126:5092](http://144.79.218.126:5092)
 The centralized Axios instance handles automated injection of Access Tokens into requests, and seamless handling of expired tokens via the Refresh Token endpoint.
 
 ```javascript
-import axios from 'axios';
+import axios from "axios";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Request Interceptor: Attach Bearer Token if available
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem("accessToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -255,37 +259,39 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) throw new Error('No refresh token available');
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) throw new Error("No refresh token available");
 
         // Request new access token using refresh token
-        const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/refresh-token`, {
-          refreshToken,
-        });
+        const res = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh-token`,
+          {
+            refreshToken,
+          },
+        );
 
         const { accessToken, refreshToken: newRefreshToken } = res.data.data;
 
         // Save updated tokens
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
 
         // Retry original request with new token
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
         // If refresh fails, clear storage and redirect to login
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
 
     return Promise.reject(error);
-  }
+  },
 );
-
 ```
 
 ---
@@ -295,23 +301,26 @@ api.interceptors.response.use(
 Manage global user state, login state changes, and logout sequences cleanly with Zustand.
 
 ```javascript
-import { create } from 'zustand';
-import { api } from '../api/axios';
+import { create } from "zustand";
+import { api } from "../api/axios";
 
 export const useAuthStore = create((set) => ({
-  user: JSON.parse(localStorage.getItem('user')) || null,
-  accessToken: localStorage.getItem('accessToken') || null,
-  refreshToken: localStorage.getItem('refreshToken') || null,
-  isAuthenticated: !!localStorage.getItem('accessToken'),
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  accessToken: localStorage.getItem("accessToken") || null,
+  refreshToken: localStorage.getItem("refreshToken") || null,
+  isAuthenticated: !!localStorage.getItem("accessToken"),
 
   login: async (email, password) => {
     try {
-      const response = await api.post('/api/auth/login', { email, password });
+      const response = await api.post("/api/v1/auth/login", {
+        email,
+        password,
+      });
       const { user, accessToken, refreshToken } = response.data.data;
 
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
 
       set({
         user,
@@ -324,23 +333,23 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Login failed',
+        message: error.response?.data?.message || "Login failed",
       };
     }
   },
 
   logout: async () => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
-        await api.post('/api/auth/logout', { refreshToken });
+        await api.post("/api/v1/auth/logout", { refreshToken });
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
 
       set({
         user: null,
@@ -351,7 +360,6 @@ export const useAuthStore = create((set) => ({
     }
   },
 }));
-
 ```
 
 ---
@@ -361,15 +369,14 @@ export const useAuthStore = create((set) => ({
 Restrict dashboard and internal ERP screens from unauthenticated visitors.
 
 ```jsx
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore";
 
 export const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
-  return isAuthenticated ? <Outlet/> : <Navigate replace to="/login"/>;
+  return isAuthenticated ? <Outlet /> : <Navigate replace to="/login" />;
 };
-
 ```
 
 ---
@@ -379,25 +386,24 @@ export const ProtectedRoute = () => {
 Integrate authentication guards within your application routing configuration.
 
 ```jsx
-import { createBrowserRouter } from 'react-router-dom';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import DashboardHome from './pages/DashboardHome';
-import Login from './pages/Login';
+import { createBrowserRouter } from "react-router-dom";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import DashboardHome from "./pages/DashboardHome";
+import Login from "./pages/Login";
 
 export const router = createBrowserRouter([
   {
-    path: '/login',
-    element: <Login/>,
+    path: "/login",
+    element: <Login />,
   },
   {
-    element: <ProtectedRoute/>,
+    element: <ProtectedRoute />,
     children: [
       {
-        path: '/',
-        element: <DashboardHome/>,
+        path: "/",
+        element: <DashboardHome />,
       },
     ],
   },
 ]);
-
 ```

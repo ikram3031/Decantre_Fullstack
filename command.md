@@ -40,9 +40,9 @@ Project root: `/opt/dev`
 ├── frontend/                # React / Vite frontend application
 │   ├── package.json         # Dev/prod scripts targeting port 8001
 │   └── Dockerfile           # ARG VITE_API_URL=http://144.79.218.126:5092
-└── dashboard/               # React / Vite admin dashboard
+└── dash/                    # Next.js admin dashboard
     ├── package.json         # Scripts targeting port 8005
-    └── Dockerfile           # ARG VITE_API_URL=http://144.79.218.126:5092
+    └── Dockerfile           # ARG NEXT_PUBLIC_API_BASE_URL=http://144.79.218.126:5092
 ```
 
 ## 2. Service and Port Allocation
