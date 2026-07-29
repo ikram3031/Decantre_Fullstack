@@ -44,7 +44,7 @@ export default function MembersPage() {
         </div>
         <Select
           value={segmentFilter}
-          onValueChange={(value: string | null, _eventDetails) => setSegmentFilter(value ?? 'All')}
+          onValueChange={(value: string | null) => setSegmentFilter(value ?? 'All')}
         >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Segment" />
