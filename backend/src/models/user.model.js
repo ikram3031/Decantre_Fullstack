@@ -3,7 +3,7 @@ import { generateDid } from "../utils/generateDid.js";
 
 const { models } = mongoose;
 
-export const USER_ROLES = ["Super_Admin", "Admin", "Store_manager"];
+export const USER_ROLES = ["Owner", "Admin", "Manager", "Employee"];
 
 const userSchema = new Schema(
   {
@@ -18,11 +18,24 @@ const userSchema = new Schema(
     },
     did: { type: String, default: () => generateDid(), unique: true, index: true },
     passwordHash: { type: String, required: true, trim: true, select: false },
+    phone: { type: String, required: true, trim: true, index: true },
     refreshToken: { type: String, select: false },
     refreshTokenExpiresAt: { type: Date, select: false },
     emailOtp: { type: String, trim: true, select: false },
     emailOtpExpiresAt: { type: Date, select: false },
-    role: { type: String, required: true, enum: USER_ROLES, default: "Store_manager" },
+    role: { type: String, required: true, enum: USER_ROLES, default: "Employee" },
+    assets: {
+      type: [String],
+      validate: {
+        validator: function (arr) {
+          // ensure max 2 assets per employee
+          if (!Array.isArray(arr)) return true;
+          return arr.length <= 2;
+        },
+        message: 'An employee may have at most 2 assets assigned',
+      },
+      default: [],
+    },
     isActive: { type: Boolean, default: true },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
     updatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },

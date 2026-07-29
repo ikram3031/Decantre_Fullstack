@@ -22,9 +22,12 @@ export const NewArrival = () => {
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 768) {
-                setVisibleCount(6);
-            } else {
-                setVisibleCount(12);
+                setVisibleCount(2);
+            } else if(window.innerWidth < 1024) {
+                setVisibleCount(3);
+            }
+            else {
+                setVisibleCount(4);
             }
         };
         handleResize();

@@ -2,12 +2,6 @@
 
 This document describes the member collection endpoints for the backend.
 
-## Base URL
-
-```text
-http://localhost:4000/api/v1
-```
-
 ## Base Path
 
 `/api/v1/members`

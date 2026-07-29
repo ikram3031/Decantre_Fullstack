@@ -10,6 +10,7 @@ import ordersRouter from "./routes/OrdersRoute.js";
 import usersRouter from "./routes/UsersRoute.js";
 import authRouter from "./routes/AuthRoute.js";
 import membersRouter from "./routes/MembersRoute.js";
+import assetsRouter from "./routes/AssetsRoute.js";
 // import exportRouter from "./routes/ExportRoute.js";
 import categoriesRouter from "./routes/CategoryRoute.js";
 import brandRouter from "./routes/BrandRoute.js";
@@ -50,6 +51,7 @@ export async function createApp() {
   // app.use("/api/v1/export", exportRouter);
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/users", usersRouter);
+  app.use("/api/v1/assets", assetsRouter);
   app.use("/api/v1/members", membersRouter);
   app.use("/api/v1/sendEmail", emailRouter);
   app.use("/api/v1/orders", ordersRouter);

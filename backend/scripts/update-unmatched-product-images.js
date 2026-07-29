@@ -255,6 +255,8 @@ const processUnmatchedProducts = async () => {
     }
 
     if (Object.keys(updates).length > 0) {
+      const slugName = slugify(product?.name || product?.title || product?.slug || "product");
+      updates.slugName = slugName;
       await ProductModel.updateOne({ _id: product._id }, { $set: updates });
     }
 

@@ -6,6 +6,8 @@ const authRouter = Router();
 authRouter.post("/login", login);
 authRouter.post("/refresh-token", refreshToken);
 authRouter.post("/logout", logout);
-authRouter.post("/create-super-admin", createSuperAdmin);
+// Creation of the Owner / super-admin is intentionally disabled by default.
+// If you need to create an Owner, enable the endpoint below in a controlled environment.
+// authRouter.post("/create-super-admin", createSuperAdmin);
 
 export default authRouter;

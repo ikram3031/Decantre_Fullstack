@@ -31,4 +31,4 @@ Thumbs.db
 .idea/
 
 # Exclude dashboard changes from git tracking
-
+**/dashboard/
