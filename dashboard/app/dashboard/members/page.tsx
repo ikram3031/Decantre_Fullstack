@@ -42,7 +42,10 @@ export default function MembersPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Select value={segmentFilter} onValueChange={setSegmentFilter}>
+        <Select
+          value={segmentFilter}
+          onValueChange={(value: string | null, _eventDetails) => setSegmentFilter(value ?? 'All')}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Segment" />
           </SelectTrigger>
