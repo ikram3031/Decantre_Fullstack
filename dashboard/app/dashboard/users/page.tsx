@@ -61,7 +61,7 @@ export default function UsersPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Select value={roleFilter} onValueChange={setRoleFilter}>
+        <Select value={roleFilter} onValueChange={(value: string | null) => setRoleFilter(value ?? 'All')}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Role" />
           </SelectTrigger>
