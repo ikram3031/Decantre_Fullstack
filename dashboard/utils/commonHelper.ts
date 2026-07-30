@@ -1,6 +1,8 @@
 
-export const interface hrefType {
-      children: ReactNode;
+import type { MouseEventHandler, ReactNode } from "react";
+
+export interface hrefType {
+  children: ReactNode;
   href: string;
   onClick: MouseEventHandler<HTMLAnchorElement>;
 }
