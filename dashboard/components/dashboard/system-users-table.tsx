@@ -33,7 +33,12 @@ interface SystemUsersTableProps {
   roleFilter: string;
 }
 
+import { apiClient } from '@/lib/api-client';
+import { useQueryClient } from '@tanstack/react-query';
+
 export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTableProps) {
+  const queryClient = useQueryClient();
+
   const { data: users, isLoading, isError, error } = useSystemUsers({
     search: searchQuery,
     role: roleFilter !== 'All' ? roleFilter : undefined,
@@ -41,12 +46,29 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
 
   const [toggling, setToggling] = useState<string | null>(null);
 
-  const handleToggleStatus = (id: string, currentStatus: string) => {
+  const handleToggleStatus = async (id: string, currentStatus: string) => {
     setToggling(id);
-    setTimeout(() => {
+    const newActive = currentStatus !== 'Active';
+    try {
+      await apiClient.put(`/api/v1/users/${id}`, { isActive: newActive });
+      toast.success(`User status updated to ${newActive ? 'Active' : 'Inactive'}.`);
+      queryClient.invalidateQueries({ queryKey: ['system-users'] });
+    } catch (err: any) {
+      toast.error('Failed to update user status.');
+    } finally {
       setToggling(null);
-      toast.success(`User status updated successfully.`);
-    }, 500);
+    }
+  };
+
+  const handleRevokeAccess = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to revoke access for ${name}?`)) return;
+    try {
+      await apiClient.delete(`/api/v1/users/${id}`);
+      toast.success(`Access revoked for ${name}.`);
+      queryClient.invalidateQueries({ queryKey: ['system-users'] });
+    } catch (err: any) {
+      toast.error('Failed to revoke access.');
+    }
   };
 
   const getRoleBadge = (role: string) => {
@@ -139,17 +161,24 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuTrigger render={
                       <Button variant="ghost" className="h-8 w-8 p-0">
                         <span className="sr-only">Open menu</span>
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
-                    </DropdownMenuTrigger>
+                    } />
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>Edit Role</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleToggleStatus(user.id, user.status)}>
+                        Toggle Active Status
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">Revoke Access</DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive cursor-pointer"
+                        onClick={() => handleRevokeAccess(user.id, user.name)}
+                      >
+                        Revoke Access
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

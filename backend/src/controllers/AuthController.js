@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/user.model.js";
 import { env } from "../config/env.js";
+import { logger } from "../config/logger.js";
 import { comparePassword, hashPassword } from "../utils/password.js";
 
 const createAccessToken = (user) => {
@@ -41,7 +42,13 @@ export const login = async (req, res, next) => {
     user.refreshTokenExpiresAt = refreshTokenExpiresAt;
     await user.save();
 
+    if (!refreshToken) {
+      logger.error({ userId: user.id }, "Failed to generate refresh token for login");
+      return res.status(500).json({ status: "error", message: "Failed to issue refresh token" });
+    }
+
     const accessToken = createAccessToken(user);
+    logger.debug({ userId: user.id }, "Issued new access and refresh tokens");
 
     res.json({
       status: "success",
@@ -81,11 +88,18 @@ export const refreshToken = async (req, res, next) => {
     user.refreshTokenExpiresAt = refreshTokenExpiresAt;
     await user.save();
 
+    if (!newRefreshToken) {
+      logger.error({ userId: user.id }, "Failed to generate refresh token on refresh");
+      return res.status(500).json({ status: "error", message: "Failed to issue refresh token" });
+    }
+
     const accessToken = jwt.sign(
       { userId: user.id, role: user.role, email: user.email },
       env.ACCESS_TOKEN_SECRET,
       { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN },
     );
+
+    logger.debug({ userId: user.id }, "Rotated refresh token and issued new access token");
 
     res.json({
       status: "success",

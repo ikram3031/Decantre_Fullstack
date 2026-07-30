@@ -65,7 +65,7 @@ export function RecentTransactionsTable() {
                   <TableCell className="font-medium">{tx.id}</TableCell>
                   <TableCell>{tx.customerName}</TableCell>
                   <TableCell>{getStatusBadge(tx.paymentStatus)}</TableCell>
-                  <TableCell className="text-right">${tx.totalAmount.toFixed(2)}</TableCell>
+                  <TableCell className="text-right">৳{tx.totalAmount.toFixed(2)}</TableCell>
                 </TableRow>
               ))
             ) : (

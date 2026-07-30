@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { handleGlobalError } from '@/lib/error-handler';
-import { toast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
   const { user, login, isLoading: isAuthLoading } = useAuth();
@@ -33,7 +33,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.add({ title: 'Please enter both email and password.', type: 'error', timeout: 4000 });
+      toast.error('Please enter both email and password.');
       return;
     }
 
@@ -42,7 +42,10 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      router.replace('/dashboard');
+      toast.success('Logged in successfully.');
+      // Redirect is handled by auth state effect once user is set.
+    } catch (err: unknown) {
+      handleGlobalError(err);
     } finally {
       setIsSubmitting(false);
     }

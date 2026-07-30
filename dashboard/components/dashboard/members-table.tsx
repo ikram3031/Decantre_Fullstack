@@ -24,16 +24,41 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 
+import { apiClient } from '@/lib/api-client';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
 interface MembersTableProps {
   searchQuery: string;
   segmentFilter: string;
 }
 
 export function MembersTable({ searchQuery, segmentFilter }: MembersTableProps) {
+  const queryClient = useQueryClient();
+
   const { data: members, isLoading, isError, error } = useMembers({
     search: searchQuery,
     segment: segmentFilter !== 'All' ? segmentFilter : undefined,
   });
+
+  const handleViewProfile = (member: any) => {
+    toast.info(`Viewing profile for ${member.name}`);
+  };
+
+  const handleSendMessage = (member: any) => {
+    toast.info(`Preparing message for ${member.email}`);
+  };
+
+  const handleDeleteMember = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete member ${name}?`)) return;
+    try {
+      await apiClient.delete(`/api/v1/members/${id}`);
+      toast.success(`Member ${name} deleted.`);
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+    } catch (err: any) {
+      toast.error('Failed to delete member.');
+    }
+  };
 
   if (isError) {
     return (
@@ -94,22 +119,31 @@ export function MembersTable({ searchQuery, segmentFilter }: MembersTableProps) 
                 <TableCell>{member.email}</TableCell>
                 <TableCell className="text-muted-foreground">{member.phone}</TableCell>
                 <TableCell className="text-right">{member.totalOrders}</TableCell>
-                <TableCell className="text-right font-medium">${member.lifetimeSpent.toFixed(2)}</TableCell>
+                <TableCell className="text-right font-medium">৳{member.lifetimeSpent.toFixed(2)}</TableCell>
                 <TableCell>{new Date(member.joinedDate).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuTrigger render={
                       <Button variant="ghost" className="h-8 w-8 p-0">
                         <span className="sr-only">Open menu</span>
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
-                    </DropdownMenuTrigger>
+                    } />
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>View Profile</DropdownMenuItem>
-                      <DropdownMenuItem>Send Message</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleViewProfile(member)}>
+                        View Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleSendMessage(member)}>
+                        Send Message
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">Ban Member</DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive cursor-pointer"
+                        onClick={() => handleDeleteMember(member.id, member.name)}
+                      >
+                        Delete Member
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

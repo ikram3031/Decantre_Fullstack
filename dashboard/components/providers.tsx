@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toast';
+import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/lib/auth-context';
 import { handleGlobalError } from '@/lib/error-handler';
 
@@ -53,9 +53,8 @@ export function ReactQueryProvider({ children }: { children: React.ReactNode }) 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Toaster>
-          {children}
-        </Toaster>
+        {children}
+        <Toaster />
       </AuthProvider>
     </QueryClientProvider>
   );

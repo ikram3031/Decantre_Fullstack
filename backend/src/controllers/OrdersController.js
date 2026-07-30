@@ -19,7 +19,7 @@ export const createOrder = async (req, res, next) => {
     }
 
     const orderData = {
-      orderNumber: await buildOrderNumber(),
+      orderNumber: await buildOrderNumber(payload.orderType === 'instore'),
       status: 'received',
       createdBy: payload.createdBy?.trim() || '',
       updatedBy: '',

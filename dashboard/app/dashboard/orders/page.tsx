@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { OrdersTable } from '@/components/dashboard/orders-table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Download } from 'lucide-react';
+import { Search, Download, PlusCircle } from 'lucide-react';
+import Link from 'next/link';
+
 import {
   Select,
   SelectContent,
@@ -30,10 +32,17 @@ export default function OrdersPage() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Orders Management</h2>
-        <Button variant="outline">
-          <Download className="mr-2 h-4 w-4" />
-          Export Orders
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" nativeButton={false} render={<Link href="/dashboard/orders/new" />}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            New In-Store Order
+          </Button>
+          <Button variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            Export Orders
+          </Button>
+        </div>
+
       </div>
       
       <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">

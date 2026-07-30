@@ -1,6 +1,6 @@
 'use client';
 
-import { toast } from '@/components/ui/toast';
+import { toast } from 'sonner';
 
 /**
  * Generic user-friendly fallback error message
@@ -64,16 +64,12 @@ export function getGenericErrorMessage(error: any, customFallback?: string): str
 /**
  * Global Error Handler function
  * Displays a generic, sanitized error toast at the TOP-RIGHT corner
- * using the base-ui/react toast from @/components/ui/toast.
+ * using the sonner library.
  */
 export function handleGlobalError(error: any, customFallback?: string): string {
   const safeMessage = getGenericErrorMessage(error, customFallback);
 
-  toast.add({
-    title: safeMessage,
-    type: 'error',
-    timeout: 4000,
-  });
+  toast.error(safeMessage);
 
   return safeMessage;
 }

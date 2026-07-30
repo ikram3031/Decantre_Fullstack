@@ -41,7 +41,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = async (email: string, password?: string) => {
-    setIsLoading(true);
     try {
       if (!email || !password) {
         throw new Error('Please provide both email and password.');
