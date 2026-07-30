@@ -15,6 +15,7 @@ import {
 import { LayoutDashboard, Users, CreditCard, Settings, BarChart, CheckSquare, Package, ShoppingCart, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { UrlObject } from 'url';
 
 const navItems = [
   {
@@ -48,30 +49,38 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar>
-      <SidebarHeader className="h-16 flex items-center justify-center border-b px-4">
-        <div className="flex items-center gap-2 font-semibold text-lg">
-          <LayoutDashboard className="h-6 w-6 text-primary" />
-          <span>AdminDash</span>
-        </div>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton render={<Link href={item.url} />} isActive={pathname === item.url}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
-  );
+		<Sidebar>
+			<SidebarHeader className="h-16 flex items-center justify-center border-b px-4">
+				<div className="flex items-center gap-2 font-semibold text-lg">
+					<LayoutDashboard className="h-6 w-6 text-primary" />
+					<span>AdminDash</span>
+				</div>
+			</SidebarHeader>
+			<SidebarContent>
+				<SidebarGroup>
+					<SidebarGroupLabel>Application</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							{navItems.map((item) => (
+								<SidebarMenuItem key={item.title}>
+									<SidebarMenuButton
+										render={<Link href={item.url as UrlObject} />}
+										isActive={
+											pathname ===
+											(typeof item.url === "string"
+												? item.url
+												: (item.url.pathname ?? ""))
+										}
+									>
+										<item.icon />
+										<span>{item.title}</span>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+							))}
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+			</SidebarContent>
+		</Sidebar>
+	);
 }
