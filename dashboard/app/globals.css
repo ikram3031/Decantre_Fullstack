@@ -122,6 +122,14 @@
   body {
     @apply bg-background text-foreground;
     }
+  ::selection {
+    background: oklch(0.56 0.085 210.2);
+    color: oklch(0.987 0.002 197.1);
+  }
+  .dark ::selection {
+    background: oklch(0.925 0.005 214.3);
+    color: oklch(0.148 0.004 228.8);
+  }
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;
     }

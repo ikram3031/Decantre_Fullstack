@@ -184,3 +184,109 @@ export const createSuperAdmin = async (req, res, next) => {
     next(error);
   }
 };
+
+export const googleAuth = async (req, res, next) => {
+  try {
+    const { code, redirectUri } = req.body ?? {};
+
+    if (!code || !redirectUri) {
+      return res.status(400).json({ status: "error", message: "Authorization code and redirectUri are required" });
+    }
+
+    if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
+      logger.error("Google credentials are not configured in the backend environment");
+      return res.status(500).json({ status: "error", message: "Google Auth is not configured on this server" });
+    }
+
+    // 1. Exchange authorization code for tokens
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        code,
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      }).toString(),
+    });
+
+    if (!tokenResponse.ok) {
+      const errorDetail = await tokenResponse.json().catch(() => ({}));
+      logger.error({ errorDetail }, "Failed to exchange authorization code for Google token");
+      return res.status(400).json({ status: "error", message: "Failed to authenticate with Google" });
+    }
+
+    const tokens = await tokenResponse.json();
+    const { access_token } = tokens;
+
+    if (!access_token) {
+      logger.error("No access token returned from Google");
+      return res.status(400).json({ status: "error", message: "Failed to retrieve access token from Google" });
+    }
+
+    // 2. Fetch user profile
+    const userResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: { Authorization: `Bearer ${access_token}` },
+    });
+
+    if (!userResponse.ok) {
+      logger.error("Failed to fetch Google user profile");
+      return res.status(400).json({ status: "error", message: "Failed to fetch user profile from Google" });
+    }
+
+    const googleUser = await userResponse.json();
+    const { email } = googleUser;
+
+    if (!email) {
+      logger.error("Google profile did not contain an email address");
+      return res.status(400).json({ status: "error", message: "Google account does not have an email address" });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // 3. Search for registered user in database
+    const user = await UserModel.findOne({ email: normalizedEmail });
+    if (!user) {
+      logger.warn({ email: normalizedEmail }, "Google login attempt for unregistered email");
+      return res.status(401).json({
+        status: "error",
+        message: `The email ${normalizedEmail} is not registered in this store administration portal. Please contact your system administrator.`,
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ status: "error", message: "This user account is currently deactivated." });
+    }
+
+    // 4. Authenticate user by issuing JWTs
+    const accessToken = createAccessToken(user);
+    const refreshToken = createRefreshToken();
+    const refreshTokenExpiresAt = new Date(Date.now() + env.REFRESH_TOKEN_EXPIRES_MS);
+
+    user.refreshToken = refreshToken;
+    user.refreshTokenExpiresAt = refreshTokenExpiresAt;
+    await user.save();
+
+    logger.info({ userId: user.id }, "Successfully logged in via Google Auth");
+
+    res.json({
+      status: "success",
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        accessToken,
+        accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
+        refreshToken,
+        refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

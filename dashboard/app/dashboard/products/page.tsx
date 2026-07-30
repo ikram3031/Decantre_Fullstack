@@ -5,6 +5,7 @@ import { ProductsTable } from '@/components/dashboard/products-table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Plus } from 'lucide-react';
+import { useCategories, useBrands } from '@/lib/category-cache';
 import {
   Select,
   SelectContent,
@@ -42,6 +43,7 @@ import { toast } from 'sonner';
 export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
+  const [brandFilter, setBrandFilter] = useState('All');
   const [activeTab, setActiveTab] = useState('all');
 
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -53,6 +55,8 @@ export default function ProductsPage() {
   const [newProductImage, setNewProductImage] = useState('');
 
   const queryClient = useQueryClient();
+  const { data: categories = [] } = useCategories();
+  const { data: brands = [] } = useBrands();
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,26 +190,40 @@ export default function ProductsPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Select value={categoryFilter} onValueChange={(value: string | null) => setCategoryFilter(value ?? 'All')}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Categories</SelectItem>
-              <SelectItem value="Fragrance">Fragrance</SelectItem>
-              <SelectItem value="Elixir">Elixir</SelectItem>
-              <SelectItem value="Essence">Essence</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2">
+            <Select value={categoryFilter} onValueChange={(value: string | null) => setCategoryFilter(value ?? 'All')}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Categories</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.did} value={cat.name}>{cat.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={brandFilter} onValueChange={(value: string | null) => setBrandFilter(value ?? 'All')}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Brand" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Brands</SelectItem>
+                {brands.map((brand) => (
+                  <SelectItem key={brand.did} value={brand.name}>{brand.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         
         <div className="bg-card text-card-foreground shadow-sm border rounded-lg">
           <div className="p-6">
             <TabsContent value="all" className="m-0">
-              <ProductsTable searchQuery={searchQuery} categoryFilter={categoryFilter} />
+              <ProductsTable searchQuery={searchQuery} categoryFilter={categoryFilter} brandFilter={brandFilter} />
             </TabsContent>
             <TabsContent value="low-stock" className="m-0">
-              <ProductsTable searchQuery={searchQuery} categoryFilter="LowStock" />
+              <ProductsTable searchQuery={searchQuery} categoryFilter="LowStock" brandFilter={brandFilter} />
             </TabsContent>
             
             <div className="mt-4">

@@ -32,14 +32,16 @@ import { toast } from 'sonner';
 interface ProductsTableProps {
   searchQuery: string;
   categoryFilter: string;
+  brandFilter: string;
 }
 
-export function ProductsTable({ searchQuery, categoryFilter }: ProductsTableProps) {
+export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: ProductsTableProps) {
   const queryClient = useQueryClient();
 
   const { data: products, isLoading, isError, error } = useProducts({
     search: searchQuery,
     category: categoryFilter !== 'All' ? categoryFilter : undefined,
+    brand: brandFilter !== 'All' ? brandFilter : undefined,
   });
 
   const handleDeleteProduct = async (id: string, name: string) => {
@@ -91,8 +93,6 @@ export function ProductsTable({ searchQuery, categoryFilter }: ProductsTableProp
             <TableHead>SKU</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Price</TableHead>
-            <TableHead>Stock Level</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -109,8 +109,6 @@ export function ProductsTable({ searchQuery, categoryFilter }: ProductsTableProp
                 <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
                 <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto rounded-md" /></TableCell>
               </TableRow>
             ))
@@ -134,21 +132,6 @@ export function ProductsTable({ searchQuery, categoryFilter }: ProductsTableProp
                 <TableCell className="text-muted-foreground">{product.sku}</TableCell>
                 <TableCell>{product.category}</TableCell>
                 <TableCell>৳{product.price.toFixed(2)}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {product.stock}
-                    {product.stock < 10 && (
-                      <Badge variant="destructive" className="h-5 text-[10px]">Low Stock</Badge>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {product.status === 'In Stock' ? (
-                    <Badge variant="outline" className="border-emerald-500 text-emerald-500">In Stock</Badge>
-                  ) : (
-                    <Badge variant="outline" className="border-destructive text-destructive">Out of Stock</Badge>
-                  )}
-                </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger render={
@@ -179,7 +162,7 @@ export function ProductsTable({ searchQuery, categoryFilter }: ProductsTableProp
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center">
+              <TableCell colSpan={5} className="h-24 text-center">
                 No products found.
               </TableCell>
             </TableRow>

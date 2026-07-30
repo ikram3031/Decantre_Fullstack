@@ -17,6 +17,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password?: string) => Promise<void>;
   logout: () => Promise<void>;
+  loginWithGoogle: (code: string, redirectUri: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -68,6 +69,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const loginWithGoogle = async (code: string, redirectUri: string) => {
+    try {
+      setIsLoading(true);
+      const response = await apiClient.post('/api/v1/auth/google', { code, redirectUri });
+      const { user: apiUser, accessToken, refreshToken } = response.data.data;
+
+      const loggedUser: AuthUser = {
+        email: apiUser.email,
+        name: apiUser.name,
+        role: apiUser.role,
+        avatar: apiUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
+      };
+
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('user', JSON.stringify(loggedUser));
+      setUser(loggedUser);
+    } catch (err: any) {
+      throw new Error(getGenericErrorMessage(err, 'Google Sign-in failed. Please verify your account.'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
       const refreshToken = localStorage.getItem('refreshToken');
@@ -85,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, loginWithGoogle }}>
       {children}
     </AuthContext.Provider>
   );

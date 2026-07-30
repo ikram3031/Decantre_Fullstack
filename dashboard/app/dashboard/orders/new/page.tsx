@@ -1,13 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useMemo, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useProducts, Product, ProductVariant } from '@/hooks/use-products';
-import { apiClient } from '@/lib/api-client';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { useState, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useProducts, Product, ProductVariant } from "@/hooks/use-products";
+import { apiClient } from "@/lib/api-client";
+import { useCategories, useBrands } from "@/lib/category-cache";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +23,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Search,
   Plus,
@@ -28,7 +36,7 @@ import {
   X,
   Layers,
   Tag,
-} from 'lucide-react';
+} from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -45,9 +53,11 @@ interface CartItem {
 // ─── Price helpers ────────────────────────────────────────────────────────────
 
 const effectivePrice = (price: number, offerPrice: number | null) =>
-  offerPrice != null && offerPrice > 0 && offerPrice < price ? offerPrice : price;
+  offerPrice != null && offerPrice > 0 && offerPrice < price
+    ? offerPrice
+    : price;
 
-const formatBDT = (amount: number) => `৳${amount.toLocaleString('en-BD')}`;
+const formatBDT = (amount: number) => `৳${amount.toLocaleString("en-BD")}`;
 
 // ─── Product Add Dialog ───────────────────────────────────────────────────────
 
@@ -57,13 +67,19 @@ interface ProductDialogProps {
   onAddToCart: (item: CartItem) => void;
 }
 
-function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps) {
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+function ProductAddDialog({
+  product,
+  onClose,
+  onAddToCart,
+}: ProductDialogProps) {
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    null,
+  );
   const [quantity, setQuantity] = useState(1);
 
   if (!product) return null;
 
-  const isVariant = product.type === 'variant' && product.variants.length > 0;
+  const isVariant = product.type === "variant" && product.variants.length > 0;
 
   // For simple products, price is on the product itself
   const simplePrice = effectivePrice(product.price, product.offerPrice);
@@ -91,12 +107,14 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
 
     onAddToCart({
       id: cartKey,
-      name: isVariant ? `${product.name} (${selectedVariant!.size})` : product.name,
+      name: isVariant
+        ? `${product.name} (${selectedVariant!.size})`
+        : product.name,
       price: displayPrice,
       quantity,
       image: product.image,
-      sku: isVariant ? (selectedVariant!.sku || product.sku) : product.sku,
-      size: isVariant ? selectedVariant!.size : '',
+      sku: isVariant ? selectedVariant!.sku || product.sku : product.sku,
+      size: isVariant ? selectedVariant!.size : "",
     });
 
     // Reset
@@ -106,14 +124,21 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
   };
 
   return (
-    <Dialog open={product !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog
+      open={product !== null}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md" showCloseButton>
         <DialogHeader>
           <DialogTitle className="text-base font-semibold leading-snug pr-6">
             {product.name}
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
-            {isVariant ? 'Select a size / variation to add to cart' : 'Confirm quantity to add'}
+            {isVariant
+              ? "Select a size / variation to add to cart"
+              : "Confirm quantity to add"}
           </DialogDescription>
         </DialogHeader>
 
@@ -121,7 +146,11 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
         <div className="flex items-start gap-3 -mt-1">
           <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border">
             {product.image ? (
-              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <Package className="h-6 w-6 text-muted-foreground/30" />
@@ -136,9 +165,13 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
                 className="text-[10px] px-1.5 py-0 gap-1"
               >
                 {isVariant ? (
-                  <><Layers className="h-2.5 w-2.5" /> Variable</>
+                  <>
+                    <Layers className="h-2.5 w-2.5" /> Variable
+                  </>
                 ) : (
-                  <><Tag className="h-2.5 w-2.5" /> Simple</>
+                  <>
+                    <Tag className="h-2.5 w-2.5" /> Simple
+                  </>
                 )}
               </Badge>
               <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
@@ -152,20 +185,19 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
         {!isVariant && (
           <div className="bg-muted/50 rounded-lg px-4 py-3 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold">
-                {formatBDT(simplePrice)}
-              </p>
-              {product.offerPrice != null && product.offerPrice < product.price && (
-                <p className="text-xs text-muted-foreground line-through">
-                  {formatBDT(product.price)}
-                </p>
-              )}
+              <p className="text-sm font-semibold">{formatBDT(simplePrice)}</p>
+              {product.offerPrice != null &&
+                product.offerPrice < product.price && (
+                  <p className="text-xs text-muted-foreground line-through">
+                    {formatBDT(product.price)}
+                  </p>
+                )}
             </div>
             <Badge
-              variant={product.stock > 0 ? 'secondary' : 'destructive'}
+              variant={product.stock > 0 ? "secondary" : "destructive"}
               className="text-xs"
             >
-              {product.stock > 0 ? `${product.stock} in stock` : 'Out of Stock'}
+              {product.stock > 0 ? `${product.stock} in stock` : "Out of Stock"}
             </Badge>
           </div>
         )}
@@ -187,37 +219,50 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
                   return (
                     <button
                       key={v.size}
+                      type="button"
                       disabled={oos}
-                      onClick={() => setSelectedVariant(isSelected ? null : v)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setSelectedVariant(isSelected ? null : v);
+                      }}
                       className={`
                         w-full flex items-center justify-between px-4 py-2.5 rounded-lg border text-sm transition-all
-                        ${oos
-                          ? 'opacity-40 cursor-not-allowed bg-muted/30 border-border'
-                          : isSelected
-                            ? 'border-primary bg-primary/8 ring-1 ring-primary/30'
-                            : 'border-border bg-background hover:border-primary/60 hover:bg-primary/5'
+                        ${
+                          oos
+                            ? "opacity-40 cursor-not-allowed bg-muted/30 border-border"
+                            : isSelected
+                              ? "border-primary bg-primary/8 ring-1 ring-primary/30"
+                              : "border-border bg-background hover:border-primary/60 hover:bg-primary/5"
                         }
                       `}
                     >
                       <div className="flex items-center gap-2">
                         {/* Selection indicator */}
-                        <span className={`
+                        <span
+                          className={`
                           h-4 w-4 rounded-full border-2 flex items-center justify-center flex-shrink-0
-                          ${isSelected ? 'border-primary bg-primary' : 'border-muted-foreground/40'}
-                        `}>
+                          ${isSelected ? "border-primary bg-primary" : "border-muted-foreground/40"}
+                        `}
+                        >
                           {isSelected && (
                             <span className="h-1.5 w-1.5 rounded-full bg-white" />
                           )}
                         </span>
                         <span className="font-medium">{v.size}</span>
                         {oos && (
-                          <Badge variant="secondary" className="text-[10px] px-1 py-0">
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] px-1 py-0"
+                          >
                             Out of Stock
                           </Badge>
                         )}
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-primary">{formatBDT(vPrice)}</p>
+                        <p className="font-semibold text-primary">
+                          {formatBDT(vPrice)}
+                        </p>
                         {v.offerPrice != null && v.offerPrice < v.price && (
                           <p className="text-[10px] text-muted-foreground line-through">
                             {formatBDT(v.price)}
@@ -242,7 +287,9 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
               >
                 <Minus className="h-3 w-3" />
               </button>
-              <span className="w-8 text-center text-sm font-semibold">{quantity}</span>
+              <span className="w-8 text-center text-sm font-semibold">
+                {quantity}
+              </span>
               <button
                 onClick={() => setQuantity((q) => q + 1)}
                 className="h-7 w-7 rounded-md border border-border flex items-center justify-center hover:bg-muted transition-colors"
@@ -256,17 +303,15 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
           {lineTotal !== null && (
             <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2">
               <p className="text-sm text-muted-foreground">Subtotal</p>
-              <p className="text-base font-bold text-primary">{formatBDT(lineTotal)}</p>
+              <p className="text-base font-bold text-primary">
+                {formatBDT(lineTotal)}
+              </p>
             </div>
           )}
         </div>
 
         <DialogFooter showCloseButton>
-          <Button
-            disabled={!canAdd}
-            onClick={handleAdd}
-            className="gap-2"
-          >
+          <Button disabled={!canAdd} onClick={handleAdd} className="gap-2">
             <ShoppingBag className="h-4 w-4" />
             Add to Cart
           </Button>
@@ -281,16 +326,24 @@ function ProductAddDialog({ product, onClose, onAddToCart }: ProductDialogProps)
 export default function NewInStoreOrderPage() {
   const router = useRouter();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [brandFilter, setBrandFilter] = useState("All");
+
+  const { data: categories = [] } = useCategories();
+  const { data: brands = [] } = useBrands();
+
   const { data: products = [], isLoading: productsLoading } = useProducts({
     search: searchQuery || undefined,
+    category: categoryFilter !== "All" ? categoryFilter : undefined,
+    brand: brandFilter !== "All" ? brandFilter : undefined,
   });
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [dialogProduct, setDialogProduct] = useState<Product | null>(null);
 
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ── Cart ─────────────────────────────────────────────────────────────────
@@ -300,7 +353,7 @@ export default function NewInStoreOrderPage() {
       const existing = prev.find((c) => c.id === item.id);
       if (existing) {
         return prev.map((c) =>
-          c.id === item.id ? { ...c, quantity: c.quantity + item.quantity } : c
+          c.id === item.id ? { ...c, quantity: c.quantity + item.quantity } : c,
         );
       }
       return [...prev, item];
@@ -312,7 +365,7 @@ export default function NewInStoreOrderPage() {
     setCart((prev) =>
       prev
         .map((c) => (c.id === id ? { ...c, quantity: c.quantity + delta } : c))
-        .filter((c) => c.quantity > 0)
+        .filter((c) => c.quantity > 0),
     );
   }, []);
 
@@ -322,52 +375,52 @@ export default function NewInStoreOrderPage() {
 
   const subtotal = useMemo(
     () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [cart]
+    [cart],
   );
 
   // ── Submit ───────────────────────────────────────────────────────────────
 
   const handleSubmit = async () => {
     if (cart.length === 0) {
-      toast.error('Cart is empty. Add at least one product.');
+      toast.error("Cart is empty. Add at least one product.");
       return;
     }
     setIsSubmitting(true);
     try {
       const payload = {
-        orderType: 'instore',
-        paymentMethod: 'cash',
-        fullName: customerName.trim() || 'In-Store Customer',
-        phone: customerPhone.trim() || '01000000000',
-        email: 'instore@decantre.com',
-        address: 'In-Store',
-        city: 'Dhaka',
-        thana: 'Dhaka',
-        district: 'Dhaka',
-        zip: '1000',
+        orderType: "instore",
+        paymentMethod: "cash",
+        fullName: customerName.trim() || "In-Store Customer",
+        phone: customerPhone.trim() || "01000000000",
+        email: "instore@decantre.com",
+        address: "In-Store",
+        city: "Dhaka",
+        thana: "Dhaka",
+        district: "Dhaka",
+        zip: "1000",
         giftWrap: false,
         items: cart.map((item) => ({
           name: item.name,
           quantity: item.quantity,
           unitPrice: item.price,
           size: item.size,
-          concentration: '',
+          concentration: "",
         })),
         subtotal,
         shippingFee: 0,
         tax: 0,
         total: subtotal,
-        createdBy: 'staff',
+        createdBy: "staff",
       };
 
-      await apiClient.post('/api/v1/orders', payload);
-      toast.success('In-store order created successfully!');
-      router.push('/dashboard/orders');
+      await apiClient.post("/api/v1/orders", payload);
+      toast.success("In-store order created successfully!");
+      router.push("/dashboard/orders");
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
-        err?.response?.data?.errors?.join(', ') ||
-        'Failed to create order.';
+        err?.response?.data?.errors?.join(", ") ||
+        "Failed to create order.";
       toast.error(msg);
     } finally {
       setIsSubmitting(false);
@@ -389,9 +442,11 @@ export default function NewInStoreOrderPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">New In-Store Order</h2>
+          <h2 className="text-3xl font-bold tracking-tight">
+            New In-Store Order
+          </h2>
           <p className="text-muted-foreground text-sm mt-0.5">
-            Walk-in counter sale — order ID prefixed with{' '}
+            Walk-in counter sale — order ID prefixed with{" "}
             <span className="font-mono font-semibold text-primary">S</span>
           </p>
         </div>
@@ -406,6 +461,43 @@ export default function NewInStoreOrderPage() {
               Product Catalogue
             </h3>
 
+            {/* Filters */}
+            <div className="flex gap-2 mb-3">
+              <Select
+                value={categoryFilter}
+                onValueChange={(v) => setCategoryFilter(v ?? "Category")}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Category">All Categories</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.did} value={cat.name}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={brandFilter}
+                onValueChange={(v) => setBrandFilter(v ?? "All")}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Brand" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Brand">All Brands</SelectItem>
+                  {brands.map((brand) => (
+                    <SelectItem key={brand.did} value={brand.name}>
+                      {brand.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Search */}
             <div className="relative mb-4">
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -418,7 +510,7 @@ export default function NewInStoreOrderPage() {
               {searchQuery && (
                 <button
                   className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => setSearchQuery("")}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -429,7 +521,10 @@ export default function NewInStoreOrderPage() {
             {productsLoading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-24 rounded-lg bg-muted animate-pulse" />
+                  <div
+                    key={i}
+                    className="h-24 rounded-lg bg-muted animate-pulse"
+                  />
                 ))}
               </div>
             ) : products.length === 0 ? (
@@ -440,12 +535,18 @@ export default function NewInStoreOrderPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[540px] overflow-y-auto pr-1">
                 {products.map((product) => {
-                  const inCart = cart.filter((c) => c.id.startsWith(product.id));
+                  const inCart = cart.filter((c) =>
+                    c.id.startsWith(product.id),
+                  );
                   const cartQty = inCart.reduce((s, c) => s + c.quantity, 0);
-                  const isOutOfStock = product.status === 'Out of Stock';
-                  const isVariant = product.type === 'variant';
+                  const isOutOfStock = product.status === "Out of Stock";
+                  const isVariant = product.type === "variant";
                   const displayPrice = isVariant
-                    ? Math.min(...(product.variants.map((v) => effectivePrice(v.price, v.offerPrice))))
+                    ? Math.min(
+                        ...product.variants.map((v) =>
+                          effectivePrice(v.price, v.offerPrice),
+                        ),
+                      )
                     : effectivePrice(product.price, product.offerPrice);
 
                   return (
@@ -453,8 +554,8 @@ export default function NewInStoreOrderPage() {
                       key={product.id}
                       className={`
                         flex items-center gap-3 p-3 rounded-xl border bg-background transition-all
-                        ${isOutOfStock ? 'opacity-50' : 'hover:border-primary/40 hover:shadow-sm'}
-                        ${cartQty > 0 ? 'border-primary/50 bg-primary/3' : 'border-border'}
+                        ${isOutOfStock ? "opacity-50" : "hover:border-primary/40 hover:shadow-sm"}
+                        ${cartQty > 0 ? "border-primary/50 bg-primary/3" : "border-border"}
                       `}
                     >
                       {/* Thumbnail */}
@@ -474,15 +575,25 @@ export default function NewInStoreOrderPage() {
 
                       {/* Info */}
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm leading-tight truncate">{product.name}</p>
-                        <p className="text-[11px] text-muted-foreground truncate">{product.sku}</p>
+                        <p className="font-medium text-sm leading-tight truncate">
+                          {product.name}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate">
+                          {product.sku}
+                        </p>
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className="text-sm font-semibold text-primary">
-                            {isVariant ? `from ${formatBDT(displayPrice)}` : formatBDT(displayPrice)}
+                            {isVariant
+                              ? `from ${formatBDT(displayPrice)}`
+                              : formatBDT(displayPrice)}
                           </span>
                           {isVariant && (
-                            <Badge variant="secondary" className="text-[10px] px-1 py-0 gap-0.5">
-                              <Layers className="h-2.5 w-2.5" /> {product.variants.length} sizes
+                            <Badge
+                              variant="secondary"
+                              className="text-[10px] px-1 py-0 gap-0.5"
+                            >
+                              <Layers className="h-2.5 w-2.5" />{" "}
+                              {product.variants.length} sizes
                             </Badge>
                           )}
                         </div>
@@ -491,19 +602,24 @@ export default function NewInStoreOrderPage() {
                       {/* Add button */}
                       <div className="flex flex-col items-center gap-1">
                         {cartQty > 0 && (
-                          <span className="text-[10px] font-semibold text-primary">×{cartQty}</span>
+                          <span className="text-[10px] font-semibold text-primary">
+                            ×{cartQty}
+                          </span>
                         )}
                         <button
                           disabled={isOutOfStock}
-                          onClick={() => !isOutOfStock && setDialogProduct(product)}
+                          onClick={() =>
+                            !isOutOfStock && setDialogProduct(product)
+                          }
                           className={`
                             h-8 w-8 rounded-lg flex items-center justify-center transition-all
-                            ${isOutOfStock
-                              ? 'bg-muted cursor-not-allowed text-muted-foreground'
-                              : 'bg-primary text-primary-foreground hover:bg-primary/80 active:scale-95 shadow-sm'
+                            ${
+                              isOutOfStock
+                                ? "bg-muted cursor-not-allowed text-muted-foreground"
+                                : "bg-primary text-primary-foreground hover:bg-primary/80 active:scale-95 shadow-sm"
                             }
                           `}
-                          title={isOutOfStock ? 'Out of Stock' : 'Add to cart'}
+                          title={isOutOfStock ? "Out of Stock" : "Add to cart"}
                         >
                           <Plus className="h-4 w-4" />
                         </button>
@@ -520,10 +636,14 @@ export default function NewInStoreOrderPage() {
         <div className="lg:col-span-2 space-y-4">
           {/* Customer Info */}
           <div className="bg-card border rounded-xl p-5 shadow-sm">
-            <h3 className="font-semibold text-base mb-3">Customer Info (Optional)</h3>
+            <h3 className="font-semibold text-base mb-3">
+              Customer Info (Optional)
+            </h3>
             <div className="space-y-3">
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Customer Name</label>
+                <label className="text-xs text-muted-foreground mb-1 block">
+                  Customer Name
+                </label>
                 <Input
                   placeholder="Walk-in Customer"
                   value={customerName}
@@ -531,7 +651,9 @@ export default function NewInStoreOrderPage() {
                 />
               </div>
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Phone Number</label>
+                <label className="text-xs text-muted-foreground mb-1 block">
+                  Phone Number
+                </label>
                 <Input
                   placeholder="01XXXXXXXXX"
                   value={customerPhone}
@@ -568,7 +690,11 @@ export default function NewInStoreOrderPage() {
                   >
                     <div className="w-9 h-9 rounded-md overflow-hidden bg-muted flex-shrink-0">
                       {item.image ? (
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <Package className="h-4 w-4 text-muted-foreground/40" />
@@ -576,9 +702,11 @@ export default function NewInStoreOrderPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium truncate">{item.name}</p>
+                      <p className="text-xs font-medium truncate">
+                        {item.name}
+                      </p>
                       <p className="text-xs text-muted-foreground">
-                        {formatBDT(item.price)} × {item.quantity} ={' '}
+                        {formatBDT(item.price)} × {item.quantity} ={" "}
                         <span className="font-semibold text-foreground">
                           {formatBDT(item.price * item.quantity)}
                         </span>
@@ -591,7 +719,9 @@ export default function NewInStoreOrderPage() {
                       >
                         <Minus className="h-3 w-3" />
                       </button>
-                      <span className="w-5 text-center text-xs font-medium">{item.quantity}</span>
+                      <span className="w-5 text-center text-xs font-medium">
+                        {item.quantity}
+                      </span>
                       <button
                         onClick={() => updateQty(item.id, 1)}
                         className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-muted transition-colors"
@@ -631,10 +761,13 @@ export default function NewInStoreOrderPage() {
           {/* Info */}
           <div className="bg-muted/50 border border-border rounded-xl p-4">
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="font-semibold text-foreground">Payment:</span> Cash (In-Store)
+              <span className="font-semibold text-foreground">Payment:</span>{" "}
+              Cash (In-Store)
               <br />
-              Order number prefix:{' '}
-              <span className="font-mono font-semibold text-primary">S</span>{' '}
+              Order number prefix:{" "}
+              <span className="font-mono font-semibold text-primary">
+                S
+              </span>{" "}
               (e.g. <span className="font-mono text-primary">S2607001</span>)
             </p>
           </div>

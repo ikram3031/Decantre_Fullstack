@@ -1,192 +1,192 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  Users,
+  CreditCard,
+  BarChart3,
+  ShieldAlert,
+  ListOrdered,
+  PlusCircle,
+  Package,
+} from "lucide-react"
+
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import {
-  LayoutDashboard,
-  Users,
-  CreditCard,
-  Settings,
-  BarChart,
-  CheckSquare,
-  Package,
-  ShoppingCart,
-  ShieldAlert,
-  List,
-  PlusCircle,
-  ChevronDown,
-  ChevronRight,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarRail,
+} from "@/components/ui/sidebar"
+import { DecantreLogo } from "@/components/DecantreLogo"
+import { useAuth } from "@/lib/auth-context"
 
-type NavItem = {
-  title: string;
-  url: string;
-  icon: React.ElementType;
-  children?: { title: string; url: string; icon: React.ElementType }[];
-};
-
-const navItems: NavItem[] = [
-  {
-    title: "Overview",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Orders",
-    url: "/dashboard/orders",
-    icon: ShoppingCart,
-    children: [
-      {
-        title: "New In-Store Order",
-        url: "/dashboard/orders/new",
-        icon: PlusCircle,
-      },
-      {
-        title: "Orders List",
-        url: "/dashboard/orders",
-        icon: List,
-      },
-    ],
-  },
-  {
-    title: "Products",
-    url: "/dashboard/products",
-    icon: Package,
-  },
-  {
-    title: "Members",
-    url: "/dashboard/members",
-    icon: Users,
-  },
-  {
-    title: "Billing & Payment",
-    url: "/dashboard/billing",
-    icon: CreditCard,
-  },
-  {
-    title: "Reports",
-    url: "/dashboard/reports",
-    icon: BarChart,
-  },
-  {
-    title: "System Users",
-    url: "/dashboard/users",
-    icon: ShieldAlert,
-  },
-];
-
-export function AppSidebar() {
-  const pathname = usePathname();
-
-  // Track expanded state for items with children
-  const [expanded, setExpanded] = React.useState<Record<string, boolean>>(
-    () => {
-      // Auto-expand if current path is under that section
-      const initial: Record<string, boolean> = {};
-      navItems.forEach((item) => {
-        if (item.children && pathname.startsWith(item.url)) {
-          initial[item.title] = true;
-        }
-      });
-      return initial;
-    },
-  );
-
-  const toggleExpand = (title: string) => {
-    setExpanded((prev) => ({ ...prev, [title]: !prev[title] }));
-  };
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname()
+  const { user } = useAuth()
 
   return (
-    <Sidebar>
-      <SidebarHeader className="h-16 flex items-center border-b px-4">
-        <div className="flex items-center gap-2 font-bold text-base tracking-widest uppercase">
-          <LayoutDashboard className="h-5 w-5 text-primary" />
-          <span>Decantre</span>
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader className="border-b border-sidebar-border px-6 py-4">
+        <div className="flex items-center gap-3">
+          <DecantreLogo className="h-8 w-8 text-primary" />
+          <div className="flex flex-col group-data-[collapsible=icon]:hidden">
+            <span className="font-bold text-lg tracking-tight text-sidebar-foreground">
+              Decantre
+            </span>
+            <span className="text-xs text-sidebar-foreground/60">
+              Perfume Store Dashboard
+            </span>
+          </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map((item) => {
-                const isParentActive =
-                  pathname.startsWith(item.url) &&
-                  (item.children ? true : pathname === item.url);
-                const isOpen = expanded[item.title] ?? false;
 
-                if (item.children) {
-                  return (
-                    <React.Fragment key={item.title}>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton
-                          isActive={isParentActive && !item.children}
-                          onClick={() => toggleExpand(item.title)}
-                          className="cursor-pointer"
-                        >
-                          <item.icon />
-                          <span className="flex-1">{item.title}</span>
-                          {isOpen ? (
-                            <ChevronDown className="h-4 w-4 ml-auto shrink-0 text-muted-foreground" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4 ml-auto shrink-0 text-muted-foreground" />
-                          )}
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                      {isOpen && (
-                        <div className="ml-4 border-l border-border pl-2 mb-1">
-                          {item.children.map((child) => (
-                            <SidebarMenuItem key={child.title}>
-                              <SidebarMenuButton
-                                render={<Link href={{ pathname: child.url }} />}
-                                isActive={pathname === child.url}
-                                className="text-sm"
-                              >
-                                <child.icon className="h-3.5 w-3.5" />
-                                <span>{child.title}</span>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          ))}
-                        </div>
-                      )}
-                    </React.Fragment>
-                  );
-                }
+      <SidebarContent className="px-3 py-4">
+        <SidebarMenu>
+          {/* Overview */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/dashboard"}
+              tooltip="Overview"
+              render={<Link href={{ pathname: "/dashboard" }} />}
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              <span>Overview</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
 
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      render={
-                        <Link
-                          href={{
-                            pathname: item.url,
-                          }}
-                        />
-                      }
-                      isActive={pathname === item.url}
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+          {/* Orders */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname.startsWith("/dashboard/orders")}
+              tooltip="Orders"
+              render={<Link href={{ pathname: "/dashboard/orders" }} />}
+            >
+              <ShoppingBag className="h-4 w-4" />
+              <span>Orders</span>
+            </SidebarMenuButton>
+            <SidebarMenuSub>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/orders/new"}
+                  render={<Link href={{ pathname: "/dashboard/orders/new" }} />}
+                >
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span>New In-Store Order</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/orders"}
+                  render={<Link href={{ pathname: "/dashboard/orders" }} />}
+                >
+                  <ListOrdered className="h-3.5 w-3.5" />
+                  <span>Orders List</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            </SidebarMenuSub>
+          </SidebarMenuItem>
+
+          {/* Products Management */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/dashboard/products"}
+              tooltip="Products"
+              render={<Link href={{ pathname: "/dashboard/products" }} />}
+            >
+              <Package className="h-4 w-4" />
+              <span>Products</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          {/* Stock Management */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/dashboard/products/stock"}
+              tooltip="Stock Management"
+              render={<Link href={{ pathname: "/dashboard/products/stock" }} />}
+            >
+              <ListOrdered className="h-4 w-4" />
+              <span>Stock Management</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          {/* Members */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/dashboard/members"}
+              tooltip="Members"
+              render={<Link href={{ pathname: "/dashboard/members" }} />}
+            >
+              <Users className="h-4 w-4" />
+              <span>Members</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          {/* Billing & Payment */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/dashboard/billing"}
+              tooltip="Billing & Payment"
+              render={<Link href={{ pathname: "/dashboard/billing" }} />}
+            >
+              <CreditCard className="h-4 w-4" />
+              <span>Billing & Payment</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          {/* Reports */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/dashboard/reports"}
+              tooltip="Reports"
+              render={<Link href={{ pathname: "/dashboard/reports" }} />}
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span>Reports</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          {/* System Users */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname === "/dashboard/users"}
+              tooltip="System Users"
+              render={<Link href={{ pathname: "/dashboard/users" }} />}
+            >
+              <ShieldAlert className="h-4 w-4" />
+              <span>System Users</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarContent>
+
+      <SidebarFooter className="border-t border-sidebar-border p-4">
+        <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center">
+          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+            {user?.email ? user.email.charAt(0).toUpperCase() : "A"}
+          </div>
+          <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
+            <span className="text-sm font-medium truncate text-sidebar-foreground">
+              {user?.email || "Admin User"}
+            </span>
+            <span className="text-xs text-sidebar-foreground/60 truncate">
+              Store Manager
+            </span>
+          </div>
+        </div>
+      </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
-  );
+  )
 }

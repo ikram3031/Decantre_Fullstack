@@ -9,7 +9,10 @@ export const validateOrderPayload = (body) => {
     return ['Request body must be a valid JSON object'];
   }
 
-  const requiredFields = ['fullName', 'phone', 'email', 'address', 'district'];
+  const isInstore = body.orderType === 'instore';
+  const requiredFields = isInstore
+    ? ['fullName', 'phone']
+    : ['fullName', 'phone', 'email', 'address', 'district'];
 
   requiredFields.forEach((field) => {
     const value = body[field];
@@ -26,8 +29,14 @@ export const validateOrderPayload = (body) => {
     errors.push('paymentMethod is required');
   }
 
-  if (!isValidEmail(body.email)) {
-    errors.push('email must be a valid email address');
+  if (!isInstore) {
+    if (!isValidEmail(body.email)) {
+      errors.push('email must be a valid email address');
+    }
+  } else if (body.email && body.email.trim() !== '') {
+    if (!isValidEmail(body.email)) {
+      errors.push('email must be a valid email address');
+    }
   }
 
   return errors;
@@ -37,7 +46,7 @@ export const buildOrderNumber = async (isInstore = false) => {
   const now = new Date();
   const shortYear = String(now.getFullYear()).slice(-2);
   const month = String(now.getMonth() + 1).padStart(2, '0');
-  const prefix = `${isInstore ? 'S' : 'D'}${shortYear}${month}`;
+  const prefix = `${isInstore ? 'S-' : 'D'}${shortYear}${month}`;
 
   const lastOrder = await OrderModel.findOne({
     orderNumber: { $regex: `^${prefix}` }

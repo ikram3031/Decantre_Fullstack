@@ -54,8 +54,8 @@ apiClient.interceptors.response.use(
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           localStorage.removeItem('user');
+          window.location.replace('/login');
         }
-        handleGlobalError(refreshError);
         return Promise.reject(refreshError);
       }
     }
