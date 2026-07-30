@@ -1,54 +1,64 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar';
-import { LayoutDashboard, Users, CreditCard, Settings, BarChart, CheckSquare, Package, ShoppingCart, ShieldAlert } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import type { UrlObject } from 'url';
+	Sidebar,
+	SidebarContent,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarGroupLabel,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import {
+	LayoutDashboard,
+	Users,
+	CreditCard,
+	Settings,
+	BarChart,
+	CheckSquare,
+	Package,
+	ShoppingCart,
+	ShieldAlert,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { UrlObject } from "url";
 
 const navItems = [
-  {
-    title: 'Overview',
-    url: '/dashboard',
-    icon: LayoutDashboard,
-  },
-  {
-    title: 'Orders',
-    url: '/dashboard/orders',
-    icon: ShoppingCart,
-  },
-  {
-    title: 'Products',
-    url: '/dashboard/products',
-    icon: Package,
-  },
-  {
-    title: 'Members',
-    url: '/dashboard/members',
-    icon: Users,
-  },
-  {
-    title: 'System Users',
-    url: '/dashboard/users',
-    icon: ShieldAlert,
-  },
+	{
+		title: "Overview",
+		url: "/dashboard",
+		icon: LayoutDashboard,
+	},
+	{
+		title: "Orders",
+		url: "/dashboard/orders",
+		icon: ShoppingCart,
+	},
+	{
+		title: "Products",
+		url: "/dashboard/products",
+		icon: Package,
+	},
+	{
+		title: "Members",
+		url: "/dashboard/members",
+		icon: Users,
+	},
+	{
+		title: "System Users",
+		url: "/dashboard/users",
+		icon: ShieldAlert,
+	},
 ];
 
 export function AppSidebar() {
-  const pathname = usePathname();
+	const pathname = usePathname();
 
-  return (
+	return (
 		<Sidebar>
 			<SidebarHeader className="h-16 flex items-center justify-center border-b px-4">
 				<div className="flex items-center gap-2 font-semibold text-lg">
@@ -64,13 +74,15 @@ export function AppSidebar() {
 							{navItems.map((item) => (
 								<SidebarMenuItem key={item.title}>
 									<SidebarMenuButton
-										render={<Link href={item.url as UrlObject} />}
-										isActive={
-											pathname ===
-											(typeof item.url === "string"
-												? item.url
-												: (item.url.pathname ?? ""))
+										render={
+											<Link
+												href={{
+													pathname: item.url
+													// query: {},
+												}}
+											/>
 										}
+										isActive={pathname === item.url}
 									>
 										<item.icon />
 										<span>{item.title}</span>
