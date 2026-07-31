@@ -21,17 +21,39 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 
+const ITEMS_PER_PAGE = 20;
+const TOTAL_MOCK = 20; // update when API returns total
+const totalPages = Math.ceil(TOTAL_MOCK / ITEMS_PER_PAGE);
+
 export default function MembersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [segmentFilter, setSegmentFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset to page 1 when filters change
+  const handleSearch = (q: string) => {
+    setSearchQuery(q);
+    setCurrentPage(1);
+  };
+
+  const handleSegment = (v: string) => {
+    setSegmentFilter(v ?? 'All');
+    setCurrentPage(1);
+  };
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Members & Customers</h2>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Members & Customers</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Showing {ITEMS_PER_PAGE} members per page
+          </p>
+        </div>
       </div>
-      
-      <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row items-center gap-4">
         <div className="relative flex-1 w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -39,13 +61,10 @@ export default function MembersPage() {
             placeholder="Search by name or email..."
             className="pl-8"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <Select
-          value={segmentFilter}
-          onValueChange={(value: string | null) => setSegmentFilter(value ?? 'All')}
-        >
+        <Select value={segmentFilter} onValueChange={handleSegment}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Segment" />
           </SelectTrigger>
@@ -57,35 +76,78 @@ export default function MembersPage() {
           </SelectContent>
         </Select>
       </div>
-      
-      <div className="bg-card text-card-foreground shadow-sm border rounded-lg">
-        <div className="p-6">
-          <MembersTable searchQuery={searchQuery} segmentFilter={segmentFilter} />
-          
-          <div className="mt-4">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious href="#" />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#" isActive>1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">2</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">3</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext href="#" />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+
+      {/* Table */}
+      <div className="bg-card text-card-foreground shadow-sm border rounded-xl overflow-hidden">
+        <MembersTable
+          searchQuery={searchQuery}
+          segmentFilter={segmentFilter}
+          page={currentPage}
+        />
+
+        {/* Pagination */}
+        <div className="border-t px-4 py-3">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) setCurrentPage((p) => p - 1);
+                  }}
+                  aria-disabled={currentPage === 1}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const page = i + 1;
+                const showPage =
+                  page === 1 ||
+                  page === totalPages ||
+                  Math.abs(page - currentPage) <= 1;
+
+                if (!showPage) {
+                  if (page === 2 || page === totalPages - 1) {
+                    return (
+                      <PaginationItem key={`ellipsis-${page}`}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    );
+                  }
+                  return null;
+                }
+
+                return (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      isActive={currentPage === page}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(page);
+                      }}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) setCurrentPage((p) => p + 1);
+                  }}
+                  aria-disabled={currentPage === totalPages}
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </div>

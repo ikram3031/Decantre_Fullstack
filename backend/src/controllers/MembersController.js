@@ -100,7 +100,7 @@ export const getMemberById = async (req, res, next) => {
       return res.status(400).json({ status: "error", message: "Invalid member ID" });
     }
 
-    const member = await MemberModel.findById(memberId).populate("orders").lean();
+    const member = await MemberModel.findById(memberId).lean();
     if (!member) {
       return res.status(404).json({ status: "error", message: "Member not found" });
     }

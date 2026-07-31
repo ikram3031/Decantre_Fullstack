@@ -7,7 +7,16 @@ const { Types } = mongoose;
 // Create Payment
 export const createPayment = async (req, res, next) => {
   try {
-    const { orderId, paymentMethod, paymentPhone, amount, status } = req.body ?? {};
+    const {
+      orderId,
+      paymentMethod,
+      paymentPhone,
+      amount,
+      paymentStatus: requestedPaymentStatus,
+      totalAmount: requestedTotalAmount,
+      paidAmount: requestedPaidAmount,
+      pendingAmount: requestedPendingAmount,
+    } = req.body ?? {};
 
     if (!orderId || !Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({ status: "error", message: "Invalid or missing orderId" });
@@ -19,12 +28,21 @@ export const createPayment = async (req, res, next) => {
       return res.status(400).json({ status: "error", message: "Valid amount is required" });
     }
 
+    const totalAmount = Number(requestedTotalAmount ?? amount);
+    const paidAmount = Number(requestedPaidAmount ?? amount);
+    const pendingAmount = Number(requestedPendingAmount ?? Math.max(0, totalAmount - paidAmount));
+    const status = (requestedPaymentStatus || (paidAmount >= totalAmount ? "paid" : paidAmount > 0 ? "partial" : "pending")).toString().trim().toLowerCase();
+
     const paymentData = {
       orderId,
       paymentMethod: paymentMethod.trim(),
       paymentPhone: paymentPhone?.trim() || "",
+      totalAmount,
+      paidAmount,
+      pendingAmount,
       amount,
-      status: status || "completed",
+      status,
+      createdBy: req.user?.userId || null,
     };
 
     const payment = await PaymentModel.create(paymentData);
@@ -50,8 +68,34 @@ export const listPayments = async (req, res, next) => {
     if (req.query.orderId && Types.ObjectId.isValid(req.query.orderId)) {
       filter.orderId = req.query.orderId;
     }
+
+    if (req.query.paymentMethod) {
+      filter.paymentMethod = { $regex: `^${req.query.paymentMethod.toString().trim()}$`, $options: "i" };
+    }
+
     if (req.query.status) {
-      filter.status = req.query.status;
+      const statusQuery = req.query.status.toString().trim().toLowerCase();
+      if (statusQuery === "completed") {
+        filter.status = "paid";
+      } else if (statusQuery === "failed") {
+        filter.status = "failed";
+      } else if (statusQuery === "pending") {
+        filter.status = { $in: ["pending", "partial"] };
+      } else {
+        filter.status = statusQuery;
+      }
+    }
+
+    if (req.query.search) {
+      const search = req.query.search.toString().trim();
+      if (search.length > 0) {
+        const searchRegex = { $regex: search, $options: "i" };
+        filter.$or = [
+          { did: searchRegex },
+          { paymentMethod: searchRegex },
+          { paymentPhone: searchRegex },
+        ];
+      }
     }
 
     const total = await PaymentModel.countDocuments(filter);
@@ -119,6 +163,18 @@ export const updatePayment = async (req, res, next) => {
     }
     if (payload.amount !== undefined && typeof payload.amount === "number") {
       allowedUpdates.amount = payload.amount;
+    }
+    if (payload.totalAmount !== undefined && typeof payload.totalAmount === "number") {
+      allowedUpdates.totalAmount = payload.totalAmount;
+    }
+    if (payload.paidAmount !== undefined && typeof payload.paidAmount === "number") {
+      allowedUpdates.paidAmount = payload.paidAmount;
+    }
+    if (payload.pendingAmount !== undefined && typeof payload.pendingAmount === "number") {
+      allowedUpdates.pendingAmount = payload.pendingAmount;
+    }
+    if (payload.status) {
+      allowedUpdates.status = payload.status.trim().toLowerCase();
     }
 
     const payment = await PaymentModel.findByIdAndUpdate(paymentId, allowedUpdates, {

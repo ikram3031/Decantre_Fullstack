@@ -6,6 +6,8 @@ import { getGenericErrorMessage } from '@/lib/error-handler';
 import { apiClient } from '@/lib/api-client';
 
 export interface AuthUser {
+  id?: string;
+  did?: string;
   email: string;
   name: string;
   avatar?: string;
@@ -51,6 +53,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { user: apiUser, accessToken, refreshToken } = response.data.data;
 
       const loggedUser: AuthUser = {
+        id: apiUser.id || apiUser._id,
+        did: apiUser.did,
         email: apiUser.email || email,
         name: apiUser.name || email.split('@')[0].replace('.', ' ').replace(/\b\w/g, l => l.toUpperCase()),
         role: apiUser.role || 'Administrator',
@@ -76,6 +80,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { user: apiUser, accessToken, refreshToken } = response.data.data;
 
       const loggedUser: AuthUser = {
+        id: apiUser.id || apiUser._id,
+        did: apiUser.did,
         email: apiUser.email,
         name: apiUser.name,
         role: apiUser.role,

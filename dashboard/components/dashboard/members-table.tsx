@@ -31,14 +31,17 @@ import { toast } from 'sonner';
 interface MembersTableProps {
   searchQuery: string;
   segmentFilter: string;
+  page?: number;
 }
 
-export function MembersTable({ searchQuery, segmentFilter }: MembersTableProps) {
+export function MembersTable({ searchQuery, segmentFilter, page = 1 }: MembersTableProps) {
   const queryClient = useQueryClient();
 
   const { data: members, isLoading, isError, error } = useMembers({
     search: searchQuery,
     segment: segmentFilter !== 'All' ? segmentFilter : undefined,
+    page,
+    limit: 20,
   });
 
   const handleViewProfile = (member: any) => {
@@ -88,7 +91,7 @@ export function MembersTable({ searchQuery, segmentFilter }: MembersTableProps) 
         </TableHeader>
         <TableBody>
           {isLoading ? (
-            Array.from({ length: 5 }).map((_, i) => (
+            Array.from({ length: 20 }).map((_, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center gap-3">

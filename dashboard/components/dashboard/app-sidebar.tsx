@@ -13,6 +13,7 @@ import {
   ListOrdered,
   PlusCircle,
   Package,
+  Receipt,
 } from "lucide-react"
 
 import {
@@ -136,13 +137,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {/* Billing & Payment */}
           <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={pathname === "/dashboard/billing"}
+              isActive={pathname.startsWith("/dashboard/billing")}
               tooltip="Billing & Payment"
               render={<Link href={{ pathname: "/dashboard/billing" }} />}
             >
               <CreditCard className="h-4 w-4" />
               <span>Billing & Payment</span>
             </SidebarMenuButton>
+            <SidebarMenuSub>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/billing/billings"}
+                  render={<Link href={{ pathname: "/dashboard/billing/billings" }} />}
+                >
+                  <Receipt className="h-3.5 w-3.5" />
+                  <span>Bills & Invoices</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/billing/payments"}
+                  render={<Link href={{ pathname: "/dashboard/billing/payments" }} />}
+                >
+                  <CreditCard className="h-3.5 w-3.5" />
+                  <span>Payments</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            </SidebarMenuSub>
           </SidebarMenuItem>
 
           {/* Reports */}

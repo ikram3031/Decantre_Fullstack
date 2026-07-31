@@ -11,6 +11,7 @@ const orderItemSchema = new Schema(
     unitPrice: { type: Number, required: true, min: 0 },
     size: { type: String, trim: true },
     concentration: { type: String, trim: true },
+    productDid: { type: String, trim: true, default: "" },
   },
   { _id: false },
 );
@@ -56,10 +57,13 @@ const orderSchema = new Schema(
     customer: { type: customerSchema, required: true },
     paymentMethod: { type: String, required: true, trim: true },
     shippingAddress: { type: Schema.Types.Mixed, default: {} },
+    shippingTotalAmount: { type: Number, default: 0, min: 0 },
+    discountTotalAmount: { type: Number, default: 0, min: 0 },
     items: { type: [orderItemSchema], required: true, validate: [(items) => items.length > 0, "items must contain at least one item"] },
     totals: { type: orderTotalsSchema, required: true },
   },
   {
+    collection: "orders",
     timestamps: true,
     versionKey: false,
     toJSON: {

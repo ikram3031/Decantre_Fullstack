@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useProducts, Product, ProductVariant } from "@/hooks/use-products";
 import { apiClient } from "@/lib/api-client";
+import { useAuth } from "@/lib/auth-context";
 import { useCategories, useBrands } from "@/lib/category-cache";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -321,6 +322,7 @@ function ProductAddDialog({
 
 export default function NewInStoreOrderPage() {
   const router = useRouter();
+  const { user } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -426,7 +428,7 @@ export default function NewInStoreOrderPage() {
         shippingFee: 0,
         tax: 0,
         total: subtotal,
-        createdBy: "staff",
+        createdBy: user?.did || "staff",
       };
 
       // 1. Create the Order
@@ -526,15 +528,15 @@ export default function NewInStoreOrderPage() {
 						<div className="flex gap-2 mb-3">
 							<Select
 								value={categoryFilter}
-								onValueChange={(v) => setCategoryFilter(v ?? "Category")}
+								onValueChange={(v) => setCategoryFilter(v ?? "All")}
 							>
 								<SelectTrigger className="w-full">
 									<SelectValue placeholder="Category" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="Category">All Categories</SelectItem>
+									<SelectItem value="All">All Categories</SelectItem>
 									{categories.map((cat) => (
-										<SelectItem key={cat.did} value={cat.name}>
+										<SelectItem key={cat.did} value={cat.slug || cat.did}>
 											{cat.name}
 										</SelectItem>
 									))}
@@ -549,9 +551,9 @@ export default function NewInStoreOrderPage() {
 									<SelectValue placeholder="Brand" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="Brand">All Brands</SelectItem>
+									<SelectItem value="All">All Brands</SelectItem>
 									{brands.map((brand) => (
-										<SelectItem key={brand.did} value={brand.name}>
+										<SelectItem key={brand.did} value={brand.slug || brand.did}>
 											{brand.name}
 										</SelectItem>
 									))}

@@ -87,15 +87,15 @@ type BackendProduct = {
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 
 const fetchProducts = async (params?: FetchProductsParams): Promise<Product[]> => {
-  const body: Record<string, string> = {};
+  const body: Record<string, string> = { limit: "100" };
 
   if (params?.search) body.q = params.search;
   if (params?.category) body.category = params.category;
   if (params?.brand) body.brand = params.brand;
 
-  const response = (body.category || body.brand)
+  const response = (body.category || body.brand || body.q)
     ? await apiClient.post<unknown>('/api/v1/products', body)
-    : await apiClient.get<unknown>('/api/v1/products', { params: { q: params?.search } });
+    : await apiClient.get<unknown>('/api/v1/products', { params: { q: params?.search, limit: 100 } });
 
   const responseData = response.data;
   let productList: BackendProduct[] = [];
