@@ -5,7 +5,7 @@ This document describes the email endpoint used by the website to send test emai
 ## Base URL
 
 ```text
-http://localhost:4000/api/v1/sendEmail
+http://144.79.218.126:5092/api/v1/sendEmail
 ```
 
 ## Endpoint
@@ -18,18 +18,20 @@ http://localhost:4000/api/v1/sendEmail
 
 ### Query Parameters
 
-| Parameter | Type   | Required | Description |
-|----------|--------|----------|-------------|
-| `email`  | string | Yes      | Recipient email address |
+| Parameter | Type   | Required | Description             |
+| --------- | ------ | -------- | ----------------------- |
+| `email`   | string | Yes      | Recipient email address |
 
 ### Request Example
 
 **GET**
+
 ```text
 GET /api/v1/sendEmail?email=someone@example.com
 ```
 
 **POST**
+
 ```json
 {
   "email": "someone@example.com"

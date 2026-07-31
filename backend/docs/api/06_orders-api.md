@@ -5,7 +5,7 @@ This document describes all available order endpoints for the backend.
 ## Base URL
 
 ```text
-http://localhost:4000/api/v1
+http://144.79.218.126:5092/api/v1
 ```
 
 ## Endpoints

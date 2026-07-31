@@ -5,7 +5,7 @@ This endpoint sends a styled invoice email using Hostinger SMTP.
 ## Base URL
 
 ```text
-http://localhost:4000/api/v1/sendEmail/invoice
+http://144.79.218.126:5092/api/v1/sendEmail/invoice
 ```
 
 ## Endpoint

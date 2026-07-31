@@ -11,6 +11,7 @@ import usersRouter from "./routes/UsersRoute.js";
 import authRouter from "./routes/AuthRoute.js";
 import membersRouter from "./routes/MembersRoute.js";
 import assetsRouter from "./routes/AssetsRoute.js";
+import paymentsRouter from "./routes/PaymentsRoute.js";
 // import exportRouter from "./routes/ExportRoute.js";
 import categoriesRouter from "./routes/CategoryRoute.js";
 import brandRouter from "./routes/BrandRoute.js";
@@ -55,6 +56,7 @@ export async function createApp() {
   app.use("/api/v1/members", membersRouter);
   app.use("/api/v1/sendEmail", emailRouter);
   app.use("/api/v1/orders", ordersRouter);
+  app.use("/api/v1/payments", paymentsRouter);
   app.use("/api/v1/categories", categoriesRouter);
   app.use("/api/v1/brands", brandRouter);
   app.get("/api/v1/search-products", searchProducts);
