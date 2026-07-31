@@ -21,8 +21,8 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 
-const ITEMS_PER_PAGE = 20;
-const TOTAL_MOCK = 20; // update when API returns total
+const ITEMS_PER_PAGE = 15;
+const TOTAL_MOCK = 15; // update when API returns total
 const totalPages = Math.ceil(TOTAL_MOCK / ITEMS_PER_PAGE);
 
 export default function MembersPage() {

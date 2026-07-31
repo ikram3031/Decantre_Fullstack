@@ -61,7 +61,10 @@ const mapPayment = (payment: any): PaymentRecord => {
 
 const fetchPayments = async (params?: FetchPaymentsParams): Promise<PaymentRecord[]> => {
   try {
-    const queryParams: Record<string, unknown> = { limit: 100 };
+    const queryParams: Record<string, unknown> = {
+      limit: 15,
+      page: 1,
+    };
     if (params?.status) queryParams.status = params.status.toLowerCase();
     if (params?.method) queryParams.paymentMethod = params.method;
     if (params?.search) queryParams.search = params.search;

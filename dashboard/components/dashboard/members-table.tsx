@@ -41,7 +41,7 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1 }: MembersTa
     search: searchQuery,
     segment: segmentFilter !== 'All' ? segmentFilter : undefined,
     page,
-    limit: 20,
+    limit: 15,
   });
 
   const handleViewProfile = (member: any) => {
@@ -91,7 +91,7 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1 }: MembersTa
         </TableHeader>
         <TableBody>
           {isLoading ? (
-            Array.from({ length: 20 }).map((_, i) => (
+            Array.from({ length: 15 }).map((_, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center gap-3">

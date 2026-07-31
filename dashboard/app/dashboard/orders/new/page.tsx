@@ -339,6 +339,8 @@ export default function NewInStoreOrderPage() {
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [dialogProduct, setDialogProduct] = useState<Product | null>(null);
+  const [completedOrder, setCompletedOrder] = useState<any>(null);
+  const [isSendingInvoice, setIsSendingInvoice] = useState(false);
 
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -451,34 +453,27 @@ export default function NewInStoreOrderPage() {
         status: "completed",
       });
 
-      // 3. Send Invoice Email
-      try {
-        await apiClient.post("/api/v1/sendEmail/invoice", {
-          email: customerEmail.trim() || "instore@decantre.com",
-          invoiceNumber: orderNumber,
-          issueDate: new Date().toISOString().split("T")[0],
-          shippingName: customerName.trim(),
-          shippingAddress: customerAddress.trim() || "In-Store",
-          shippingPhone: `+880${customerPhone.trim()}`,
-          items: cart.map((item) => ({
-            description: item.name,
-            price: `৳${item.price}`,
-            quantity: item.quantity,
-            total: `৳${item.price * item.quantity}`,
-          })),
-          subtotal: `৳${subtotal}`,
-          taxes: "৳0",
-          discount: "৳0",
-          total: `৳${subtotal}`,
-          invoiceUrl: `https://decantre.com/invoice/${orderNumber}`,
-        });
-      } catch (emailErr) {
-        // Log email error but don't fail the whole POS checkout
-        console.error("Invoice email failed to send:", emailErr);
-      }
+      // 3. Invoice generation is pending until the user chooses to download or send it.
+      const invoiceUrl = `https://decantre.com/invoice/${orderNumber}`;
+      setCompletedOrder({
+        order,
+        orderNumber,
+        invoiceUrl,
+        customerName: customerName.trim() || "Walk-in Customer",
+        customerEmail: customerEmail.trim() || "instore@decantre.com",
+        customerPhone: `+880${customerPhone.trim()}`,
+        customerAddress: customerAddress.trim() || "In-Store",
+        totalAmount: subtotal,
+        paymentMethod: paymentMethod,
+        paymentPhone:
+          (paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone
+            ? `+880${paymentPhone}`
+            : "",
+      });
 
-      toast.success("In-store order created & payment recorded successfully!");
-      router.push("/dashboard/orders");
+      toast.success(
+        "In-store order created successfully. Invoice generation is pending.",
+      );
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
@@ -488,6 +483,48 @@ export default function NewInStoreOrderPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSendInvoice = async () => {
+    if (!completedOrder) return;
+    setIsSendingInvoice(true);
+    try {
+      await apiClient.post("/api/v1/sendEmail/invoice", {
+        email: completedOrder.customerEmail,
+        invoiceNumber: completedOrder.orderNumber,
+        issueDate: new Date().toISOString().split("T")[0],
+        shippingName: completedOrder.customerName,
+        shippingAddress: completedOrder.customerAddress,
+        shippingPhone: completedOrder.customerPhone,
+        items: cart.map((item) => ({
+          description: item.name,
+          price: `৳${item.price}`,
+          quantity: item.quantity,
+          total: `৳${item.price * item.quantity}`,
+        })),
+        subtotal: `৳${completedOrder.totalAmount}`,
+        taxes: "৳0",
+        discount: "৳0",
+        total: `৳${completedOrder.totalAmount}`,
+        invoiceUrl: completedOrder.invoiceUrl,
+      });
+      toast.success("Invoice email sent successfully.");
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message || "Failed to send invoice email.",
+      );
+    } finally {
+      setIsSendingInvoice(false);
+    }
+  };
+
+  const handleDownloadInvoice = () => {
+    if (!completedOrder) return;
+    window.open(completedOrder.invoiceUrl, "_blank");
+  };
+
+  const closeCompletedDialog = () => {
+    setCompletedOrder(null);
   };
 
   // ── Render ───────────────────────────────────────────────────────────────
@@ -947,6 +984,100 @@ export default function NewInStoreOrderPage() {
 				onClose={() => setDialogProduct(null)}
 				onAddToCart={addToCart}
 			/>
-		</div>
-	);
-}
+
+      <Dialog
+        open={Boolean(completedOrder)}
+        onOpenChange={(open) => {
+          if (!open) closeCompletedDialog();
+        }}
+      >
+        <DialogContent className="sm:max-w-md" showCloseButton>
+          <DialogHeader>
+            <DialogTitle className="text-base font-semibold leading-snug">
+              Order Completed
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              In-store order has been created. Invoice generation is ready.
+            </DialogDescription>
+          </DialogHeader>
+
+          {completedOrder && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-xl border border-border bg-muted p-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Order ID
+                    </p>
+                    <p className="font-semibold">{completedOrder.orderNumber}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Total
+                    </p>
+                    <p className="font-semibold text-primary">
+                      {formatBDT(completedOrder.totalAmount)}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Customer
+                    </p>
+                    <p>{completedOrder.customerName}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Payment
+                    </p>
+                    <p className="capitalize">{completedOrder.paymentMethod}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Email
+                    </p>
+                    <p>{completedOrder.customerEmail}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Phone
+                    </p>
+                    <p>{completedOrder.customerPhone}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1 text-sm">
+                <p className="font-medium">Invoice Actions</p>
+                <p className="text-xs text-muted-foreground">
+                  The invoice is generated and can be downloaded or emailed on demand.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleDownloadInvoice}
+                >
+                  Download Invoice
+                </Button>
+                <Button
+                  className="w-full"
+                  onClick={handleSendInvoice}
+                  disabled={isSendingInvoice}
+                >
+                  {isSendingInvoice ? "Sending..." : "Send Invoice"}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="secondary" onClick={closeCompletedDialog}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>

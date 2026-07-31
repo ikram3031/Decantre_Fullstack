@@ -46,7 +46,7 @@ export const buildOrderNumber = async (isInstore = false) => {
   const now = new Date();
   const shortYear = String(now.getFullYear()).slice(-2);
   const month = String(now.getMonth() + 1).padStart(2, '0');
-  const prefix = `${isInstore ? 'S-' : 'D'}${shortYear}${month}`;
+  const prefix = `${isInstore ? 'IS' : 'D'}${shortYear}${month}`;
 
   const lastOrder = await OrderModel.findOne({
     orderNumber: { $regex: `^${prefix}` }

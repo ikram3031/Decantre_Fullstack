@@ -47,7 +47,10 @@ const mockUsers: SystemUser[] = [
 
 const fetchSystemUsers = async (params?: FetchUsersParams): Promise<SystemUser[]> => {
   try {
-    const queryParams: any = {};
+    const queryParams: any = {
+      limit: 15,
+      page: 1,
+    };
     if (params?.search) queryParams.q = params.search;
     if (params?.role && params.role !== 'All') queryParams.role = params.role;
 

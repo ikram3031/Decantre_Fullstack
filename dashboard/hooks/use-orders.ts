@@ -16,6 +16,20 @@ interface FetchOrdersParams {
   status?: string;
 }
 
+type OrdersApiResponse = {
+  data?: unknown[];
+} | unknown[];
+
+type BackendOrder = {
+  _id?: string;
+  id?: string;
+  orderNumber?: string;
+  customer?: { fullName?: string };
+  createdAt?: string;
+  totals?: { total?: number };
+  status?: string;
+};
+
 const mockOrders: Order[] = [
   {
     id: '1001',
@@ -57,11 +71,14 @@ const mockOrders: Order[] = [
 
 const fetchOrders = async (params?: FetchOrdersParams): Promise<Order[]> => {
   try {
-    const queryParams: any = {};
+    const queryParams: Record<string, string | number> = {
+      limit: 15,
+      page: 1,
+    };
     if (params?.status) queryParams.status = params.status.toLowerCase();
     if (params?.search) queryParams.email = params.search;
 
-    const response = await apiClient.get<any>('/api/v1/orders', { params: queryParams });
+    const response = await apiClient.get<OrdersApiResponse>('/api/v1/orders', { params: queryParams });
     const orderList = response.data?.data || (Array.isArray(response.data) ? response.data : []);
 
     if (orderList.length > 0) {
