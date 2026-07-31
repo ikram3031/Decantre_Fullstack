@@ -36,7 +36,7 @@ export default function MembersPage() {
     setCurrentPage(1);
   };
 
-  const handleSegment = (v: string) => {
+  const handleSegment = (v: string | null) => {
     setSegmentFilter(v ?? 'All');
     setCurrentPage(1);
   };
