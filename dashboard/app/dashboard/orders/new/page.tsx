@@ -1081,3 +1081,6 @@ export default function NewInStoreOrderPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+		</div>
+	);
+}
