@@ -61,12 +61,18 @@ export default function PaymentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [methodFilter, setMethodFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: payments = [], isLoading, isError } = usePayments({
+  const { data: paymentsResponse, isLoading, isError } = usePayments({
     search: searchQuery || undefined,
     status: statusFilter !== 'All' ? statusFilter : undefined,
     method: methodFilter !== 'All' ? methodFilter : undefined,
+    page: currentPage,
+    limit: 15,
   });
+
+  const payments = paymentsResponse?.items || [];
+  const meta = paymentsResponse?.meta;
 
   const filtered = useMemo(() => {
     return payments.filter((p) => {
@@ -193,7 +199,6 @@ export default function PaymentsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Payment ID</TableHead>
                 <TableHead>Invoice</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Method</TableHead>
@@ -205,23 +210,19 @@ export default function PaymentsPage() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                     Loading payments...
                   </TableCell>
                 </TableRow>
               ) : isError ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                     Failed to load payments. Please refresh.
                   </TableCell>
                 </TableRow>
               ) : filtered.length > 0 ? (
                 filtered.map((p) => (
                   <TableRow key={p.id}>
-                    <TableCell className="font-semibold flex items-center gap-2">
-                      <CreditCard className="h-4 w-4 text-muted-foreground" />
-                      {p.id}
-                    </TableCell>
                     <TableCell className="text-muted-foreground">{p.invoiceId}</TableCell>
                     <TableCell>{p.customerName}</TableCell>
                     <TableCell>{getMethodBadge(p.method)}</TableCell>
@@ -232,13 +233,38 @@ export default function PaymentsPage() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                     No payments found.
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Pagination */}
+        <div className="p-4 flex items-center justify-end">
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={!meta || meta.page <= 1}
+            >
+              Prev
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {meta?.page ?? currentPage} of {meta?.totalPages ?? '-'}
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={!meta || (meta.totalPages ? meta.page >= meta.totalPages : false)}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
     </div>

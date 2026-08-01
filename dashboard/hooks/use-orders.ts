@@ -79,10 +79,14 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<Order[]> => {
     if (params?.search) queryParams.email = params.search;
 
     const response = await apiClient.get<OrdersApiResponse>('/api/v1/orders', { params: queryParams });
-    const orderList = response.data?.data || (Array.isArray(response.data) ? response.data : []);
+    const responseData = response.data;
+    const rawOrderList = Array.isArray(responseData)
+      ? responseData
+      : responseData?.data ?? [];
+    const orderList = Array.isArray(rawOrderList) ? (rawOrderList as BackendOrder[]) : [];
 
     if (orderList.length > 0) {
-      return orderList.map((o: any) => {
+      return orderList.map((o: BackendOrder) => {
         let fulfillment: Order['fulfillmentStatus'] = 'Pending';
         if (o.status === 'processing') {
           fulfillment = 'Processing';
@@ -94,9 +98,11 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<Order[]> => {
 
         const isPaid = o.status === 'completed' || o.status === 'shipped';
 
+        const id = o._id || o.id || `UNKNOWN-${Math.random().toString(36).slice(2, 10)}`;
+
         return {
-          id: o._id || o.id,
-          orderNumber: o.orderNumber || `ORD-${o._id?.slice(-8) || 'UNKNOWN'}`,
+          id,
+          orderNumber: o.orderNumber || `ORD-${o._id?.slice(-8) || id}`,
           customerName: o.customer?.fullName || 'Guest Customer',
           date: o.createdAt || new Date().toISOString(),
           totalAmount: o.totals?.total || 0,

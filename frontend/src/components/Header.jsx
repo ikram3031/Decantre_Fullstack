@@ -259,8 +259,8 @@ export const Header = ({
   const handleSuggestionSelect = (item) => {
     setLocalSearchVal(item.name);
     setIsSearchPanelOpen(false);
-    if (item?.slug) {
-      navigate(`/product/${encodeURIComponent(item.slug)}`);
+    if (item?.id) {
+      navigate(`/product?id=${encodeURIComponent(item.id)}`);
     }
   };
 
@@ -771,9 +771,9 @@ export const Header = ({
               </div>
 
               {/* Form Row */}
-              <div className="flex flex-row items-stretch border border-gold/40 focus-within:border-gold rounded-sm overflow-hidden shadow-lg">
+              <div className="flex flex-row items-stretch border border-gold/40 rounded-sm shadow-lg relative">
                 {/* Search Input */}
-                <div className="relative flex-grow flex items-center bg-black">
+                <div className="relative flex-grow flex items-center bg-black rounded-l-sm">
                   <input 
                     type="text"
                     placeholder={`Search "${placeholderText || 'Search'}"...`}
@@ -784,7 +784,7 @@ export const Header = ({
                         handlePerformSearch(e);
                       }
                     }}
-                    className="w-full px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-sans font-light placeholder-zinc-500 focus:outline-none bg-black text-zinc-100 border-none"
+                    className="w-full px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-sans font-light placeholder-zinc-500 focus:outline-none bg-black text-zinc-100 border-none rounded-l-sm no-outline-search"
                   />
 
                   <SearchDropdown
@@ -802,7 +802,7 @@ export const Header = ({
                 <button
                   type="button"
                   onClick={(e) => handlePerformSearch(e)}
-                  className="bg-gold hover:bg-gold/80 text-black transition-all px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-bold cursor-pointer shrink-0 border-none"
+                  className="bg-gold hover:bg-gold/80 text-black transition-all px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-bold cursor-pointer shrink-0 border-none rounded-r-sm"
                 >
                   <Search className="w-4 h-4 shrink-0" />
                   <span className="hidden sm:inline">Search</span>

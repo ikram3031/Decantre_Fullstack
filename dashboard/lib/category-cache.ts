@@ -73,18 +73,49 @@ export function getBrandNamesByDids(dids: string[]): string[] {
 
 // ─── TanStack Query Hooks ────────────────────────────────────────────────────
 
+interface ApiListResponse<T> {
+  data?: T[];
+}
+
+interface CategoryApiItem {
+  did?: string;
+  name?: string;
+  slug?: string;
+}
+
+interface BrandApiItem {
+  did?: string;
+  name?: string;
+  slug?: string;
+}
+
+const isCategoryApiItem = (item: unknown): item is CategoryApiItem =>
+  typeof item === 'object' &&
+  item !== null &&
+  typeof (item as CategoryApiItem).did === 'string' &&
+  typeof (item as CategoryApiItem).name === 'string';
+
+const isBrandApiItem = (item: unknown): item is BrandApiItem =>
+  typeof item === 'object' &&
+  item !== null &&
+  typeof (item as BrandApiItem).did === 'string' &&
+  typeof (item as BrandApiItem).name === 'string';
+
 export function useCategories() {
-  return useQuery({
+  return useQuery<CategoryCacheEntry[]>({
     queryKey: ['categories-cache'],
     queryFn: async () => {
-      const response = await apiClient.get<any>('/api/v1/categories', { params: { limit: 1000 } });
-      const data = response.data?.data ?? (Array.isArray(response.data) ? response.data : []);
-      const categories: CategoryCacheEntry[] = data
-        .filter((c: any) => c.did && c.name)
-        .map((c: any) => ({
+      const response = await apiClient.get<ApiListResponse<CategoryApiItem>>('/api/v1/categories', {
+        params: { limit: 1000 },
+      });
+      const responseData = response.data;
+      const rawData = Array.isArray(responseData) ? responseData : responseData?.data ?? [];
+      const categories: CategoryCacheEntry[] = (Array.isArray(rawData) ? rawData : [])
+        .filter(isCategoryApiItem)
+        .map((c) => ({
           did: c.did,
           name: c.name,
-          slug: c.slug || '',
+          slug: c.slug ?? '',
         }));
 
       if (typeof window !== 'undefined') {
@@ -97,17 +128,20 @@ export function useCategories() {
 }
 
 export function useBrands() {
-  return useQuery({
+  return useQuery<BrandCacheEntry[]>({
     queryKey: ['brands-cache'],
     queryFn: async () => {
-      const response = await apiClient.get<any>('/api/v1/brands', { params: { limit: 1000 } });
-      const data = response.data?.data ?? (Array.isArray(response.data) ? response.data : []);
-      const brands: BrandCacheEntry[] = data
-        .filter((b: any) => b.did && b.name)
-        .map((b: any) => ({
+      const response = await apiClient.get<ApiListResponse<BrandApiItem>>('/api/v1/brands', {
+        params: { limit: 1000 },
+      });
+      const responseData = response.data;
+      const rawData = Array.isArray(responseData) ? responseData : responseData?.data ?? [];
+      const brands: BrandCacheEntry[] = (Array.isArray(rawData) ? rawData : [])
+        .filter(isBrandApiItem)
+        .map((b) => ({
           did: b.did,
           name: b.name,
-          slug: b.slug || '',
+          slug: b.slug ?? '',
         }));
 
       if (typeof window !== 'undefined') {

@@ -15,6 +15,20 @@ interface FetchPaymentsParams {
   search?: string;
   status?: string;
   method?: string;
+  page?: number;
+  limit?: number;
+}
+
+interface ListMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+interface PaymentsListResult {
+  items: PaymentRecord[];
+  meta?: ListMeta;
 }
 
 const mockPayments: PaymentRecord[] = [
@@ -59,11 +73,11 @@ const mapPayment = (payment: any): PaymentRecord => {
   };
 };
 
-const fetchPayments = async (params?: FetchPaymentsParams): Promise<PaymentRecord[]> => {
+const fetchPayments = async (params?: FetchPaymentsParams): Promise<PaymentsListResult> => {
   try {
     const queryParams: Record<string, unknown> = {
-      limit: 15,
-      page: 1,
+      limit: params?.limit ?? 15,
+      page: params?.page ?? 1,
     };
     if (params?.status) queryParams.status = params.status.toLowerCase();
     if (params?.method) queryParams.paymentMethod = params.method;
@@ -77,19 +91,21 @@ const fetchPayments = async (params?: FetchPaymentsParams): Promise<PaymentRecor
       : Array.isArray(response.data)
       ? response.data
       : [];
+    const items = Array.isArray(paymentList) ? paymentList.map((p) => mapPayment(p)) : [];
+    const meta = response.data && typeof response.data === 'object' && 'meta' in response.data
+      ? (response.data as any).meta
+      : undefined;
 
-    if (paymentList.length > 0) {
-      return paymentList.map((p) => mapPayment(p));
-    }
+    return { items, meta };
   } catch (error) {
     console.warn('Payment API failed, using fallback mock payments:', error);
   }
 
-  return mockPayments;
+  return { items: mockPayments, meta: undefined };
 };
 
 export function usePayments(params?: FetchPaymentsParams) {
-  return useQuery({
+  return useQuery<PaymentsListResult>({
     queryKey: ['payments', params],
     queryFn: () => fetchPayments(params),
     staleTime: 60 * 1000,

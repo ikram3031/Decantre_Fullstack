@@ -57,7 +57,7 @@ export const SearchDropdown = ({ query, onSelect, maxResults = 6, placeholder = 
   if ((!query || !query.trim()) && results.length === 0) return null;
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-2 z-30 border border-gold/20 bg-black/95 backdrop-blur rounded-sm shadow-2xl overflow-hidden">
+    <div className="absolute top-full left-0 right-0 mt-2 z-30 border border-zinc-700 bg-zinc-900 rounded-sm shadow-2xl overflow-hidden">
       <div className="px-2 py-1">
         {loading && (
           <div className="text-xs text-zinc-400 py-2">Searching...</div>

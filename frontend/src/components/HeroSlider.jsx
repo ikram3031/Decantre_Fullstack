@@ -10,6 +10,7 @@ const bannerSlides = [
     title: "INDULGE IN LUXURY",
     buttonText: "SHOP NOW"
   },
+  /*
   {
     bgImage: "https://decantrebd.com/wp-content/uploads/2026/07/main_banner-2.jpg",
     tagline: "Elevate your olfactory signature",
@@ -22,6 +23,7 @@ const bannerSlides = [
     title: "ROYAL SIGNATURES",
     buttonText: "SHOP NOW"
   }
+  */
 ];
 
 export const HeroSlider = () => {
@@ -30,6 +32,7 @@ export const HeroSlider = () => {
 
   // Auto-play the slider
   useEffect(() => {
+    if (bannerSlides.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % bannerSlides.length);
     }, 6000);
@@ -87,31 +90,37 @@ export const HeroSlider = () => {
       ))}
 
       {/* Slider Controls (Bottom Dot Indicators with elegant long active pills) */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-        {bannerSlides.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrentSlide(idx)}
-            className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${
-              idx === currentSlide ? 'bg-gold w-6' : 'bg-white/40 hover:bg-white/70 w-2'
-            }`}
-          />
-        ))}
-      </div>
+      {bannerSlides.length > 1 && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+          {bannerSlides.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${
+                idx === currentSlide ? 'bg-gold w-6' : 'bg-white/40 hover:bg-white/70 w-2'
+              }`}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Left & Right Arrows */}
-      <button 
-        onClick={() => setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length)}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2.5 bg-black/40 hover:bg-gold text-white hover:text-black rounded-full border border-gold/40 hover:border-gold transition-all duration-300 cursor-pointer"
-      >
-        <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-      </button>
-      <button 
-        onClick={() => setCurrentSlide((prev) => (prev + 1) % bannerSlides.length)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2.5 bg-black/40 hover:bg-gold text-white hover:text-black rounded-full border border-gold/40 hover:border-gold transition-all duration-300 cursor-pointer"
-      >
-        <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-      </button>
+      {bannerSlides.length > 1 && (
+        <>
+          <button 
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + bannerSlides.length) % bannerSlides.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2.5 bg-black/40 hover:bg-gold text-white hover:text-black rounded-full border border-gold/40 hover:border-gold transition-all duration-300 cursor-pointer"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+          <button 
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % bannerSlides.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2.5 bg-black/40 hover:bg-gold text-white hover:text-black rounded-full border border-gold/40 hover:border-gold transition-all duration-300 cursor-pointer"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+        </>
+      )}
     </section>
   );
 };

@@ -12,25 +12,12 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-
-const data = [
-  { name: 'Jan', revenue: 4000 },
-  { name: 'Feb', revenue: 3000 },
-  { name: 'Mar', revenue: 2000 },
-  { name: 'Apr', revenue: 2780 },
-  { name: 'May', revenue: 1890 },
-  { name: 'Jun', revenue: 2390 },
-  { name: 'Jul', revenue: 3490 },
-  { name: 'Aug', revenue: 4200 },
-  { name: 'Sep', revenue: 3800 },
-  { name: 'Oct', revenue: 4300 },
-  { name: 'Nov', revenue: 5100 },
-  { name: 'Dec', revenue: 6200 },
-];
+import { useOrderCounts } from '@/hooks/use-order-counts';
 
 export function RevenueChart() {
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { data: counts = [], isLoading } = useOrderCounts(30);
 
   useEffect(() => {
     setMounted(true);
@@ -39,12 +26,17 @@ export function RevenueChart() {
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const isDark = currentTheme === 'dark';
 
+  const data = (counts || []).map((c) => ({
+    name: new Date(c.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+    count: c.count,
+  }));
+
   if (!mounted) {
     return (
       <Card className="col-span-1 lg:col-span-4 h-[400px]">
         <CardHeader>
-          <CardTitle>Revenue Overview</CardTitle>
-          <CardDescription>Monthly revenue performance for the year.</CardDescription>
+          <CardTitle>Orders (last 30 days)</CardTitle>
+          <CardDescription>Daily order counts for the last 30 days.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[300px] w-full flex items-center justify-center text-muted-foreground">
@@ -58,8 +50,8 @@ export function RevenueChart() {
   return (
     <Card className="col-span-1 lg:col-span-4">
       <CardHeader>
-        <CardTitle>Revenue Overview</CardTitle>
-        <CardDescription>Monthly revenue performance for the year.</CardDescription>
+        <CardTitle>Orders (last 30 days)</CardTitle>
+        <CardDescription>Daily order counts for the last 30 days.</CardDescription>
       </CardHeader>
       <CardContent className="px-2 sm:p-6 sm:pt-0">
         <div className="h-[300px] w-full">
@@ -86,7 +78,7 @@ export function RevenueChart() {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `৳${value}`}
+                tickFormatter={(value) => `${value}`}
               />
               <Tooltip
                 contentStyle={{
@@ -95,10 +87,11 @@ export function RevenueChart() {
                   color: isDark ? '#f9fafb' : '#111827',
                   borderRadius: '6px',
                 }}
+                formatter={(value: any) => [value, 'Orders']}
               />
               <Line
                 type="monotone"
-                dataKey="revenue"
+                dataKey="count"
                 stroke="hsl(var(--primary))"
                 strokeWidth={2}
                 dot={false}
