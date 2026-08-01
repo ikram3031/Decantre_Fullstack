@@ -39,26 +39,15 @@ import {
   Tag,
 } from "lucide-react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-  sku: string;
-  size: string;
-}
-
-// ─── Price helpers ────────────────────────────────────────────────────────────
-
-const effectivePrice = (price: number, offerPrice: number | null) =>
-  offerPrice != null && offerPrice > 0 && offerPrice < price
-    ? offerPrice
-    : price;
-
-const formatBDT = (amount: number) => `৳${amount.toLocaleString("en-BD")}`;
+import {
+  CartItem,
+  CompletedInvoiceItem,
+  OrderRecord,
+  NewOrderApiResponse,
+  CompletedOrder,
+  ApiErrorResponse,
+} from "@/lib/order-utils";
+import {effectivePrice, formatBDT} from "@/utils/orderHelper";
 
 // ─── Product Add Dialog ───────────────────────────────────────────────────────
 
@@ -339,7 +328,7 @@ export default function NewInStoreOrderPage() {
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [dialogProduct, setDialogProduct] = useState<Product | null>(null);
-  const [completedOrder, setCompletedOrder] = useState<any>(null);
+  const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
   const [isSendingInvoice, setIsSendingInvoice] = useState(false);
 
   const [customerName, setCustomerName] = useState("");
@@ -434,7 +423,7 @@ export default function NewInStoreOrderPage() {
       };
 
       // 1. Create the Order
-      const orderResponse = await apiClient.post<any>(
+      const orderResponse = await apiClient.post<NewOrderApiResponse>(
         "/api/v1/orders/new-order",
         orderPayload
       );
@@ -455,6 +444,13 @@ export default function NewInStoreOrderPage() {
 
       // 3. Invoice generation is pending until the user chooses to download or send it.
       const invoiceUrl = `https://decantre.com/invoice/${orderNumber}`;
+      const invoiceItems = cart.map((item) => ({
+        description: item.name,
+        price: formatBDT(item.price),
+        quantity: item.quantity,
+        total: formatBDT(item.price * item.quantity),
+      }));
+
       setCompletedOrder({
         order,
         orderNumber,
@@ -469,15 +465,17 @@ export default function NewInStoreOrderPage() {
           (paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone
             ? `+880${paymentPhone}`
             : "",
+        items: invoiceItems,
       });
 
       toast.success(
         "In-store order created successfully. Invoice generation is pending.",
       );
-    } catch (err: any) {
+    } catch (err) {
+      const apiErr = err as ApiErrorResponse;
       const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.errors?.join(", ") ||
+        apiErr?.response?.data?.message ||
+        apiErr?.response?.data?.errors?.join(", ") ||
         "Failed to create order.";
       toast.error(msg);
     } finally {
@@ -489,29 +487,35 @@ export default function NewInStoreOrderPage() {
     if (!completedOrder) return;
     setIsSendingInvoice(true);
     try {
+      const createdDate = new Date();
+      const dueDate = new Date(createdDate);
+      dueDate.setDate(createdDate.getDate() + 7);
+
       await apiClient.post("/api/v1/sendEmail/invoice", {
         email: completedOrder.customerEmail,
         invoiceNumber: completedOrder.orderNumber,
-        issueDate: new Date().toISOString().split("T")[0],
-        shippingName: completedOrder.customerName,
-        shippingAddress: completedOrder.customerAddress,
-        shippingPhone: completedOrder.customerPhone,
-        items: cart.map((item) => ({
-          description: item.name,
-          price: `৳${item.price}`,
-          quantity: item.quantity,
-          total: `৳${item.price * item.quantity}`,
-        })),
-        subtotal: `৳${completedOrder.totalAmount}`,
+        createdDate: createdDate.toISOString().split("T")[0],
+        dueDate: dueDate.toISOString().split("T")[0],
+        sellerName: "Decantre",
+        sellerAddress: "House 20, Rd 10, Uttara, Dhaka 1230",
+        buyerName: completedOrder.customerName,
+        buyerAddress: completedOrder.customerAddress,
+        buyerEmail: completedOrder.customerEmail,
+        paymentMethod: completedOrder.paymentMethod,
+        paymentReference: completedOrder.orderNumber,
+        items: completedOrder.items,
+        subtotal: formatBDT(completedOrder.totalAmount),
         taxes: "৳0",
         discount: "৳0",
-        total: `৳${completedOrder.totalAmount}`,
+        total: formatBDT(completedOrder.totalAmount),
         invoiceUrl: completedOrder.invoiceUrl,
+        notes: "Thank you for shopping with Decantre.",
       });
       toast.success("Invoice email sent successfully.");
-    } catch (err: any) {
+    } catch (err) {
+      const apiErr = err as ApiErrorResponse;
       toast.error(
-        err?.response?.data?.message || "Failed to send invoice email.",
+        apiErr?.response?.data?.message || "Failed to send invoice email.",
       );
     } finally {
       setIsSendingInvoice(false);

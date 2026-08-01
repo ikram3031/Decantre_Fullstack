@@ -4,6 +4,7 @@ import cors from "cors";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { logger } from "./config/logger.js";
 import productsRouter from "./routes/ProductsRoute.js";
+import imagesRouter from "./routes/ImagesRoute.js";
 import { searchProducts } from "./controllers/SearchController.js";
 import emailRouter from "./routes/EmailRoute.js";
 import ordersRouter from "./routes/OrdersRoute.js";
@@ -12,6 +13,7 @@ import authRouter from "./routes/AuthRoute.js";
 import membersRouter from "./routes/MembersRoute.js";
 import assetsRouter from "./routes/AssetsRoute.js";
 import paymentsRouter from "./routes/PaymentsRoute.js";
+import billingRouter from "./routes/BillingRoute.js";
 // import exportRouter from "./routes/ExportRoute.js";
 import categoriesRouter from "./routes/CategoryRoute.js";
 import brandRouter from "./routes/BrandRoute.js";
@@ -49,7 +51,7 @@ export async function createApp() {
   });
 
   app.use("/api/v1/products", productsRouter);
-  // app.use("/api/v1/images", imagesRouter);
+  app.use("/api/v1/images", imagesRouter);
   // app.use("/api/v1/export", exportRouter);
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/users", usersRouter);
@@ -58,6 +60,7 @@ export async function createApp() {
   app.use("/api/v1/sendEmail", emailRouter);
   app.use("/api/v1/orders", ordersRouter);
   app.use("/api/v1/payments", paymentsRouter);
+  app.use("/api/v1/billing", billingRouter);
   app.use("/api/v1/categories", categoriesRouter);
   app.use("/api/v1/brands", brandRouter);
   app.use('/api/v1/dashboard', dashboardRouter);

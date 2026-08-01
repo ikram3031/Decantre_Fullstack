@@ -7,11 +7,11 @@ interface DecantreLogoProps {
 }
 
 export const DecantreLogo: React.FC<DecantreLogoProps> = ({
-  className = 'relative h-16 w-16 overflow-hidden',
+  className = 'h-16 w-16',
   alt = 'Decantre logo',
 }) => {
   return (
-    <div className={className}>
+    <div className={`relative overflow-hidden ${className}`}>
       <Image
         src={logoImage}
         alt={alt}

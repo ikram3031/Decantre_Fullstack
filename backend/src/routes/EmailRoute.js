@@ -80,33 +80,47 @@ const handleInvoiceRequest = async (req, res) => {
     });
   }
 
+  const invoiceNumber = req.body.invoiceNumber || req.query.invoiceNumber || `INV-${Date.now()}`;
   const invoiceData = {
-    invoiceNumber: req.body.invoiceNumber || req.query.invoiceNumber || "INV-0001",
-    issueDate: req.body.issueDate || req.query.issueDate || new Date().toLocaleDateString(),
-    sellerName: "Decantre",
-    sellerAddress: "House 20, Rd 10, Uttara, Dhaka 1230",
-    shippingName: req.body.shippingName || req.query.shippingName || "Customer",
-    shippingAddress: req.body.shippingAddress || req.query.shippingAddress || "Customer Address",
-    shippingPhone: req.body.shippingPhone || req.query.shippingPhone || "",
-    items: req.body.items || req.query.items || [
-      {
-        description: "Product Name 1",
-        price: "$35.00",
-        quantity: 2,
-        total: "$70.00",
-      },
-      {
-        description: "Product Name 2",
-        price: "$100.00",
-        quantity: 1,
-        total: "$100.00",
-      },
-    ],
-    subtotal: req.body.subtotal || req.query.subtotal || "$215.00",
+    invoiceNumber,
+    createdDate: req.body.createdDate || req.query.createdDate || new Date().toLocaleDateString(),
+    dueDate: req.body.dueDate || req.query.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    sellerName: req.body.sellerName || req.query.sellerName || "Decantre",
+    sellerAddress: req.body.sellerAddress || req.query.sellerAddress || "House 20, Rd 10, Uttara, Dhaka 1230",
+    buyerName: req.body.buyerName || req.query.buyerName || "Acme Corp.",
+    buyerAddress: req.body.buyerAddress || req.query.buyerAddress || "John Doe, john@example.com",
+    buyerEmail: req.body.buyerEmail || req.query.buyerEmail || email,
+    paymentMethod: req.body.paymentMethod || req.query.paymentMethod || "Check",
+    paymentReference: req.body.paymentReference || req.query.paymentReference || "1000",
+    items: Array.isArray(req.body.items)
+      ? req.body.items
+      : Array.isArray(req.query.items)
+      ? req.query.items
+      : [
+          {
+            description: "Website design",
+            price: "$300.00",
+            total: "$300.00",
+          },
+          {
+            description: "Hosting (3 months)",
+            price: "$75.00",
+            total: "$75.00",
+          },
+          {
+            description: "Domain name (1 year)",
+            price: "$10.00",
+            total: "$10.00",
+          },
+        ],
+    subtotal: req.body.subtotal || req.query.subtotal || "$385.00",
     taxes: req.body.taxes || req.query.taxes || "$0.00",
     discount: req.body.discount || req.query.discount || "$0.00",
-    total: req.body.total || req.query.total || "$215.00",
-    invoiceUrl: req.body.invoiceUrl || req.query.invoiceUrl || "https://yourdomain.com/invoice/INV-0001",
+    total: req.body.total || req.query.total || "$385.00",
+    invoiceUrl:
+      req.body.invoiceUrl || req.query.invoiceUrl || `https://yourdomain.com/invoice/${invoiceNumber}`,
+    notes: req.body.notes || req.query.notes || "Thank you for your business.",
+    logoUrl: req.body.logoUrl || req.query.logoUrl || "https://sparksuite.github.io/simple-html-invoice-template/images/logo.png",
   };
 
   try {

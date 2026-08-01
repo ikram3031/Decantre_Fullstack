@@ -1,6 +1,6 @@
 # Invoice Email API Documentation
 
-This endpoint sends a styled invoice email using Hostinger SMTP.
+This endpoint sends a styled invoice email using SMTP credentials configured in the backend.
 
 ## Base URL
 
@@ -22,29 +22,39 @@ http://144.79.218.126:5092/api/v1/sendEmail/invoice
 {
   "email": "customer@example.com",
   "invoiceNumber": "INV-0001",
-  "issueDate": "2026-07-19",
-  "shippingName": "Customer",
-  "shippingAddress": "Customer Address",
-  "shippingPhone": "+8801712345678",
+  "createdDate": "2026-07-19",
+  "dueDate": "2026-08-19",
+  "sellerName": "Decantre",
+  "sellerAddress": "House 20, Rd 10, Uttara, Dhaka 1230",
+  "buyerName": "Acme Corp.",
+  "buyerAddress": "John Doe, john@example.com",
+  "buyerEmail": "buyer@example.com",
+  "paymentMethod": "Check",
+  "paymentReference": "1000",
   "items": [
     {
-      "description": "Product Name 1",
-      "price": "$35.00",
-      "quantity": 2,
-      "total": "$70.00"
+      "description": "Website design",
+      "price": "$300.00",
+      "total": "$300.00"
     },
     {
-      "description": "Product Name 2",
-      "price": "$100.00",
-      "quantity": 1,
-      "total": "$100.00"
+      "description": "Hosting (3 months)",
+      "price": "$75.00",
+      "total": "$75.00"
+    },
+    {
+      "description": "Domain name (1 year)",
+      "price": "$10.00",
+      "total": "$10.00"
     }
   ],
-  "subtotal": "$215.00",
+  "subtotal": "$385.00",
   "taxes": "$0.00",
   "discount": "$0.00",
-  "total": "$215.00",
-  "invoiceUrl": "https://yourdomain.com/invoice/INV-0001"
+  "total": "$385.00",
+  "invoiceUrl": "https://yourdomain.com/invoice/INV-0001",
+  "notes": "Thank you for your business.",
+  "logoUrl": "https://sparksuite.github.io/simple-html-invoice-template/images/logo.png"
 }
 ```
 
@@ -72,6 +82,8 @@ http://144.79.218.126:5092/api/v1/sendEmail/invoice
 ## Notes
 
 - `email` is required and must be a valid address.
-- `shippingName` and `shippingAddress` should be provided instead of buyer name/address.
+- `buyerName`, `buyerAddress`, and `buyerEmail` are used to build the invoice recipient block.
 - `total` should be provided in the request and will be used as-is; the server does not calculate totals.
-- The invoice email uses a styled HTML template.
+- `createdDate` and `dueDate` are optional; defaults are generated if omitted.
+- `logoUrl` can be provided to render a brand logo in the invoice HTML.
+- The invoice uses a responsive HTML template styled to match the existing frontend theme.

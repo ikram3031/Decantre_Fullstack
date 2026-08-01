@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { uploadMiddleware, uploadProductImage } from "../controllers/ImagesController.js";
+import { authenticateToken, authorizeRoles } from "../middlewares/auth.middleware.js";
 
 const imagesRouter = Router();
 
@@ -17,4 +19,13 @@ imagesRouter.get("/resize", async (req, res, next) => {
   }
 });
 
+imagesRouter.post(
+  "/upload",
+  authenticateToken,
+  authorizeRoles("Owner", "Admin"),
+  uploadMiddleware,
+  uploadProductImage
+);
+
 export default imagesRouter;
+
