@@ -23,7 +23,6 @@ import {
 import { MoreHorizontal, ImageIcon } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import Image from 'next/image';
 
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';

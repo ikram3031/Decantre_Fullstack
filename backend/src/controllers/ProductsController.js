@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { ProductModel } from "../models/product.model.js";
 import { CategoryModel } from "../models/category.model.js";
 import { BrandModel } from "../models/brand.model.js";
+import { UserModel } from "../models/user.model.js";
 
 const DEFAULT_LIMIT = 10;
 const SORT_FIELD_MAP = {
@@ -253,6 +254,250 @@ export const getProduct = async (req, res, next) => {
     }
 
     res.json({ data: serializeProduct(product) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const checkSlugExists = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    if (!slug) {
+      res.json({ exists: false });
+      return;
+    }
+    const product = await ProductModel.findOne({ slug: slug.trim() }).lean();
+    res.json({ exists: !!product });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const createProduct = async (req, res, next) => {
+  try {
+    const body = req.body || {};
+    
+    // Resolve createdBy
+    let userId = req.user?.userId || req.user?.id;
+    if (!userId) {
+      const fallbackUser = await UserModel.findOne({ role: { $in: ["Owner", "Admin"] } }).lean();
+      if (fallbackUser) {
+        userId = fallbackUser._id;
+      } else {
+        const anyUser = await UserModel.findOne().lean();
+        if (anyUser) userId = anyUser._id;
+      }
+    }
+    
+    if (!userId) {
+      res.status(400).json({ status: "error", message: "User is required to create a product" });
+      return;
+    }
+
+    // Resolve Categories: convert array of IDs or slugs
+    let categoryIds = [];
+    if (body.categories || body.category) {
+      const catInput = body.categories || body.category;
+      const catArray = Array.isArray(catInput) ? catInput : [catInput];
+      for (const cat of catArray) {
+        if (!cat) continue;
+        if (Types.ObjectId.isValid(cat)) {
+          categoryIds.push(cat);
+        } else {
+          const found = await CategoryModel.findOne({ slug: cat }).lean();
+          if (found) categoryIds.push(found._id);
+        }
+      }
+    }
+
+    // Resolve Brand: convert to parent/sub brand dids
+    let brandDids = [];
+    if (body.brand || body.brands) {
+      const brandInput = body.brand || body.brands;
+      const brandArray = Array.isArray(brandInput) ? brandInput : [brandInput];
+      for (const br of brandArray) {
+        if (!br) continue;
+        if (/^[0-9a-fA-F]{16}$/.test(br)) {
+          brandDids.push(br);
+        } else {
+          const found = await BrandModel.findOne({ slug: br }).lean();
+          if (found) brandDids.push(found.did);
+        }
+      }
+    }
+
+    // Handle image_url vs imageUrl
+    const imageUrl = body.imageUrl || body.image_url || PLACEHOLDER_IMAGE_URL;
+
+    const productData = {
+      name: body.name,
+      slug: body.slug,
+      description: body.description || body.name, // default to name if empty
+      type: body.type || "simple",
+      imageUrl,
+      thumbnailUrl: body.thumbnailUrl || body.thumbnail_url || imageUrl,
+      season: body.season || "All-Season",
+      tags: Array.isArray(body.tags) ? body.tags : [],
+      notes: Array.isArray(body.notes) ? body.notes : [],
+      categories: categoryIds,
+      brand: brandDids,
+      stockStatus: body.stockStatus || body.stock_status || "instock",
+      createdBy: userId,
+    };
+
+    if (body.type === "variant") {
+      productData.variants = Array.isArray(body.variants) ? body.variants.map((v, i) => ({
+        size: v.size,
+        price: Number(v.price),
+        offerPrice: v.offerPrice !== undefined && v.offerPrice !== null ? Number(v.offerPrice) : null,
+        stockQuantity: v.stockQuantity !== undefined ? Number(v.stockQuantity) : 0,
+        sku: v.sku || "",
+        sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : i,
+      })) : [];
+    } else {
+      productData.price = Number(body.price || 0);
+      productData.offerPrice = body.offerPrice !== undefined && body.offerPrice !== null ? Number(body.offerPrice) : null;
+      productData.stockQuantity = body.stockQuantity !== undefined ? Number(body.stockQuantity) : 0;
+      productData.sku = body.sku || "";
+    }
+
+    if (body.metaData) {
+      productData.metaData = {
+        metaTitle: body.metaData.metaTitle || "",
+        metaDescription: body.metaData.metaDescription || "",
+        keywords: Array.isArray(body.metaData.keywords) ? body.metaData.keywords : [],
+        ogImage: body.metaData.ogImage || "",
+      };
+    }
+
+    const newProduct = await ProductModel.create(productData);
+    res.status(201).json({ status: "success", data: serializeProduct(newProduct) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const body = req.body || {};
+
+    const filter = Types.ObjectId.isValid(id) ? { _id: id } : { slug: id };
+    const product = await ProductModel.findOne(filter);
+    if (!product) {
+      res.status(404).json({ status: "error", message: "Product not found" });
+      return;
+    }
+
+    // Resolve updatedBy
+    let userId = req.user?.userId || req.user?.id;
+    if (!userId) {
+      const fallbackUser = await UserModel.findOne({ role: { $in: ["Owner", "Admin"] } }).lean();
+      if (fallbackUser) userId = fallbackUser._id;
+    }
+
+    // Update fields
+    if (body.name !== undefined) product.name = body.name;
+    if (body.slug !== undefined) product.slug = body.slug;
+    if (body.description !== undefined) product.description = body.description;
+    if (body.type !== undefined) product.type = body.type;
+    if (body.imageUrl !== undefined) product.imageUrl = body.imageUrl;
+    if (body.image_url !== undefined) product.imageUrl = body.image_url;
+    if (body.thumbnailUrl !== undefined) product.thumbnailUrl = body.thumbnailUrl;
+    if (body.thumbnail_url !== undefined) product.thumbnailUrl = body.thumbnail_url;
+    if (body.season !== undefined) product.season = body.season;
+    if (body.tags !== undefined) product.tags = body.tags;
+    if (body.notes !== undefined) product.notes = body.notes;
+    if (body.stockStatus !== undefined) product.stockStatus = body.stockStatus;
+    if (body.stock_status !== undefined) product.stockStatus = body.stock_status;
+    
+    if (userId) {
+      product.updatedBy = userId;
+    }
+
+    if (body.categories !== undefined || body.category !== undefined) {
+      const catInput = body.categories !== undefined ? body.categories : body.category;
+      const catArray = Array.isArray(catInput) ? catInput : [catInput];
+      let categoryIds = [];
+      for (const cat of catArray) {
+        if (!cat) continue;
+        if (Types.ObjectId.isValid(cat)) {
+          categoryIds.push(cat);
+        } else {
+          const found = await CategoryModel.findOne({ slug: cat }).lean();
+          if (found) categoryIds.push(found._id);
+        }
+      }
+      product.categories = categoryIds;
+    }
+
+    if (body.brand !== undefined || body.brands !== undefined) {
+      const brandInput = body.brand !== undefined ? body.brand : body.brands;
+      const brandArray = Array.isArray(brandInput) ? brandInput : [brandInput];
+      let brandDids = [];
+      for (const br of brandArray) {
+        if (!br) continue;
+        if (/^[0-9a-fA-F]{16}$/.test(br)) {
+          brandDids.push(br);
+        } else {
+          const found = await BrandModel.findOne({ slug: br }).lean();
+          if (found) brandDids.push(found.did);
+        }
+      }
+      product.brand = brandDids;
+    }
+
+    if (product.type === "variant") {
+      if (body.variants !== undefined) {
+        product.variants = Array.isArray(body.variants) ? body.variants.map((v, i) => ({
+          size: v.size,
+          price: Number(v.price),
+          offerPrice: v.offerPrice !== undefined && v.offerPrice !== null ? Number(v.offerPrice) : null,
+          stockQuantity: v.stockQuantity !== undefined ? Number(v.stockQuantity) : 0,
+          sku: v.sku || "",
+          sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : i,
+        })) : [];
+      }
+      // Clean simple product fields
+      product.price = undefined;
+      product.offerPrice = undefined;
+      product.stockQuantity = undefined;
+      product.sku = undefined;
+    } else {
+      if (body.price !== undefined) product.price = Number(body.price);
+      if (body.offerPrice !== undefined) product.offerPrice = body.offerPrice !== null ? Number(body.offerPrice) : null;
+      if (body.stockQuantity !== undefined) product.stockQuantity = Number(body.stockQuantity);
+      if (body.sku !== undefined) product.sku = body.sku;
+      // Clean variant product fields
+      product.variants = undefined;
+    }
+
+    if (body.metaData !== undefined) {
+      product.metaData = {
+        metaTitle: body.metaData.metaTitle || "",
+        metaDescription: body.metaData.metaDescription || "",
+        keywords: Array.isArray(body.metaData.keywords) ? body.metaData.keywords : [],
+        ogImage: body.metaData.ogImage || "",
+      };
+    }
+
+    await product.save();
+    res.json({ status: "success", data: serializeProduct(product) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const filter = Types.ObjectId.isValid(id) ? { _id: id } : { slug: id };
+    const result = await ProductModel.deleteOne(filter);
+    if (result.deletedCount === 0) {
+      res.status(404).json({ status: "error", message: "Product not found" });
+      return;
+    }
+    res.json({ status: "success", message: "Product deleted successfully" });
   } catch (err) {
     next(err);
   }

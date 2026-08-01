@@ -58,7 +58,7 @@ const mapBilling = (billing: RawBilling): BillingRecord => {
     (billing._id as string) ||
     'Unknown';
   const customerName =
-    (order.customer as Record<string, unknown>)?.fullName ||
+    ((order.customer as Record<string, unknown>)?.fullName as string) ||
     (billing.billingEmail as string) ||
     (billing.billingPhone as string) ||
     'Guest Customer';

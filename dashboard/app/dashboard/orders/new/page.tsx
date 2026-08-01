@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useProducts, Product, ProductVariant } from "@/hooks/use-products";
 import { apiClient } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-context";
@@ -41,8 +42,6 @@ import {
 
 import {
   CartItem,
-  CompletedInvoiceItem,
-  OrderRecord,
   NewOrderApiResponse,
   CompletedOrder,
   ApiErrorResponse,
@@ -133,12 +132,13 @@ function ProductAddDialog({
 
         {/* Product thumbnail + meta */}
         <div className="flex items-start gap-3 -mt-1">
-          <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border">
+          <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border">
             {product.image ? (
-              <img
+              <Image
                 src={product.image}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
