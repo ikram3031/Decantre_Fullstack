@@ -3,7 +3,8 @@
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useProducts, Product, ProductVariant } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
+import type { Product, ProductVariant } from "@/types";
 import { apiClient } from "@/lib/api-client";
 import { useAuth } from "@/lib/auth-context";
 import { useCategories, useBrands } from "@/lib/category-cache";
@@ -46,7 +47,7 @@ import {
   CompletedOrder,
   ApiErrorResponse,
 } from "@/lib/order-utils";
-import {effectivePrice, formatBDT} from "@/utils/orderHelper";
+import { effectivePrice, formatBDT } from "@/utils/orderHelper";
 
 // ─── Product Add Dialog ───────────────────────────────────────────────────────
 
@@ -68,12 +69,12 @@ function ProductAddDialog({
 
   if (!product) return null;
 
-  const isVariant = product.type === "variant" && product.variants.length > 0;
+  const isVariant = product.type === "variant" && (product?.variants?.length ?? 0) > 0;
 
   // For simple products, price is on the product itself
-  const simplePrice = effectivePrice(product.price, product.offerPrice);
+  const simplePrice = effectivePrice(product.price, product.offerPrice ?? null);
   const variantPrice = selectedVariant
-    ? effectivePrice(selectedVariant.price, selectedVariant.offerPrice)
+    ? effectivePrice(selectedVariant.price, selectedVariant.offerPrice ?? null)
     : null;
 
   const displayPrice = isVariant ? variantPrice : simplePrice;
@@ -82,9 +83,7 @@ function ProductAddDialog({
   // For in-store orders, bypass database stock checks to allow selling physical items on hand
   const isOutOfStock = false;
 
-  const canAdd = isVariant
-    ? selectedVariant !== null
-    : true;
+  const canAdd = isVariant ? selectedVariant !== null : true;
 
   const handleAdd = () => {
     if (!canAdd || displayPrice === null) return;
@@ -183,10 +182,10 @@ function ProductAddDialog({
                 )}
             </div>
             <Badge
-              variant={product.stock > 0 ? "secondary" : "destructive"}
+              variant={(product.stock ?? 0) > 0 ? "secondary" : "destructive"}
               className="text-xs"
             >
-              {product.stock > 0 ? `${product.stock} in stock` : "Out of Stock"}
+              {(product.stock ?? 0) > 0 ? `${product.stock} in stock` : "Out of Stock"}
             </Badge>
           </div>
         )}
@@ -198,10 +197,10 @@ function ProductAddDialog({
               Select Size / Variation
             </p>
             <div className="grid grid-cols-1 gap-2">
-              {[...product.variants]
-                .sort((a, b) => a.sortOrder - b.sortOrder)
+              {[...(product.variants || [])]
+                .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
                 .map((v) => {
-                  const vPrice = effectivePrice(v.price, v.offerPrice);
+                  const vPrice = effectivePrice(v.price, v.offerPrice ?? null);
                   const isSelected = selectedVariant?.size === v.size;
                   const hasNoStock = v.stockQuantity === 0;
 
@@ -328,7 +327,9 @@ export default function NewInStoreOrderPage() {
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [dialogProduct, setDialogProduct] = useState<Product | null>(null);
-  const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
+  const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(
+    null,
+  );
   const [isSendingInvoice, setIsSendingInvoice] = useState(false);
 
   const [customerName, setCustomerName] = useState("");
@@ -386,15 +387,21 @@ export default function NewInStoreOrderPage() {
       toast.error("Please enter a valid 10-digit Phone Number.");
       return;
     }
-    if ((paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone.trim().length !== 10) {
-      toast.error(`Please enter a valid 10-digit ${paymentMethod === "bkash" ? "bKash" : "Nagad"} number.`);
+    if (
+      (paymentMethod === "bkash" || paymentMethod === "nagad") &&
+      paymentPhone.trim().length !== 10
+    ) {
+      toast.error(
+        `Please enter a valid 10-digit ${paymentMethod === "bkash" ? "bKash" : "Nagad"} number.`,
+      );
       return;
     }
     setIsSubmitting(true);
     try {
-      const fullPaymentMethod = (paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone
-        ? `${paymentMethod} (+880${paymentPhone})`
-        : paymentMethod;
+      const fullPaymentMethod =
+        (paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone
+          ? `${paymentMethod} (+880${paymentPhone})`
+          : paymentMethod;
 
       const orderPayload = {
         orderType: "instore",
@@ -425,7 +432,7 @@ export default function NewInStoreOrderPage() {
       // 1. Create the Order
       const orderResponse = await apiClient.post<NewOrderApiResponse>(
         "/api/v1/orders/new-order",
-        orderPayload
+        orderPayload,
       );
       const order = orderResponse.data.data;
       const orderId = order.id || order._id;
@@ -435,9 +442,11 @@ export default function NewInStoreOrderPage() {
       await apiClient.post("/api/v1/payments", {
         orderId,
         paymentMethod: paymentMethod,
-        paymentPhone: (paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone
-          ? `+880${paymentPhone}`
-          : "",
+        paymentPhone:
+          (paymentMethod === "bkash" || paymentMethod === "nagad") &&
+          paymentPhone
+            ? `+880${paymentPhone}`
+            : "",
         amount: subtotal,
         status: "completed",
       });
@@ -462,7 +471,8 @@ export default function NewInStoreOrderPage() {
         totalAmount: subtotal,
         paymentMethod: paymentMethod,
         paymentPhone:
-          (paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone
+          (paymentMethod === "bkash" || paymentMethod === "nagad") &&
+          paymentPhone
             ? `+880${paymentPhone}`
             : "",
         items: invoiceItems,
@@ -534,460 +544,464 @@ export default function NewInStoreOrderPage() {
   // ── Render ───────────────────────────────────────────────────────────────
 
   return (
-		<div className="flex-1 space-y-0 p-4 md:p-8 pt-6">
-			{/* Header */}
-			<div className="flex items-center gap-3 mb-6">
-				<Button
-					variant="outline"
-					size="icon"
-					onClick={() => router.back()}
-					className="h-9 w-9"
-				>
-					<ArrowLeft className="h-4 w-4" />
-				</Button>
-				<div>
-					<h2 className="text-3xl font-bold tracking-tight">
-						New In-Store Order
-					</h2>
-					<p className="text-muted-foreground text-sm mt-0.5">
-						Walk-in counter sale — order ID prefixed with{" "}
-						<span className="font-mono font-semibold text-primary">S</span>
-					</p>
-				</div>
-			</div>
+    <div className="flex-1 space-y-0 p-4 md:p-8 pt-6">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => router.back()}
+          className="h-9 w-9"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">
+            New In-Store Order
+          </h2>
+          <p className="text-muted-foreground text-sm mt-0.5">
+            Walk-in counter sale — order ID prefixed with{" "}
+            <span className="font-mono font-semibold text-primary">S</span>
+          </p>
+        </div>
+      </div>
 
-			<div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-				{/* ── Left: Product Catalogue ──────────────────────────────────────── */}
-				<div className="lg:col-span-3 space-y-4">
-					<div className="bg-card border rounded-xl p-5 shadow-sm">
-						<h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-							<Package className="h-5 w-5 text-primary" />
-							Product Catalogue
-						</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* ── Left: Product Catalogue ──────────────────────────────────────── */}
+        <div className="lg:col-span-3 space-y-4">
+          <div className="bg-card border rounded-xl p-5 shadow-sm">
+            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <Package className="h-5 w-5 text-primary" />
+              Product Catalogue
+            </h3>
 
-						{/* Filters */}
-						<div className="flex gap-2 mb-3">
-							<Select
-								value={categoryFilter}
-								onValueChange={(v) => setCategoryFilter(v ?? "All")}
-							>
-								<SelectTrigger className="w-full">
-									<SelectValue placeholder="Category" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="All">All Categories</SelectItem>
-									{categories.map((cat) => (
-										<SelectItem key={cat.did} value={cat.slug || cat.did}>
-											{cat.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
+            {/* Filters */}
+            <div className="flex gap-2 mb-3">
+              <Select
+                value={categoryFilter}
+                onValueChange={(v) => setCategoryFilter(v ?? "All")}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Categories</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.did} value={cat.slug || cat.did}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-							<Select
-								value={brandFilter}
-								onValueChange={(v) => setBrandFilter(v ?? "All")}
-							>
-								<SelectTrigger className="w-full">
-									<SelectValue placeholder="Brand" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="All">All Brands</SelectItem>
-									{brands.map((brand) => (
-										<SelectItem key={brand.did} value={brand.slug || brand.did}>
-											{brand.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
+              <Select
+                value={brandFilter}
+                onValueChange={(v) => setBrandFilter(v ?? "All")}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Brand" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Brands</SelectItem>
+                  {brands.map((brand) => (
+                    <SelectItem key={brand.did} value={brand.slug || brand.did}>
+                      {brand.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-						{/* Search */}
-						<div className="relative mb-4">
-							<Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-							<Input
-								placeholder="Search products by name or SKU..."
-								className="pl-9"
-								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
-							/>
-							{searchQuery && (
-								<button
-									className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground transition-colors"
-									onClick={() => setSearchQuery("")}
-								>
-									<X className="h-4 w-4" />
-								</button>
-							)}
-						</div>
+            {/* Search */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search products by name or SKU..."
+                className="pl-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button
+                  className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
 
-						{/* Product Grid */}
-						{productsLoading ? (
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-								{[...Array(6)].map((_, i) => (
-									<div
-										key={i}
-										className="h-24 rounded-lg bg-muted animate-pulse"
-									/>
-								))}
-							</div>
-						) : products.length === 0 ? (
-							<div className="py-16 text-center text-muted-foreground">
-								<Package className="h-10 w-10 mx-auto mb-3 opacity-30" />
-								<p>No products found</p>
-							</div>
-						) : (
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[540px] overflow-y-auto pr-1">
-								{products.map((product) => {
-									const inCart = cart.filter((c) =>
-										c.id.startsWith(product.id),
-									);
-									const cartQty = inCart.reduce((s, c) => s + c.quantity, 0);
-									const isOutOfStock = product.status === "Out of Stock";
-									const isVariant = product.type === "variant";
-									const displayPrice = isVariant
-										? Math.min(
-												...product.variants.map((v) =>
-													effectivePrice(v.price, v.offerPrice),
-												),
-											)
-										: effectivePrice(product.price, product.offerPrice);
+            {/* Product Grid */}
+            {productsLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-24 rounded-lg bg-muted animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : products.length === 0 ? (
+              <div className="py-16 text-center text-muted-foreground">
+                <Package className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p>No products found</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[540px] overflow-y-auto pr-1">
+                {products.map((product) => {
+                  const inCart = cart.filter((c) =>
+                    c.id.startsWith(product.id),
+                  );
+                  const cartQty = inCart.reduce((s, c) => s + c.quantity, 0);
+                  const isOutOfStock = product.status === "Out of Stock";
+                  const isVariant = product.type === "variant";
+                  const displayPrice = isVariant
+                    ? Math.min(
+                        ...(product.variants || []).map((v) =>
+                          effectivePrice(v.price, v.offerPrice ?? null),
+                        ),
+                      )
+                    : effectivePrice(product.price, product.offerPrice ?? null);
 
-									return (
-										<div
-											key={product.id}
-											className={`
+                  return (
+                    <div
+                      key={product.id}
+                      className={`
                         flex items-center gap-3 p-3 rounded-xl border bg-background transition-all
                         ${isOutOfStock ? "opacity-50" : "hover:border-primary/40 hover:shadow-sm"}
                         ${cartQty > 0 ? "border-primary/50 bg-primary/3" : "border-border"}
                       `}
-										>
-											{/* Thumbnail */}
-											<div className="w-14 h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-												{product.image ? (
-													<img
-														src={product.image}
-														alt={product.name}
-														className="w-full h-full object-cover"
-													/>
-												) : (
-													<div className="w-full h-full flex items-center justify-center">
-														<Package className="h-6 w-6 text-muted-foreground/30" />
-													</div>
-												)}
-											</div>
+                    >
+                      {/* Thumbnail */}
+                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                        {product.image ? (
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Package className="h-6 w-6 text-muted-foreground/30" />
+                          </div>
+                        )}
+                      </div>
 
-											{/* Info */}
-											<div className="flex-1 min-w-0">
-												<p className="font-medium text-sm leading-tight truncate">
-													{product.name}
-												</p>
-												<p className="text-[11px] text-muted-foreground truncate">
-													{product.sku}
-												</p>
-												<div className="flex items-center gap-1.5 mt-1">
-													<span className="text-sm font-semibold text-primary">
-														{isVariant
-															? `from ${formatBDT(displayPrice)}`
-															: formatBDT(displayPrice)}
-													</span>
-													{isVariant && (
-														<Badge
-															variant="secondary"
-															className="text-[10px] px-1 py-0 gap-0.5"
-														>
-															<Layers className="h-2.5 w-2.5" />{" "}
-															{product.variants.length} sizes
-														</Badge>
-													)}
-												</div>
-											</div>
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm leading-tight truncate">
+                          {product.name}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground truncate">
+                          {product.sku}
+                        </p>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="text-sm font-semibold text-primary">
+                            {isVariant
+                              ? `from ${formatBDT(displayPrice)}`
+                              : formatBDT(displayPrice)}
+                          </span>
+                          {isVariant && (
+                            <Badge
+                              variant="secondary"
+                              className="text-[10px] px-1 py-0 gap-0.5"
+                            >
+                              <Layers className="h-2.5 w-2.5" />{" "}
+                              {product.variants?.length ?? 0} sizes
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
 
-											{/* Add button */}
-											<div className="flex flex-col items-center gap-1">
-												{cartQty > 0 && (
-													<span className="text-[10px] font-semibold text-primary">
-														×{cartQty}
-													</span>
-												)}
-												<button
-													disabled={isOutOfStock}
-													onClick={() =>
-														!isOutOfStock && setDialogProduct(product)
-													}
-													className={`
+                      {/* Add button */}
+                      <div className="flex flex-col items-center gap-1">
+                        {cartQty > 0 && (
+                          <span className="text-[10px] font-semibold text-primary">
+                            ×{cartQty}
+                          </span>
+                        )}
+                        <button
+                          disabled={isOutOfStock}
+                          onClick={() =>
+                            !isOutOfStock && setDialogProduct(product)
+                          }
+                          className={`
                             h-8 w-8 rounded-lg flex items-center justify-center transition-all
                             ${
-															isOutOfStock
-																? "bg-muted cursor-not-allowed text-muted-foreground"
-																: "bg-primary text-primary-foreground hover:bg-primary/80 active:scale-95 shadow-sm"
-														}
+                              isOutOfStock
+                                ? "bg-muted cursor-not-allowed text-muted-foreground"
+                                : "bg-primary text-primary-foreground hover:bg-primary/80 active:scale-95 shadow-sm"
+                            }
                           `}
-													title={isOutOfStock ? "Out of Stock" : "Add to cart"}
-												>
-													<Plus className="h-4 w-4" />
-												</button>
-											</div>
-										</div>
-									);
-								})}
-							</div>
-						)}
-					</div>
-				</div>
+                          title={isOutOfStock ? "Out of Stock" : "Add to cart"}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
 
-				{/* ── Right: Cart + Checkout ───────────────────────────────────────── */}
-				<div className="lg:col-span-2 space-y-4">
-					{/* Customer Info */}
-					<div className="bg-card border rounded-xl p-5 shadow-sm">
-						<h3 className="font-semibold text-base mb-3">
-							Customer Info
-						</h3>
-						<div className="space-y-3">
-							<div>
-								<label className="text-xs text-muted-foreground mb-1 block">
-									Customer Name <span className="text-destructive">*</span>
-								</label>
-								<Input
-									placeholder="Walk-in Customer"
-									value={customerName}
-									onChange={(e) => setCustomerName(e.target.value)}
-								/>
-							</div>
-							<div>
-								<label className="text-xs text-muted-foreground mb-1 block">
-									Phone Number <span className="text-destructive">*</span>
-								</label>
-								<div className="flex items-center h-8 w-full rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 overflow-hidden">
-									<span className="bg-muted/50 h-full flex items-center px-2.5 text-sm text-muted-foreground border-r border-input select-none font-medium">
-										+880
-									</span>
-									<input
-										type="text"
-										className="flex-1 h-full bg-transparent px-2.5 text-base md:text-sm outline-none placeholder:text-muted-foreground"
-										placeholder="1XXXXXXXXX"
-										maxLength={10}
-										value={customerPhone}
-										onChange={(e) => {
-											const val = e.target.value.replace(/\D/g, "").slice(0, 10);
-											setCustomerPhone(val);
-										}}
-									/>
-								</div>
-							</div>
-							<div>
-								<label className="text-xs text-muted-foreground mb-1 block">
-									Email
-								</label>
-								<Input
-									placeholder="email@example.com"
-									value={customerEmail}
-									onChange={(e) => setCustomerEmail(e.target.value)}
-								/>
-							</div>
-							<div>
-								<label className="text-xs text-muted-foreground mb-1 block">
-									Address
-								</label>
-								<Input
-									placeholder="Customer Address"
-									value={customerAddress}
-									onChange={(e) => setCustomerAddress(e.target.value)}
-								/>
-							</div>
-						</div>
-					</div>
+        {/* ── Right: Cart + Checkout ───────────────────────────────────────── */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Customer Info */}
+          <div className="bg-card border rounded-xl p-5 shadow-sm">
+            <h3 className="font-semibold text-base mb-3">Customer Info</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">
+                  Customer Name <span className="text-destructive">*</span>
+                </label>
+                <Input
+                  placeholder="Walk-in Customer"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">
+                  Phone Number <span className="text-destructive">*</span>
+                </label>
+                <div className="flex items-center h-8 w-full rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 overflow-hidden">
+                  <span className="bg-muted/50 h-full flex items-center px-2.5 text-sm text-muted-foreground border-r border-input select-none font-medium">
+                    +880
+                  </span>
+                  <input
+                    type="text"
+                    className="flex-1 h-full bg-transparent px-2.5 text-base md:text-sm outline-none placeholder:text-muted-foreground"
+                    placeholder="1XXXXXXXXX"
+                    maxLength={10}
+                    value={customerPhone}
+                    onChange={(e) => {
+                      const val = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
+                      setCustomerPhone(val);
+                    }}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">
+                  Email
+                </label>
+                <Input
+                  placeholder="email@example.com"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">
+                  Address
+                </label>
+                <Input
+                  placeholder="Customer Address"
+                  value={customerAddress}
+                  onChange={(e) => setCustomerAddress(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
 
-					{/* Cart */}
-					<div className="bg-card border rounded-xl p-5 shadow-sm">
-						<h3 className="font-semibold text-base mb-3 flex items-center gap-2">
-							<ShoppingBag className="h-4 w-4 text-primary" />
-							Cart
-							{cart.length > 0 && (
-								<Badge variant="secondary" className="ml-auto text-xs">
-									{cart.reduce((s, c) => s + c.quantity, 0)} items
-								</Badge>
-							)}
-						</h3>
+          {/* Cart */}
+          <div className="bg-card border rounded-xl p-5 shadow-sm">
+            <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
+              <ShoppingBag className="h-4 w-4 text-primary" />
+              Cart
+              {cart.length > 0 && (
+                <Badge variant="secondary" className="ml-auto text-xs">
+                  {cart.reduce((s, c) => s + c.quantity, 0)} items
+                </Badge>
+              )}
+            </h3>
 
-						{cart.length === 0 ? (
-							<div className="py-10 text-center text-muted-foreground">
-								<ShoppingBag className="h-8 w-8 mx-auto mb-2 opacity-30" />
-								<p className="text-sm">No items added yet</p>
-								<p className="text-xs mt-1">Click + on a product to add it</p>
-							</div>
-						) : (
-							<div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-								{cart.map((item) => (
-									<div
-										key={item.id}
-										className="flex items-center gap-2 py-2 border-b border-border/50 last:border-0"
-									>
-										<div className="w-9 h-9 rounded-md overflow-hidden bg-muted flex-shrink-0">
-											{item.image ? (
-												<img
-													src={item.image}
-													alt={item.name}
-													className="w-full h-full object-cover"
-												/>
-											) : (
-												<div className="w-full h-full flex items-center justify-center">
-													<Package className="h-4 w-4 text-muted-foreground/40" />
-												</div>
-											)}
-										</div>
-										<div className="flex-1 min-w-0">
-											<p className="text-xs font-medium truncate">
-												{item.name}
-											</p>
-											<p className="text-xs text-muted-foreground">
-												{formatBDT(item.price)} × {item.quantity} ={" "}
-												<span className="font-semibold text-foreground">
-													{formatBDT(item.price * item.quantity)}
-												</span>
-											</p>
-										</div>
-										<div className="flex items-center gap-1">
-											<button
-												onClick={() => updateQty(item.id, -1)}
-												className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-muted transition-colors"
-											>
-												<Minus className="h-3 w-3" />
-											</button>
-											<span className="w-5 text-center text-xs font-medium">
-												{item.quantity}
-											</span>
-											<button
-												onClick={() => updateQty(item.id, 1)}
-												className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-muted transition-colors"
-											>
-												<Plus className="h-3 w-3" />
-											</button>
-											<button
-												onClick={() => removeFromCart(item.id)}
-												className="h-6 w-6 rounded flex items-center justify-center text-destructive hover:bg-destructive/10 transition-colors ml-1"
-											>
-												<Trash2 className="h-3 w-3" />
-											</button>
-										</div>
-									</div>
-								))}
-							</div>
-						)}
+            {cart.length === 0 ? (
+              <div className="py-10 text-center text-muted-foreground">
+                <ShoppingBag className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                <p className="text-sm">No items added yet</p>
+                <p className="text-xs mt-1">Click + on a product to add it</p>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                {cart.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-2 py-2 border-b border-border/50 last:border-0"
+                  >
+                    <div className="w-9 h-9 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Package className="h-4 w-4 text-muted-foreground/40" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate">
+                        {item.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatBDT(item.price)} × {item.quantity} ={" "}
+                        <span className="font-semibold text-foreground">
+                          {formatBDT(item.price * item.quantity)}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => updateQty(item.id, -1)}
+                        className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-muted transition-colors"
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      <span className="w-5 text-center text-xs font-medium">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQty(item.id, 1)}
+                        className="h-6 w-6 rounded border border-border flex items-center justify-center hover:bg-muted transition-colors"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                      <button
+                        onClick={() => removeFromCart(item.id)}
+                        className="h-6 w-6 rounded flex items-center justify-center text-destructive hover:bg-destructive/10 transition-colors ml-1"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
-						{cart.length > 0 && (
-							<div className="mt-4 pt-3 border-t border-border space-y-1.5">
-								<div className="flex justify-between text-sm text-muted-foreground">
-									<span>Subtotal</span>
-									<span>{formatBDT(subtotal)}</span>
-								</div>
-								<div className="flex justify-between text-sm text-muted-foreground">
-									<span>Shipping</span>
-									<span className="text-green-600 font-medium">Free</span>
-								</div>
-								<div className="flex justify-between text-base font-bold mt-2 pt-2 border-t border-border">
-									<span>Total</span>
-									<span className="text-primary">{formatBDT(subtotal)}</span>
-								</div>
-							</div>
-						)}
-					</div>
+            {cart.length > 0 && (
+              <div className="mt-4 pt-3 border-t border-border space-y-1.5">
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Subtotal</span>
+                  <span>{formatBDT(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Shipping</span>
+                  <span className="text-green-600 font-medium">Free</span>
+                </div>
+                <div className="flex justify-between text-base font-bold mt-2 pt-2 border-t border-border">
+                  <span>Total</span>
+                  <span className="text-primary">{formatBDT(subtotal)}</span>
+                </div>
+              </div>
+            )}
+          </div>
 
-					{/* Payment Method Section */}
-					<div className="bg-card border rounded-xl p-5 shadow-sm">
-						<h3 className="font-semibold text-base mb-3 flex items-center gap-2">
-							Payment Method
-						</h3>
-						<div className="space-y-3">
-							<Select
-								value={paymentMethod}
-								onValueChange={(v) => {
-									setPaymentMethod(v ?? "cash");
-									setPaymentPhone("");
-								}}
-							>
-								<SelectTrigger className="h-8 w-full">
-									<SelectValue placeholder="Select Payment Method" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="cash">Cash</SelectItem>
-									<SelectItem value="card">Card</SelectItem>
-									<SelectItem value="bkash">bKash</SelectItem>
-									<SelectItem value="nagad">Nagad</SelectItem>
-								</SelectContent>
-							</Select>
+          {/* Payment Method Section */}
+          <div className="bg-card border rounded-xl p-5 shadow-sm">
+            <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
+              Payment Method
+            </h3>
+            <div className="space-y-3">
+              <Select
+                value={paymentMethod}
+                onValueChange={(v) => {
+                  setPaymentMethod(v ?? "cash");
+                  setPaymentPhone("");
+                }}
+              >
+                <SelectTrigger className="h-8 w-full">
+                  <SelectValue placeholder="Select Payment Method" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cash">Cash</SelectItem>
+                  <SelectItem value="card">Card</SelectItem>
+                  <SelectItem value="bkash">bKash</SelectItem>
+                  <SelectItem value="nagad">Nagad</SelectItem>
+                </SelectContent>
+              </Select>
 
-							{(paymentMethod === "bkash" || paymentMethod === "nagad") && (
-								<div className="animate-in fade-in slide-in-from-top-1 duration-200">
-									<label className="text-xs text-muted-foreground mb-1 block">
-										{paymentMethod === "bkash" ? "bKash" : "Nagad"} Number <span className="text-destructive">*</span>
-									</label>
-									<div className="flex items-center h-8 w-full rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 overflow-hidden">
-										<span className="bg-muted/50 h-full flex items-center px-2.5 text-sm text-muted-foreground border-r border-input select-none font-medium">
-											+880
-										</span>
-										<input
-											type="text"
-											className="flex-1 h-full bg-transparent px-2.5 text-base md:text-sm outline-none placeholder:text-muted-foreground"
-											placeholder="1XXXXXXXXX"
-											maxLength={10}
-											value={paymentPhone}
-											onChange={(e) => {
-												const val = e.target.value.replace(/\D/g, "").slice(0, 10);
-												setPaymentPhone(val);
-											}}
-										/>
-									</div>
-								</div>
-							)}
-						</div>
-					</div>
+              {(paymentMethod === "bkash" || paymentMethod === "nagad") && (
+                <div className="animate-in fade-in slide-in-from-top-1 duration-200">
+                  <label className="text-xs text-muted-foreground mb-1 block">
+                    {paymentMethod === "bkash" ? "bKash" : "Nagad"} Number{" "}
+                    <span className="text-destructive">*</span>
+                  </label>
+                  <div className="flex items-center h-8 w-full rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 overflow-hidden">
+                    <span className="bg-muted/50 h-full flex items-center px-2.5 text-sm text-muted-foreground border-r border-input select-none font-medium">
+                      +880
+                    </span>
+                    <input
+                      type="text"
+                      className="flex-1 h-full bg-transparent px-2.5 text-base md:text-sm outline-none placeholder:text-muted-foreground"
+                      placeholder="1XXXXXXXXX"
+                      maxLength={10}
+                      value={paymentPhone}
+                      onChange={(e) => {
+                        const val = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 10);
+                        setPaymentPhone(val);
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-					{/* Info */}
-					<div className="bg-muted/50 border border-border rounded-xl p-4">
-						<p className="text-xs text-muted-foreground leading-relaxed">
-							<span className="font-semibold text-foreground">Payment:</span>{" "}
-							<span className="capitalize">{paymentMethod}</span>
-							{(paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone && (
-								<span className="text-muted-foreground ml-1">
-									(+880{paymentPhone})
-								</span>
-							)}
-							<br />
-							Order number prefix:{" "}
-							<span className="font-mono font-semibold text-primary">
-								S
-							</span>{" "}
-							(e.g. <span className="font-mono text-primary">S2607001</span>)
-						</p>
-					</div>
+          {/* Info */}
+          <div className="bg-muted/50 border border-border rounded-xl p-4">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">Payment:</span>{" "}
+              <span className="capitalize">{paymentMethod}</span>
+              {(paymentMethod === "bkash" || paymentMethod === "nagad") &&
+                paymentPhone && (
+                  <span className="text-muted-foreground ml-1">
+                    (+880{paymentPhone})
+                  </span>
+                )}
+              <br />
+              Order number prefix:{" "}
+              <span className="font-mono font-semibold text-primary">
+                S
+              </span>{" "}
+              (e.g. <span className="font-mono text-primary">S2607001</span>)
+            </p>
+          </div>
 
-					<Button
-						className="w-full h-12 text-base font-semibold"
-						onClick={handleSubmit}
-						disabled={isSubmitting || cart.length === 0}
-					>
-						{isSubmitting ? (
-							<>
-								<div className="h-4 w-4 mr-2 rounded-full border-2 border-white border-t-transparent animate-spin" />
-								Creating Order...
-							</>
-						) : (
-							<>
-								<CheckCircle className="h-5 w-5 mr-2" />
-								Confirm &amp; Create Order
-							</>
-						)}
-					</Button>
-				</div>
-			</div>
+          <Button
+            className="w-full h-12 text-base font-semibold"
+            onClick={handleSubmit}
+            disabled={isSubmitting || cart.length === 0}
+          >
+            {isSubmitting ? (
+              <>
+                <div className="h-4 w-4 mr-2 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                Creating Order...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="h-5 w-5 mr-2" />
+                Confirm &amp; Create Order
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
 
-			{/* ── Product Variation Dialog ─────────────────────────────────────────── */}
-			<ProductAddDialog
-				product={dialogProduct}
-				onClose={() => setDialogProduct(null)}
-				onAddToCart={addToCart}
-			/>
+      {/* ── Product Variation Dialog ─────────────────────────────────────────── */}
+      <ProductAddDialog
+        product={dialogProduct}
+        onClose={() => setDialogProduct(null)}
+        onAddToCart={addToCart}
+      />
 
       <Dialog
         open={Boolean(completedOrder)}
@@ -1013,7 +1027,9 @@ export default function NewInStoreOrderPage() {
                     <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                       Order ID
                     </p>
-                    <p className="font-semibold">{completedOrder.orderNumber}</p>
+                    <p className="font-semibold">
+                      {completedOrder.orderNumber}
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
@@ -1055,7 +1071,8 @@ export default function NewInStoreOrderPage() {
               <div className="space-y-1 text-sm">
                 <p className="font-medium">Invoice Actions</p>
                 <p className="text-xs text-muted-foreground">
-                  The invoice is generated and can be downloaded or emailed on demand.
+                  The invoice is generated and can be downloaded or emailed on
+                  demand.
                 </p>
               </div>
 
@@ -1085,6 +1102,6 @@ export default function NewInStoreOrderPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-		</div>
-	);
+    </div>
+  );
 }
