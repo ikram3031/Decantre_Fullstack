@@ -41,7 +41,7 @@ export default function StockManagementPage() {
   // ── Derived stock metrics ────────────────────────────────────────────────
   const filtered = useMemo(() => {
     if (stockFilter === 'all') return products;
-    if (stockFilter === 'low') return products.filter((p) => p.stock > 0 && p.stock < 10);
+    if (stockFilter === 'low') return products.filter((p) => (p.stock ?? 0) > 0 && (p.stock ?? 0) < 10);
     if (stockFilter === 'out') return products.filter((p) => p.status === 'Out of Stock');
     if (stockFilter === 'in') return products.filter((p) => p.status === 'In Stock');
     return products;
@@ -49,22 +49,22 @@ export default function StockManagementPage() {
 
   const totalProducts = products.length;
   const inStockCount = products.filter((p) => p.status === 'In Stock').length;
-  const lowStockCount = products.filter((p) => p.stock > 0 && p.stock < 10).length;
+  const lowStockCount = products.filter((p) => (p.stock ?? 0) > 0 && (p.stock ?? 0) < 10).length;
   const outOfStockCount = products.filter((p) => p.status === 'Out of Stock').length;
 
   // ── Helpers ──────────────────────────────────────────────────────────────
   const getStockBadge = (product: Product) => {
-    if (product.status === 'Out of Stock' || product.stock === 0) {
+    if (product.status === 'Out of Stock' || (product.stock ?? 0) === 0) {
       return <Badge variant="destructive" className="gap-1 text-[10px]"><XCircle className="h-3 w-3" />Out of Stock</Badge>;
     }
-    if (product.stock < 10) {
+    if ((product.stock ?? 0) < 10) {
       return <Badge variant="outline" className="gap-1 text-[10px] border-amber-500 text-amber-500"><AlertTriangle className="h-3 w-3" />Low Stock</Badge>;
     }
     return <Badge variant="outline" className="gap-1 text-[10px] border-emerald-500 text-emerald-500"><CheckCircle2 className="h-3 w-3" />In Stock</Badge>;
   };
 
   const getTotalVariantStock = (product: Product): number => {
-    if (product.type !== 'variant' || !product.variants.length) return product.stock;
+    if (product.type !== 'variant' || !product.variants?.length) return product.stock ?? 0;
     return product.variants.reduce((sum, v) => sum + v.stockQuantity, 0);
   };
 
@@ -192,7 +192,7 @@ export default function StockManagementPage() {
                   ))
                 ) : filtered.length > 0 ? (
                   filtered.map((product) => (
-                    <TableRow key={product.id} className={product.stock === 0 ? 'bg-destructive/3' : product.stock < 10 ? 'bg-amber-500/3' : ''}>
+                    <TableRow key={product.id} className={(product.stock ?? 0) === 0 ? 'bg-destructive/3' : (product.stock ?? 0) < 10 ? 'bg-amber-500/3' : ''}>
                       <TableCell>
                         <div className="flex items-center gap-3">
                           {product.image ? (
@@ -217,7 +217,7 @@ export default function StockManagementPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-center">
-                        <span className={`font-semibold text-sm ${product.stock === 0 ? 'text-destructive' : product.stock < 10 ? 'text-amber-600' : ''}`}>
+                        <span className={`font-semibold text-sm ${(product.stock ?? 0) === 0 ? 'text-destructive' : (product.stock ?? 0) < 10 ? 'text-amber-600' : ''}`}>
                           {getTotalVariantStock(product)}
                         </span>
                       </TableCell>
@@ -225,9 +225,9 @@ export default function StockManagementPage() {
                         {getStockBadge(product)}
                       </TableCell>
                       <TableCell>
-                        {product.type === 'variant' && product.variants.length > 0 ? (
+                        {product.type === 'variant' && (product.variants?.length ?? 0) > 0 ? (
                           <div className="flex flex-wrap gap-1.5">
-                            {product.variants.map((v) => (
+                            {(product.variants || []).map((v) => (
                               <span
                                 key={v.size}
                                 className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border ${
