@@ -44,11 +44,14 @@ import { Input } from '@/components/ui/input';
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 
 interface OrdersTableProps {
   searchQuery: string;
   statusFilter: string;
 }
+
+import type { Order, OrderDetails, OrderItem } from '@/types';
 
 export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
   const queryClient = useQueryClient();
@@ -58,45 +61,69 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
     status: statusFilter !== 'All' ? statusFilter : undefined,
   });
 
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [editFulfillmentStatus, setEditFulfillmentStatus] = useState('Pending');
-  const [editPaymentStatus, setEditPaymentStatus] = useState('Pending');
+  const [editFulfillmentStatus, setEditFulfillmentStatus] = useState<'Pending' | 'Processing' | 'Shipped' | 'Cancelled'>('Pending');
+  const [editPaymentStatus, setEditPaymentStatus] = useState<'Paid' | 'Pending' | 'Failed'>('Pending');
 
-  const handleUpdateStatus = async (order: any, newStatus: string) => {
+  const handleUpdateStatus = async (order: Order, newStatus: string) => {
     try {
       await apiClient.put(`/api/v1/orders/${order.id}`, { status: newStatus });
       toast.success(`Order ${order.orderNumber} status updated to ${newStatus}.`);
       queryClient.invalidateQueries({ queryKey: ['orders'] });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      console.error(err);
       toast.error('Failed to update order status.');
     }
   };
 
-  const handleDeleteOrder = async (orderId: string, orderNumber: string) => {
-    if (!confirm(`Are you sure you want to delete order ${orderNumber}?`)) return;
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; orderNumber: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteOrder = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
     try {
-      await apiClient.delete(`/api/v1/orders/${orderId}`);
-      toast.success(`Order ${orderNumber} deleted successfully.`);
+      await apiClient.delete(`/api/v1/orders/${deleteTarget.id}`);
+      toast.success(`Order ${deleteTarget.orderNumber} deleted successfully.`);
       queryClient.invalidateQueries({ queryKey: ['orders'] });
-    } catch (err: any) {
+      setDeleteTarget(null);
+    } catch (err: unknown) {
+      console.error(err);
       toast.error('Failed to delete order.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  const handleEditOrderClick = (order: any) => {
+  const handleEditOrderClick = (order: Order) => {
     setSelectedOrder(order);
     setEditFulfillmentStatus(order.fulfillmentStatus);
     setEditPaymentStatus(order.paymentStatus);
     setIsEditOpen(true);
   };
 
-  const handleViewDetails = (order: any) => {
+  const handleViewDetails = async (order: Order) => {
     setSelectedOrder(order);
+    setDetailsLoading(true);
     setIsDetailsOpen(true);
+
+    try {
+      const response = await apiClient.get<{ data?: OrderDetails }>(`/api/v1/orders/${order.id}`);
+      if (response.data?.data) {
+        setSelectedOrder(response.data.data);
+      }
+    } catch (err: unknown) {
+      console.error(err);
+      toast.error('Failed to load order details.');
+      setIsDetailsOpen(false);
+    } finally {
+      setDetailsLoading(false);
+    }
   };
 
   const handleEditOrderSubmit = async (e: React.FormEvent) => {
@@ -116,7 +143,8 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
       toast.success(`Order ${selectedOrder.orderNumber} updated successfully!`);
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       setIsEditOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      console.error(err);
       toast.error('Failed to update order.');
     } finally {
       setIsSubmitting(false);
@@ -218,7 +246,7 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive focus:text-destructive cursor-pointer"
-                        onClick={() => handleDeleteOrder(order.id, order.orderNumber)}
+                        onClick={() => setDeleteTarget({ id: order.id, orderNumber: order.orderNumber })}
                       >
                         Delete Order
                       </DropdownMenuItem>
@@ -246,34 +274,121 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
               Full information for order {selectedOrder?.orderNumber}
             </DialogDescription>
           </DialogHeader>
-          {selectedOrder && (
+          {detailsLoading ? (
+            <div className="space-y-4 pt-2 text-sm">
+              <div className="h-16 rounded-xl bg-muted animate-pulse" />
+              <div className="h-12 rounded-xl bg-muted animate-pulse" />
+            </div>
+          ) : selectedOrder ? (
             <div className="space-y-4 pt-2 text-sm">
               <div className="grid grid-cols-2 gap-2 border-b pb-2">
                 <div>
-                  <span className="text-xs text-muted-foreground block">Customer Name</span>
-                  <span className="font-medium">{selectedOrder.customerName}</span>
+                  <span className="text-xs text-muted-foreground block">Order Number</span>
+                  <span className="font-medium">{selectedOrder.orderNumber || selectedOrder._id}</span>
                 </div>
                 <div>
+                  <span className="text-xs text-muted-foreground block">Order ID</span>
+                  <span className="font-medium">{selectedOrder.id || selectedOrder._id || 'N/A'}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 border-b pb-2">
+                <div>
                   <span className="text-xs text-muted-foreground block">Date</span>
-                  <span className="font-medium">{new Date(selectedOrder.date).toLocaleString()}</span>
+                  <span className="font-medium">{new Date(selectedOrder.createdAt || selectedOrder.date).toLocaleString()}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block">Payment Method</span>
+                  <span className="font-medium">{selectedOrder.paymentMethod || 'N/A'}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 border-b pb-2">
+                <div>
+                  <span className="text-xs text-muted-foreground block">Customer Name</span>
+                  <span className="font-medium">{selectedOrder.customer?.fullName || selectedOrder.customerName || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block">Phone</span>
+                  <span className="font-medium">{selectedOrder.customer?.phone || 'N/A'}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 border-b pb-2">
+                <div>
+                  <span className="text-xs text-muted-foreground block">Email</span>
+                  <span className="font-medium">{selectedOrder.customer?.email || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block">Address</span>
+                  <span className="font-medium">
+                    {selectedOrder.customer?.address || 'N/A'}
+                    {selectedOrder.customer?.city ? `, ${selectedOrder.customer.city}` : ''}
+                    {selectedOrder.customer?.thana ? `, ${selectedOrder.customer.thana}` : ''}
+                    {selectedOrder.customer?.district ? `, ${selectedOrder.customer.district}` : ''}
+                    {selectedOrder.customer?.zip ? `, ${selectedOrder.customer.zip}` : ''}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 border-b pb-2">
+                <div>
+                  <span className="text-xs text-muted-foreground block">Shipping Address</span>
+                  <span className="font-medium">
+                    {selectedOrder.shippingAddress?.address || selectedOrder.shippingAddress?.line1 || 'N/A'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block">Shipping City</span>
+                  <span className="font-medium">{selectedOrder.shippingAddress?.city || 'N/A'}</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 border-b pb-2">
                 <div>
                   <span className="text-xs text-muted-foreground block">Payment Status</span>
-                  <span>{getPaymentBadge(selectedOrder.paymentStatus)}</span>
+                  <span>{getPaymentBadge(selectedOrder.paymentStatus || (selectedOrder.status === 'completed' ? 'Paid' : 'Pending'))}</span>
                 </div>
                 <div>
                   <span className="text-xs text-muted-foreground block">Fulfillment Status</span>
-                  <span>{getFulfillmentBadge(selectedOrder.fulfillmentStatus)}</span>
+                  <span>{getFulfillmentBadge(selectedOrder.fulfillmentStatus || selectedOrder.status)}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 border-b pb-2">
+                <div>
+                  <span className="text-xs text-muted-foreground block">Subtotal</span>
+                  <span className="font-medium">৳{(selectedOrder.totals?.subtotal ?? 0).toFixed(2)}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block">Tax</span>
+                  <span className="font-medium">৳{(selectedOrder.totals?.tax ?? 0).toFixed(2)}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 border-b pb-2">
+                <div>
+                  <span className="text-xs text-muted-foreground block">Shipping Fee</span>
+                  <span className="font-medium">৳{(selectedOrder.totals?.shippingFee ?? selectedOrder.shippingTotalAmount ?? 0).toFixed(2)}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground block">Discount</span>
+                  <span className="font-medium">৳{(selectedOrder.discountTotalAmount ?? 0).toFixed(2)}</span>
                 </div>
               </div>
               <div>
                 <span className="text-xs text-muted-foreground block">Total Amount</span>
-                <span className="text-lg font-bold text-primary">৳{selectedOrder.totalAmount.toFixed(2)}</span>
+                <span className="text-lg font-bold text-primary">৳{(selectedOrder.totals?.total ?? selectedOrder.totalAmount ?? 0).toFixed(2)}</span>
               </div>
+              {selectedOrder.items && selectedOrder.items.length > 0 && (
+                <div className="space-y-2">
+                  <span className="text-xs text-muted-foreground block">Items</span>
+                  <div className="rounded-lg border border-border bg-surface p-3 space-y-2">
+                    {selectedOrder.items.map((item: OrderItem, index: number) => (
+                      <div key={index} className="grid grid-cols-[1.5fr_0.7fr_0.8fr] gap-2 text-sm">
+                        <div className="font-medium">{item.name}</div>
+                        <div className="text-muted-foreground">Qty: {item.quantity}</div>
+                        <div className="text-right">৳{((item.unitPrice ?? item.price ?? 0) * (item.quantity ?? 1)).toFixed(2)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          ) : null}
           <DialogFooter>
             <Button onClick={() => setIsDetailsOpen(false)}>Close</Button>
           </DialogFooter>
@@ -292,7 +407,7 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
           <form onSubmit={handleEditOrderSubmit} className="space-y-4 pt-2">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold">Fulfillment Status</label>
-              <Select value={editFulfillmentStatus} onValueChange={(val: string | null) => setEditFulfillmentStatus(val ?? 'Pending')}>
+              <Select value={editFulfillmentStatus} onValueChange={(val: string | null) => setEditFulfillmentStatus((val as 'Pending' | 'Processing' | 'Shipped' | 'Cancelled') ?? 'Pending')}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Status" />
                 </SelectTrigger>
@@ -306,7 +421,7 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-semibold">Payment Status</label>
-              <Select value={editPaymentStatus} onValueChange={(val: string | null) => setEditPaymentStatus(val ?? 'Pending')}>
+              <Select value={editPaymentStatus} onValueChange={(val: string | null) => setEditPaymentStatus((val as 'Paid' | 'Pending' | 'Failed') ?? 'Pending')}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Payment Status" />
                 </SelectTrigger>
@@ -328,6 +443,15 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
           </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDeleteDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={handleDeleteOrder}
+        isDeleting={isDeleting}
+        title="Delete Order"
+        description={`Are you sure you want to delete order ${deleteTarget?.orderNumber ?? ''}?`}
+      />
     </div>
   );
 }

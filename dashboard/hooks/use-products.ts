@@ -1,32 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import { getCategoryCache, getBrandName } from '@/lib/category-cache';
+import type { Product, ProductVariant } from '@/types';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export interface ProductVariant {
-  size: string;
-  price: number;
-  offerPrice: number | null;
-  stockQuantity: number;
-  sku: string;
-  sortOrder: number;
-}
-
-export interface Product {
-  id: string;
-  name: string;
-  sku: string;
-  category: string;
-  brand?: string;
-  price: number;
-  offerPrice: number | null;
-  stock: number;
-  status: 'In Stock' | 'Out of Stock';
-  image?: string;
-  type: 'simple' | 'variant';
-  variants: ProductVariant[];
-}
+export type { Product, ProductVariant };
 
 interface FetchProductsParams {
   search?: string;

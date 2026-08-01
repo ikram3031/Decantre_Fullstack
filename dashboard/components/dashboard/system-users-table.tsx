@@ -35,6 +35,7 @@ interface SystemUsersTableProps {
 
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 
 export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTableProps) {
   const queryClient = useQueryClient();
@@ -60,14 +61,21 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
     }
   };
 
-  const handleRevokeAccess = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to revoke access for ${name}?`)) return;
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isRevoking, setIsRevoking] = useState(false);
+
+  const handleRevokeAccess = async () => {
+    if (!deleteTarget) return;
+    setIsRevoking(true);
     try {
-      await apiClient.delete(`/api/v1/users/${id}`);
-      toast.success(`Access revoked for ${name}.`);
+      await apiClient.delete(`/api/v1/users/${deleteTarget.id}`);
+      toast.success(`Access revoked for ${deleteTarget.name}.`);
       queryClient.invalidateQueries({ queryKey: ['system-users'] });
+      setDeleteTarget(null);
     } catch (err: any) {
       toast.error('Failed to revoke access.');
+    } finally {
+      setIsRevoking(false);
     }
   };
 
@@ -175,7 +183,7 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive focus:text-destructive cursor-pointer"
-                        onClick={() => handleRevokeAccess(user.id, user.name)}
+                        onClick={() => setDeleteTarget({ id: user.id, name: user.name })}
                       >
                         Revoke Access
                       </DropdownMenuItem>
@@ -193,6 +201,14 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
           )}
         </TableBody>
       </Table>
+      <ConfirmDeleteDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={handleRevokeAccess}
+        isDeleting={isRevoking}
+        title="Revoke Access"
+        description={`Are you sure you want to revoke access for ${deleteTarget?.name ?? ''}?`}
+      />
     </div>
   );
 }

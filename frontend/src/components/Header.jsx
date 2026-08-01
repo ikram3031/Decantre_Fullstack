@@ -786,17 +786,17 @@ export const Header = ({
                     }}
                     className="w-full px-4 py-3 sm:py-3.5 text-xs sm:text-sm font-sans font-light placeholder-zinc-500 focus:outline-none bg-black text-zinc-100 border-none rounded-l-sm no-outline-search"
                   />
-
-                  <SearchDropdown
-                    query={localSearchVal}
-                    onSelect={(item) => {
-                      handleSuggestionSelect(item);
-                      setIsSearchPanelOpen(false);
-                      setLocalSearchVal('');
-                    }}
-                    maxResults={6}
-                  />
                 </div>
+
+                <SearchDropdown
+                  query={localSearchVal}
+                  onSelect={(item) => {
+                    handleSuggestionSelect(item);
+                    setIsSearchPanelOpen(false);
+                    setLocalSearchVal('');
+                  }}
+                  maxResults={6}
+                />
 
                 {/* Search Button */}
                 <button

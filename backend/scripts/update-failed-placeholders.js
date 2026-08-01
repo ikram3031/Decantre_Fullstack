@@ -5,55 +5,40 @@ import { connectDatabase, closeDatabase } from "../src/database/index.js";
 import { ProductModel } from "../src/models/product.model.js";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
-const failureLogPath = path.join(scriptDir, "failed-product-images.json");
-const NEW_PLACEHOLDER_URL = "/uploads/product_placeholder.webp";
+const OUTPUT_JSON_PATH = path.join(scriptDir, "failed-product-images.json");
+const PLACEHOLDER_URL = "/uploads/product_placeholder.webp";
 
-const updateFailedPlaceholders = async () => {
-  if (!fs.existsSync(failureLogPath)) {
-    console.error(`Failure log file not found at: ${failureLogPath}`);
-    process.exit(1);
-  }
-
-  const rawData = fs.readFileSync(failureLogPath, "utf-8");
-  const failedProducts = JSON.parse(rawData);
-
-  console.log(`Loaded ${failedProducts.length} failed products from JSON log.`);
-
+const buildPlaceholderProductJson = async () => {
   await connectDatabase();
 
-  let successCount = 0;
-  let errorCount = 0;
+  const query = { imageUrl: PLACEHOLDER_URL };
+  const cursor = ProductModel.find(query).lean().cursor();
 
-  for (const item of failedProducts) {
-    try {
-      const query = item.did ? { did: item.did } : { _id: item._id };
-      const updates = {
-        imageUrl: NEW_PLACEHOLDER_URL,
-        thumbnailUrl: NEW_PLACEHOLDER_URL,
-      };
+  const products = [];
+  let totalCount = 0;
 
-      const result = await ProductModel.updateOne(query, { $set: updates });
-      if (result.modifiedCount > 0 || result.matchedCount > 0) {
-        successCount += 1;
-        console.log(`[updated] product did=${item.did || item._id} -> ${NEW_PLACEHOLDER_URL}`);
-      } else {
-        console.log(`[not found in DB] product did=${item.did || item._id}`);
-      }
-    } catch (err) {
-      errorCount += 1;
-      console.error(`[error] did=${item.did || item._id}:`, err.message);
-    }
+  for await (const product of cursor) {
+    totalCount += 1;
+    products.push({
+      _id: product._id?.toString(),
+      did: product.did,
+      name: product.name,
+      slug: product.slug,
+      imageUrl: product.imageUrl,
+      thumbnailUrl: product.thumbnailUrl,
+    });
   }
 
-  console.log("\n=== Failed Placeholder Update Summary ===");
-  console.log(`Total products processed from log: ${failedProducts.length}`);
-  console.log(`Successfully updated in DB: ${successCount}`);
-  console.log(`Errors: ${errorCount}`);
+  await fs.promises.writeFile(OUTPUT_JSON_PATH, JSON.stringify(products, null, 2), "utf-8");
+
+  console.log("\n=== Placeholder Product JSON Export ===");
+  console.log(`Products matched by placeholder imageUrl: ${totalCount}`);
+  console.log(`JSON written to: ${OUTPUT_JSON_PATH}`);
 
   await closeDatabase();
 };
 
-updateFailedPlaceholders().catch((err) => {
+buildPlaceholderProductJson().catch((err) => {
   console.error("Script execution failed:", err);
   process.exit(1);
 });

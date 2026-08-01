@@ -76,14 +76,18 @@ export const SearchDropdown = ({ query, onSelect, maxResults = 6, placeholder = 
             <button
               type="button"
               onClick={() => onSelect && onSelect({ id: item.id, name: item.name, slug: item.slug })}
-              className="w-full text-left px-3 py-2 flex items-center gap-3 hover:bg-gold/5 transition-colors"
+              className="w-full text-left px-3 py-2 flex items-center justify-between gap-3 hover:bg-gold/5 transition-colors"
             >
-              <img src={item.image || ''} alt={item.name} className="w-10 h-10 object-cover rounded-sm bg-zinc-900" />
-              <div className="flex-1">
-                <div className="text-sm font-medium text-zinc-100 truncate">{item.name}</div>
-                <div className="text-[11px] text-zinc-400 truncate">{item.brand || item.category || ''}</div>
+              <div className="flex items-center gap-3 w-[70%] min-w-0">
+                <img src={item.image || ''} alt={item.name} className="w-10 h-10 object-cover rounded-sm bg-zinc-900 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium text-zinc-100 truncate">{item.name}</div>
+                  <div className="text-[11px] text-zinc-400 truncate">{item.brand || item.category || ''}</div>
+                </div>
               </div>
-              <div className="text-xs text-zinc-300">{item.price ? item.price : ''}</div>
+              <div className="w-[30%] text-right text-sm sm:text-base font-semibold text-gold truncate pl-2">
+                {item.price ? `৳${item.price}` : ''}
+              </div>
             </button>
           </li>
         ))}

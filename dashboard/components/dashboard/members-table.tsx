@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -27,6 +28,7 @@ import { AlertCircle } from 'lucide-react';
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 
 interface MembersTableProps {
   searchQuery: string;
@@ -52,14 +54,21 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1 }: MembersTa
     toast.info(`Preparing message for ${member.email}`);
   };
 
-  const handleDeleteMember = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete member ${name}?`)) return;
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteMember = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
     try {
-      await apiClient.delete(`/api/v1/members/${id}`);
-      toast.success(`Member ${name} deleted.`);
+      await apiClient.delete(`/api/v1/members/${deleteTarget.id}`);
+      toast.success(`Member ${deleteTarget.name} deleted.`);
       queryClient.invalidateQueries({ queryKey: ['members'] });
+      setDeleteTarget(null);
     } catch (err: any) {
       toast.error('Failed to delete member.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -143,7 +152,7 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1 }: MembersTa
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive focus:text-destructive cursor-pointer"
-                        onClick={() => handleDeleteMember(member.id, member.name)}
+                        onClick={() => setDeleteTarget({ id: member.id, name: member.name })}
                       >
                         Delete Member
                       </DropdownMenuItem>
@@ -161,6 +170,14 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1 }: MembersTa
           )}
         </TableBody>
       </Table>
+      <ConfirmDeleteDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={handleDeleteMember}
+        isDeleting={isDeleting}
+        title="Delete Member"
+        description={`Are you sure you want to delete member ${deleteTarget?.name ?? ''}?`}
+      />
     </div>
   );
 }

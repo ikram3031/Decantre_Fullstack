@@ -1,15 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 
-export interface Order {
-  id: string;
-  orderNumber: string;
-  customerName: string;
-  date: string;
-  totalAmount: number;
-  paymentStatus: 'Paid' | 'Pending' | 'Failed';
-  fulfillmentStatus: 'Pending' | 'Processing' | 'Shipped' | 'Cancelled';
-}
+import type { Order } from '@/types';
+
+export type { Order };
 
 interface FetchOrdersParams {
   search?: string;

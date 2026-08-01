@@ -1,10 +1,3 @@
-/**
- * src/controllers/CategoryController.js
- *
- * Simple DAO‑style controller for the Category model.
- * Provides endpoints to list all categories and fetch a single category by ID.
- */
-
 import { CategoryModel } from "../models/category.model.js";
 import { logger } from "../config/logger.js";
 
@@ -41,5 +34,100 @@ export const getCategoryById = async (req, res) => {
   } catch (err) {
     logger.error({ err }, "Failed to fetch category by id");
     res.status(500).json({ status: "error", message: "Unable to fetch category" });
+  }
+}
+
+/**
+ * POST /api/v1/categories
+ * Create a new category.
+ */
+export const createCategory = async (req, res) => {
+  try {
+    const { name, slug, description, parent } = req.body;
+    if (!name || !slug) {
+      return res.status(400).json({ status: "error", message: "Name and slug are required" });
+    }
+
+    const exists = await CategoryModel.findOne({ $or: [{ name }, { slug }] });
+    if (exists) {
+      return res.status(400).json({ status: "error", message: "Category name or slug already exists" });
+    }
+
+    let parentId = null;
+    if (parent) {
+      const parentCat = await CategoryModel.findOne({ $or: [{ _id: parent.match(/^[0-9a-fA-F]{24}$/) ? parent : null }, { slug: parent }, { did: parent }] });
+      if (parentCat) parentId = parentCat._id;
+    }
+
+    const category = new CategoryModel({
+      name,
+      slug,
+      description,
+      parent: parentId,
+      createdBy: req.user?._id || null,
+    });
+
+    await category.save();
+    res.status(201).json({ status: "success", data: category });
+  } catch (err) {
+    logger.error({ err }, "Failed to create category");
+    res.status(500).json({ status: "error", message: "Unable to create category" });
+  }
+}
+
+/**
+ * PUT /api/v1/categories/:id
+ * Update an existing category by ID or slug/did.
+ */
+export const updateCategory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { name, slug, description, parent } = req.body;
+    
+    const category = await CategoryModel.findOne({ $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { slug: id }, { did: id }] });
+    if (!category) {
+      return res.status(404).json({ status: "error", message: "Category not found" });
+    }
+
+    if (name) category.name = name;
+    if (slug) category.slug = slug;
+    if (description !== undefined) category.description = description;
+
+    if (parent !== undefined) {
+      let parentId = null;
+      if (parent) {
+        const parentCat = await CategoryModel.findOne({ $or: [{ _id: parent.match(/^[0-9a-fA-F]{24}$/) ? parent : null }, { slug: parent }, { did: parent }] });
+        if (parentCat) parentId = parentCat._id;
+      }
+      category.parent = parentId;
+    }
+
+    category.updatedBy = req.user?._id || null;
+    await category.save();
+
+    res.json({ status: "success", data: category });
+  } catch (err) {
+    logger.error({ err }, "Failed to update category");
+    res.status(500).json({ status: "error", message: "Unable to update category" });
+  }
+}
+
+/**
+ * DELETE /api/v1/categories/:id
+ * Delete a category by ID or slug/did.
+ */
+export const deleteCategory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const category = await CategoryModel.findOne({ $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { slug: id }, { did: id }] });
+    if (!category) {
+      return res.status(404).json({ status: "error", message: "Category not found" });
+    }
+
+    await CategoryModel.deleteOne({ _id: category._id });
+    res.json({ status: "success", message: "Category deleted successfully" });
+  } catch (err) {
+    logger.error({ err }, "Failed to delete category");
+    res.status(500).json({ status: "error", message: "Unable to delete category" });
   }
 }

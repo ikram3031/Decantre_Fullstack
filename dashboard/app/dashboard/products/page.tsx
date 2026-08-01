@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { ProductsTable } from '@/components/dashboard/products-table';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Plus } from 'lucide-react';
 import { useCategories, useBrands } from '@/lib/category-cache';
 import {
   Select,
@@ -27,7 +28,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { AddProductDialog } from '@/components/dashboard/add-product-dialog';
 
 export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +42,13 @@ export default function ProductsPage() {
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Products &amp; Inventory</h2>
-        <AddProductDialog />
+        <Link
+          href="/dashboard/products/new"
+          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Add New Product
+        </Link>
       </div>
       
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="flex flex-col space-y-4">

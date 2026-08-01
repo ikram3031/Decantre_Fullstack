@@ -17,6 +17,7 @@ export interface BrandCacheEntry {
   did: string;
   name: string;
   slug: string;
+  parent?: string;
 }
 
 // ─── Category Cache Helpers ──────────────────────────────────────────────────
@@ -87,6 +88,7 @@ interface BrandApiItem {
   did?: string;
   name?: string;
   slug?: string;
+  parent?: string;
 }
 
 const isCategoryApiItem = (item: unknown): item is CategoryApiItem =>
@@ -142,6 +144,7 @@ export function useBrands() {
           did: b.did,
           name: b.name,
           slug: b.slug ?? '',
+          parent: b.parent,
         }));
 
       if (typeof window !== 'undefined') {

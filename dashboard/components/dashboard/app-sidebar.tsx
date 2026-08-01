@@ -101,13 +101,51 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {/* Products Management */}
           <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={pathname === "/dashboard/products"}
+              isActive={pathname.startsWith("/dashboard/products")}
               tooltip="Products"
               render={<Link href={{ pathname: "/dashboard/products" }} />}
             >
               <Package className="h-4 w-4" />
               <span>Products</span>
             </SidebarMenuButton>
+            <SidebarMenuSub>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/products/new"}
+                  render={<Link href={{ pathname: "/dashboard/products/new" }} />}
+                >
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span>Add Product</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/products"}
+                  render={<Link href={{ pathname: "/dashboard/products" }} />}
+                >
+                  <ListOrdered className="h-3.5 w-3.5" />
+                  <span>Product List</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/products/categories"}
+                  render={<Link href={{ pathname: "/dashboard/products/categories" }} />}
+                >
+                  <Receipt className="h-3.5 w-3.5" />
+                  <span>Categories</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/products/brands"}
+                  render={<Link href={{ pathname: "/dashboard/products/brands" }} />}
+                >
+                  <CreditCard className="h-3.5 w-3.5" />
+                  <span>Brands</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            </SidebarMenuSub>
           </SidebarMenuItem>
 
           {/* Stock Management */}

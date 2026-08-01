@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import {
   Table,
   TableBody,
@@ -27,6 +29,7 @@ import { AlertCircle } from 'lucide-react';
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 
 interface ProductsTableProps {
   searchQuery: string;
@@ -43,14 +46,21 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: Prod
     brand: brandFilter !== 'All' ? brandFilter : undefined,
   });
 
-  const handleDeleteProduct = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteProduct = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
     try {
-      await apiClient.delete(`/api/v1/products/${id}`);
-      toast.success(`Product "${name}" deleted.`);
+      await apiClient.delete(`/api/v1/products/${deleteTarget.id}`);
+      toast.success(`Product "${deleteTarget.name}" deleted.`);
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      setDeleteTarget(null);
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to delete product.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -150,7 +160,7 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: Prod
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive focus:text-destructive cursor-pointer"
-                        onClick={() => handleDeleteProduct(product.id, product.name)}
+                        onClick={() => setDeleteTarget({ id: product.id, name: product.name })}
                       >
                         Delete Product
                       </DropdownMenuItem>
@@ -168,6 +178,14 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: Prod
           )}
         </TableBody>
       </Table>
+      <ConfirmDeleteDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={handleDeleteProduct}
+        isDeleting={isDeleting}
+        title="Delete Product"
+        description={`Are you sure you want to delete "${deleteTarget?.name ?? ''}"?`}
+      />
     </div>
   );
 }
