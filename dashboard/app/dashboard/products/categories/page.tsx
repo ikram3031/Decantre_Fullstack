@@ -275,7 +275,7 @@ export default function CategoriesPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold">Parent Category</label>
-              <Select value={parentId || '__none__'} onValueChange={(val) => setParentId(val === '__none__' ? '' : val)}>
+              <Select value={parentId || '__none__'} onValueChange={(val) => setParentId(val === '__none__' ? '' : (val ?? ''))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select parent category" />
                 </SelectTrigger>
