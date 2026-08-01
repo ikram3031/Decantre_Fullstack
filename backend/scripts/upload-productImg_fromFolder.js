@@ -26,6 +26,8 @@ const slugify = (text) => {
   if (!text) return "product";
   return text
     .toString()
+    .normalize("NFD")              // ô → o + combining accent, é → e + accent
+    .replace(/[\u0300-\u036f]/g, "") // remove combining diacritical marks
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
