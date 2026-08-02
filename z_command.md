@@ -12,6 +12,11 @@ ssh root@144.79.218.126
 cd /opt/dev
 ```
 
+### .env to server
+```
+scp E:/AAAAA/backend .env root@144.79.218.126:/opt/dev/backend/.env
+```
+
 ### Single app deploy example
 
 ```

@@ -21,14 +21,12 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 
-const ITEMS_PER_PAGE = 15;
-const TOTAL_MOCK = 15; // update when API returns total
-const totalPages = Math.ceil(TOTAL_MOCK / ITEMS_PER_PAGE);
-
 export default function MembersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [segmentFilter, setSegmentFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [totalPages, setTotalPages] = useState(1);
 
   // Reset to page 1 when filters change
   const handleSearch = (q: string) => {
@@ -47,7 +45,7 @@ export default function MembersPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Members & Customers</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Showing {ITEMS_PER_PAGE} members per page
+            Showing 15 members per page
           </p>
         </div>
       </div>
@@ -83,6 +81,7 @@ export default function MembersPage() {
           searchQuery={searchQuery}
           segmentFilter={segmentFilter}
           page={currentPage}
+          onTotalPagesChange={setTotalPages}
         />
 
         {/* Pagination */}

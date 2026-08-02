@@ -271,9 +271,14 @@ export const Shop = () => {
     loadProductsPage(1, false);
   }, [fetchProducts, selectedCategory, brandFilters, searchQuery, sortOrder, categories, brands]);
 
+  const productGridRef = React.useRef(null);
+
   const handlePageChange = (targetPage) => {
     if (targetPage < 1 || targetPage > totalPages || targetPage === page) return;
     loadProductsPage(targetPage, false);
+    if (productGridRef.current) {
+      productGridRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleBrandToggle = (brandSlug) => {
@@ -516,7 +521,7 @@ export const Shop = () => {
           </div>
 
           {/* Product Grid Area */}
-          <div className="lg:col-span-3 space-y-8">
+          <div ref={productGridRef} className="lg:col-span-3 space-y-8">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between border-b border-white/5 pb-4">
               <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
                 Displaying {visibleCount} of {totalProducts || visibleCount} Premium Formulations

@@ -11,7 +11,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -116,8 +115,12 @@ export default function CategoriesPage() {
 
       queryClient.invalidateQueries({ queryKey: ['categories-cache'] });
       setIsOpen(false);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to save category');
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === 'object' && 'response' in err && typeof err.response === 'object' && err.response !== null
+          ? (err.response as { data?: { message?: string } }).data?.message
+          : undefined;
+      toast.error(message || 'Failed to save category');
     } finally {
       setIsSubmitting(false);
     }
@@ -134,8 +137,12 @@ export default function CategoriesPage() {
       toast.success('Category deleted successfully');
       queryClient.invalidateQueries({ queryKey: ['categories-cache'] });
       setDeleteTarget(null);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to delete category');
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === 'object' && 'response' in err && typeof err.response === 'object' && err.response !== null
+          ? (err.response as { data?: { message?: string } }).data?.message
+          : undefined;
+      toast.error(message || 'Failed to delete category');
     } finally {
       setIsDeleting(false);
     }
@@ -188,7 +195,7 @@ export default function CategoriesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredCategories.map((cat: any) => (
+              {filteredCategories.map((cat) => (
                 <TableRow key={cat.did}>
                   <TableCell className="font-medium flex items-center gap-2">
                     <FolderTree className="h-4 w-4 text-muted-foreground" />

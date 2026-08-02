@@ -38,52 +38,78 @@ const mockMembers: Member[] = [
   { id: 'M015', name: 'Jannatul Ferdous', email: 'jannatul.f@gmail.com', phone: '01700000000', totalOrders: 1, lifetimeSpent: 950, joinedDate: '2025-01-07', segment: 'New' },
 ];
 
-const fetchMembers = async (params?: FetchMembersParams): Promise<Member[]> => {
+export interface FetchMembersResponse {
+  data: Member[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+const fetchMembers = async (params?: FetchMembersParams): Promise<FetchMembersResponse> => {
+  const limit = params?.limit ?? 15;
+  const page = params?.page ?? 1;
+
   try {
     const queryParams: Record<string, string | number> = {
-      limit: params?.limit ?? 15,
-      page: params?.page ?? 1,
+      limit,
+      page,
     };
     if (params?.search) queryParams.q = params.search;
     if (params?.segment) queryParams.segment = params.segment;
 
-    const response = await apiClient.get<{ data: unknown[] } | unknown[]>(
+    const response = await apiClient.get<any>(
       '/api/v1/members',
       { params: queryParams }
     );
 
-    const memberList: unknown[] =
-      (response.data as { data: unknown[] })?.data ??
-      (Array.isArray(response.data) ? (response.data as unknown[]) : []);
+    const rawData = response.data;
+    const memberList: unknown[] = rawData?.data ?? (Array.isArray(rawData) ? rawData : []);
+    const meta = rawData?.meta ?? {
+      total: memberList.length,
+      page,
+      limit,
+      totalPages: Math.ceil(memberList.length / limit),
+    };
 
-    if (memberList.length > 0) {
-      return memberList.map((m) => {
-        const member = m as Record<string, unknown>;
-        const orders = Array.isArray(member.orders) ? (member.orders as Record<string, unknown>[]) : [];
-        const totalOrders = orders.length;
-        const lifetimeSpent = orders.reduce(
-          (sum: number, o: Record<string, unknown>) => {
-            const value = o.value as number | undefined;
-            if (typeof value === 'number') return sum + value;
-            const totals = o.totals as Record<string, number> | undefined;
-            return sum + (totals?.total ?? (o.total as number) ?? 0);
-          },
-          0
-        );
+    const parsedMembers = (Array.isArray(memberList) ? memberList : []).map((m) => {
+      const member = m as Record<string, unknown>;
+      const orders = Array.isArray(member.orders) ? (member.orders as Record<string, unknown>[]) : [];
+      const totalOrders = orders.length;
+      const lifetimeSpent = orders.reduce(
+        (sum: number, o: Record<string, unknown>) => {
+          const value = o.value as number | undefined;
+          if (typeof value === 'number') return sum + value;
+          const totals = o.totals as Record<string, number> | undefined;
+          return sum + (totals?.total ?? (o.total as number) ?? 0);
+        },
+        0
+      );
 
-        return {
-          id: (member.id || member._id) as string,
-          name: (member.name as string) || '',
-          email: (member.email as string) || '',
-          phone: (member.phone as string) || '',
-          totalOrders,
-          lifetimeSpent,
-          joinedDate: (member.createdAt as string) || new Date().toISOString(),
-          segment: (member.segment as string) || undefined,
-          avatar: (member.avatar as string) || undefined,
-        } as Member;
-      });
-    }
+      return {
+        id: (member.id || member._id) as string,
+        name: (member.name as string) || '',
+        email: (member.email as string) || '',
+        phone: (member.phone as string) || '',
+        totalOrders,
+        lifetimeSpent,
+        joinedDate: (member.createdAt as string) || new Date().toISOString(),
+        segment: (member.segment as string) || undefined,
+        avatar: (member.avatar as string) || undefined,
+      } as Member;
+    });
+
+    return {
+      data: parsedMembers,
+      meta: {
+        total: meta.total ?? parsedMembers.length,
+        page: meta.page ?? page,
+        limit: meta.limit ?? limit,
+        totalPages: meta.totalPages ?? Math.ceil((meta.total ?? parsedMembers.length) / limit),
+      },
+    };
   } catch (err) {
     console.warn('Members API failed, using mock data:', err);
   }
@@ -100,13 +126,20 @@ const fetchMembers = async (params?: FetchMembersParams): Promise<Member[]> => {
     result = result.filter((m) => m.segment === params.segment);
   }
 
-  const limit = params?.limit ?? 15;
-  const page = params?.page ?? 1;
-  return result.slice((page - 1) * limit, page * limit);
+  const paginatedData = result.slice((page - 1) * limit, page * limit);
+  return {
+    data: paginatedData,
+    meta: {
+      total: result.length,
+      page,
+      limit,
+      totalPages: Math.ceil(result.length / limit),
+    },
+  };
 };
 
 export function useMembers(params?: FetchMembersParams) {
-  return useQuery({
+  return useQuery<FetchMembersResponse>({
     queryKey: ['members', params],
     queryFn: () => fetchMembers(params),
   });

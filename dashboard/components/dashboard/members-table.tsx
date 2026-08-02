@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -34,17 +34,27 @@ interface MembersTableProps {
   searchQuery: string;
   segmentFilter: string;
   page?: number;
+  onTotalPagesChange?: (totalPages: number) => void;
 }
 
-export function MembersTable({ searchQuery, segmentFilter, page = 1 }: MembersTableProps) {
+export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPagesChange }: MembersTableProps) {
   const queryClient = useQueryClient();
 
-  const { data: members, isLoading, isError, error } = useMembers({
+  const { data: responseData, isLoading, isError, error } = useMembers({
     search: searchQuery,
     segment: segmentFilter !== 'All' ? segmentFilter : undefined,
     page,
     limit: 15,
   });
+
+  const members = responseData?.data ?? [];
+  const totalPages = responseData?.meta?.totalPages ?? 1;
+
+  useEffect(() => {
+    if (onTotalPagesChange && responseData?.meta) {
+      onTotalPagesChange(totalPages);
+    }
+  }, [totalPages, onTotalPagesChange, responseData]);
 
   const handleViewProfile = (member: any) => {
     toast.info(`Viewing profile for ${member.name}`);

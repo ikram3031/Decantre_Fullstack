@@ -3,45 +3,11 @@ import { MemberModel } from "../models/member.model.js";
 import { hashPassword, comparePassword } from "../utils/password.js";
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
-import nodemailer from "nodemailer";
 import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
-import { buildOtpEmailHtml } from "../../emailTemplates/otpTemp.js";
+import { sendOtpEmail } from "../utils/otpDelivery.js";
 
 const { Types } = mongoose;
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.hostinger.com",
-  port: Number(process.env.SMTP_PORT || 465),
-  secure: (process.env.SMTP_ENCRYPTION || "SSL").toLowerCase() === "ssl",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
-  },
-});
-
-const sendOtpEmail = async ({ toEmail, otp, name, type = "registration" }) => {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
-    throw new Error("SMTP credentials are not configured");
-  }
-
-  const isForgotPassword = type === "forgot-password";
-  const subject = isForgotPassword
-    ? "Your Decantre Password Reset Code"
-    : "Your OTP verification code";
-  const text = isForgotPassword
-    ? `Hello ${name || "there"},\n\nUse this OTP to reset your Decantre password: ${otp}\nThis code will expire in 3 minutes.\n\nIf you did not request this, please ignore this email.`
-    : `Hello ${name || "there"},\n\nYour OTP verification code is ${otp}.\nThis code will expire in 3 minutes.\n\nThank you.`;
-  const html = buildOtpEmailHtml({ name, otp, type });
-
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM || process.env.SMTP_USER,
-    to: toEmail,
-    subject,
-    text,
-    html,
-  });
-};
 
 const hasAddressData = (address) => {
   if (!address || typeof address !== "object") return false;
@@ -139,8 +105,41 @@ const sanitizeInfo = (info) => {
 // GET /members - returns the list of all members
 export const listMembers = async (req, res, next) => {
   try {
-    const members = await MemberModel.find().lean();
-    res.json({ status: "success", data: members });
+    const page = Math.max(1, parseInt(req.query.page || '1', 10));
+    const limit = Math.max(1, parseInt(req.query.limit || '15', 10));
+    
+    const filter = {};
+    
+    if (req.query.q) {
+      const searchRegex = new RegExp(req.query.q.trim(), 'i');
+      filter.$or = [
+        { name: searchRegex },
+        { email: searchRegex },
+        { phone: searchRegex }
+      ];
+    }
+    
+    if (req.query.segment && req.query.segment !== 'All') {
+      filter.segment = req.query.segment;
+    }
+    
+    const total = await MemberModel.countDocuments(filter);
+    const members = await MemberModel.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+      
+    res.json({
+      status: "success",
+      data: members,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     next(error);
   }
@@ -371,12 +370,26 @@ export const registerMember = async (req, res, next) => {
         shippingInfo: sanitizeInfo(req.body?.shippingInfo),
       });
 
-      await sendOtpEmail({
+      const emailResult = await sendOtpEmail({
         toEmail: member.email,
         otp,
         name: member.name,
         type: "registration",
       });
+
+      if (!emailResult.delivered) {
+        if (member?.id) {
+          await MemberModel.findByIdAndDelete(member.id);
+        }
+        logger.warn(
+          { email: trimmedEmail, reason: emailResult.reason },
+          "OTP delivery failed during registration",
+        );
+        return res.status(500).json({
+          status: "error",
+          message: emailResult.reason || "Failed to send OTP email",
+        });
+      }
     } catch (emailError) {
       if (member?.id) {
         await MemberModel.findByIdAndDelete(member.id);

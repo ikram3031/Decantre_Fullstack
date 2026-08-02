@@ -107,9 +107,7 @@ export function useCategories() {
   return useQuery<CategoryCacheEntry[]>({
     queryKey: ['categories-cache'],
     queryFn: async () => {
-      const response = await apiClient.get<ApiListResponse<CategoryApiItem>>('/api/v1/categories', {
-        params: { limit: 1000 },
-      });
+      const response = await apiClient.get<ApiListResponse<CategoryApiItem>>('/api/v1/categories');
       const responseData = response.data;
       const rawData = Array.isArray(responseData) ? responseData : responseData?.data ?? [];
       const categories: CategoryCacheEntry[] = (Array.isArray(rawData) ? rawData : [])
