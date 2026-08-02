@@ -15,6 +15,7 @@ const memberSchema = new Schema(
     emailOtp: { type: String, trim: true, select: false },
     emailOtpExpiresAt: { type: Date, select: false },
     isEmailVerified: { type: Boolean, default: false },
+    verified: { type: Boolean, default: false },
     emailVerifiedAt: { type: Date, select: false },
     passwordReset: { type: Boolean, default: false },
     billingAddress: {

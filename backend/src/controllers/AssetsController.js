@@ -1,5 +1,6 @@
 import { AssetModel } from "../models/asset.model.js";
 
+// GET /assets - সব asset-এর তালিকা দেখায়
 export const listAssets = async (req, res, next) => {
   try {
     const assets = await AssetModel.find().lean();
@@ -9,6 +10,7 @@ export const listAssets = async (req, res, next) => {
   }
 };
 
+// GET /assets/:assetId - একটি asset-এর বিস্তারিত তথ্য দেখায়
 export const getAssetById = async (req, res, next) => {
   try {
     const { assetId } = req.params;
@@ -20,6 +22,7 @@ export const getAssetById = async (req, res, next) => {
   }
 };
 
+// POST /assets - নতুন asset তৈরি করে
 export const createAsset = async (req, res, next) => {
   try {
     const { name, metadata } = req.body ?? {};
@@ -33,6 +36,7 @@ export const createAsset = async (req, res, next) => {
   }
 };
 
+// PUT /assets/:assetId - asset আপডেট করে
 export const updateAsset = async (req, res, next) => {
   try {
     const { assetId } = req.params;
@@ -48,6 +52,7 @@ export const updateAsset = async (req, res, next) => {
   }
 };
 
+// DELETE /assets/:assetId - asset ডিলিট করে
 export const deleteAsset = async (req, res, next) => {
   try {
     const { assetId } = req.params;

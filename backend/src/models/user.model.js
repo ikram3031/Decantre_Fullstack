@@ -37,6 +37,7 @@ const userSchema = new Schema(
       default: [],
     },
     isActive: { type: Boolean, default: true },
+    lastLogin: { type: Date, default: null },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
     updatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },

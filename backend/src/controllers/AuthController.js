@@ -17,6 +17,7 @@ const createRefreshToken = () => {
   return crypto.randomBytes(48).toString("hex");
 };
 
+// POST /auth/login - ইউজারের লগইন এবং access/refresh token তৈরি করে
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body ?? {};
@@ -38,6 +39,7 @@ export const login = async (req, res, next) => {
 
     const refreshToken = createRefreshToken();
     const refreshTokenExpiresAt = new Date(Date.now() + env.REFRESH_TOKEN_EXPIRES_MS);
+    user.lastLogin = new Date();
     user.refreshToken = refreshToken;
     user.refreshTokenExpiresAt = refreshTokenExpiresAt;
     await user.save();
@@ -70,6 +72,7 @@ export const login = async (req, res, next) => {
   }
 };
 
+// POST /auth/refresh - refresh token দিয়ে নতুন access token দেয়
 export const refreshToken = async (req, res, next) => {
   try {
     const { refreshToken } = req.body ?? {};
@@ -115,6 +118,7 @@ export const refreshToken = async (req, res, next) => {
   }
 };
 
+// POST /auth/logout - refresh token সরিয়ে লগআউট করে
 export const logout = async (req, res, next) => {
   try {
     const { refreshToken } = req.body ?? {};
@@ -135,6 +139,7 @@ export const logout = async (req, res, next) => {
   }
 };
 
+// POST /auth/create-super-admin - সুপার অ্যাডমিন তৈরি বা আপডেট করে
 export const createSuperAdmin = async (req, res, next) => {
   try {
     if (!env.ALLOW_SUPER_ADMIN_CREATION) {
@@ -185,6 +190,7 @@ export const createSuperAdmin = async (req, res, next) => {
   }
 };
 
+// POST /auth/google - Google OAuth দিয়ে লগইন করে
 export const googleAuth = async (req, res, next) => {
   try {
     const { code, redirectUri } = req.body ?? {};
@@ -264,6 +270,7 @@ export const googleAuth = async (req, res, next) => {
     const refreshToken = createRefreshToken();
     const refreshTokenExpiresAt = new Date(Date.now() + env.REFRESH_TOKEN_EXPIRES_MS);
 
+    user.lastLogin = new Date();
     user.refreshToken = refreshToken;
     user.refreshTokenExpiresAt = refreshTokenExpiresAt;
     await user.save();

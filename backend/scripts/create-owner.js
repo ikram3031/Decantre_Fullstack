@@ -3,20 +3,27 @@ import { UserModel } from "../src/models/user.model.js";
 import { hashPassword } from "../src/utils/password.js";
 
 const owner_Data = [
-  {
-    email: "ikramul.web@gmail.com",
-    name: "Developer",
-    password: "111223344",
-    phone: "+8801710000001",
-    role: "Owner",
-  },
+	{
+		email: "ahmedsabit3232@gmail.com",
+		name: "Ahmed Sabit",
+		password: "dec@Ntr3",
+		phone: "+8801710000001",
+		role: "Admin",
+	},
+	{
+		email: "saadazad97@gmail.com ",
+		name: "Saad Azad",
+		password: "dec@Ntr3",
+		phone: "+8801710000002",
+		role: "Owner",
+	},
   {
     email: "decantre.store@gmail.com",
-    name: "Saad Azad",
-    password: "111223344",
-    phone: "+8801710000002",
-    role: "Owner",
-  },
+    name: "Decantre Office",
+    password: "dec@Ntr3",
+    phone: "+8801710000003",
+    role: "Admin",  
+  }
 ];
 
 const createOwners = async () => {

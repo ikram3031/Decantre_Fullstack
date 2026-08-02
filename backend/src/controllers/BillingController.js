@@ -15,6 +15,7 @@ const normalizeStatus = (status, amount, totalAmount) => {
   return "pending";
 };
 
+// POST /billing - নতুন বিলিং রেকর্ড তৈরি করে
 export const createBilling = async (req, res, next) => {
   try {
     const {
@@ -76,6 +77,7 @@ export const createBilling = async (req, res, next) => {
   }
 };
 
+// GET /billing - বিলিং রেকর্ডের তালিকা দেখায়
 export const listBilling = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || "1", 10));
@@ -141,6 +143,7 @@ export const listBilling = async (req, res, next) => {
   }
 };
 
+// GET /billing/:billingId - একটি বিলিং ডিটেইল দেখায়
 export const getBillingById = async (req, res, next) => {
   try {
     const { billingId } = req.params;
@@ -159,6 +162,7 @@ export const getBillingById = async (req, res, next) => {
   }
 };
 
+// PUT /billing/:billingId - বিলিং তথ্য আপডেট করে
 export const updateBilling = async (req, res, next) => {
   try {
     const { billingId } = req.params;
@@ -224,6 +228,7 @@ export const updateBilling = async (req, res, next) => {
   }
 };
 
+// DELETE /billing/:billingId - বিলিং রেকর্ড ডিলিট করে
 export const deleteBilling = async (req, res, next) => {
   try {
     const { billingId } = req.params;

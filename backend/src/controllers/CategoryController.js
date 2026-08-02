@@ -5,6 +5,7 @@ import { logger } from "../config/logger.js";
  * GET /api/v1/categories
  * Returns an array of all categories (populated with parent reference).
  */
+// GET /categories - সব ক্যাটাগরির তালিকা দেখায়
 export const getAllCategories = async (req, res) => {
   try {
     const categories = await CategoryModel.find()
@@ -21,6 +22,7 @@ export const getAllCategories = async (req, res) => {
  * GET /api/v1/categories/:id
  * Returns a single category by its MongoDB ObjectId.
  */
+// GET /categories/:id - একটি ক্যাটাগরির তথ্য দেখায়
 export const getCategoryById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -41,6 +43,7 @@ export const getCategoryById = async (req, res) => {
  * POST /api/v1/categories
  * Create a new category.
  */
+// POST /categories - নতুন ক্যাটাগরি তৈরি করে
 export const createCategory = async (req, res) => {
   try {
     const { name, slug, description, parent } = req.body;
@@ -79,6 +82,7 @@ export const createCategory = async (req, res) => {
  * PUT /api/v1/categories/:id
  * Update an existing category by ID or slug/did.
  */
+// PUT /categories/:id - ক্যাটাগরি আপডেট করে
 export const updateCategory = async (req, res) => {
   const { id } = req.params;
   try {
@@ -116,6 +120,7 @@ export const updateCategory = async (req, res) => {
  * DELETE /api/v1/categories/:id
  * Delete a category by ID or slug/did.
  */
+// DELETE /categories/:id - ক্যাটাগরি ডিলিট করে
 export const deleteCategory = async (req, res) => {
   const { id } = req.params;
   try {

@@ -26,24 +26,40 @@ export const AuthModal = () => {
 
   // OTP State (6 Digits)
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
-  const [resendTimer, setResendTimer] = useState(60);
+  const [resendTimer, setResendTimer] = useState(180); // 3 minutes
   const [isResending, setIsResending] = useState(false);
   const otpInputsRef = useRef([]);
+
+  const formatOtpTimer = (seconds) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
 
   // Synchronize internal state with global state trigger
   React.useEffect(() => {
     setMode(authModalMode);
   }, [authModalMode, isAuthModalOpen]);
 
-  // Resend OTP Countdown Timer
+  // OTP Countdown Timer — auto-resends when it reaches 0
   useEffect(() => {
-    let timer;
-    if (mode === 'otp' && resendTimer > 0) {
-      timer = setInterval(() => {
-        setResendTimer((prev) => prev - 1);
-      }, 1000);
-    }
+    if (mode !== 'otp') return;
+    if (resendTimer <= 0) return;
+
+    const timer = setInterval(() => {
+      setResendTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          // Auto-trigger resend when timer expires
+          handleAutoResend();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
     return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, resendTimer]);
 
   if (!isAuthModalOpen) return null;
@@ -163,18 +179,31 @@ export const AuthModal = () => {
     }
   };
 
+  // Called manually by user pressing "Resend" button
   const handleResendOTPCode = async () => {
     if (resendTimer > 0 || isResending) return;
+    await triggerResend();
+  };
 
+  // Called automatically when timer hits 0
+  const handleAutoResend = async () => {
+    if (isResending) return;
+    await triggerResend({ auto: true });
+  };
+
+  const triggerResend = async ({ auto = false } = {}) => {
     setIsResending(true);
     try {
       await resendMemberOtp({ email });
-      addToast('A new 6-digit verification code has been dispatched to your email.', 'success');
-      setResendTimer(60);
+      if (auto) {
+        addToast('OTP expired — a new code has been sent to your email.', 'info');
+      } else {
+        addToast('A new 6-digit verification code has been dispatched to your email.', 'success');
+      }
+      setResendTimer(180);
       setOtpValues(['', '', '', '', '', '']);
       otpInputsRef.current[0]?.focus();
     } catch (err) {
-      // Generic resend error
       addToast('Failed to resend verification code. Please try again later.', 'error');
     } finally {
       setIsResending(false);
@@ -195,7 +224,7 @@ export const AuthModal = () => {
       // If backend signals OTP required
       if (response.requiresOtp || response.data?.requiresOtp) {
         setMode('otp');
-        setResendTimer(60);
+        setResendTimer(180);
         addToast('Verification required. Enter the 6-digit code sent to your email.', 'info');
         return;
       }
@@ -283,7 +312,7 @@ export const AuthModal = () => {
       } else {
         // Switch to OTP verification UI if backend requires verification
         setMode('otp');
-        setResendTimer(60);
+        setResendTimer(180);
         addToast('Account created! Please verify the 6-digit code sent to your email.', 'success');
       }
     } catch (err) {
@@ -341,9 +370,9 @@ export const AuthModal = () => {
             <form onSubmit={handleVerifyOTP} className="space-y-6">
               <div className="text-center space-y-2">
                 <p className="text-xs text-zinc-300 font-sans font-light leading-relaxed">
-                  Enter the 6-digit authentication code sent to:
+                  Verification code sent to:
                 </p>
-                <p className="text-xs font-mono text-gold font-semibold">{email}</p>
+                <p className="text-xs font-mono text-gold font-semibold">"{email}"</p>
               </div>
 
               {/* 6 Digit Input Grid */}
@@ -363,10 +392,24 @@ export const AuthModal = () => {
                 ))}
               </div>
 
+              {/* 3-Minute Countdown Timer */}
+              <div className="flex flex-col items-center gap-1">
+                <div className={`text-2xl font-mono font-bold tracking-widest tabular-nums ${
+                  resendTimer === 0 ? 'text-rose-500' : resendTimer <= 30 ? 'text-amber-400' : 'text-gold'
+                }`}>
+                  {formatOtpTimer(resendTimer)}
+                </div>
+                <p className={`text-[10px] font-sans uppercase tracking-widest ${
+                  resendTimer === 0 ? 'text-rose-400' : 'text-zinc-500'
+                }`}>
+                  {resendTimer === 0 ? 'Code expired — resending…' : 'Code expires in'}
+                </p>
+              </div>
+
               {/* Verification Button */}
               <button
                 type="submit"
-                disabled={isLoading || otpValues.join('').length !== 6}
+                disabled={isLoading || otpValues.join('').length !== 6 || resendTimer === 0}
                 className="w-full py-4 bg-gradient-to-r from-gold via-[#DAA520] to-gold hover:opacity-90 disabled:opacity-40 text-black font-sans text-xs uppercase tracking-[0.25em] font-bold transition-all flex items-center justify-center gap-2 cursor-pointer border-none rounded-none shadow-lg"
               >
                 {isLoading ? (
@@ -374,7 +417,7 @@ export const AuthModal = () => {
                 ) : (
                   <>
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Authorize Code</span>
+                    <span>{resendTimer === 0 ? 'Code Expired' : 'Authorize Code'}</span>
                   </>
                 )}
               </button>
@@ -400,7 +443,7 @@ export const AuthModal = () => {
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isResending ? 'animate-spin' : ''}`} />
                   <span>
-                    {resendTimer > 0 ? `Resend Code (${resendTimer}s)` : 'Resend Code'}
+                    {isResending ? 'Sending…' : resendTimer > 0 ? 'Resend Code' : 'Resend Now'}
                   </span>
                 </button>
               </div>

@@ -11,12 +11,11 @@ const imgDir = path.join(projectRoot, "img");
 const outputUploadsDir = path.join(projectRoot, "src", "uploads");
 
 // The JSON file containing the list of products with failed images
-const failedJsonPath = path.resolve(
-  projectRoot,
-  "scripts",
-  "failed-product-images.json",
-);
+const failedJsonPath = path.resolve(projectRoot, "scripts", "failed-product-images.json");
 const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"];
+const sourceSizeThreshold = 100 * 1024;
+const targetMainFileSize = 200 * 1024;
+const targetThumbFileSize = 200 * 1024;
 
 const getBatchFolderName = () => {
   const now = new Date();
@@ -42,21 +41,36 @@ const slugify = (text) => {
     .replace(/^-+|-+$/g, "");
 };
 
-const convertToWebp = async (sourcePath, destPath, maxSize = 1200) => {
+const convertToWebp = async (sourcePath, destPath, { maxSize = 1200, fit = "inside", targetMaxBytes = 200 * 1024 } = {}) => {
   await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
-  const tmp = `${destPath}.tmp`;
-  await sharp(sourcePath)
-    .rotate()
-    .resize({
-      width: maxSize,
-      height: maxSize,
-      fit: "inside",
-      withoutEnlargement: true,
-    })
-    .webp({ quality: 90 })
-    .toFile(tmp);
-  await fs.promises.rename(tmp, destPath);
-  return destPath;
+  const tempFile = `${destPath}.tmp`;
+  const sourceStats = await fs.promises.stat(sourcePath);
+  const qualities = sourceStats.size < sourceSizeThreshold ? [100] : [90, 80];
+
+  for (const quality of qualities) {
+    await sharp(sourcePath)
+      .rotate()
+      .resize({
+        width: maxSize,
+        height: maxSize,
+        fit,
+        withoutEnlargement: true,
+      })
+      .webp({ quality })
+      .toFile(tempFile);
+
+    const outputStats = await fs.promises.stat(tempFile);
+    const shouldUseCurrent = outputStats.size <= targetMaxBytes || quality === qualities[qualities.length - 1];
+
+    if (shouldUseCurrent) {
+      await fs.promises.rename(tempFile, destPath);
+      return { destPath, quality, size: outputStats.size };
+    }
+
+    await fs.promises.unlink(tempFile).catch(() => {});
+  }
+
+  return { destPath, quality: qualities[qualities.length - 1], size: 0 };
 };
 
 const findImageFileForProduct = (productSlug, files) => {
@@ -82,139 +96,108 @@ const getAllFiles = (dirPath, arrayOfFiles = []) => {
   return arrayOfFiles;
 };
 
+const readFailedEntries = async () => {
+  if (!fs.existsSync(failedJsonPath)) {
+    return [];
+  }
+
+  const raw = await fs.promises.readFile(failedJsonPath, "utf-8");
+  if (!raw.trim()) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeFailedEntries = async (entries) => {
+  await fs.promises.writeFile(failedJsonPath, JSON.stringify(entries, null, 2), "utf-8");
+};
+
 const run = async () => {
   if (!fs.existsSync(imgDir)) {
     console.error(`Image folder not found: ${imgDir}`);
     process.exit(1);
   }
 
-  // 1. Initial cleanup or start: empty the JSON at start or ensure it exists
-  await fs.promises.writeFile(
-    failedJsonPath,
-    JSON.stringify([], null, 2),
-    "utf-8",
-  );
-  console.log(`🧹 Cleared and initialized: ${failedJsonPath}`);
+  const pendingEntries = await readFailedEntries();
+  if (pendingEntries.length === 0) {
+    console.log("No pending products found in failed-product-images.json");
+    return;
+  }
 
   await connectDatabase();
-
-  // 2. Fetch all products that have placeholder images or are missing images
-  const PLACEHOLDER_URL = "/uploads/product_placeholder.webp";
-  const query = {
-    $or: [
-      { imageUrl: PLACEHOLDER_URL },
-      { thumbnailUrl: PLACEHOLDER_URL },
-      { imageUrl: { $exists: false } },
-      { thumbnailUrl: { $exists: false } },
-      { imageUrl: "" },
-      { thumbnailUrl: "" },
-    ],
-  };
-
-  const placeholderProducts = await ProductModel.find(query).lean();
-  console.log(
-    `Loaded ${placeholderProducts.length} products with placeholder/missing images from DB`,
-  );
-
-  if (placeholderProducts.length === 0) {
-    console.log("✅ No products need image updates. Database is clean.");
-    await closeDatabase();
-    process.exit(0);
-  }
 
   const files = getAllFiles(imgDir);
   let success = 0;
   let failed = 0;
-  const newFailedList = [];
-  const baseBatchFolder = getBatchFolderName().slice(0, -2); // e.g. "260802"
+  const remainingEntries = [];
+  const baseBatchFolder = getBatchFolderName().slice(0, -2);
 
-  for (const product of placeholderProducts) {
-    const did = product.did || product._id?.toString();
-    const name = product.name;
+  for (const entry of pendingEntries) {
+    const name = entry.name || entry.productName || entry.slug || entry.title || "";
+    const did = entry.did || entry.id || entry._id || "";
+    const productSlug = slugify(name);
 
-    if (!did) {
-      console.log(
-        `✖ Skipped invalid database item: ${JSON.stringify(product)}`,
-      );
+    if (!name) {
+      remainingEntries.push(entry);
+      failed += 1;
       continue;
     }
 
-    const productSlug = slugify(name);
     const imageFilePath = findImageFileForProduct(productSlug, files);
 
-    // If the image file doesn't exist in the img folder or subfolders
     if (!imageFilePath) {
       failed += 1;
-      newFailedList.push({ did, name });
-      console.log(
-        `✖ ${productSlug} -> image not found in img folder/subfolders`,
-      );
+      remainingEntries.push(entry);
+      console.log(`✖ ${productSlug} -> image not found in img folder/subfolders`);
       continue;
     }
 
     try {
-      const sourcePath = imageFilePath; // Since getAllFiles returns full paths
       const fileBase = productSlug;
-
-      // Compute batch folder name dynamically: 50 items per folder
       const currentBatchIndex = Math.floor(success / 50) + 1;
       const batchFolder = `${baseBatchFolder}${String(currentBatchIndex).padStart(2, "0")}`;
+      const identifier = did || `${Date.now()}-${success}`;
+      const mainFileName = `product_${fileBase}_${identifier}.webp`;
+      const thumbFileName = `thumb_${fileBase}_${identifier}.webp`;
+      const mainDestPath = path.join(outputUploadsDir, batchFolder, mainFileName);
+      const thumbDestPath = path.join(outputUploadsDir, batchFolder, thumbFileName);
 
-      const mainFileName = `product_${fileBase}_${did}.webp`;
-      const thumbFileName = `thumb_${fileBase}_${did}.webp`;
-      const mainDestPath = path.join(
-        outputUploadsDir,
-        batchFolder,
-        mainFileName,
-      );
-      const thumbDestPath = path.join(
-        outputUploadsDir,
-        batchFolder,
-        thumbFileName,
-      );
+      await convertToWebp(imageFilePath, mainDestPath, { maxSize: 1200, targetMaxBytes: targetMainFileSize });
+      await convertToWebp(imageFilePath, thumbDestPath, { maxSize: 200, fit: "cover", targetMaxBytes: targetThumbFileSize });
 
-      // Convert and resize images
-      await convertToWebp(sourcePath, mainDestPath, 1200);
-      await convertToWebp(sourcePath, thumbDestPath, 600);
-
-      // Verify files exist in destination
       if (!fs.existsSync(mainDestPath) || !fs.existsSync(thumbDestPath)) {
-        throw new Error(
-          "Converted images not found in uploads destination directory",
-        );
+        throw new Error("Converted images not found in uploads destination directory");
       }
 
       const imageUrl = `/uploads/${batchFolder}/${mainFileName}`;
       const thumbnailUrl = `/uploads/${batchFolder}/${thumbFileName}`;
 
-      // Update the product's image URLs in MongoDB
-      const updateResult = await ProductModel.updateOne(
-        { _id: product._id },
-        { $set: { imageUrl, thumbnailUrl } },
-      );
+      const query = did ? { $or: [{ did }, { name }] } : { name };
+      const updateResult = await ProductModel.updateOne(query, { $set: { imageUrl, thumbnailUrl } });
 
       if (updateResult.matchedCount === 0) {
-        throw new Error(`Product not found in database for ID: ${product._id}`);
+        throw new Error(`Product not found in database for: ${name}`);
       }
 
       success += 1;
       console.log(`✔ ${productSlug} -> updated successfully: ${imageUrl}`);
     } catch (err) {
       failed += 1;
-      newFailedList.push({ did, name });
+      remainingEntries.push(entry);
       console.error(`✖ ${productSlug} failed:`, err.message || err);
     }
   }
 
-  // 3. Write only the remaining failures to failed_product_image.json
-  await fs.promises.writeFile(
-    failedJsonPath,
-    JSON.stringify(newFailedList, null, 2),
-    "utf-8",
-  );
+  await writeFailedEntries(remainingEntries);
 
   console.log("\n=== Upload Summary ===");
-  console.log(`Products checked: ${placeholderProducts.length}`);
+  console.log(`Products checked: ${pendingEntries.length}`);
   console.log(`Succeeded: ${success}`);
   console.log(`Failed (left in json): ${failed}`);
 

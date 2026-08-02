@@ -9,6 +9,7 @@ import { logger } from "../config/logger.js";
  *   - skip (default 0): number of documents to skip
  *   - limit (default 10): maximum number of documents to return
  */
+// GET /brands - ব্র্যান্ডের তালিকা দেখায়
 export const getBrands = async (req, res) => {
   const skip = parseInt(req.query.skip, 10) || 0;
   const limit = parseInt(req.query.limit, 10) || 1000; // default large limit to get all brands
@@ -29,6 +30,7 @@ export const getBrands = async (req, res) => {
  * POST /api/v1/brands
  * Create a new brand.
  */
+// POST /brands - নতুন ব্র্যান্ড তৈরি করে
 export const createBrand = async (req, res) => {
   try {
     const { name, slug, description } = req.body;
@@ -60,6 +62,7 @@ export const createBrand = async (req, res) => {
  * PUT /api/v1/brands/:id
  * Update an existing brand by ID or slug/did.
  */
+// PUT /brands/:id - ব্র্যান্ড আপডেট করে
 export const updateBrand = async (req, res) => {
   const { id } = req.params;
   try {
@@ -88,6 +91,7 @@ export const updateBrand = async (req, res) => {
  * DELETE /api/v1/brands/:id
  * Delete a brand by ID or slug/did.
  */
+// DELETE /brands/:id - ব্র্যান্ড ডিলিট করে
 export const deleteBrand = async (req, res) => {
   const { id } = req.params;
   try {
