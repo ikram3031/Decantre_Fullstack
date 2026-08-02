@@ -1,6 +1,6 @@
 #
 
-This document outlines the complete implementation of the authentication system for the E-commerce ERP & Inventory Dashboard, leveraging **Zustand**, **Axios**, and **TypeScript/JavaScript** with the backend API base URL: `http://144.79.218.126:5092`.
+This document outlines the complete implementation of the authentication system for the E-commerce ERP & Inventory Dashboard, leveraging **Zustand**, **Axios**, and **TypeScript/JavaScript** with the backend API base URL: `https://server.decantrebd.com`.
 
 #
 
@@ -9,7 +9,7 @@ This document outlines the complete implementation of the authentication system 
 Configure your environment variables in the root directory of your React/Vite application by creating or updating the `.env` file:
 
 ```env
-VITE_API_BASE_URL=http://144.79.218.126:5092
+VITE_API_BASE_URL=https://server.decantrebd.com
 ```
 
 ---
@@ -212,7 +212,7 @@ Your Markdown file is ready
 ```markdown
 # Comprehensive Frontend Authentication Documentation
 
-This document outlines the complete implementation of the authentication system for the E-commerce ERP & Inventory Dashboard, leveraging **Zustand**, **Axios**, and **TypeScript/JavaScript** with the backend API base URL: `http://144.79.218.126:5092`.
+This document outlines the complete implementation of the authentication system for the E-commerce ERP & Inventory Dashboard, leveraging **Zustand**, **Axios**, and **TypeScript/JavaScript** with the backend API base URL: `https://server.decantrebd.com`.
 
 ---
 
@@ -221,7 +221,7 @@ This document outlines the complete implementation of the authentication system 
 Configure your environment variables in the root directory of your React/Vite application by creating or updating the `.env` file:
 
 ```env
-VITE_API_BASE_URL=[http://144.79.218.126:5092](http://144.79.218.126:5092)
+VITE_API_BASE_URL=[https://server.decantrebd.com](https://server.decantrebd.com)
 
 ````
 

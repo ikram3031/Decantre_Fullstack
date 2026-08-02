@@ -143,10 +143,10 @@
 │   └── Dockerfile
 ├── frontend/                # React / Vite frontend application
 │   ├── package.json         # Dev/prod scripts targeting port 8001
-│   └── Dockerfile           # ARG VITE_API_URL=http://144.79.218.126:5092
+│   └── Dockerfile           # ARG VITE_API_URL=https://server.decantrebd.com
 └── dashboard/               # React / Vite admin dashboard
     ├── package.json         # Scripts targeting port 8005
-    └── Dockerfile           # ARG VITE_API_URL=http://144.79.218.126:5092</pre>
+    └── Dockerfile           # ARG VITE_API_URL=https://server.decantrebd.com</pre>
       </div>
 
       <div class="card">
@@ -208,11 +208,11 @@
         <h2>4. Static Asset and API Request Flow</h2>
         <pre>[Browser Client]
      │
-     ├──► Frontend Page -> http://144.79.218.126:8001
-     ├──► Admin Dashboard -> http://144.79.218.126:8005
+     ├──► Frontend Page -> https://decantrebd.com
+     ├──► Admin Dashboard -> https://dashboard.decantrebd.com
      │
-     ├──► API Requests -> http://144.79.218.126:5092/api/...
-     └──► Image Assets -> http://144.79.218.126:5092/uploads/&lt;image_name.jpg&gt;</pre>
+     ├──► API Requests -> https://server.decantrebd.com/api/...
+     └──► Image Assets -> https://server.decantrebd.com/uploads/&lt;image_name.jpg&gt;</pre>
       </div>
 
       <div class="card">

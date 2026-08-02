@@ -45,7 +45,7 @@ Implementation details:
 Example curl:
 
 ```bash
-curl "http://144.79.218.126:5092/api/v1/search-products?q=a&limit=12"
+curl "https://server.decantrebd.com/api/v1/search-products?q=a&limit=12"
 ```
 
 Security & performance:

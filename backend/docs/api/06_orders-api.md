@@ -5,7 +5,7 @@ This document describes all available order endpoints for the backend.
 ## Base URL
 
 ```text
-http://144.79.218.126:5092/api/v1
+https://server.decantrebd.com/api/v1
 ```
 
 ## Endpoints

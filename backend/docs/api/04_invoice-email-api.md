@@ -5,7 +5,7 @@ This endpoint sends a styled invoice email using SMTP credentials configured in 
 ## Base URL
 
 ```text
-http://144.79.218.126:5092/api/v1/sendEmail/invoice
+https://server.decantrebd.com/api/v1/sendEmail/invoice
 ```
 
 ## Endpoint

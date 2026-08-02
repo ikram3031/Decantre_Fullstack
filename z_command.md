@@ -1,24 +1,33 @@
 # Dev Deployment Documentation
 
-## Server login 
+## Server login
+
 ```
 ssh root@144.79.218.126
 ```
+
 ### Go to root
+
 ```
 cd /opt/dev
 ```
+
 ### Single app deploy example
+
 ```
 docker compose up -d --no-deps --build backend
 ```
+
 ```
 docker compose up -d --no-deps --build frontend
 ```
+
 ```
 docker compose up -d --no-deps --build dashboard
 ```
+
 ### All rerdeploy
+
 ```
 make deploy
 ```
@@ -39,20 +48,20 @@ Project root: `/opt/dev`
 │   └── Dockerfile
 ├── frontend/                # React / Vite frontend application
 │   ├── package.json         # Dev/prod scripts targeting port 8001
-│   └── Dockerfile           # ARG VITE_API_URL=http://144.79.218.126:5092
+│   └── Dockerfile           # ARG VITE_API_URL=https://server.decantrebd.com
 └── dash/                    # Next.js admin dashboard
     ├── package.json         # Scripts targeting port 8005
-    └── Dockerfile           # ARG NEXT_PUBLIC_API_BASE_URL=http://144.79.218.126:5092
+    └── Dockerfile           # ARG NEXT_PUBLIC_API_BASE_URL=https://server.decantrebd.com
 ```
 
 ## 2. Service and Port Allocation
 
-| Service | Container Name | Internal Port | Public Port | Purpose |
-|--------|----------------|---------------|-------------|---------|
-| Backend | `decantre-backend-dev` | 5092 | 0.0.0.0:5092 | Express API and static uploads handler |
-| Frontend | `decantre-frontend-dev` | 8001 | 0.0.0.0:8001 | User client application |
-| Dashboard | `decantre-dashboard-dev` | 8005 | 0.0.0.0:8005 | Admin dashboard |
-| Database | `decantre-mongodb-dev` | 27017 | 0.0.0.0:27017 | MongoDB database engine |
+| Service   | Container Name           | Internal Port | Public Port   | Purpose                                |
+| --------- | ------------------------ | ------------- | ------------- | -------------------------------------- |
+| Backend   | `decantre-backend-dev`   | 5092          | 0.0.0.0:5092  | Express API and static uploads handler |
+| Frontend  | `decantre-frontend-dev`  | 8001          | 0.0.0.0:8001  | User client application                |
+| Dashboard | `decantre-dashboard-dev` | 8005          | 0.0.0.0:8005  | Admin dashboard                        |
+| Database  | `decantre-mongodb-dev`   | 27017         | 0.0.0.0:27017 | MongoDB database engine                |
 
 ## 3. Uploads and Storage Synchronization
 
@@ -61,6 +70,7 @@ Project root: `/opt/dev`
 - Uploads are synchronized through Docker volume mapping so that any file saved by the backend is available directly on the host server.
 
 This setup is useful for:
+
 - storing uploaded images
 - keeping files persistent across container restarts
 - accessing files directly from the VPS filesystem
@@ -70,11 +80,11 @@ This setup is useful for:
 ```text
 [Browser Client]
        │
-       ├──► Frontend Page -> http://144.79.218.126:8001
-       ├──► Admin Dashboard -> http://144.79.218.126:8005
+       ├──► Frontend Page -> https://decantrebd.com
+       ├──► Admin Dashboard -> https://dashboard.decantrebd.com
        │
-       ├──► API Requests -> http://144.79.218.126:5092/api/...
-       └──► Image Assets -> http://144.79.218.126:5092/uploads/<image_name.jpg>
+       ├──► API Requests -> https://server.decantrebd.com/api/...
+       └──► Image Assets -> https://server.decantrebd.com/uploads/<image_name.jpg>
 ```
 
 ## 5. Key Commands
@@ -99,4 +109,3 @@ docker exec -it decantre-mongodb-dev mongosh -u admin -p 11223345 --authenticati
 # Re-create / update Super Admin user
 docker exec -it decantre-backend-dev node scripts/create-super-admin.js
 ```
-

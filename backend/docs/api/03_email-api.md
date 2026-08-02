@@ -5,7 +5,7 @@ This document describes the email endpoint used by the website to send test emai
 ## Base URL
 
 ```text
-http://144.79.218.126:5092/api/v1/sendEmail
+https://server.decantrebd.com/api/v1/sendEmail
 ```
 
 ## Endpoint

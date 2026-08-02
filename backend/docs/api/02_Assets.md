@@ -3,7 +3,7 @@
 ## Base URL
 
 ```text
-http://144.79.218.126:5092/api/v1
+https://server.decantrebd.com/api/v1
 ```
 
 ## Base Path
@@ -18,6 +18,7 @@ http://144.79.218.126:5092/api/v1
 ```http
 Authorization: Bearer <accessToken>
 ```
+
 - The GET endpoints are available to any authenticated user.
 - The POST, PUT, and DELETE endpoints require `Owner` or `Admin` role privileges.
 

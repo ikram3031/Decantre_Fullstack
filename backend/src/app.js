@@ -24,7 +24,16 @@ export async function createApp() {
 
   app.set("wpTablePrefix", process.env.WP_TABLE_PREFIX || "wp_");
   const corsOptions = {
-    origin: true,
+    origin: [
+      "http://decantrebd.com",
+      "https://decantrebd.com",
+      "http://www.decantrebd.com",
+      "https://www.decantrebd.com",
+      "http://dashboard.decantrebd.com",
+      "https://dashboard.decantrebd.com",
+      "http://localhost:8001",
+      "http://localhost:8005",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
