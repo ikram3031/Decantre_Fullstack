@@ -168,7 +168,7 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
       total,
       page: rawMeta?.page ?? page,
       limit: rawMeta?.limit ?? limit,
-      totalPages: rawMeta?.totalPages ?? Math.ceil(total / limit) || 1,
+      totalPages: rawMeta?.totalPages ?? (Math.ceil(total / limit) || 1),
     },
   };
 };
