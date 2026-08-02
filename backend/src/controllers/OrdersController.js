@@ -257,6 +257,35 @@ export const updateOrder = async (req, res, next) => {
     if (payload.totals) {
       allowedUpdates.totals = payload.totals;
     }
+    if (payload.discountTotalAmount !== undefined) {
+      allowedUpdates.discountTotalAmount = Number(payload.discountTotalAmount || 0);
+    }
+    if (payload.shippingTotalAmount !== undefined) {
+      allowedUpdates.shippingTotalAmount = Number(payload.shippingTotalAmount || 0);
+    }
+    if (payload.customer) {
+      allowedUpdates.customer = {
+        fullName: payload.customer.fullName?.trim() || existingOrder.customer?.fullName || '',
+        phone: payload.customer.phone?.trim() || existingOrder.customer?.phone || '',
+        email: payload.customer.email?.trim() || existingOrder.customer?.email || '',
+        address: payload.customer.address?.trim() || existingOrder.customer?.address || '',
+        city: payload.customer.city?.trim() || existingOrder.customer?.city || '',
+        thana: payload.customer.thana?.trim() || existingOrder.customer?.thana || '',
+        district: payload.customer.district?.trim() || existingOrder.customer?.district || '',
+        zip: payload.customer.zip?.trim() || existingOrder.customer?.zip || '',
+        giftWrap: payload.customer.giftWrap !== undefined ? Boolean(payload.customer.giftWrap) : existingOrder.customer?.giftWrap,
+      };
+    }
+    if (payload.items) {
+      allowedUpdates.items = (payload.items || []).map((item) => ({
+        name: item.name ?? 'Unknown product',
+        quantity: Number(item.quantity || 1),
+        unitPrice: Number(item.unitPrice || 0),
+        size: item.size ?? '',
+        concentration: item.concentration ?? '',
+        productDid: item.productDid ?? '',
+      }));
+    }
     if (payload.memberId !== undefined) {
       if (payload.memberId && Types.ObjectId.isValid(payload.memberId)) {
         allowedUpdates.member = payload.memberId;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Table,
   TableBody,
@@ -55,6 +56,7 @@ import type { Order, OrderDetails, OrderItem } from '@/types';
 
 export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { data: orders, isLoading, isError, error } = useOrders({
     search: searchQuery,
@@ -62,13 +64,7 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
   });
 
   const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [detailsLoading, setDetailsLoading] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [editFulfillmentStatus, setEditFulfillmentStatus] = useState<'Pending' | 'Processing' | 'Shipped' | 'Cancelled'>('Pending');
-  const [editPaymentStatus, setEditPaymentStatus] = useState<'Paid' | 'Pending' | 'Failed'>('Pending');
 
   const handleUpdateStatus = async (order: Order, newStatus: string) => {
     try {
@@ -101,54 +97,11 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
   };
 
   const handleEditOrderClick = (order: Order) => {
-    setSelectedOrder(order);
-    setEditFulfillmentStatus(order.fulfillmentStatus);
-    setEditPaymentStatus(order.paymentStatus);
-    setIsEditOpen(true);
+    router.push(`/dashboard/orders/${order.id}?edit=true` as any);
   };
 
-  const handleViewDetails = async (order: Order) => {
-    setSelectedOrder(order);
-    setDetailsLoading(true);
-    setIsDetailsOpen(true);
-
-    try {
-      const response = await apiClient.get<{ data?: OrderDetails }>(`/api/v1/orders/${order.id}`);
-      if (response.data?.data) {
-        setSelectedOrder(response.data.data);
-      }
-    } catch (err: unknown) {
-      console.error(err);
-      toast.error('Failed to load order details.');
-      setIsDetailsOpen(false);
-    } finally {
-      setDetailsLoading(false);
-    }
-  };
-
-  const handleEditOrderSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedOrder) return;
-    setIsSubmitting(true);
-    try {
-      let apiStatus = 'received';
-      if (editFulfillmentStatus === 'Processing') apiStatus = 'processing';
-      else if (editFulfillmentStatus === 'Shipped') apiStatus = 'shipped';
-      else if (editFulfillmentStatus === 'Cancelled') apiStatus = 'cancelled';
-
-      await apiClient.put(`/api/v1/orders/${selectedOrder.id}`, {
-        status: apiStatus,
-      });
-
-      toast.success(`Order ${selectedOrder.orderNumber} updated successfully!`);
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      setIsEditOpen(false);
-    } catch (err: unknown) {
-      console.error(err);
-      toast.error('Failed to update order.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleViewDetails = (order: Order) => {
+    router.push(`/dashboard/orders/${order.id}` as any);
   };
 
   const getPaymentBadge = (status: string) => {
@@ -265,184 +218,6 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
         </TableBody>
       </Table>
 
-      {/* Details Dialog */}
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Order Details</DialogTitle>
-            <DialogDescription>
-              Full information for order {selectedOrder?.orderNumber}
-            </DialogDescription>
-          </DialogHeader>
-          {detailsLoading ? (
-            <div className="space-y-4 pt-2 text-sm">
-              <div className="h-16 rounded-xl bg-muted animate-pulse" />
-              <div className="h-12 rounded-xl bg-muted animate-pulse" />
-            </div>
-          ) : selectedOrder ? (
-            <div className="space-y-4 pt-2 text-sm">
-              <div className="grid grid-cols-2 gap-2 border-b pb-2">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Order Number</span>
-                  <span className="font-medium">{selectedOrder.orderNumber || selectedOrder._id}</span>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Order ID</span>
-                  <span className="font-medium">{selectedOrder.id || selectedOrder._id || 'N/A'}</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 border-b pb-2">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Date</span>
-                  <span className="font-medium">{new Date(selectedOrder.createdAt || selectedOrder.date).toLocaleString()}</span>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Payment Method</span>
-                  <span className="font-medium">{selectedOrder.paymentMethod || 'N/A'}</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 border-b pb-2">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Customer Name</span>
-                  <span className="font-medium">{selectedOrder.customer?.fullName || selectedOrder.customerName || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Phone</span>
-                  <span className="font-medium">{selectedOrder.customer?.phone || 'N/A'}</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 border-b pb-2">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Email</span>
-                  <span className="font-medium">{selectedOrder.customer?.email || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Address</span>
-                  <span className="font-medium">
-                    {selectedOrder.customer?.address || 'N/A'}
-                    {selectedOrder.customer?.city ? `, ${selectedOrder.customer.city}` : ''}
-                    {selectedOrder.customer?.thana ? `, ${selectedOrder.customer.thana}` : ''}
-                    {selectedOrder.customer?.district ? `, ${selectedOrder.customer.district}` : ''}
-                    {selectedOrder.customer?.zip ? `, ${selectedOrder.customer.zip}` : ''}
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 border-b pb-2">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Shipping Address</span>
-                  <span className="font-medium">
-                    {selectedOrder.shippingAddress?.address || selectedOrder.shippingAddress?.line1 || 'N/A'}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Shipping City</span>
-                  <span className="font-medium">{selectedOrder.shippingAddress?.city || 'N/A'}</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 border-b pb-2">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Payment Status</span>
-                  <span>{getPaymentBadge(selectedOrder.paymentStatus || (selectedOrder.status === 'completed' ? 'Paid' : 'Pending'))}</span>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Fulfillment Status</span>
-                  <span>{getFulfillmentBadge(selectedOrder.fulfillmentStatus || selectedOrder.status)}</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 border-b pb-2">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Subtotal</span>
-                  <span className="font-medium">৳{(selectedOrder.totals?.subtotal ?? 0).toFixed(2)}</span>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Tax</span>
-                  <span className="font-medium">৳{(selectedOrder.totals?.tax ?? 0).toFixed(2)}</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 border-b pb-2">
-                <div>
-                  <span className="text-xs text-muted-foreground block">Shipping Fee</span>
-                  <span className="font-medium">৳{(selectedOrder.totals?.shippingFee ?? selectedOrder.shippingTotalAmount ?? 0).toFixed(2)}</span>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block">Discount</span>
-                  <span className="font-medium">৳{(selectedOrder.discountTotalAmount ?? 0).toFixed(2)}</span>
-                </div>
-              </div>
-              <div>
-                <span className="text-xs text-muted-foreground block">Total Amount</span>
-                <span className="text-lg font-bold text-primary">৳{(selectedOrder.totals?.total ?? selectedOrder.totalAmount ?? 0).toFixed(2)}</span>
-              </div>
-              {selectedOrder.items && selectedOrder.items.length > 0 && (
-                <div className="space-y-2">
-                  <span className="text-xs text-muted-foreground block">Items</span>
-                  <div className="rounded-lg border border-border bg-surface p-3 space-y-2">
-                    {selectedOrder.items.map((item: OrderItem, index: number) => (
-                      <div key={index} className="grid grid-cols-[1.5fr_0.7fr_0.8fr] gap-2 text-sm">
-                        <div className="font-medium">{item.name}</div>
-                        <div className="text-muted-foreground">Qty: {item.quantity}</div>
-                        <div className="text-right">৳{((item.unitPrice ?? item.price ?? 0) * (item.quantity ?? 1)).toFixed(2)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : null}
-          <DialogFooter>
-            <Button onClick={() => setIsDetailsOpen(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Order Status</DialogTitle>
-            <DialogDescription>
-              Update fulfillment and status for order {selectedOrder?.orderNumber}
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleEditOrderSubmit} className="space-y-4 pt-2">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold">Fulfillment Status</label>
-              <Select value={editFulfillmentStatus} onValueChange={(val: string | null) => setEditFulfillmentStatus((val as 'Pending' | 'Processing' | 'Shipped' | 'Cancelled') ?? 'Pending')}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Processing">Processing</SelectItem>
-                  <SelectItem value="Shipped">Shipped</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold">Payment Status</label>
-              <Select value={editPaymentStatus} onValueChange={(val: string | null) => setEditPaymentStatus((val as 'Paid' | 'Pending' | 'Failed') ?? 'Pending')}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Payment Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Paid">Paid</SelectItem>
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Failed">Failed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <DialogFooter className="pt-2">
-              <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Updating...' : 'Save Changes'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
 
       <ConfirmDeleteDialog
         open={!!deleteTarget}

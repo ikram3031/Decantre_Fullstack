@@ -47,6 +47,8 @@ export interface OrderItem {
   quantity: number;
   unitPrice?: number;
   price?: number;
+  size?: string;
+  concentration?: string;
 }
 
 export interface Order {

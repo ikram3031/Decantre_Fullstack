@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 
-import type { Order } from '@/types';
+import type { Order, OrderDetails } from '@/types';
 
-export type { Order };
+export type { Order, OrderDetails };
 
 interface FetchOrdersParams {
   search?: string;
@@ -23,45 +23,6 @@ type BackendOrder = {
   totals?: { total?: number };
   status?: string;
 };
-
-const mockOrders: Order[] = [
-  {
-    id: '1001',
-    orderNumber: 'ORD-20260719-1001',
-    customerName: 'Nadia Rahman',
-    date: '2026-07-28T10:00:00.000Z',
-    totalAmount: 18500,
-    paymentStatus: 'Paid',
-    fulfillmentStatus: 'Shipped',
-  },
-  {
-    id: '1002',
-    orderNumber: 'ORD-20260719-1002',
-    customerName: 'Tanvir Hossain',
-    date: '2026-07-29T14:30:00.000Z',
-    totalAmount: 29050,
-    paymentStatus: 'Pending',
-    fulfillmentStatus: 'Processing',
-  },
-  {
-    id: '1003',
-    orderNumber: 'ORD-20260719-1003',
-    customerName: 'Farhana Ahmed',
-    date: '2026-07-29T18:15:00.000Z',
-    totalAmount: 14500,
-    paymentStatus: 'Paid',
-    fulfillmentStatus: 'Pending',
-  },
-  {
-    id: '1004',
-    orderNumber: 'ORD-20260719-1004',
-    customerName: 'Imtiaz Chowdhury',
-    date: '2026-07-30T09:20:00.000Z',
-    totalAmount: 41000,
-    paymentStatus: 'Failed',
-    fulfillmentStatus: 'Cancelled',
-  },
-];
 
 const fetchOrders = async (params?: FetchOrdersParams): Promise<Order[]> => {
   try {
@@ -109,7 +70,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<Order[]> => {
     console.warn('Backend API orders request failed, using fallback mock data:', err);
   }
 
-  let result = [...mockOrders];
+  let result: Order[] = [];
   if (params?.search) {
     const q = params.search.toLowerCase();
     result = result.filter(o => o.customerName.toLowerCase().includes(q) || o.orderNumber.toLowerCase().includes(q));
@@ -125,5 +86,21 @@ export function useOrders(params?: FetchOrdersParams) {
   return useQuery({
     queryKey: ['orders', params],
     queryFn: () => fetchOrders(params),
+  });
+}
+
+const fetchOrderById = async (id: string): Promise<OrderDetails> => {
+  const response = await apiClient.get<{ data?: OrderDetails }>(`/api/v1/orders/${id}`);
+  if (!response.data?.data) {
+    throw new Error('Order not found');
+  }
+  return response.data.data;
+};
+
+export function useOrder(id: string) {
+  return useQuery({
+    queryKey: ['order', id],
+    queryFn: () => fetchOrderById(id),
+    enabled: !!id,
   });
 }
