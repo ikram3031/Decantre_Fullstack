@@ -30,6 +30,11 @@ export const ProductCard = ({
     : product.basePrice;
   const currentPrice = calculateItemPrice(variationPrice, currentSel.size, currentSel.concentration);
 
+  const selectedVar = product.variations && product.variations.find(v => v.size === currentSel.size);
+  const isOutOfStock = selectedVar 
+    ? (selectedVar.stock_status === 'outofstock' || selectedVar.stockStatus === 'outofstock' || selectedVar.stockQuantity === 0)
+    : (product.stockStatus === 'outofstock' || product.stockQuantity === 0);
+
   const descriptionText = product.description || product.tagline || product.scentFamily || '';
 
   return (
@@ -56,6 +61,11 @@ export const ProductCard = ({
       <div className="relative aspect-square rounded-sm overflow-hidden bg-[#0a0a0a] mb-1 flex-shrink-0">
         {!imageLoaded && (
           <div className="absolute inset-0 bg-zinc-900/80 animate-pulse z-10" />
+        )}
+        {isOutOfStock && (
+          <div className="absolute top-2 left-2 z-20 bg-red-600/90 backdrop-blur-sm text-white text-[9px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm shadow-md">
+            Out of Stock
+          </div>
         )}
         <Link to={`/product?did=${product.id}`} className="block w-full h-full">
           <img
@@ -126,22 +136,25 @@ export const ProductCard = ({
         <div>
           <button
             type="button"
+            disabled={isOutOfStock}
             onClick={() => {
+              if (isOutOfStock) return;
               if (typeof handleAddToCart === 'function') {
                 handleAddToCart(product, currentSel.size, currentSel.concentration, 1, currentPrice);
               } else {
-                // Fallback: show console warning and a toast if available
                 console.warn('handleAddToCart is not available for product:', product.id);
               }
             }}
-            className={`font-bold uppercase tracking-wider text-[9px] px-3 py-1.5 rounded-[3px] transition-all flex items-center justify-center gap-1 font-sans border cursor-pointer ${
-              isLight 
-                ? 'bg-black text-white hover:bg-zinc-800 border-black' 
-                : 'border-gold text-gold hover:bg-gold hover:text-black bg-transparent'
+            className={`font-bold uppercase tracking-wider text-[9px] px-3 py-1.5 rounded-[3px] transition-all flex items-center justify-center gap-1 font-sans border ${
+              isOutOfStock
+                ? 'bg-zinc-800 text-zinc-500 border-zinc-800 cursor-not-allowed opacity-50'
+                : isLight 
+                  ? 'bg-black text-white hover:bg-zinc-800 border-black cursor-pointer' 
+                  : 'border-gold text-gold hover:bg-gold hover:text-black bg-transparent cursor-pointer'
             }`}
           >
             <ShoppingCart className="w-3 h-3" />
-            <span className="hidden xs:inline">Add</span>
+            <span className="hidden xs:inline">{isOutOfStock ? 'Sold Out' : 'Add'}</span>
           </button>
         </div>
       </div>

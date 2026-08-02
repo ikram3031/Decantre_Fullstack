@@ -18,6 +18,7 @@ import billingRouter from "./routes/BillingRoute.js";
 import categoriesRouter from "./routes/CategoryRoute.js";
 import brandRouter from "./routes/BrandRoute.js";
 import dashboardRouter from "./routes/DashboardRoute.js";
+import couponRouter from "./routes/CouponRoute.js";
 
 export async function createApp() {
   const app = express();
@@ -81,6 +82,7 @@ export async function createApp() {
   app.use("/api/v1/categories", categoriesRouter);
   app.use("/api/v1/brands", brandRouter);
   app.use("/api/v1/dashboard", dashboardRouter);
+  app.use("/api/v1/coupons", couponRouter);
   app.get("/api/v1/search-products", searchProducts);
 
   app.use((req, res) => {

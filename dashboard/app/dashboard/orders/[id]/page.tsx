@@ -1040,17 +1040,17 @@ export default function OrderDetailsPage() {
                       className="flex items-center gap-2 py-2 border-b border-border/50 last:border-0"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <p className="text-xs font-semibold text-foreground truncate max-w-[170px]">
+                        <div className="flex items-center gap-1 flex-wrap">
+                          <p className="text-[11px] font-semibold text-foreground truncate max-w-[160px]">
                             {item.name}
                           </p>
                           {item.size ? (
-                            <Badge variant="outline" className="text-[9px] border-primary/20 text-primary py-0 px-1 font-medium">
+                            <Badge variant="outline" className="text-[8px] border-primary/20 text-primary py-0 px-1 h-3.5 flex items-center font-medium">
                               {item.size}
                             </Badge>
                           ) : null}
                         </div>
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                        <p className="text-[9px] text-muted-foreground mt-0.5">
                           {formatBDT(item.price)} × {item.quantity} ={" "}
                           <span className="font-semibold text-foreground">
                             {formatBDT(item.price * item.quantity)}
@@ -1060,24 +1060,24 @@ export default function OrderDetailsPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => updateQty(item.id, -1)}
-                          className="h-6 w-6 rounded border flex items-center justify-center hover:bg-muted transition-colors"
+                          className="h-5 w-5 rounded border flex items-center justify-center hover:bg-muted transition-colors"
                         >
-                          <Minus className="h-2.5 w-2.5" />
+                          <Minus className="h-2 w-2" />
                         </button>
-                        <span className="w-5 text-center text-xs font-semibold">
+                        <span className="w-4 text-center text-[10px] font-semibold">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateQty(item.id, 1)}
-                          className="h-6 w-6 rounded border flex items-center justify-center hover:bg-muted transition-colors"
+                          className="h-5 w-5 rounded border flex items-center justify-center hover:bg-muted transition-colors"
                         >
-                          <Plus className="h-2.5 w-2.5" />
+                          <Plus className="h-2 w-2" />
                         </button>
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="h-6 w-6 rounded flex items-center justify-center text-destructive hover:bg-destructive/10 transition-colors ml-1"
+                          className="h-5 w-5 rounded flex items-center justify-center text-destructive hover:bg-destructive/10 transition-colors ml-0.5"
                         >
-                          <Trash2 className="h-2.8 w-2.8" />
+                          <Trash2 className="h-2.5 w-2.5" />
                         </button>
                       </div>
                     </div>

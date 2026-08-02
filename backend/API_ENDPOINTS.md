@@ -47,14 +47,31 @@ Base API Address in Dev Environment: `https://server.decantrebd.com`
 **Base Prefix:** `/api/v1/orders`
 
 - **POST `/new-order`** - Create a new order _(Public Endpoint)_.
-- **GET `/`** - List all orders _(Requires JWT)_.
-- **GET `/:orderId`** - Fetch a specific order details _(Requires JWT)_.
-- **PUT `/:orderId`** - Update an order _(Requires JWT)_.
-- **DELETE `/:orderId`** - Delete an order _(Requires JWT)_.
+- **GET `/`** - List all orders _(Owner/Admin/Manager only)_.
+- **GET `/:orderId`** - Fetch a specific order details _(Owner/Admin/Manager only)_.
+- **PUT `/:orderId`** - Update an order _(Owner/Admin/Manager only)_.
+- **DELETE `/:orderId`** - Delete an order _(Owner/Admin only)_.
 
 ---
 
-## 6. Email Endpoints
+## 6. Public Read/Search Endpoints
+
+The following resources expose public read and search endpoints:
+
+- **Products:** `GET /api/v1/products`, `GET /api/v1/products/:identifier`, `GET /api/v1/products/check-slug/:slug`
+- **Categories:** `GET /api/v1/categories`, `GET /api/v1/categories/:id`
+- **Brands:** `GET /api/v1/brands`, `GET /api/v1/brands/:id`
+- **Coupons:** `GET /api/v1/coupons`, `GET /api/v1/coupons/:id`
+
+### Role Summary
+
+- **Owner/Admin:** can manage products, categories, brands, coupons, and orders.
+- **Manager:** can view and manage products, coupons, and orders; can view/edit orders but cannot delete them.
+- **Admin:** cannot delete Owner/Admin users.
+
+---
+
+## 7. Email Endpoints
 
 **Base Prefix:** `/api/v1/sendEmail`
 

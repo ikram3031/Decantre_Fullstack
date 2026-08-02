@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Table,
@@ -50,21 +50,35 @@ import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 interface OrdersTableProps {
   searchQuery: string;
   statusFilter: string;
+  page?: number;
+  onTotalPagesChange?: (totalPages: number) => void;
 }
 
 import type { Order, OrderDetails, OrderItem } from '@/types';
 
-export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
+export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesChange }: OrdersTableProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const { data: orders, isLoading, isError, error } = useOrders({
+  const { data: responseData, isLoading, isError, error } = useOrders({
     search: searchQuery,
     status: statusFilter !== 'All' ? statusFilter : undefined,
+    page,
+    limit: 15,
   });
+
+  const orders = responseData?.data ?? [];
+  const totalPages = responseData?.meta?.totalPages ?? 1;
+
+  useEffect(() => {
+    if (onTotalPagesChange && responseData?.meta) {
+      onTotalPagesChange(totalPages);
+    }
+  }, [totalPages, onTotalPagesChange, responseData]);
 
   const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const handleUpdateStatus = async (order: Order, newStatus: string) => {
     try {
@@ -145,17 +159,17 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[180px]">Order ID</TableHead>
-            <TableHead>Customer Name</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Total Amount</TableHead>
-            <TableHead>Payment</TableHead>
-            <TableHead>Fulfillment</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[150px]">Order ID</TableHead>
+            <TableHead className="w-[180px]">Customer Name</TableHead>
+            <TableHead className="w-[110px]">Date</TableHead>
+            <TableHead className="w-[120px]">Total Amount</TableHead>
+            <TableHead className="w-[100px]">Payment</TableHead>
+            <TableHead className="w-[120px]">Fulfillment</TableHead>
+            <TableHead className="w-[60px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -174,13 +188,19 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
           ) : orders && orders.length > 0 ? (
             orders.map((order) => (
               <TableRow key={order.id}>
-                <TableCell className="font-semibold">{order.orderNumber}</TableCell>
-                <TableCell>{order.customerName}</TableCell>
-                <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
-                <TableCell>৳{order.totalAmount.toFixed(2)}</TableCell>
-                <TableCell>{getPaymentBadge(order.paymentStatus)}</TableCell>
-                <TableCell>{getFulfillmentBadge(order.fulfillmentStatus)}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="max-w-[150px]">
+                  <span className="font-semibold truncate block" title={order.orderNumber}>{order.orderNumber}</span>
+                </TableCell>
+                <TableCell className="max-w-[180px]">
+                  <span className="truncate block" title={order.customerName}>{order.customerName}</span>
+                </TableCell>
+                <TableCell className="w-[110px] text-muted-foreground whitespace-nowrap">
+                  {new Date(order.date).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="w-[120px] font-medium whitespace-nowrap">৳{order.totalAmount.toFixed(2)}</TableCell>
+                <TableCell className="w-[100px]">{getPaymentBadge(order.paymentStatus)}</TableCell>
+                <TableCell className="w-[120px]">{getFulfillmentBadge(order.fulfillmentStatus)}</TableCell>
+                <TableCell className="text-right w-[60px]">
                   <DropdownMenu>
                     <DropdownMenuTrigger render={
                       <Button variant="ghost" className="h-8 w-8 p-0">

@@ -9,6 +9,18 @@ interface FetchProductsParams {
   search?: string;
   category?: string;
   brand?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface FetchProductsResponse {
+  data: Product[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 // ─── Image URL resolver ──────────────────────────────────────────────────────
@@ -63,8 +75,10 @@ type BackendProduct = {
 
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 
-const fetchProducts = async (params?: FetchProductsParams): Promise<Product[]> => {
-  const body: Record<string, string> = { limit: "15" };
+const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProductsResponse> => {
+  const limit = params?.limit ?? 15;
+  const page = params?.page ?? 1;
+  const body: Record<string, string | number> = { limit, page };
 
   if (params?.search) body.q = params.search;
   if (params?.category) body.category = params.category;
@@ -72,10 +86,11 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<Product[]> =
 
   const response = (body.category || body.brand || body.q)
     ? await apiClient.post<unknown>('/api/v1/products', body)
-    : await apiClient.get<unknown>('/api/v1/products', { params: { q: params?.search, limit: 15 } });
+    : await apiClient.get<unknown>('/api/v1/products', { params: { q: params?.search, limit, page } });
 
   const responseData = response.data;
   let productList: BackendProduct[] = [];
+  let rawMeta: { total?: number; totalPages?: number; page?: number; limit?: number } | null = null;
 
   if (Array.isArray(responseData)) {
     productList = responseData as BackendProduct[];
@@ -86,9 +101,12 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<Product[]> =
     Array.isArray((responseData as { data: unknown }).data)
   ) {
     productList = (responseData as { data: unknown }).data as BackendProduct[];
+    if ('meta' in responseData) {
+      rawMeta = (responseData as { meta: typeof rawMeta }).meta;
+    }
   }
 
-  return productList.map((p): Product => {
+  const mappedProducts = productList.map((p): Product => {
     // Resolve category name via localStorage cache (did → name)
     let categoryName = 'Uncategorized';
     const rawCats = Array.isArray(p.categories) ? p.categories : [];
@@ -142,14 +160,24 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<Product[]> =
       variants,
     };
   });
+
+  const total = rawMeta?.total ?? mappedProducts.length;
+  return {
+    data: mappedProducts,
+    meta: {
+      total,
+      page: rawMeta?.page ?? page,
+      limit: rawMeta?.limit ?? limit,
+      totalPages: rawMeta?.totalPages ?? Math.ceil(total / limit) || 1,
+    },
+  };
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useProducts(params?: FetchProductsParams) {
-  return useQuery({
+  return useQuery<FetchProductsResponse>({
     queryKey: ['products', params],
     queryFn: () => fetchProducts(params),
   });
 }
-

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import {
   Table,
@@ -22,30 +22,53 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, ImageIcon } from 'lucide-react';
+import { MoreHorizontal, ImageIcon, PackageX } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import type { Product } from '@/types';
 
 interface ProductsTableProps {
   searchQuery: string;
   categoryFilter: string;
   brandFilter: string;
+  page?: number;
+  onTotalPagesChange?: (totalPages: number) => void;
 }
 
-export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: ProductsTableProps) {
+export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page = 1, onTotalPagesChange }: ProductsTableProps) {
   const queryClient = useQueryClient();
 
-  const { data: products, isLoading, isError, error } = useProducts({
+  const { data: responseData, isLoading, isError, error } = useProducts({
     search: searchQuery,
-    category: categoryFilter !== 'All' ? categoryFilter : undefined,
+    category: categoryFilter !== 'All' && categoryFilter !== 'LowStock' ? categoryFilter : undefined,
     brand: brandFilter !== 'All' ? brandFilter : undefined,
+    page,
+    limit: 15,
   });
 
+  const products = responseData?.data ?? [];
+  const totalPages = responseData?.meta?.totalPages ?? 1;
+
+  useEffect(() => {
+    if (onTotalPagesChange && responseData?.meta) {
+      onTotalPagesChange(totalPages);
+    }
+  }, [totalPages, onTotalPagesChange, responseData]);
+
+  // ── Delete ───────────────────────────────────────────────────────────────
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -64,21 +87,25 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: Prod
     }
   };
 
-  const handleToggleStock = async (product: any) => {
-    const newStatus = product.status === 'In Stock' ? 'outofstock' : 'instock';
-    try {
-      await apiClient.put(`/api/v1/products/${product.id}`, {
-        stock_status: newStatus,
-      });
-      toast.success(`Stock status updated for ${product.name}`);
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    } catch (err: any) {
-      toast.error('Failed to update stock status.');
-    }
-  };
+  // ── Update Stock ──────────────────────────────────────────────────────────
+  const [stockTarget, setStockTarget] = useState<Product | null>(null);
+  const [isUpdatingStock, setIsUpdatingStock] = useState(false);
 
-  const handleEditProduct = (product: any) => {
-    toast.info(`Editing ${product.name} details`);
+  const handleSetOutOfStock = async () => {
+    if (!stockTarget) return;
+    setIsUpdatingStock(true);
+    try {
+      await apiClient.put(`/api/v1/products/${stockTarget.id}`, {
+        stock_status: 'outofstock',
+      });
+      toast.success(`"${stockTarget.name}" set to Out of Stock.`);
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      setStockTarget(null);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to update stock status.');
+    } finally {
+      setIsUpdatingStock(false);
+    }
   };
 
   if (isError) {
@@ -94,15 +121,17 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: Prod
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Product</TableHead>
-            <TableHead>SKU</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[280px] min-w-[180px]">Product</TableHead>
+            <TableHead className="w-[120px]">SKU</TableHead>
+            <TableHead className="w-[140px]">Category</TableHead>
+            <TableHead className="w-[120px]">Brand</TableHead>
+            <TableHead className="w-[100px]">Price</TableHead>
+            <TableHead className="w-[110px]">Stock</TableHead>
+            <TableHead className="w-[60px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -111,37 +140,70 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: Prod
               <TableRow key={i}>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <Skeleton className="h-9 w-9 rounded-md flex-shrink-0" />
                     <Skeleton className="h-4 w-32" />
                   </div>
                 </TableCell>
                 <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
                 <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto rounded-md" /></TableCell>
               </TableRow>
             ))
           ) : products && products.length > 0 ? (
             products.map((product) => (
               <TableRow key={product.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
+                {/* Product name + image */}
+                <TableCell className="max-w-[280px]">
+                  <div className="flex items-center gap-3 min-w-0">
                     {product.image ? (
-                      <div className="relative h-10 w-10 overflow-hidden rounded-md border">
+                      <div className="relative h-9 w-9 overflow-hidden rounded-md border flex-shrink-0">
                         <img src={product.image} alt={product.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                     ) : (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted">
-                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                      <div className="flex h-9 w-9 items-center justify-center rounded-md border bg-muted flex-shrink-0">
+                        <ImageIcon className="h-4 w-4 text-muted-foreground" />
                       </div>
                     )}
-                    <span className="font-medium">{product.name}</span>
+                    <span className="font-medium truncate" title={product.name}>{product.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{product.sku}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>৳{product.price.toFixed(2)}</TableCell>
-                <TableCell className="text-right">
+
+                {/* SKU */}
+                <TableCell className="max-w-[120px]">
+                  <span className="text-muted-foreground truncate block" title={product.sku}>{product.sku}</span>
+                </TableCell>
+
+                {/* Category */}
+                <TableCell className="max-w-[140px]">
+                  <span className="truncate block" title={product.category}>{product.category}</span>
+                </TableCell>
+
+                {/* Brand */}
+                <TableCell className="max-w-[120px]">
+                  <span className="truncate block text-muted-foreground" title={product.brand ?? '—'}>{product.brand ?? '—'}</span>
+                </TableCell>
+
+                {/* Price */}
+                <TableCell className="w-[100px] font-medium">৳{product.price.toFixed(2)}</TableCell>
+
+                {/* Stock status */}
+                <TableCell className="w-[110px]">
+                  {product.status === 'In Stock' ? (
+                    <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" variant="outline">
+                      In Stock
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20" >
+                      Out of Stock
+                    </Badge>
+                  )}
+                </TableCell>
+
+                {/* Actions */}
+                <TableCell className="text-right w-[60px]">
                   <DropdownMenu>
                     <DropdownMenuTrigger render={
                       <Button variant="ghost" className="h-8 w-8 p-0">
@@ -151,11 +213,12 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: Prod
                     } />
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => handleEditProduct(product)}>
-                        Edit Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleToggleStock(product)}>
-                        Toggle Stock Status
+                      <DropdownMenuItem
+                        onClick={() => setStockTarget(product)}
+                        disabled={product.status !== 'In Stock'}
+                      >
+                        <PackageX className="h-4 w-4 mr-2 text-muted-foreground" />
+                        Update Stock
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
@@ -171,20 +234,57 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter }: Prod
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="h-24 text-center">
+              <TableCell colSpan={7} className="h-24 text-center">
                 No products found.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
+
+      {/* Update Stock Dialog */}
+      <Dialog open={!!stockTarget} onOpenChange={(open) => !open && setStockTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <PackageX className="h-5 w-5 text-destructive" />
+              Set Out of Stock
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to mark{' '}
+              <span className="font-semibold text-foreground">"{stockTarget?.name}"</span>{' '}
+              as <span className="font-semibold text-destructive">Out of Stock</span>?
+              <br />
+              <span className="text-xs mt-1 block">This will hide the product from the store until stock is replenished.</span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setStockTarget(null)}
+              disabled={isUpdatingStock}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleSetOutOfStock}
+              disabled={isUpdatingStock}
+            >
+              {isUpdatingStock ? 'Updating...' : 'Yes, Set Out of Stock'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Dialog */}
       <ConfirmDeleteDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         onConfirm={handleDeleteProduct}
         isDeleting={isDeleting}
         title="Delete Product"
-        description={`Are you sure you want to delete "${deleteTarget?.name ?? ''}"?`}
+        description={`Are you sure you want to delete "${deleteTarget?.name ?? ''}"? This cannot be undone.`}
       />
     </div>
   );

@@ -14,6 +14,7 @@ import {
   PlusCircle,
   Package,
   Receipt,
+  Ticket,
 } from "lucide-react"
 
 import {
@@ -169,6 +170,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Users className="h-4 w-4" />
               <span>Members</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          {/* Coupons */}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              isActive={pathname.startsWith("/dashboard/coupons")}
+              tooltip="Coupons"
+              render={<Link href={{ pathname: "/dashboard/coupons" }} />}
+            >
+              <Ticket className="h-4 w-4" />
+              <span>Coupons</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
 

@@ -27,6 +27,18 @@ import {
 export default function OrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const handleSearch = (q: string) => {
+    setSearchQuery(q);
+    setCurrentPage(1);
+  };
+
+  const handleStatus = (v: string | null) => {
+    setStatusFilter(v ?? 'All');
+    setCurrentPage(1);
+  };
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -53,10 +65,10 @@ export default function OrdersPage() {
             placeholder="Search by order ID or customer..."
             className="pl-8"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <Select value={statusFilter} onValueChange={(value: string | null) => setStatusFilter(value ?? 'All')}>
+        <Select value={statusFilter} onValueChange={handleStatus}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
@@ -72,28 +84,73 @@ export default function OrdersPage() {
       
       <div className="bg-card text-card-foreground shadow-sm border rounded-lg">
         <div className="p-6">
-          <OrdersTable searchQuery={searchQuery} statusFilter={statusFilter} />
-          
-          <div className="mt-4">
+          <OrdersTable
+            searchQuery={searchQuery}
+            statusFilter={statusFilter}
+            page={currentPage}
+            onTotalPagesChange={setTotalPages}
+          />
+
+          {/* Pagination */}
+          <div className="border-t mt-4 pt-3">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) setCurrentPage((p) => p - 1);
+                    }}
+                    aria-disabled={currentPage === 1}
+                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                  />
                 </PaginationItem>
+
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const page = i + 1;
+                  const showPage =
+                    page === 1 ||
+                    page === totalPages ||
+                    Math.abs(page - currentPage) <= 1;
+
+                  if (!showPage) {
+                    if (page === 2 || page === totalPages - 1) {
+                      return (
+                        <PaginationItem key={`ellipsis-${page}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    return null;
+                  }
+
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        href="#"
+                        isActive={currentPage === page}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCurrentPage(page);
+                        }}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+
                 <PaginationItem>
-                  <PaginationLink href="#" isActive>1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">2</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">3</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext href="#" />
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) setCurrentPage((p) => p + 1);
+                    }}
+                    aria-disabled={currentPage === totalPages}
+                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                  />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

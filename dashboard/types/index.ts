@@ -113,3 +113,27 @@ export interface SystemUser {
   lastLogin: string;
   avatar?: string;
 }
+
+export interface CouponRestrictionItem {
+  id: string;
+  name: string;
+  did: string;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  minOrderAmount: number;
+  validFrom: string;
+  validTo: string;
+  active: boolean;
+  usageLimit?: number | null;
+  usedCount?: number;
+  applicableProducts?: CouponRestrictionItem[];
+  applicableCategories?: CouponRestrictionItem[];
+  applicableBrands?: CouponRestrictionItem[];
+  createdAt?: string;
+  updatedAt?: string;
+}

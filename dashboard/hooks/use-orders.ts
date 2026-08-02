@@ -8,11 +8,19 @@ export type { Order, OrderDetails };
 interface FetchOrdersParams {
   search?: string;
   status?: string;
+  page?: number;
+  limit?: number;
 }
 
-type OrdersApiResponse = {
-  data?: unknown[];
-} | unknown[];
+export interface FetchOrdersResponse {
+  data: Order[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 
 type BackendOrder = {
   _id?: string;
@@ -24,66 +32,77 @@ type BackendOrder = {
   status?: string;
 };
 
-const fetchOrders = async (params?: FetchOrdersParams): Promise<Order[]> => {
+const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersResponse> => {
+  const limit = params?.limit ?? 15;
+  const page = params?.page ?? 1;
+
   try {
     const queryParams: Record<string, string | number> = {
-      limit: 15,
-      page: 1,
+      limit,
+      page,
     };
     if (params?.status) queryParams.status = params.status.toLowerCase();
     if (params?.search) queryParams.email = params.search;
 
-    const response = await apiClient.get<OrdersApiResponse>('/api/v1/orders', { params: queryParams });
+    const response = await apiClient.get<any>('/api/v1/orders', { params: queryParams });
     const responseData = response.data;
+
     const rawOrderList = Array.isArray(responseData)
       ? responseData
       : responseData?.data ?? [];
     const orderList = Array.isArray(rawOrderList) ? (rawOrderList as BackendOrder[]) : [];
+    const meta = responseData?.meta ?? {
+      total: orderList.length,
+      page,
+      limit,
+      totalPages: Math.ceil(orderList.length / limit),
+    };
 
-    if (orderList.length > 0) {
-      return orderList.map((o: BackendOrder) => {
-        let fulfillment: Order['fulfillmentStatus'] = 'Pending';
-        if (o.status === 'processing') {
-          fulfillment = 'Processing';
-        } else if (o.status === 'shipped' || o.status === 'completed') {
-          fulfillment = 'Shipped';
-        } else if (o.status === 'cancelled') {
-          fulfillment = 'Cancelled';
-        }
+    const orders: Order[] = orderList.map((o: BackendOrder) => {
+      let fulfillment: Order['fulfillmentStatus'] = 'Pending';
+      if (o.status === 'processing') {
+        fulfillment = 'Processing';
+      } else if (o.status === 'shipped' || o.status === 'completed') {
+        fulfillment = 'Shipped';
+      } else if (o.status === 'cancelled') {
+        fulfillment = 'Cancelled';
+      }
 
-        const isPaid = o.status === 'completed' || o.status === 'shipped';
+      const isPaid = o.status === 'completed' || o.status === 'shipped';
+      const id = o._id || o.id || `UNKNOWN-${Math.random().toString(36).slice(2, 10)}`;
 
-        const id = o._id || o.id || `UNKNOWN-${Math.random().toString(36).slice(2, 10)}`;
+      return {
+        id,
+        orderNumber: o.orderNumber || `ORD-${o._id?.slice(-8) || id}`,
+        customerName: o.customer?.fullName || 'Guest Customer',
+        date: o.createdAt || new Date().toISOString(),
+        totalAmount: o.totals?.total || 0,
+        paymentStatus: isPaid ? 'Paid' : 'Pending',
+        fulfillmentStatus: fulfillment,
+      };
+    });
 
-        return {
-          id,
-          orderNumber: o.orderNumber || `ORD-${o._id?.slice(-8) || id}`,
-          customerName: o.customer?.fullName || 'Guest Customer',
-          date: o.createdAt || new Date().toISOString(),
-          totalAmount: o.totals?.total || 0,
-          paymentStatus: isPaid ? 'Paid' : 'Pending',
-          fulfillmentStatus: fulfillment,
-        };
-      });
-    }
+    return {
+      data: orders,
+      meta: {
+        total: meta.total ?? orders.length,
+        page: meta.page ?? page,
+        limit: meta.limit ?? limit,
+        totalPages: meta.totalPages ?? Math.ceil((meta.total ?? orders.length) / limit),
+      },
+    };
   } catch (err) {
-    console.warn('Backend API orders request failed, using fallback mock data:', err);
+    console.warn('Backend API orders request failed:', err);
   }
 
-  let result: Order[] = [];
-  if (params?.search) {
-    const q = params.search.toLowerCase();
-    result = result.filter(o => o.customerName.toLowerCase().includes(q) || o.orderNumber.toLowerCase().includes(q));
-  }
-  if (params?.status && params.status !== 'All') {
-    result = result.filter(o => o.fulfillmentStatus.toLowerCase() === params.status?.toLowerCase());
-  }
-
-  return result;
+  return {
+    data: [],
+    meta: { total: 0, page, limit, totalPages: 0 },
+  };
 };
 
 export function useOrders(params?: FetchOrdersParams) {
-  return useQuery({
+  return useQuery<FetchOrdersResponse>({
     queryKey: ['orders', params],
     queryFn: () => fetchOrders(params),
   });

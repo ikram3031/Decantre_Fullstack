@@ -1,25 +1,25 @@
 // src/routes/BrandRoute.js
-import express from 'express';
-import { 
-  getBrands, 
-  createBrand, 
-  updateBrand, 
-  deleteBrand 
-} from '../controllers/BrandController.js';
-import { authenticateToken } from '../middlewares/auth.middleware.js';
+import express from "express";
+import {
+  getBrands,
+  createBrand,
+  updateBrand,
+  deleteBrand,
+} from "../controllers/BrandController.js";
+import { authenticateToken, authorizeRoles } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 // GET /api/v1/brands
-router.get('/', getBrands);
+router.get("/", getBrands);
 
 // POST /api/v1/brands
-router.post('/', authenticateToken, createBrand);
+router.post("/", authenticateToken, authorizeRoles("Owner", "Admin"), createBrand);
 
 // PUT /api/v1/brands/:id
-router.put('/:id', authenticateToken, updateBrand);
+router.put("/:id", authenticateToken, authorizeRoles("Owner", "Admin"), updateBrand);
 
 // DELETE /api/v1/brands/:id
-router.delete('/:id', authenticateToken, deleteBrand);
+router.delete("/:id", authenticateToken, authorizeRoles("Owner", "Admin"), deleteBrand);
 
 export default router;

@@ -95,17 +95,17 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Customer</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead className="text-right">Total Orders</TableHead>
-            <TableHead className="text-right">Lifetime Spent</TableHead>
-            <TableHead>Joined Date</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[200px] min-w-[160px]">Customer</TableHead>
+            <TableHead className="w-[200px]">Email</TableHead>
+            <TableHead className="w-[130px]">Phone</TableHead>
+            <TableHead className="w-[100px] text-right">Total Orders</TableHead>
+            <TableHead className="w-[130px] text-right">Lifetime Spent</TableHead>
+            <TableHead className="w-[110px]">Joined Date</TableHead>
+            <TableHead className="w-[60px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -129,21 +129,23 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
           ) : members && members.length > 0 ? (
             members.map((member) => (
               <TableRow key={member.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-9 w-9">
+                <TableCell className="max-w-[200px]">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Avatar className="h-9 w-9 flex-shrink-0">
                       <AvatarImage src={member.avatar} alt={member.name} />
                       <AvatarFallback>{member.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <span className="font-medium">{member.name}</span>
+                    <span className="font-medium truncate" title={member.name}>{member.name}</span>
                   </div>
                 </TableCell>
-                <TableCell>{member.email}</TableCell>
-                <TableCell className="text-muted-foreground">{member.phone}</TableCell>
-                <TableCell className="text-right">{member.totalOrders}</TableCell>
-                <TableCell className="text-right font-medium">৳{member.lifetimeSpent.toFixed(2)}</TableCell>
-                <TableCell>{new Date(member.joinedDate).toLocaleDateString()}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="max-w-[200px]">
+                  <span className="truncate block text-muted-foreground" title={member.email}>{member.email}</span>
+                </TableCell>
+                <TableCell className="w-[130px] text-muted-foreground whitespace-nowrap">{member.phone}</TableCell>
+                <TableCell className="text-right w-[100px]">{member.totalOrders}</TableCell>
+                <TableCell className="text-right w-[130px] font-medium whitespace-nowrap">৳{member.lifetimeSpent.toFixed(2)}</TableCell>
+                <TableCell className="w-[110px] whitespace-nowrap">{new Date(member.joinedDate).toLocaleDateString()}</TableCell>
+                <TableCell className="text-right w-[60px]">
                   <DropdownMenu>
                     <DropdownMenuTrigger render={
                       <Button variant="ghost" className="h-8 w-8 p-0">
