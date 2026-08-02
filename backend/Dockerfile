@@ -25,6 +25,7 @@ COPY --from=builder /app/package.json /app/package-lock.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/public ./public
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
