@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
+import fallbackBanner from '../assets/main-banner.webp';
 
 const bannerSlides = [
   {
-    bgImage: "https://decantrebd.com/wp-content/uploads/2025/12/main-bannerJPG-scaled-1.jpg",
+    bgImage: "https://decantrebd.com/wp-content/uploads/assets/main-banner.webp",
     tagline: "Enchanting aromas for every unique moment",
     title: "INDULGE IN LUXURY",
     buttonText: "SHOP NOW"
@@ -50,12 +51,7 @@ export const HeroSlider = () => {
         >
           {/* Rich full-color background image with elegant gradient dark overlays */}
           <div className="absolute inset-0 bg-black">
-            <img 
-              src={slide.bgImage} 
-              alt={slide.title} 
-              className="w-full h-full object-cover object-center opacity-85"
-              referrerPolicy="no-referrer"
-            />
+            <HeroSlideImage src={slide.bgImage} title={slide.title} />
             {/* Top, Bottom and center dark protection overlays for text readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70"></div>
             <div className="absolute inset-0 bg-black/35"></div>
@@ -122,6 +118,38 @@ export const HeroSlider = () => {
         </>
       )}
     </section>
+  );
+};
+
+// Helper Component to handle Image Load States, Skeletons, and Error Fallbacks
+const HeroSlideImage = ({ src, title }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [error, setError] = useState(false);
+  const PLACEHOLDER_IMAGE = fallbackBanner; 
+
+  return (
+    <div className="w-full h-full relative">
+      {/* Loading Skeleton */}
+      {!imageLoaded && (
+        <div className="absolute inset-0 bg-zinc-950 animate-pulse flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full border-t-2 border-r-2 border-gold animate-spin"></div>
+        </div>
+      )}
+
+      <img 
+        src={error ? PLACEHOLDER_IMAGE : src} 
+        alt={title} 
+        className={`w-full h-full object-cover object-center opacity-85 transition-opacity duration-700 ${
+          imageLoaded ? 'opacity-85' : 'opacity-0'
+        }`}
+        referrerPolicy="no-referrer"
+        onLoad={() => setImageLoaded(true)}
+        onError={() => {
+          setError(true);
+          setImageLoaded(true);
+        }}
+      />
+    </div>
   );
 };
 

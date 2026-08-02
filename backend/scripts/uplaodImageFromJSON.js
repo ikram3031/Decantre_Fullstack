@@ -13,8 +13,8 @@ const outputUploadsDir = path.join(projectRoot, "src", "uploads");
 // The JSON file containing the list of products with failed images
 const failedJsonPath = path.resolve(
   projectRoot,
-  "..",
-  "failed_product_image.json",
+  "scripts",
+  "failed-product-images.json",
 );
 const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"];
 
@@ -24,7 +24,7 @@ const getBatchFolderName = () => {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
   const dateStr = `${year}${month}${day}`;
-  return `${dateStr}01009`;
+  return `${dateStr}010010`;
 };
 
 const slugify = (text) => {
@@ -34,6 +34,9 @@ const slugify = (text) => {
     .normalize("NFD") // ô → o + combining accent, é → e + accent
     .replace(/[\u0300-\u036f]/g, "") // remove combining diacritical marks
     .toLowerCase()
+    .replace(/\([^)]*\)/g, "") // Remove everything inside parentheses, including parentheses e.g. "(jpg)" -> ""
+    .replace(/\[[^\]]*\]/g, "") // Remove everything inside brackets e.g. "[jpg]" -> ""
+    .replace(/['"’`”“]/g, "") // Remove apostrophes and quotes completely so "Victoria's" becomes "victorias"
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
@@ -64,54 +67,93 @@ const findImageFileForProduct = (productSlug, files) => {
   });
 };
 
+const getAllFiles = (dirPath, arrayOfFiles = []) => {
+  const files = fs.readdirSync(dirPath);
+
+  files.forEach((file) => {
+    const fullPath = path.join(dirPath, file);
+    if (fs.statSync(fullPath).isDirectory()) {
+      getAllFiles(fullPath, arrayOfFiles);
+    } else {
+      arrayOfFiles.push(fullPath);
+    }
+  });
+
+  return arrayOfFiles;
+};
+
 const run = async () => {
   if (!fs.existsSync(imgDir)) {
     console.error(`Image folder not found: ${imgDir}`);
     process.exit(1);
   }
 
-  if (!fs.existsSync(failedJsonPath)) {
-    console.error(`failed_product_image.json not found: ${failedJsonPath}`);
-    process.exit(1);
-  }
-
-  // Load products list from failed_product_image.json
-  const failedProducts = JSON.parse(
-    await fs.promises.readFile(failedJsonPath, "utf-8"),
+  // 1. Initial cleanup or start: empty the JSON at start or ensure it exists
+  await fs.promises.writeFile(
+    failedJsonPath,
+    JSON.stringify([], null, 2),
+    "utf-8",
   );
-  console.log(
-    `Loaded ${failedProducts.length} items from failed_product_image.json`,
-  );
+  console.log(`🧹 Cleared and initialized: ${failedJsonPath}`);
 
   await connectDatabase();
 
-  const files = await fs.promises.readdir(imgDir);
+  // 2. Fetch all products that have placeholder images or are missing images
+  const PLACEHOLDER_URL = "/uploads/product_placeholder.webp";
+  const query = {
+    $or: [
+      { imageUrl: PLACEHOLDER_URL },
+      { thumbnailUrl: PLACEHOLDER_URL },
+      { imageUrl: { $exists: false } },
+      { thumbnailUrl: { $exists: false } },
+      { imageUrl: "" },
+      { thumbnailUrl: "" },
+    ],
+  };
+
+  const placeholderProducts = await ProductModel.find(query).lean();
+  console.log(
+    `Loaded ${placeholderProducts.length} products with placeholder/missing images from DB`,
+  );
+
+  if (placeholderProducts.length === 0) {
+    console.log("✅ No products need image updates. Database is clean.");
+    await closeDatabase();
+    process.exit(0);
+  }
+
+  const files = getAllFiles(imgDir);
   let success = 0;
   let failed = 0;
   const newFailedList = [];
   const baseBatchFolder = getBatchFolderName().slice(0, -2); // e.g. "260802"
-  let batchIndex = 1;
 
-  for (const item of failedProducts) {
-    const { did, name } = item;
+  for (const product of placeholderProducts) {
+    const did = product.did || product._id?.toString();
+    const name = product.name;
+
     if (!did) {
-      console.log(`✖ Skipped invalid item: ${JSON.stringify(item)}`);
+      console.log(
+        `✖ Skipped invalid database item: ${JSON.stringify(product)}`,
+      );
       continue;
     }
 
     const productSlug = slugify(name);
-    const imageFile = findImageFileForProduct(productSlug, files);
+    const imageFilePath = findImageFileForProduct(productSlug, files);
 
-    // 1. Check if the image file exists in the img folder
-    if (!imageFile) {
+    // If the image file doesn't exist in the img folder or subfolders
+    if (!imageFilePath) {
       failed += 1;
-      newFailedList.push(item);
-      console.log(`✖ ${productSlug} -> image not found in img folder`);
+      newFailedList.push({ did, name });
+      console.log(
+        `✖ ${productSlug} -> image not found in img folder/subfolders`,
+      );
       continue;
     }
 
     try {
-      const sourcePath = path.join(imgDir, imageFile);
+      const sourcePath = imageFilePath; // Since getAllFiles returns full paths
       const fileBase = productSlug;
 
       // Compute batch folder name dynamically: 50 items per folder
@@ -131,11 +173,11 @@ const run = async () => {
         thumbFileName,
       );
 
-      // Convert and resize images (Validation check for successful conversion)
+      // Convert and resize images
       await convertToWebp(sourcePath, mainDestPath, 1200);
       await convertToWebp(sourcePath, thumbDestPath, 600);
 
-      // Verify that the files were actually successfully written/uploaded to destination
+      // Verify files exist in destination
       if (!fs.existsSync(mainDestPath) || !fs.existsSync(thumbDestPath)) {
         throw new Error(
           "Converted images not found in uploads destination directory",
@@ -145,26 +187,26 @@ const run = async () => {
       const imageUrl = `/uploads/${batchFolder}/${mainFileName}`;
       const thumbnailUrl = `/uploads/${batchFolder}/${thumbFileName}`;
 
-      // 2. Update the product's image URLs in MongoDB using 'did'
+      // Update the product's image URLs in MongoDB
       const updateResult = await ProductModel.updateOne(
-        { did },
+        { _id: product._id },
         { $set: { imageUrl, thumbnailUrl } },
       );
 
       if (updateResult.matchedCount === 0) {
-        throw new Error(`Product not found in database for did: ${did}`);
+        throw new Error(`Product not found in database for ID: ${product._id}`);
       }
 
       success += 1;
       console.log(`✔ ${productSlug} -> updated successfully: ${imageUrl}`);
     } catch (err) {
       failed += 1;
-      newFailedList.push(item);
+      newFailedList.push({ did, name });
       console.error(`✖ ${productSlug} failed:`, err.message || err);
     }
   }
 
-  // 3. Write any remaining failures back to failed_product_image.json
+  // 3. Write only the remaining failures to failed_product_image.json
   await fs.promises.writeFile(
     failedJsonPath,
     JSON.stringify(newFailedList, null, 2),
@@ -172,7 +214,7 @@ const run = async () => {
   );
 
   console.log("\n=== Upload Summary ===");
-  console.log(`Products checked: ${failedProducts.length}`);
+  console.log(`Products checked: ${placeholderProducts.length}`);
   console.log(`Succeeded: ${success}`);
   console.log(`Failed (left in json): ${failed}`);
 

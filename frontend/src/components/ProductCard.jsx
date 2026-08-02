@@ -128,7 +128,7 @@ export const ProductCard = ({
             type="button"
             onClick={() => {
               if (typeof handleAddToCart === 'function') {
-                handleAddToCart(product, currentSel.size, currentSel.concentration, 1);
+                handleAddToCart(product, currentSel.size, currentSel.concentration, 1, currentPrice);
               } else {
                 // Fallback: show console warning and a toast if available
                 console.warn('handleAddToCart is not available for product:', product.id);

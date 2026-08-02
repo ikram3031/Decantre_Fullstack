@@ -115,34 +115,56 @@ export const Checkout = () => {
   };
 
   const normalizePhoneValue = (value) => {
-    const raw = (value || '').toString().trim();
+    let raw = (value || '').toString().trim();
     if (!raw) return '';
 
-    const digitsOnly = raw.replace(/[^\d+]/g, '');
-    if (digitsOnly.startsWith('+880')) return digitsOnly;
-    if (digitsOnly.startsWith('880')) return `+${digitsOnly}`;
-    if (digitsOnly.startsWith('01')) return `+880${digitsOnly.slice(1)}`;
-    if (/^1[3-8]\d{8}$/.test(digitsOnly)) return `+880${digitsOnly}`;
-    return digitsOnly;
+    // Enforce that it starts with '+88'
+    if (!raw.startsWith('+88')) {
+      // Remove any leading non-digits to check
+      const digits = raw.replace(/[^\d]/g, '');
+      if (digits.startsWith('880')) {
+        raw = `+${digits}`;
+      } else if (digits.startsWith('0')) {
+        raw = `+88${digits}`;
+      } else if (digits.startsWith('1')) {
+        raw = `+880${digits}`;
+      } else {
+        raw = `+88${digits}`;
+      }
+    }
+    
+    // Cleanup any characters except digits and the leading +
+    const cleaned = '+' + raw.slice(1).replace(/[^\d]/g, '');
+    return cleaned;
   };
 
   const validatePhoneValue = (value) => {
     const normalized = normalizePhoneValue(value);
-    if (!normalized) return 'Phone number is required.';
-    const phoneRegex = /^\+8801[3-8]\d{8}$/;
-    return phoneRegex.test(normalized)
-      ? ''
-      : 'Please enter a valid Bangladeshi number in format +8801[3-8]XXXXXXXX.';
+    if (!normalized || normalized === '+88') return 'Phone number is required.';
+    
+    // Check pattern: Must start with +8801 followed by 3-9, then 8 digits (Total length: 14 characters including +88)
+    const phoneRegex = /^\+8801[3-9]\d{8}$/;
+    if (!phoneRegex.test(normalized)) {
+      return 'Please enter a valid 11-digit Bangladeshi number starting with 01[3-9] (e.g. +88017XXXXXXXX).';
+    }
+    return '';
   };
 
   const handleBillingPhoneChange = (value) => {
-    const normalized = normalizePhoneValue(value);
+    let normalized = normalizePhoneValue(value);
+    // If user cleared it or tried to delete beyond prefix, keep the default prefix
+    if (!normalized || normalized === '+') {
+      normalized = '+88';
+    }
     setShippingInfo((prev) => ({ ...prev, phone: normalized }));
     setPhoneError(validatePhoneValue(normalized));
   };
 
   const handleShippingPhoneChange = (value) => {
-    const normalized = normalizePhoneValue(value);
+    let normalized = normalizePhoneValue(value);
+    if (!normalized || normalized === '+') {
+      normalized = '+88';
+    }
     setShippingAddress((prev) => ({ ...prev, phone: normalized }));
     setShipPhoneError(validatePhoneValue(normalized));
   };

@@ -17,7 +17,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Environment variables for build phase
-ARG NEXT_PUBLIC_API_BASE_URL=http://144.79.218.126:5092
+ARG NEXT_PUBLIC_API_BASE_URL=https://server.decantrebd.com
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 

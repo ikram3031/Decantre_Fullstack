@@ -4,7 +4,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Accept VITE_API_URL as build argument
-ARG VITE_API_URL=http://144.79.218.126:5092
+ARG VITE_API_URL=https://server.decantrebd.com
 ENV VITE_API_URL=$VITE_API_URL
 
 # Copy package files

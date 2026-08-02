@@ -220,7 +220,7 @@ export const ProductDetailModal = ({
 
                   <button
                     onClick={() => {
-                      handleAddToCart(selectedProduct, modalSize, 'Eau de Parfum', 1);
+                      handleAddToCart(selectedProduct, modalSize, 'Eau de Parfum', 1, activePrice);
                       onClose();
                     }}
                     className="bg-transparent border border-gold hover:bg-gold hover:text-black text-gold font-sans font-bold uppercase tracking-[0.25em] text-[10px] px-8 py-3.5 rounded-none shadow-2xl flex items-center justify-center gap-2 transition-all cursor-pointer h-12"

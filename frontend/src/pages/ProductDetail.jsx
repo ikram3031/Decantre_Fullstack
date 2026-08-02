@@ -5,6 +5,25 @@ import { formatBDT } from '../utils/formatCurrency';
 import { mapRemoteProduct, resolveBrandName, resolveCategoryName } from '../store/productHelpers';
 import { fetchProductDetails, fetchProducts } from '../lib/api';
 import { MoreProducts } from '../components/sections/MoreProducts';
+import { RecentlyViewedProducts } from '../components/sections/RecentlyViewedProducts';
+
+const addToRecentlyViewed = (id) => {
+  if (!id) return;
+  try {
+    const stored = localStorage.getItem('recently_viewed');
+    let list = stored ? JSON.parse(stored) : [];
+    if (!Array.isArray(list)) list = [];
+    
+    // Filter out if already exists, and push to front (max 10)
+    list = list.filter(item => String(item) !== String(id));
+    list.unshift(id);
+    list = list.slice(0, 10);
+    
+    localStorage.setItem('recently_viewed', JSON.stringify(list));
+  } catch (e) {
+    console.error(e);
+  }
+};
 import { 
   ArrowLeft, 
   ShoppingCart, 
@@ -92,6 +111,8 @@ export const ProductDetail = () => {
         if (fetched) {
           setProduct(fetched);
           setIsLoading(false);
+          // Add to recently viewed in localStorage
+          addToRecentlyViewed(fetched.id);
           return;
         }
 
@@ -100,6 +121,7 @@ export const ProductDetail = () => {
           if (found) {
             setProduct(found);
             setIsLoading(false);
+            addToRecentlyViewed(found.id);
             return;
           }
         }
@@ -108,6 +130,7 @@ export const ProductDetail = () => {
         const found = allProds.find(p => p.id === did || String(p.raw?.id) === String(did));
         if (found) {
           setProduct(found);
+          addToRecentlyViewed(found.id);
         } else {
           setError('Product not found.');
         }
@@ -508,6 +531,14 @@ export const ProductDetail = () => {
             </div>
 
           </div>
+        </div>
+
+        {/* Recently Viewed Products Section */}
+        <div className="pt-8">
+          <RecentlyViewedProducts 
+            currentProductId={product.id}
+            limit={8}
+          />
         </div>
 
         {/* Requirement 11: Reusable "More Products" Section Component */}
