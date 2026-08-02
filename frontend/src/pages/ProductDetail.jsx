@@ -194,7 +194,7 @@ export const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-    handleAddToCart(product, activeSwatch.size, 'Eau de Parfum', quantity);
+    handleAddToCart(product, activeSwatch.size, 'Eau de Parfum', quantity, unitPrice);
     navigate('/checkout');
   };
 
@@ -364,7 +364,7 @@ export const ProductDetail = () => {
             {/* Action Buttons: Add to Cart & Buy Now */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
-                onClick={() => handleAddToCart(product, activeSwatch.size, 'Eau de Parfum', quantity)}
+                onClick={() => handleAddToCart(product, activeSwatch.size, 'Eau de Parfum', quantity, unitPrice)}
                 className="w-full bg-gold hover:bg-gold/90 text-black py-4 rounded-sm text-xs font-sans font-bold uppercase tracking-widest transition-all shadow-lg shadow-gold/10 cursor-pointer flex items-center justify-center gap-2"
               >
                 <ShoppingCart className="w-4 h-4" />

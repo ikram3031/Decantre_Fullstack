@@ -37,6 +37,12 @@ Raw Images (jpg / png / webp)  ← img/ folder এ রাখো
 ┌─────────────────────────────────────────────┐
 │  STEP 3: scp দিয়ে VPS এ upload             │  ← converted files server এ পাঠাও
 └─────────────────────────────────────────────┘
+```
+
+scp -r E:\AAAAA\backend\src\uploads\* root@144.79.218.126:/var/www/uploads/
+
+```
+
          │
          ▼
 ┌─────────────────────────────────────────────┐
@@ -69,14 +75,17 @@ npm install
 ## Script 1 — `upload-productImg_fromFolder.js`
 
 ### কখন ব্যবহার করবে
+
 MongoDB তে যে products এর `imageUrl = /uploads/product_placeholder.webp`, সেগুলোর জন্য `img/` folder থেকে image খুঁজে upload করে।
 
 ### Run
+
 ```bash
 node ./scripts/upload-productImg_fromFolder.js
 ```
 
 ### কীভাবে কাজ করে
+
 1. DB থেকে `imageUrl = placeholder` এমন সব product fetch করে
 2. প্রতিটা product এর `name` কে slugify করে (`Lancôme` → `lancome`)
 3. `img/` folder এ ওই slug এর সাথে matching file খোঁজে
@@ -87,21 +96,25 @@ node ./scripts/upload-productImg_fromFolder.js
 5. **Match না পেলে:** product কে `scripts/failed-product-images.json` এ লিখে রাখে
 
 ### Output
-| File | Path |
-|------|------|
-| Main Image | `src/uploads/YYMMDD01/product_<slug>_<did>.webp` |
-| Thumbnail | `src/uploads/YYMMDD01/product_<slug>_<did>_thumb.webp` |
-| Failed List | `scripts/failed-product-images.json` |
+
+| File        | Path                                                   |
+| ----------- | ------------------------------------------------------ |
+| Main Image  | `src/uploads/YYMMDD01/product_<slug>_<did>.webp`       |
+| Thumbnail   | `src/uploads/YYMMDD01/product_<slug>_<did>_thumb.webp` |
+| Failed List | `scripts/failed-product-images.json`                   |
 
 ---
 
 ## Script 2 — `uplaodImageFromJSON.js`
 
 ### কখন ব্যবহার করবে
+
 Script 1 এ যেগুলো fail হয়েছে (বা আলাদা JSON list আছে), সেগুলোকে retry করার জন্য।
 
 ### Input JSON
+
 `E:\AAAAA\failed_product_image.json` (backend এর parent folder এ):
+
 ```json
 [
   { "did": "WC-12345", "name": "Lancôme Idôle EDP" },
@@ -110,11 +123,13 @@ Script 1 এ যেগুলো fail হয়েছে (বা আলাদা 
 ```
 
 ### Run
+
 ```bash
 node ./scripts/uplaodImageFromJSON.js
 ```
 
 ### কীভাবে কাজ করে
+
 1. `failed_product_image.json` load করে
 2. `img/` folder এর files read করে
 3. প্রতিটা item এর `name` slugify করে — **accented chars normalize করে** (`ô→o`, `é→e`, `à→a`)
@@ -125,6 +140,7 @@ node ./scripts/uplaodImageFromJSON.js
 5. **এবারও fail হলে:** `failed_product_image.json` overwrite হয় (শুধু remaining failures)
 
 ### Batch Folder Logic
+
 ```
 success 0–49   → src/uploads/YYMMDD01/
 success 50–99  → src/uploads/YYMMDD02/
@@ -132,14 +148,15 @@ success 100–149 → src/uploads/YYMMDD03/
 ```
 
 ### Slugify — Special Character Handling
+
 ```js
 // "Lancôme Idôle EDP" → "lancome-idole-edp"
 // "Yves Saint Laurent L'Homme" → "yves-saint-laurent-l-homme"
 text
-  .normalize("NFD")              // ô → o + combining accent
+  .normalize("NFD") // ô → o + combining accent
   .replace(/[\u0300-\u036f]/g, "") // diacritical marks remove
   .toLowerCase()
-  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/[^a-z0-9]+/g, "-");
 ```
 
 **Image folder এর file নামও একইভাবে slugify হয়**, তাই দুই দিকেই accented হলেও match হবে।
@@ -149,26 +166,30 @@ text
 ## Script 3 — `set-placeHolder.js`
 
 ### কখন ব্যবহার করবে
+
 `img/` folder এও image নেই এমন products — এগুলোর DB তে placeholder set করতে হবে যাতে frontend broken image না দেখায়।
 
 ### Input
+
 `scripts/failed-product-images.json` (Script 1 এর output):
+
 ```json
-[
-  { "did": "abc123", "name": "Some Product" }
-]
+[{ "did": "abc123", "name": "Some Product" }]
 ```
 
 ### Run
+
 ```bash
 node ./scripts/set-placeHolder.js
 ```
 
 ### কী করে
+
 `failed-product-images.json` এর প্রতিটা `did` দিয়ে MongoDB তে product খুঁজে:
+
 ```js
-imageUrl    = "/uploads/product_placeholder.webp"
-thumbnailUrl = "/uploads/product_placeholder.webp"
+imageUrl = "/uploads/product_placeholder.webp";
+thumbnailUrl = "/uploads/product_placeholder.webp";
 ```
 
 ---
@@ -176,9 +197,11 @@ thumbnailUrl = "/uploads/product_placeholder.webp"
 ## Script 4 — `migrate-images-to-webp.js`
 
 ### কখন ব্যবহার করবে
+
 পুরনো system থেকে migrate করার সময়। DB তে JPG/PNG path আছে, সেগুলো WebP তে convert করতে।
 
 ### Run
+
 ```bash
 # Dry run — কী হবে দেখো, কিছু change হবে না
 node ./scripts/migrate-images-to-webp.js --dry-run
@@ -188,10 +211,11 @@ node ./scripts/migrate-images-to-webp.js
 ```
 
 ### Image Sizes
-| Type | Max Size | Quality |
-|------|----------|---------|
-| Main image | 800×800 | 82% |
-| Thumbnail | 300×300 | 82% |
+
+| Type       | Max Size | Quality |
+| ---------- | -------- | ------- |
+| Main image | 800×800  | 82%     |
+| Thumbnail  | 300×300  | 82%     |
 
 Report save হয়: `scripts/migrate-images-report.json`
 
@@ -202,20 +226,24 @@ Report save হয়: `scripts/migrate-images-report.json`
 Scripts run করার পরে `src/uploads/` এ converted WebP files থাকবে। এগুলো VPS এ copy করতে হবে।
 
 ### ⚠️ Important
+
 এই command **local Windows PowerShell** থেকে run করতে হবে।  
 VPS এর SSH session এর ভেতর থেকে না।
 
 ### Command
+
 ```powershell
 scp -r E:\AAAAA\backend\src\uploads\* root@144.79.218.126:/var/www/uploads/
 ```
 
 ### First-Time Connection
+
 ```
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 ```
 
 ### VPS এ Verify করো
+
 ```bash
 ssh root@144.79.218.126
 ls /var/www/uploads/
@@ -257,14 +285,14 @@ ls /var/www/uploads/
 
 ## Common Errors & Solutions
 
-| Error | কারণ | সমাধান |
-|-------|------|--------|
-| `Image folder not found` | `img/` folder নেই | `backend/img/` তৈরি করে images রাখো |
-| `failed_product_image.json not found` | Wrong path | `E:\AAAAA\` তে রাখো (backend এর parent) |
-| `Product not found in database for did` | `did` DB তে নেই | JSON এর `did` value check করো |
-| Image slug match হচ্ছে না | File নাম ভুল | Product name slugify করে দেখো |
-| scp permission denied | Wrong password | VPS root password confirm করো |
-| `sharp` error | Dependencies নেই | `npm install` run করো |
+| Error                                   | কারণ              | সমাধান                                  |
+| --------------------------------------- | ----------------- | --------------------------------------- |
+| `Image folder not found`                | `img/` folder নেই | `backend/img/` তৈরি করে images রাখো     |
+| `failed_product_image.json not found`   | Wrong path        | `E:\AAAAA\` তে রাখো (backend এর parent) |
+| `Product not found in database for did` | `did` DB তে নেই   | JSON এর `did` value check করো           |
+| Image slug match হচ্ছে না               | File নাম ভুল      | Product name slugify করে দেখো           |
+| scp permission denied                   | Wrong password    | VPS root password confirm করো           |
+| `sharp` error                           | Dependencies নেই  | `npm install` run করো                   |
 
 ---
 

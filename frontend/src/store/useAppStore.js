@@ -355,8 +355,10 @@ export const useAppStore = create((set, get) => {
       return Math.round(finalPrice);
     },
 
-    handleAddToCart: (product, size, concentration, qty = 1) => {
-      const unitPrice = get().calculateItemPrice(product.basePrice, size, concentration);
+    handleAddToCart: (product, size, concentration, qty = 1, explicitUnitPrice = null) => {
+      const unitPrice = explicitUnitPrice != null
+        ? explicitUnitPrice
+        : get().calculateItemPrice(product.basePrice, size, concentration);
       const cart = get().cart;
       const existingIndex = cart.findIndex(
         (item) => item.product.id === product.id && item.size === size && item.concentration === concentration

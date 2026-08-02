@@ -23,11 +23,15 @@ export async function createApp() {
   const app = express();
 
   app.set("wpTablePrefix", process.env.WP_TABLE_PREFIX || "wp_");
-
   const corsOptions = {
     origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+    ],
     credentials: false,
     optionsSuccessStatus: 204,
   };
@@ -39,7 +43,10 @@ export async function createApp() {
   app.use(express.urlencoded({ extended: false }));
 
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-  app.use("/src/uploads", express.static(path.join(process.cwd(), "src", "uploads")));
+  app.use(
+    "/src/uploads",
+    express.static(path.join(process.cwd(), "src", "uploads")),
+  );
 
   app.use((req, res, next) => {
     logger.info({ method: req.method, path: req.originalUrl }, "route hit");
@@ -63,7 +70,7 @@ export async function createApp() {
   app.use("/api/v1/billing", billingRouter);
   app.use("/api/v1/categories", categoriesRouter);
   app.use("/api/v1/brands", brandRouter);
-  app.use('/api/v1/dashboard', dashboardRouter);
+  app.use("/api/v1/dashboard", dashboardRouter);
   app.get("/api/v1/search-products", searchProducts);
 
   app.use((req, res) => {
