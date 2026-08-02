@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { buildOtpEmailHtml } from "../../emailTemplates/otpTemp.js";
+import { buildOtpEmailHtml } from "../templates/otpEmailTemplate.js";
 
 const defaultTransport = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "smtp.hostinger.com",
