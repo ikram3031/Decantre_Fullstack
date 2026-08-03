@@ -90,7 +90,7 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
       toast.success(`Member ${deleteTarget.name} deleted.`);
       queryClient.invalidateQueries({ queryKey: ['members'] });
       setDeleteTarget(null);
-    } catch (err: unknown) {
+    } catch {
       toast.error('Failed to delete member.');
     } finally {
       setIsDeleting(false);

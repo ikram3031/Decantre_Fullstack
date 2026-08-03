@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { ShieldCheck, Calendar, Compass, ArrowRight, FileText, Sparkles, CheckCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
 export const ThankYou = () => {
+  const location = useLocation();
   const {
     shippingInfo,
     orderNumber: apiOrderNumber,
@@ -11,7 +12,10 @@ export const ThankYou = () => {
     addToast
   } = useApp();
 
-  const orderNumber = apiOrderNumber || ('LX-' + Math.floor(100000 + Math.random() * 900000));
+  const searchParams = new URLSearchParams(location.search);
+  const orderIdFromUrl = searchParams.get('orderId') || searchParams.get('orderNumber') || searchParams.get('id');
+  const persistedOrderNumber = typeof window !== 'undefined' ? window.localStorage.getItem('luxury_last_order_number') : null;
+  const orderNumber = orderIdFromUrl || apiOrderNumber || persistedOrderNumber || "";
   const formattedDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',

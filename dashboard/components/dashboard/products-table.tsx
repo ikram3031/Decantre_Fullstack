@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 import {
   Table,
@@ -80,8 +81,8 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
       toast.success(`Product "${deleteTarget.name}" deleted.`);
       queryClient.invalidateQueries({ queryKey: ['products'] });
       setDeleteTarget(null);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to delete product.');
+    } catch {
+      toast.error('Failed to delete product.');
     } finally {
       setIsDeleting(false);
     }
@@ -101,8 +102,8 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
       toast.success(`"${stockTarget.name}" set to Out of Stock.`);
       queryClient.invalidateQueries({ queryKey: ['products'] });
       setStockTarget(null);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to update stock status.');
+    } catch {
+      toast.error('Failed to update stock status.');
     } finally {
       setIsUpdatingStock(false);
     }
@@ -160,7 +161,7 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
                   <div className="flex items-center gap-3 min-w-0">
                     {product.image ? (
                       <div className="relative h-9 w-9 overflow-hidden rounded-md border flex-shrink-0">
-                        <img src={product.image} alt={product.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                        <Image src={product.image} alt={product.name} fill className="object-cover" referrerPolicy="no-referrer" unoptimized />
                       </div>
                     ) : (
                       <div className="flex h-9 w-9 items-center justify-center rounded-md border bg-muted flex-shrink-0">
@@ -252,7 +253,7 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
             </DialogTitle>
             <DialogDescription>
               Are you sure you want to mark{' '}
-              <span className="font-semibold text-foreground">"{stockTarget?.name}"</span>{' '}
+              <span className="font-semibold text-foreground">`{stockTarget?.name}`</span>{' '}
               as <span className="font-semibold text-destructive">Out of Stock</span>?
               <br />
               <span className="text-xs mt-1 block">This will hide the product from the store until stock is replenished.</span>

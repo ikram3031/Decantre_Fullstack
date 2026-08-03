@@ -71,7 +71,7 @@ export default function PaymentsPage() {
     limit: 15,
   });
 
-  const payments = paymentsResponse?.items || [];
+  const payments = useMemo(() => paymentsResponse?.items || [], [paymentsResponse?.items]);
   const meta = paymentsResponse?.meta;
 
   const filtered = useMemo(() => {

@@ -60,7 +60,7 @@ const fetchMembers = async (params?: FetchMembersParams): Promise<FetchMembersRe
     if (params?.search) queryParams.q = params.search;
     if (params?.segment) queryParams.segment = params.segment;
 
-    const response = await apiClient.get<any>(
+    const response = await apiClient.get<{ data?: unknown[]; meta?: unknown }>(
       '/api/v1/members',
       { params: queryParams }
     );

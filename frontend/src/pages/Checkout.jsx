@@ -37,6 +37,7 @@ export const Checkout = () => {
     isProcessingOrder,
     handleCheckoutSubmit,
     orderCompleted,
+    orderNumber,
     cartSubtotal,
     discountAmount,
     shippingFee,
@@ -233,9 +234,12 @@ export const Checkout = () => {
   // Reactive redirect to thank you page on success
   useEffect(() => {
     if (orderCompleted) {
-      navigate('/thank-you');
+      const nextPath = orderNumber
+        ? `/thank-you?orderId=${encodeURIComponent(orderNumber)}`
+        : '/thank-you';
+      navigate(nextPath, { replace: true });
     }
-  }, [orderCompleted, navigate]);
+  }, [orderCompleted, navigate, orderNumber]);
 
   return (
     <div className="py-12 sm:py-20 bg-luxury-black animate-fade-in text-left">

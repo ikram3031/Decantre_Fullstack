@@ -25,27 +25,12 @@ import {
 import { MoreHorizontal } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import type { Route } from 'next';
+import type { Order } from '@/types';
 
 interface OrdersTableProps {
   searchQuery: string;
@@ -53,8 +38,6 @@ interface OrdersTableProps {
   page?: number;
   onTotalPagesChange?: (totalPages: number) => void;
 }
-
-import type { Order, OrderDetails, OrderItem } from '@/types';
 
 export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesChange }: OrdersTableProps) {
   const queryClient = useQueryClient();
@@ -76,21 +59,6 @@ export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesC
     }
   }, [totalPages, onTotalPagesChange, responseData]);
 
-  const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-  const handleUpdateStatus = async (order: Order, newStatus: string) => {
-    try {
-      await apiClient.put(`/api/v1/orders/${order.id}`, { status: newStatus });
-      toast.success(`Order ${order.orderNumber} status updated to ${newStatus}.`);
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-    } catch (err: unknown) {
-      console.error(err);
-      toast.error('Failed to update order status.');
-    }
-  };
-
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; orderNumber: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -111,11 +79,13 @@ export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesC
   };
 
   const handleEditOrderClick = (order: Order) => {
-    router.push(`/dashboard/orders/${order.id}?edit=true` as any);
+    const path = `/dashboard/orders/${order.id}?edit=true` as Route;
+    router.push(path);
   };
 
   const handleViewDetails = (order: Order) => {
-    router.push(`/dashboard/orders/${order.id}` as any);
+    const path = `/dashboard/orders/${order.id}` as Route;
+    router.push(path);
   };
 
   const getPaymentBadge = (status: string) => {

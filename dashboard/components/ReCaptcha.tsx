@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
-import { Check, RefreshCw, HelpCircle, AlertCircle } from 'lucide-react';
+import { Check, RefreshCw, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -107,7 +108,7 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({ onVerify, verified }) => {
           </button>
           
           <span className="text-[11px] font-semibold text-slate-300 font-sans">
-            I'm not a robot
+            {"I'm not a robot"}
           </span>
         </div>
 
@@ -171,12 +172,14 @@ export const ReCaptcha: React.FC<ReCaptchaProps> = ({ onVerify, verified }) => {
                               : 'border-slate-800 hover:border-slate-600'
                           }`}
                         >
-                          <img
+                          <Image
                             src={item.image}
                             alt="Verification challenge"
-                            className={`w-full h-full object-cover transition-all duration-200 ${
+                            fill
+                            className={`object-cover transition-all duration-200 ${
                               isSelected ? 'brightness-75 opacity-90' : 'group-hover:scale-105'
                             }`}
+                            unoptimized
                           />
                           {isSelected && (
                             <div className="absolute inset-0 bg-slate-950/40 flex items-center justify-center">

@@ -193,26 +193,15 @@ export const listProducts = async (req, res, next) => {
   try {
     const method = (req.method || "GET").toUpperCase();
 
-    // Pagination and sorting come from either query (GET) or body (POST)
-    const paginationSource = method === "POST" ? req.body || {} : req.query || {};
+    if (method !== "POST") {
+      res.status(405).json({ status: "error", message: "Method not allowed" });
+      return;
+    }
+
+    const paginationSource = req.body || {};
     const { skip, limit } = parsePagination(paginationSource);
     const sort = buildProductSort(paginationSource.sortBy ?? paginationSource.sortby, paginationSource.order);
-
-    // Build filter: GET only supports free-text `q` search; POST accepts full filters in body
-    let filter = {};
-    if (method === "GET") {
-      const q = (req.query.q || "").trim();
-      if (q) {
-        filter.$or = [
-          { name: { $regex: q, $options: "i" } },
-          { slug: { $regex: q, $options: "i" } },
-          { description: { $regex: q, $options: "i" } },
-        ];
-      }
-    } else {
-      // POST: accept richer filters (category, brand, tags, season, name, slug, did, etc.)
-      filter = await buildProductFilter(req.body || {});
-    }
+    const filter = await buildProductFilter(req.body || {});
 
     const filteredQuery = {
       ...filter,

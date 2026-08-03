@@ -580,12 +580,17 @@ export const useAppStore = create((set, get) => {
         };
 
         const json = await apiCreateOrder(payload);
+        const resolvedOrderId = json?.data?.orderNumber ?? json?.data?.id ?? json?.orderNumber ?? json?.id ?? null;
+
+        if (resolvedOrderId) {
+          localStorage.setItem('luxury_last_order_number', String(resolvedOrderId));
+        }
 
         get().saveCart([]);
         set({
           isProcessingOrder: false,
           orderCompleted: true,
-          orderNumber: json.data?.orderNumber ?? json.data?.id ?? ('DEC-' + Math.floor(100000 + Math.random() * 900000))
+          orderNumber: resolvedOrderId ?? ('DEC-' + Math.floor(100000 + Math.random() * 900000))
         });
         get().addToast(json?.message || 'Your order has been placed successfully!', 'success');
       } catch (err) {
@@ -596,6 +601,7 @@ export const useAppStore = create((set, get) => {
 
     handleResetCheckout: () => {
       get().saveCart([]);
+      localStorage.removeItem('luxury_last_order_number');
       set({
         isCheckoutMode: false,
         orderCompleted: false,

@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('user', JSON.stringify(loggedUser));
       setUser(loggedUser);
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Sanitize and re-throw so the caller can forward to handleGlobalError
       throw new Error(getGenericErrorMessage(err, 'Sign in failed. Please check your credentials.'));
     } finally {
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('user', JSON.stringify(loggedUser));
       setUser(loggedUser);
-    } catch (err: any) {
+    } catch (err: unknown) {
       throw new Error(getGenericErrorMessage(err, 'Google Sign-in failed. Please verify your account.'));
     } finally {
       setIsLoading(false);
