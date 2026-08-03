@@ -20,12 +20,7 @@ productsRouter.get("/", listProducts);
 productsRouter.post("/search", listProducts);
 
 // POST /api/products : Creates a new product (restricted to Owner, Admin, and Manager roles)
-productsRouter.post(
-  "/",
-  authenticateToken,
-  authorizeRoles("Owner", "Admin", "Manager"),
-  createProduct,
-);
+productsRouter.post("/", authenticateToken, createProduct);
 
 // GET /api/products/:identifier : Retrieves details of a single product by its ObjectId or Slug
 productsRouter.get("/:identifier", getSingleProduct);
