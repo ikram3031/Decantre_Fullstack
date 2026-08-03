@@ -15,6 +15,7 @@ const SORT_FIELD_MAP = {
 
 const PLACEHOLDER_IMAGE_URL = "/uploads/product_placeholder.webp";
 
+// ইনপুট ভ্যালুকে সাফ করে এবং trim করে দেয়
 const normalizeValue = (value) => {
   if (typeof value === "string") {
     return value.trim();
@@ -23,8 +24,10 @@ const normalizeValue = (value) => {
   return value;
 };
 
+// placeholder image URL কিনা চেক করে
 const isPlaceholderImageUrl = (value) => typeof value === "string" && value.trim() === PLACEHOLDER_IMAGE_URL;
 
+// MongoDB প্রডাক্ট ডেটাকে API response-এ readable format-এ রূপান্তর করে
 export const serializeProduct = (product) => {
   const source = product?.toObject ? product.toObject() : product;
   const { _id, __v, ...rest } = source || {};
@@ -41,6 +44,7 @@ export const serializeProduct = (product) => {
   };
 };
 
+// incoming filter/query data থেকে MongoDB query object তৈরি করে
 export const buildProductFilter = async (input = {}) => {
   const source = input && typeof input === "object" && !Array.isArray(input) ? input : {};
   const explicitFilter = source.filter && typeof source.filter === "object" && !Array.isArray(source.filter)
@@ -175,6 +179,7 @@ export const buildProductFilter = async (input = {}) => {
   return filter;
 };
 
+// sort field ও direction অনুযায়ী MongoDB sort object তৈরি করে
 export const buildProductSort = (sortBy = "createdAt", order = "desc") => {
   const field = SORT_FIELD_MAP[normalizeValue(sortBy)] || "createdAt";
   const direction = normalizeValue(order).toLowerCase() === "asc" ? 1 : -1;
@@ -182,6 +187,7 @@ export const buildProductSort = (sortBy = "createdAt", order = "desc") => {
   return { [field]: direction };
 };
 
+// skip এবং limit calculate করে pagination data তৈরি করে
 export const parsePagination = (input = {}) => {
   const skip = Math.max(0, parseInt(normalizeValue(input.skip ?? input.offset ?? 0), 10) || 0);
   const limit = Math.min(100, Math.max(1, parseInt(normalizeValue(input.limit ?? DEFAULT_LIMIT), 10) || DEFAULT_LIMIT));
@@ -189,6 +195,7 @@ export const parsePagination = (input = {}) => {
   return { skip, limit };
 };
 
+// product list fetch করে pagination, filter, sort সহ response পাঠায়
 export const listProducts = async (req, res, next) => {
   try {
     const method = (req.method || "GET").toUpperCase();
@@ -239,6 +246,7 @@ export const listProducts = async (req, res, next) => {
   }
 };
 
+// slug বা id ব্যবহার করে একটি নির্দিষ্ট product fetch করে
 export const getProduct = async (req, res, next) => {
   try {
     const identifier = req.params.identifier;
@@ -259,6 +267,7 @@ export const getProduct = async (req, res, next) => {
   }
 };
 
+// given slug আগে থেকে আছে কিনা চেক করে
 export const checkSlugExists = async (req, res, next) => {
   try {
     const { slug } = req.params;
@@ -273,6 +282,7 @@ export const checkSlugExists = async (req, res, next) => {
   }
 };
 
+// নতুন product create করে database-এ save করে
 export const createProduct = async (req, res, next) => {
   try {
     const body = req.body || {};
@@ -377,6 +387,7 @@ export const createProduct = async (req, res, next) => {
   }
 };
 
+// একটি existing product-এর তথ্য update করে
 export const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -488,6 +499,7 @@ export const updateProduct = async (req, res, next) => {
   }
 };
 
+// একটি product delete করে database থেকে
 export const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
