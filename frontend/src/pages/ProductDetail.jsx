@@ -5,7 +5,7 @@ import { formatBDT } from '../utils/formatCurrency';
 import { mapRemoteProduct, resolveBrandName, resolveCategoryName } from '../store/productHelpers';
 import { fetchProductDetails, fetchProducts } from '../lib/api';
 import { MoreProducts } from '../components/sections/MoreProducts';
-import { RecentlyViewedProducts } from '../components/sections/RecentlyViewedProducts';
+import { RecentlyViewedProducts } from '../utils/utilityFunctions';
 import { 
   ArrowLeft, 
   ShoppingCart, 
