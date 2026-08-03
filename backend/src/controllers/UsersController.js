@@ -1,76 +1,12 @@
-import { UserModel, USER_ROLES } from "../models/user.model.js";
+import { UserModel } from "../models/user.model.js";
 import { AssetModel } from "../models/asset.model.js";
 import { hashPassword } from "../utils/password.js";
+import {
+  validateCreateUserPayload,
+  validateUpdateUserPayload,
+} from "../helper/userControllerHelper.js";
 
-const validateCreateUserPayload = (payload) => {
-  const errors = [];
-
-  if (!payload.name || typeof payload.name !== "string" || !payload.name.trim()) {
-    errors.push("name is required");
-  }
-
-  if (!payload.email || typeof payload.email !== "string" || !payload.email.trim()) {
-    errors.push("email is required");
-  }
-
-  if (!payload.phone || typeof payload.phone !== "string" || !payload.phone.trim()) {
-    errors.push("phone is required");
-  }
-
-  if (!payload.password || typeof payload.password !== "string" || payload.password.length < 6) {
-    errors.push("password is required and must be at least 6 characters");
-  }
-
-  if (!payload.role || !USER_ROLES.includes(payload.role)) {
-    errors.push(`role must be one of: ${USER_ROLES.join(", ")}`);
-  }
-
-  // If role is Employee, require assets (1-2)
-  if (payload.role === "Employee") {
-    if (!Array.isArray(payload.assets) || payload.assets.length === 0) {
-      errors.push("Employee must be assigned at least one asset");
-    } else if (payload.assets.length > 2) {
-      errors.push("An employee may have at most 2 assets assigned");
-    }
-  }
-
-  return errors;
-};
-
-const validateUpdateUserPayload = (payload) => {
-  const errors = [];
-
-  if (!payload.name || typeof payload.name !== "string" || !payload.name.trim()) {
-    errors.push("name is required");
-  }
-
-  if (!payload.email || typeof payload.email !== "string" || !payload.email.trim()) {
-    errors.push("email is required");
-  }
-
-  if (!payload.phone || typeof payload.phone !== "string" || !payload.phone.trim()) {
-    errors.push("phone is required");
-  }
-
-  if (payload.role && !USER_ROLES.includes(payload.role)) {
-    errors.push(`role must be one of: ${USER_ROLES.join(", ")}`);
-  }
-
-  if (payload.password && payload.password.length < 6) {
-    errors.push("password must be at least 6 characters when provided");
-  }
-
-  if (payload.role === "Employee") {
-    if (!Array.isArray(payload.assets) || payload.assets.length === 0) {
-      errors.push("Employee must be assigned at least one asset");
-    } else if (payload.assets.length > 2) {
-      errors.push("An employee may have at most 2 assets assigned");
-    }
-  }
-
-  return errors;
-};
-
+// List all users in the system.
 export const listUsers = async (req, res, next) => {
   try {
     const users = await UserModel.find().lean();
@@ -80,6 +16,7 @@ export const listUsers = async (req, res, next) => {
   }
 };
 
+// Fetch a single user record by id.
 export const getUserById = async (req, res, next) => {
   try {
     const { userId } = req.params;
@@ -91,6 +28,7 @@ export const getUserById = async (req, res, next) => {
   }
 };
 
+// Create a new user with role-aware permission checks and asset validation.
 export const createUser = async (req, res, next) => {
   try {
     const payload = req.body ?? {};
@@ -135,6 +73,7 @@ export const createUser = async (req, res, next) => {
   }
 };
 
+// Update an existing user while enforcing role-based restrictions.
 export const updateUser = async (req, res, next) => {
   try {
     const { userId } = req.params;
@@ -188,6 +127,7 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
+// Delete a user and prevent unsafe admin/self-deletion cases.
 export const deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;

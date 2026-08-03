@@ -93,7 +93,7 @@ export async function fetchProducts(opts = {}) {
 			body.order = order;
 
 			res = await fetchWithRetry(
-				`${apiBaseUrl}/api/v1/products`,
+				`${apiBaseUrl}/api/v1/products/search`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
@@ -351,6 +351,28 @@ export async function verifyMemberOtp(payload) {
 			json?.message ||
 			json?.error ||
 			"OTP verification failed.";
+		throw new Error(errorMsg);
+	}
+	return json;
+}
+
+/**
+ * Reset Member Password (via /members/reset-password)
+ */
+export async function resetMemberPassword(payload) {
+	const apiBaseUrl = getApiBaseUrl();
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/reset-password`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(payload),
+	});
+	const json = await res.json().catch(() => null);
+	if (!res.ok) {
+		const errorMsg =
+			json?.errors?.join(", ") ||
+			json?.message ||
+			json?.error ||
+			"Password reset failed.";
 		throw new Error(errorMsg);
 	}
 	return json;

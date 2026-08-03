@@ -6,103 +6,15 @@ import crypto from "node:crypto";
 import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
 import { sendOtpEmail } from "../utils/otpDelivery.js";
+import {
+  sanitizeInfo,
+  validateAddressPayload,
+  validateMemberPayload,
+} from "../helper/memberControllerHelper.js";
 
 const { Types } = mongoose;
 
-const hasAddressData = (address) => {
-  if (!address || typeof address !== "object") return false;
-
-  return Object.entries(address).some(([key, value]) => {
-    if (key === "company" || key === "address2") return false;
-    if (typeof value === "string") return value.trim() !== "";
-    return value !== undefined && value !== null;
-  });
-};
-
-const validateAddressPayload = (address, sectionName) => {
-  const errors = [];
-  const requiredFields = [
-    "firstName",
-    "lastName",
-    "address1",
-    "district",
-    "city",
-    "state",
-    "postcode",
-    "country",
-    "email",
-    "phone",
-  ];
-
-  if (!address || typeof address !== "object") {
-    return [];
-  }
-
-  if (!hasAddressData(address)) {
-    return [];
-  }
-
-  requiredFields.forEach((field) => {
-    const value = address[field];
-    if (!value || typeof value !== "string" || !value.trim()) {
-      errors.push(`${sectionName}.${field} is required`);
-    }
-  });
-
-  return errors;
-};
-
-const validateMemberPayload = (payload, billingInfo, shippingInfo) => {
-  const errors = [];
-  if (
-    !payload.name ||
-    typeof payload.name !== "string" ||
-    !payload.name.trim()
-  ) {
-    errors.push("name is required");
-  }
-  if (
-    !payload.email ||
-    typeof payload.email !== "string" ||
-    !payload.email.trim()
-  ) {
-    errors.push("email is required");
-  }
-  if (
-    !payload.phone ||
-    typeof payload.phone !== "string" ||
-    !payload.phone.trim()
-  ) {
-    errors.push("phone is required");
-  }
-  if (
-    !payload.password ||
-    typeof payload.password !== "string" ||
-    payload.password.length < 6
-  ) {
-    errors.push("password is required and must be at least 6 characters");
-  }
-
-  if (payload.billingInfo !== undefined) {
-    errors.push(...validateAddressPayload(billingInfo, "billingInfo"));
-  }
-  if (payload.shippingInfo !== undefined) {
-    errors.push(...validateAddressPayload(shippingInfo, "shippingInfo"));
-  }
-
-  return errors;
-};
-
-const sanitizeInfo = (info) => {
-  if (!info || typeof info !== "object") return {};
-  return Object.entries(info).reduce((acc, [key, value]) => {
-    if (value === undefined || value === null) return acc;
-    acc[key] = typeof value === "string" ? value.trim() : value;
-    return acc;
-  }, {});
-};
-
-// GET /members - returns the list of all members
+// List members with search, pagination, and optional segment filtering.
 export const listMembers = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || '1', 10));
@@ -145,7 +57,7 @@ export const listMembers = async (req, res, next) => {
   }
 };
 
-// GET /members/:memberId - returns the details of a specific member
+// Fetch one member record by Mongo ObjectId.
 export const getMemberById = async (req, res, next) => {
   try {
     const { memberId } = req.params;
@@ -168,7 +80,7 @@ export const getMemberById = async (req, res, next) => {
   }
 };
 
-// DELETE /members/:memberId - deletes a member
+// Delete a member record after validating the request id.
 export const deleteMember = async (req, res, next) => {
   try {
     const { memberId } = req.params;
@@ -191,7 +103,7 @@ export const deleteMember = async (req, res, next) => {
   }
 };
 
-// POST /members - creates a new member
+// Create a new member and persist its sanitized billing/shipping address data.
 export const createMember = async (req, res, next) => {
   try {
     const payload = req.body ?? {};
@@ -233,7 +145,7 @@ export const createMember = async (req, res, next) => {
   }
 };
 
-// PUT /members/:memberId - updates a member's information
+// Update a member profile and persist any valid address changes.
 export const updateMember = async (req, res, next) => {
   try {
     const { memberId } = req.params;
@@ -309,7 +221,7 @@ export const updateMember = async (req, res, next) => {
   }
 };
 
-// POST /members/register - starts member registration and generates an OTP
+// Start member registration by validating the payload and sending a verification OTP.
 export const registerMember = async (req, res, next) => {
   try {
     const { name, email, password, phone, role } = req.body ?? {};
@@ -419,7 +331,7 @@ export const registerMember = async (req, res, next) => {
   }
 };
 
-// POST /members/verify-otp - verifies the OTP and completes email verification
+// Verify a registration OTP and mark the member email as confirmed.
 export const verifyMemberOtp = async (req, res, next) => {
   try {
     const { email, otp } = req.body ?? {};
@@ -457,11 +369,13 @@ export const verifyMemberOtp = async (req, res, next) => {
     res.json({
       status: "success",
       message: "Verified successfully",
+      isEmailVerified: true,
       data: {
         user: {
           id: member.id,
           name: member.name,
           email: member.email,
+          phone: member.phone,
           role: member.role,
         },
       },
@@ -471,7 +385,7 @@ export const verifyMemberOtp = async (req, res, next) => {
   }
 };
 
-// POST /members/login - logs in a member and issues JWT/refresh tokens
+// Authenticate a member and issue new access and refresh tokens.
 export const loginMember = async (req, res, next) => {
   try {
     const { email, password } = req.body ?? {};
@@ -528,6 +442,7 @@ export const loginMember = async (req, res, next) => {
       return res.status(200).json({
         status: "success",
         requiresOtp: true,
+        isEmailVerified: false,
         message: "Your email is not verified. A verification code has been sent to your email.",
         data: {
           email: member.email,
@@ -569,6 +484,7 @@ export const loginMember = async (req, res, next) => {
 
     res.json({
       status: "success",
+      isEmailVerified: true,
       data: {
         user: {
           id: member.id,
@@ -588,7 +504,7 @@ export const loginMember = async (req, res, next) => {
   }
 };
 
-// POST /members/resend-otp - resends a new OTP
+// Resend a fresh member verification OTP to the registered email.
 export const resendMemberOtp = async (req, res, next) => {
   try {
     const { email } = req.body ?? {};
@@ -651,7 +567,7 @@ export const resendMemberOtp = async (req, res, next) => {
   }
 };
 
-// POST /members/:memberId/change-password - updates a member password directly
+// Change a member password directly after validating the supplied new password.
 export const changeMemberPassword = async (req, res, next) => {
   try {
     const { memberId } = req.params ?? {};
@@ -692,7 +608,7 @@ export const changeMemberPassword = async (req, res, next) => {
   }
 };
 
-// POST /members/forgot-password - sends a password reset OTP to the member's email
+// Send a password reset OTP when a member requests a forgotten-password flow.
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body ?? {};
@@ -758,7 +674,7 @@ export const forgotPassword = async (req, res, next) => {
   }
 };
 
-// POST /members/reset-password - verifies OTP and sets a new password
+// Verify the reset OTP and update the member password to the new value.
 export const resetPassword = async (req, res, next) => {
   try {
     const { email, otp, password } = req.body ?? {};
@@ -797,12 +713,41 @@ export const resetPassword = async (req, res, next) => {
     member.passwordHash = await hashPassword(trimmedPassword);
     member.emailOtp = undefined;
     member.emailOtpExpiresAt = undefined;
+    member.isEmailVerified = true;
+    member.emailVerifiedAt = new Date();
+
+    const refreshToken = crypto.randomBytes(48).toString("hex");
+    const refreshTokenExpiresAt = new Date(
+      Date.now() + (env.REFRESH_TOKEN_EXPIRES_MS || 7 * 24 * 60 * 60 * 1000),
+    );
+    member.refreshToken = refreshToken;
+    member.refreshTokenExpiresAt = refreshTokenExpiresAt;
     await member.save();
+
+    const accessToken = jwt.sign(
+      { userId: member.id, role: member.role, email: member.email },
+      env.ACCESS_TOKEN_SECRET,
+      { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "15m" },
+    );
 
     return res.json({
       status: "success",
+      isEmailVerified: true,
       message:
         "Password has been reset successfully. You can now log in with your new password.",
+      data: {
+        user: {
+          id: member.id,
+          name: member.name,
+          email: member.email,
+          phone: member.phone,
+          role: member.role,
+        },
+        accessToken,
+        accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "15m",
+        refreshToken,
+        refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+      },
     });
   } catch (error) {
     next(error);

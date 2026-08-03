@@ -41,7 +41,7 @@ export const Shop = () => {
   const brandParam = searchParams.get('brand');
   const searchParam = searchParams.get('search');
 
-  const [maxPrice, setMaxPrice] = useState(25000);
+  const [maxPrice, setMaxPrice] = useState(30000);
   const [sortOrder, setSortOrder] = useState('newest');
   const [brandFilters, setBrandFilters] = useState([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
@@ -73,25 +73,11 @@ export const Shop = () => {
     return () => window.removeEventListener('resize', updatePageSize);
   }, []);
 
-  // Compute dynamic min/max price boundaries from the currently loaded products
-  const priceLimits = useMemo(() => {
-    const prices = allProducts.map((p) => p.basePrice).filter((p) => p > 0);
-    if (prices.length === 0) return { min: 140, max: 25000 };
-    return {
-      min: Math.min(...prices),
-      max: Math.max(...prices)
-    };
-  }, [allProducts]);
-
-  // Sync initial max price selection with loaded products range
-  useEffect(() => {
-    if (allProducts.length > 0) {
-      const prices = allProducts.map((p) => p.basePrice).filter((p) => p > 0);
-      if (prices.length > 0) {
-        setMaxPrice(Math.max(...prices));
-      }
-    }
-  }, [allProducts]);
+  // Compute stable min/max price boundaries for the decants and bottles range
+  const priceLimits = {
+    min: 100,
+    max: 30000
+  };
 
   // Mapped client-side filter for the price range
   const displayedProducts = useMemo(() => {

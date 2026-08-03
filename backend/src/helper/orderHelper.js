@@ -1,3 +1,4 @@
+// Generic order domain utilities: validation and number generation.
 import { OrderModel } from '../models/order.model.js';
 
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
