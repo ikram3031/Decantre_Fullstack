@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createMember, getMemberById, listMembers, updateMember, deleteMember, registerMember, verifyMemberOtp, loginMember, resendMemberOtp, forgotPassword, resetPassword } from "../controllers/MembersController.js";
+import { createMember, getMemberById, listMembers, updateMember, deleteMember, registerMember, verifyMemberOtp, loginMember, resendMemberOtp, forgotPassword, resetPassword, changeMemberPassword } from "../controllers/MembersController.js";
 import { authenticateToken, authorizeRoles } from "../middlewares/auth.middleware.js";
 
 const membersRouter = Router();
@@ -15,7 +15,17 @@ membersRouter.use(authenticateToken);
 membersRouter.post("/", createMember);
 membersRouter.get("/", listMembers);
 membersRouter.get("/:memberId", getMemberById);
-membersRouter.put("/:memberId", authorizeRoles("super_admin", "admin", "store_manager"), updateMember);
-membersRouter.delete("/:memberId", authorizeRoles("super_admin", "admin", "store_manager"), deleteMember);
+membersRouter.post(
+  "/:memberId/change-password",
+  authorizeRoles("Owner", "Admin", "Manager"),
+  changeMemberPassword,
+);
+// membersRouter.put("/:memberId", authorizeRoles("super_admin", "admin", "store_manager"), updateMember);
+membersRouter.put(
+	"/:memberId",
+	// authorizeRoles("super_admin", "admin", "store_manager"),
+	updateMember,
+);
+membersRouter.delete("/:memberId", authorizeRoles("Owner", "Admin", "Manager"), deleteMember);
 
 export default membersRouter;

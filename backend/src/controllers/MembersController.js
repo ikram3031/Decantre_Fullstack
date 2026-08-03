@@ -651,6 +651,47 @@ export const resendMemberOtp = async (req, res, next) => {
   }
 };
 
+// POST /members/:memberId/change-password - updates a member password directly
+export const changeMemberPassword = async (req, res, next) => {
+  try {
+    const { memberId } = req.params ?? {};
+    const { newPassword } = req.body ?? {};
+    const trimmedPassword = typeof newPassword === "string" ? newPassword : "";
+
+    if (!memberId) {
+      return res.status(400).json({
+        status: "error",
+        message: "Member id is required",
+      });
+    }
+
+    if (!trimmedPassword || trimmedPassword.length < 6) {
+      return res.status(400).json({
+        status: "error",
+        message: "Password must be at least 6 characters",
+      });
+    }
+
+    const member = await MemberModel.findById(memberId).select("+passwordHash");
+    if (!member) {
+      return res.status(404).json({
+        status: "error",
+        message: "Member not found",
+      });
+    }
+
+    member.passwordHash = await hashPassword(trimmedPassword);
+    await member.save();
+
+    return res.json({
+      status: "success",
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // POST /members/forgot-password - sends a password reset OTP to the member's email
 export const forgotPassword = async (req, res, next) => {
   try {

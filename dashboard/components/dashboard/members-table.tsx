@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMembers } from '@/hooks/use-members';
+import { Member, useMembers } from '@/hooks/use-members';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,8 +24,12 @@ import { MoreHorizontal } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 import { apiClient } from '@/lib/api-client';
+import { isAxiosError } from 'axios';
+import { useAuth } from '@/lib/auth-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
@@ -39,6 +43,7 @@ interface MembersTableProps {
 
 export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPagesChange }: MembersTableProps) {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const { data: responseData, isLoading, isError, error } = useMembers({
     search: searchQuery,
@@ -56,16 +61,26 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
     }
   }, [totalPages, onTotalPagesChange, responseData]);
 
-  const handleViewProfile = (member: any) => {
+  // Action to inspect member details in the dashboard.
+  const handleViewProfile = (member: Member) => {
     toast.info(`Viewing profile for ${member.name}`);
   };
 
-  const handleSendMessage = (member: any) => {
+  // Action to start a message flow for the selected member.
+  const handleSendMessage = (member: Member) => {
     toast.info(`Preparing message for ${member.email}`);
   };
 
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [passwordTarget, setPasswordTarget] = useState<{ id: string; name: string } | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  // Only privileged roles can change a member's password from the dashboard.
+  const canChangePassword = ['owner', 'admin', 'manager', 'administrator', 'super_admin'].includes((user?.role || '').toLowerCase());
 
   const handleDeleteMember = async () => {
     if (!deleteTarget) return;
@@ -75,10 +90,43 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
       toast.success(`Member ${deleteTarget.name} deleted.`);
       queryClient.invalidateQueries({ queryKey: ['members'] });
       setDeleteTarget(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error('Failed to delete member.');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  // Send the password change request to the backend for the selected member.
+  const handleChangePassword = async () => {
+    if (!passwordTarget) return;
+
+    if (!newPassword || newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match.');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      await apiClient.post(`/api/v1/members/${passwordTarget.id}/change-password`, {
+        newPassword,
+      });
+      toast.success(`Password updated for ${passwordTarget.name}.`);
+      setPasswordTarget(null);
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: unknown) {
+      const message = isAxiosError(err) && err.response?.data?.message
+        ? String(err.response.data.message)
+        : 'Failed to change password.';
+      toast.error(message);
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -161,6 +209,17 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
                       <DropdownMenuItem onClick={() => handleSendMessage(member)}>
                         Send Message
                       </DropdownMenuItem>
+                      {canChangePassword && (
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setPasswordTarget({ id: member.id, name: member.name });
+                            setNewPassword('');
+                            setConfirmPassword('');
+                          }}
+                        >
+                          Change Password
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive focus:text-destructive cursor-pointer"
@@ -190,6 +249,51 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
         title="Delete Member"
         description={`Are you sure you want to delete member ${deleteTarget?.name ?? ''}?`}
       />
+
+      <Dialog open={!!passwordTarget} onOpenChange={(open) => { if (!open) setPasswordTarget(null); }}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle>Change Password</DialogTitle>
+            <DialogDescription>
+              Set a new password for {passwordTarget?.name ?? 'this member'}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="grid gap-2">
+              <label htmlFor="new-password" className="text-sm font-medium text-muted-foreground">
+                New Password
+              </label>
+              <Input
+                id="new-password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="confirm-password" className="text-sm font-medium text-muted-foreground">
+                Confirm Password
+              </label>
+              <Input
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPasswordTarget(null)} disabled={isChangingPassword}>
+              Cancel
+            </Button>
+            <Button onClick={handleChangePassword} disabled={isChangingPassword}>
+              {isChangingPassword ? 'Updating...' : 'Update Password'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
