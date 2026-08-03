@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import {
   Table,
   TableBody,
@@ -29,11 +30,14 @@ export default function StockManagementPage() {
   const [brandFilter, setBrandFilter] = useState('All');
   const [stockFilter, setStockFilter] = useState('all');
 
-  const { data: products = [], isLoading } = useProducts({
+  const { data: productsResponse, isLoading } = useProducts({
     search: searchQuery || undefined,
     category: categoryFilter !== 'All' ? categoryFilter : undefined,
     brand: brandFilter !== 'All' ? brandFilter : undefined,
   });
+  const products: Product[] = useMemo(() => Array.isArray(productsResponse?.data)
+    ? productsResponse.data
+    : [], [productsResponse?.data]);
 
   const { data: categories = [] } = useCategories();
   const { data: brands = [] } = useBrands();
@@ -197,7 +201,7 @@ export default function StockManagementPage() {
                         <div className="flex items-center gap-3">
                           {product.image ? (
                             <div className="relative h-10 w-10 overflow-hidden rounded-md border flex-shrink-0">
-                              <img src={product.image} alt={product.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                              <Image src={product.image} alt={product.name} fill className="object-cover" referrerPolicy="no-referrer" unoptimized />
                             </div>
                           ) : (
                             <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted flex-shrink-0">

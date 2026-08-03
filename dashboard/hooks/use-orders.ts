@@ -44,7 +44,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
     if (params?.status) queryParams.status = params.status.toLowerCase();
     if (params?.search) queryParams.email = params.search;
 
-    const response = await apiClient.get<any>('/api/v1/orders', { params: queryParams });
+    const response = await apiClient.get<{ data?: unknown[]; meta?: unknown }>('/api/v1/orders', { params: queryParams });
     const responseData = response.data;
 
     const rawOrderList = Array.isArray(responseData)

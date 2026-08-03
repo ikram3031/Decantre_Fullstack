@@ -72,7 +72,7 @@ export function CouponsTable({
       await apiClient.put(`/api/v1/coupons/${coupon.id}`, { active: !currentStatus });
       toast.success(`Coupon "${coupon.code}" is now ${!currentStatus ? 'Active' : 'Inactive'}.`);
       queryClient.invalidateQueries({ queryKey: ['coupons'] });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       toast.error('Failed to update coupon status.');
     }
@@ -87,7 +87,7 @@ export function CouponsTable({
       toast.success(`Coupon "${deleteTarget.code}" deleted successfully.`);
       queryClient.invalidateQueries({ queryKey: ['coupons'] });
       setDeleteTarget(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       toast.error('Failed to delete coupon.');
     } finally {

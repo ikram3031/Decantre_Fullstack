@@ -3,14 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
-import { LogIn, Mail, Lock, KeyRound } from 'lucide-react';
+import { LogIn, Mail, Lock } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
-import { DecantreLogo } from '@/components/DecantreLogo';
-import { ReCaptcha } from '@/components/ReCaptcha';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { handleGlobalError } from '@/lib/error-handler';
 import { toast } from 'sonner';
 
@@ -30,10 +27,10 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [isGoogleSigningIn, setIsGoogleSigningIn] = useState(false);
 
   // Detect and process Google Auth redirect code
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- Need to set signing in state client-side when Google OAuth code is detected in URL
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
@@ -45,7 +42,7 @@ export default function LoginPage() {
           .then(() => {
             toast.success('Logged in with Google successfully.');
           })
-          .catch((err: any) => {
+          .catch((err: unknown) => {
             handleGlobalError(err);
             setIsGoogleSigningIn(false);
             router.replace('/login');
@@ -80,11 +77,6 @@ export default function LoginPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleDemoFill = () => {
-    setEmail('admin@example.com');
-    setPassword('admin');
   };
 
   const handleGoogleLogin = () => {

@@ -80,9 +80,6 @@ function ProductAddDialog({
   const displayPrice = isVariant ? variantPrice : simplePrice;
   const lineTotal = displayPrice != null ? displayPrice * quantity : null;
 
-  // For in-store orders, bypass database stock checks to allow selling physical items on hand
-  const isOutOfStock = false;
-
   const canAdd = isVariant ? selectedVariant !== null : true;
 
   const handleAdd = () => {
@@ -319,11 +316,14 @@ export default function NewInStoreOrderPage() {
   const { data: categories = [] } = useCategories();
   const { data: brands = [] } = useBrands();
 
-  const { data: products = [], isLoading: productsLoading } = useProducts({
+  const { data: productsResponse, isLoading: productsLoading } = useProducts({
     search: searchQuery || undefined,
     category: categoryFilter !== "All" ? categoryFilter : undefined,
     brand: brandFilter !== "All" ? brandFilter : undefined,
   });
+  const products: Product[] = Array.isArray(productsResponse?.data)
+    ? productsResponse.data
+    : [];
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [dialogProduct, setDialogProduct] = useState<Product | null>(null);
@@ -673,12 +673,14 @@ export default function NewInStoreOrderPage() {
                       `}
                     >
                       {/* Thumbnail */}
-                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0 relative">
                         {product.image ? (
-                          <img
+                          <Image
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            unoptimized
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -833,12 +835,14 @@ export default function NewInStoreOrderPage() {
                     key={item.id}
                     className="flex items-center gap-2 py-2 border-b border-border/50 last:border-0"
                   >
-                    <div className="w-9 h-9 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                    <div className="w-9 h-9 rounded-md overflow-hidden bg-muted flex-shrink-0 relative">
                       {item.image ? (
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.name}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          unoptimized
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">

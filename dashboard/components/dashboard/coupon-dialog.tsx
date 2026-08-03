@@ -39,37 +39,140 @@ const toDateTimeLocalString = (isoString?: string) => {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };
 
+type CouponFormState = {
+  code: string;
+  discountType: 'percentage' | 'fixed';
+  discountValue: string;
+  minOrderAmount: string;
+  validFrom: string;
+  validTo: string;
+  active: boolean;
+  isUnlimited: boolean;
+  usageLimit: string;
+  selectedProducts: string[];
+  selectedCategories: string[];
+  selectedBrands: string[];
+  productSearch: string;
+  categorySearch: string;
+  brandSearch: string;
+};
+
+const normalizeEntityIds = (items?: unknown[]): string[] => {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => {
+      if (typeof item === 'string') return item;
+      if (typeof item === 'object' && item !== null) {
+        const entity = item as { _id?: string; id?: string };
+        return entity._id || entity.id;
+      }
+      return undefined;
+    })
+    .filter(Boolean) as string[];
+};
+
+const mapToEntityList = (data: unknown): { id: string; name: string }[] => {
+  const items = Array.isArray(data) ? data : (data as { data?: unknown }).data;
+  if (!Array.isArray(items)) return [];
+
+  return items
+    .map((item) => {
+      if (typeof item !== 'object' || item === null) return null;
+      const entity = item as { _id?: string; id?: string; name?: string };
+      if (!entity.name) return null;
+      const id = entity._id || entity.id;
+      return id ? { id, name: entity.name } : null;
+    })
+    .filter(Boolean) as { id: string; name: string }[];
+};
+
+const getInitialFormState = (coupon?: Coupon | null): CouponFormState => {
+  if (!coupon) {
+    return {
+      code: '',
+      discountType: 'percentage',
+      discountValue: '',
+      minOrderAmount: '0',
+      validFrom: '',
+      validTo: '',
+      active: true,
+      isUnlimited: true,
+      usageLimit: '',
+      selectedProducts: [],
+      selectedCategories: [],
+      selectedBrands: [],
+      productSearch: '',
+      categorySearch: '',
+      brandSearch: '',
+    };
+  }
+
+  const limitVal = coupon.usageLimit;
+
+  return {
+    code: coupon.code,
+    discountType: coupon.discountType,
+    discountValue: String(coupon.discountValue),
+    minOrderAmount: String(coupon.minOrderAmount ?? 0),
+    validFrom: toDateTimeLocalString(coupon.validFrom),
+    validTo: toDateTimeLocalString(coupon.validTo),
+    active: coupon.active,
+    isUnlimited: limitVal === undefined || limitVal === null,
+    usageLimit: limitVal != null ? String(limitVal) : '',
+    selectedProducts: normalizeEntityIds(coupon.applicableProducts),
+    selectedCategories: normalizeEntityIds(coupon.applicableCategories),
+    selectedBrands: normalizeEntityIds(coupon.applicableBrands),
+    productSearch: '',
+    categorySearch: '',
+    brandSearch: '',
+  };
+};
+
 export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogProps) {
   const isEdit = !!couponToEdit;
   const queryClient = useQueryClient();
 
-  // Basic coupon fields
-  const [code, setCode] = useState('');
-  const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
-  const [discountValue, setDiscountValue] = useState('');
-  const [minOrderAmount, setMinOrderAmount] = useState('0');
-  const [validFrom, setValidFrom] = useState('');
-  const [validTo, setValidTo] = useState('');
-  const [active, setActive] = useState(true);
+  const [formState, setFormState] = useState<CouponFormState>(() => getInitialFormState(couponToEdit));
+  const {
+    code,
+    discountType,
+    discountValue,
+    minOrderAmount,
+    validFrom,
+    validTo,
+    active,
+    isUnlimited,
+    usageLimit,
+    selectedProducts,
+    selectedCategories,
+    selectedBrands,
+    productSearch,
+    categorySearch,
+    brandSearch,
+  } = formState;
 
-  // Usage Limit fields
-  const [isUnlimited, setIsUnlimited] = useState(true);
-  const [usageLimit, setUsageLimit] = useState('');
+  const setCode = (value: string) => setFormState((prev) => ({ ...prev, code: value }));
+  const setDiscountType = (value: 'percentage' | 'fixed') => setFormState((prev) => ({ ...prev, discountType: value }));
+  const setDiscountValue = (value: string) => setFormState((prev) => ({ ...prev, discountValue: value }));
+  const setMinOrderAmount = (value: string) => setFormState((prev) => ({ ...prev, minOrderAmount: value }));
+  const setValidFrom = (value: string) => setFormState((prev) => ({ ...prev, validFrom: value }));
+  const setValidTo = (value: string) => setFormState((prev) => ({ ...prev, validTo: value }));
+  const setActive = (value: boolean) => setFormState((prev) => ({ ...prev, active: value }));
+  const setIsUnlimited = (value: boolean) => setFormState((prev) => ({ ...prev, isUnlimited: value }));
+  const setUsageLimit = (value: string) => setFormState((prev) => ({ ...prev, usageLimit: value }));
 
-  // Restrictions selection fields
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const setSelectedProducts = (value: string[]) => setFormState((prev) => ({ ...prev, selectedProducts: value }));
+  const setSelectedCategories = (value: string[]) => setFormState((prev) => ({ ...prev, selectedCategories: value }));
+  const setSelectedBrands = (value: string[]) => setFormState((prev) => ({ ...prev, selectedBrands: value }));
+
+  const setProductSearch = (value: string) => setFormState((prev) => ({ ...prev, productSearch: value }));
+  const setCategorySearch = (value: string) => setFormState((prev) => ({ ...prev, categorySearch: value }));
+  const setBrandSearch = (value: string) => setFormState((prev) => ({ ...prev, brandSearch: value }));
 
   // DB entities list for selection
   const [productsList, setProductsList] = useState<{ id: string; name: string }[]>([]);
   const [categoriesList, setCategoriesList] = useState<{ id: string; name: string }[]>([]);
   const [brandsList, setBrandsList] = useState<{ id: string; name: string }[]>([]);
-
-  // Search filter keywords
-  const [productSearch, setProductSearch] = useState('');
-  const [categorySearch, setCategorySearch] = useState('');
-  const [brandSearch, setBrandSearch] = useState('');
 
   const [isLoadingEntities, setIsLoadingEntities] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -81,20 +184,14 @@ export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogP
     const fetchEntities = async () => {
       setIsLoadingEntities(true);
       try {
-        // Fetch categories
         const catRes = await apiClient.get('/api/v1/categories');
-        const cats = Array.isArray(catRes.data) ? catRes.data : catRes.data?.data || [];
-        setCategoriesList(cats.map((c: any) => ({ id: c._id || c.id, name: c.name })));
+        setCategoriesList(mapToEntityList(catRes.data));
 
-        // Fetch brands
         const brandRes = await apiClient.get('/api/v1/brands', { params: { limit: 1000 } });
-        const brands = Array.isArray(brandRes.data) ? brandRes.data : brandRes.data?.data || [];
-        setBrandsList(brands.map((b: any) => ({ id: b._id || b.id, name: b.name })));
+        setBrandsList(mapToEntityList(brandRes.data));
 
-        // Fetch products
         const prodRes = await apiClient.get('/api/v1/products', { params: { limit: 200 } });
-        const prods = Array.isArray(prodRes.data) ? prodRes.data : prodRes.data?.data || [];
-        setProductsList(prods.map((p: any) => ({ id: p._id || p.id, name: p.name })));
+        setProductsList(mapToEntityList(prodRes.data));
       } catch (err) {
         console.error('Failed to load selection entities', err);
         toast.error('Failed to load products/categories list.');
@@ -107,53 +204,10 @@ export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogP
   }, [open]);
 
   // Set form state when coupon to edit changes
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- Reset form state when coupon dialog is opened or coupon to edit changes
   useEffect(() => {
-    if (open) {
-      if (couponToEdit) {
-        setCode(couponToEdit.code);
-        setDiscountType(couponToEdit.discountType);
-        setDiscountValue(String(couponToEdit.discountValue));
-        setMinOrderAmount(String(couponToEdit.minOrderAmount ?? 0));
-        setValidFrom(toDateTimeLocalString(couponToEdit.validFrom));
-        setValidTo(toDateTimeLocalString(couponToEdit.validTo));
-        setActive(couponToEdit.active);
-
-        const limitVal = couponToEdit.usageLimit;
-        if (limitVal !== undefined && limitVal !== null) {
-          setIsUnlimited(false);
-          setUsageLimit(String(limitVal));
-        } else {
-          setIsUnlimited(true);
-          setUsageLimit('');
-        }
-
-        const mapToIds = (items?: any[]) => {
-          if (!items) return [];
-          return items.map((item) => (typeof item === 'object' ? item._id || item.id : item)).filter(Boolean);
-        };
-
-        setSelectedProducts(mapToIds(couponToEdit.applicableProducts));
-        setSelectedCategories(mapToIds(couponToEdit.applicableCategories));
-        setSelectedBrands(mapToIds(couponToEdit.applicableBrands));
-      } else {
-        // Reset form
-        setCode('');
-        setDiscountType('percentage');
-        setDiscountValue('');
-        setMinOrderAmount('0');
-        setValidFrom('');
-        setValidTo('');
-        setActive(true);
-        setIsUnlimited(true);
-        setUsageLimit('');
-        setSelectedProducts([]);
-        setSelectedCategories([]);
-        setSelectedBrands([]);
-        setProductSearch('');
-        setCategorySearch('');
-        setBrandSearch('');
-      }
-    }
+    if (!open) return;
+    setFormState(getInitialFormState(couponToEdit));
   }, [open, couponToEdit]);
 
   const handleToggleProduct = (id: string) => {
@@ -240,9 +294,10 @@ export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogP
 
       queryClient.invalidateQueries({ queryKey: ['coupons'] });
       onOpenChange(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      toast.error(err?.response?.data?.message || 'Failed to save coupon.');
+      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toast.error(errorMessage || 'Failed to save coupon.');
     } finally {
       setIsSubmitting(false);
     }

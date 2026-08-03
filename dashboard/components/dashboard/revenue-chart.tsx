@@ -17,8 +17,9 @@ import { useOrderCounts } from '@/hooks/use-order-counts';
 export function RevenueChart() {
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const { data: counts = [], isLoading } = useOrderCounts(30);
+  const { data: counts = [] } = useOrderCounts(30);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- Need to set mounted to true after hydration to prevent client/server HTML mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -87,7 +88,7 @@ export function RevenueChart() {
                   color: isDark ? '#f9fafb' : '#111827',
                   borderRadius: '6px',
                 }}
-                formatter={(value: any) => [value, 'Orders']}
+                formatter={(value: number | string) => [value, 'Orders']}
               />
               <Line
                 type="monotone"

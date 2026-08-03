@@ -11,7 +11,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Table,
@@ -105,7 +104,7 @@ export default function BrandsPage() {
 
       queryClient.invalidateQueries({ queryKey: ['brands-cache'] });
       setIsOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err?.response?.data?.message || 'Failed to save brand');
     } finally {
       setIsSubmitting(false);
@@ -123,7 +122,7 @@ export default function BrandsPage() {
       toast.success('Brand deleted successfully');
       queryClient.invalidateQueries({ queryKey: ['brands-cache'] });
       setDeleteTarget(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err?.response?.data?.message || 'Failed to delete brand');
     } finally {
       setIsDeleting(false);
@@ -178,7 +177,7 @@ export default function BrandsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredBrands.map((brand: any) => (
+              {filteredBrands.map((brand: BrandCacheEntry) => (
                 <TableRow key={brand.did}>
                   <TableCell className="font-medium flex items-center gap-2">
                     <Tag className="h-4 w-4 text-muted-foreground" />

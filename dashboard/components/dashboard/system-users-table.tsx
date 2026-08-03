@@ -54,7 +54,7 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
       await apiClient.put(`/api/v1/users/${id}`, { isActive: newActive });
       toast.success(`User status updated to ${newActive ? 'Active' : 'Inactive'}.`);
       queryClient.invalidateQueries({ queryKey: ['system-users'] });
-    } catch (err: any) {
+    } catch {
       toast.error('Failed to update user status.');
     } finally {
       setToggling(null);
@@ -72,7 +72,7 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
       toast.success(`Access revoked for ${deleteTarget.name}.`);
       queryClient.invalidateQueries({ queryKey: ['system-users'] });
       setDeleteTarget(null);
-    } catch (err: any) {
+    } catch {
       toast.error('Failed to revoke access.');
     } finally {
       setIsRevoking(false);

@@ -15,11 +15,7 @@ import {
 } from "@/components/ui/select";
 import {
   Plus,
-  Trash2,
-  Layers,
-  Package,
   UploadCloud,
-  FileImage,
   X,
   ArrowLeft,
 } from "lucide-react";
@@ -163,7 +159,7 @@ export default function NewProductPage() {
       } else {
         throw new Error("Image URL not found in response");
       }
-    } catch (err: unknown) {
+    } catch {
       toast.error("Failed to upload image. Please try again.");
       setImagePreview("");
       setUploadedImageUrl("");

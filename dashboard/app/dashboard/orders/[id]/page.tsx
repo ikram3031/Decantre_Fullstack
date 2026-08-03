@@ -35,7 +35,6 @@ import {
   Trash2,
   ShoppingBag,
   ArrowLeft,
-  CheckCircle,
   Package,
   X,
   Layers,
@@ -332,7 +331,6 @@ export default function OrderDetailsPage() {
 
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [fulfillmentStatus, setFulfillmentStatus] = useState("Pending");
-  const [paymentStatus, setPaymentStatus] = useState("Pending");
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -346,13 +344,17 @@ export default function OrderDetailsPage() {
 
   const { data: categories = [] } = useCategories();
   const { data: brands = [] } = useBrands();
-  const { data: products = [], isLoading: productsLoading } = useProducts({
+  const { data: productsResponse, isLoading: productsLoading } = useProducts({
     search: searchQuery || undefined,
     category: categoryFilter !== "All" ? categoryFilter : undefined,
     brand: brandFilter !== "All" ? brandFilter : undefined,
   });
+  const products: Product[] = Array.isArray(productsResponse?.data)
+    ? productsResponse.data
+    : [];
 
   // Populate fields when order is loaded
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- Copy asynchronously fetched order data to editable form state on load
   useEffect(() => {
     if (order) {
       setCustomerName(order.customer?.fullName || order.customerName || "");
@@ -366,7 +368,6 @@ export default function OrderDetailsPage() {
 
       setPaymentMethod(order.paymentMethod || "cash");
       setFulfillmentStatus(order.fulfillmentStatus || "Pending");
-      setPaymentStatus(order.paymentStatus || "Pending");
 
       setDiscountAmount(order.discountTotalAmount || 0);
       setShippingFee(order.totals?.shippingFee ?? order.shippingTotalAmount ?? 0);
@@ -889,10 +890,12 @@ export default function OrderDetailsPage() {
                         {/* Image */}
                         <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0 relative border border-border/60">
                           {product.image ? (
-                            <img
+                            <Image
                               src={product.image}
                               alt={product.name}
-                              className="w-full h-full object-cover"
+                              fill
+                              className="object-cover"
+                              unoptimized
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">

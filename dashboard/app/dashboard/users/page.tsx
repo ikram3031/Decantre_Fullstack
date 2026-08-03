@@ -60,7 +60,7 @@ export default function UsersPage() {
       setNewUserEmail('');
       setNewUserPassword('');
       setNewUserRole('Admin');
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err?.response?.data?.message || 'Failed to invite user.');
     } finally {
       setIsSubmitting(false);
