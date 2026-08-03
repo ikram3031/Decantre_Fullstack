@@ -11,8 +11,8 @@ import { authenticateToken, authorizeRoles } from "../middlewares/auth.middlewar
 
 const productsRouter = Router();
 
-productsRouter.get("/", listProducts);
-productsRouter.post("/", authenticateToken, authorizeRoles("Owner", "Admin", "Manager"), createProduct);
+productsRouter.post("/", listProducts);
+productsRouter.post("/add-new", authenticateToken, authorizeRoles("Owner", "Admin", "Manager"), createProduct);
 productsRouter.get("/check-slug/:slug", checkSlugExists);
 productsRouter.get("/:identifier", getProduct);
 productsRouter.put("/:id", authenticateToken, authorizeRoles("Owner", "Admin", "Manager"), updateProduct);
