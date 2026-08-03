@@ -487,24 +487,18 @@ export const loginMember = async (req, res, next) => {
     const member = await MemberModel.findOne({ email: normalizedEmail }).select(
       "+passwordHash",
     );
-    if (!member || !member.passwordHash) {
+    if (!member) {
       return res
         .status(401)
         .json({ status: "error", message: "Invalid credentials" });
     }
 
-    const isPasswordValid = await comparePassword(
-      password,
-      member.passwordHash,
-    );
-    if (!isPasswordValid) {
-      return res
-        .status(401)
-        .json({ status: "error", message: "Invalid credentials" });
-    }
-
-    // Check if email is verified
-    if (member.isEmailVerified === false || member.isEmailVerified === null || member.isEmailVerified === undefined) {
+    // If email is not verified, skip password check and send OTP for verification
+    if (
+      member.isEmailVerified === false ||
+      member.isEmailVerified === null ||
+      member.isEmailVerified === undefined
+    ) {
       const otp = String(Math.floor(100000 + Math.random() * 900000));
       const otpExpires = new Date(Date.now() + 3 * 60 * 1000);
 
@@ -540,6 +534,23 @@ export const loginMember = async (req, res, next) => {
           expiresAt: otpExpires.toISOString(),
         },
       });
+    }
+
+    // Email verified — validate password
+    if (!member.passwordHash) {
+      return res
+        .status(401)
+        .json({ status: "error", message: "Invalid credentials" });
+    }
+
+    const isPasswordValid = await comparePassword(
+      password,
+      member.passwordHash,
+    );
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json({ status: "error", message: "Invalid credentials" });
     }
 
     const refreshToken = crypto.randomBytes(48).toString("hex");
