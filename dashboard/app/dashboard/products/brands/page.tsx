@@ -36,6 +36,23 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+function getApiErrorMessage(err: unknown, fallback: string): string {
+  const apiErr = err as {
+    response?: {
+      data?: {
+        message?: string;
+        errors?: string[];
+      };
+    };
+  };
+
+  return (
+    apiErr?.response?.data?.message ||
+    apiErr?.response?.data?.errors?.join(', ') ||
+    fallback
+  );
+}
+
 export default function BrandsPage() {
   const { data: brands = [], isLoading } = useBrands();
   const queryClient = useQueryClient();
@@ -105,7 +122,7 @@ export default function BrandsPage() {
       queryClient.invalidateQueries({ queryKey: ['brands-cache'] });
       setIsOpen(false);
     } catch (err: unknown) {
-      toast.error(err?.response?.data?.message || 'Failed to save brand');
+      toast.error(getApiErrorMessage(err, 'Failed to save brand'));
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +140,7 @@ export default function BrandsPage() {
       queryClient.invalidateQueries({ queryKey: ['brands-cache'] });
       setDeleteTarget(null);
     } catch (err: unknown) {
-      toast.error(err?.response?.data?.message || 'Failed to delete brand');
+      toast.error(getApiErrorMessage(err, 'Failed to delete brand'));
     } finally {
       setIsDeleting(false);
     }
