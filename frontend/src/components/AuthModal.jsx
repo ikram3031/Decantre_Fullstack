@@ -2,7 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Mail, Lock, User, Key, ShieldCheck, ShoppingBag, LogOut, Award, ArrowLeft, RefreshCw, Phone } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { loginMember, registerMember, verifyMemberOtp, resendMemberOtp } from '../lib/api';
+import {
+  loginMember,
+  registerMember,
+  verifyMemberOtp,
+  resendMemberOtp,
+  forgotMemberPassword,
+  resetMemberPassword,
+} from '../lib/api';
 
 export const AuthModal = () => {
   const {
@@ -14,10 +21,11 @@ export const AuthModal = () => {
     addToast
   } = useApp();
 
-  const [mode, setMode] = useState(authModalMode); // 'login' | 'register' | 'otp' | 'profile'
+  const [mode, setMode] = useState(authModalMode); // 'login' | 'register' | 'otp' | 'profile' | 'forgot' | 'reset'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [otpContext, setOtpContext] = useState('register');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -72,6 +80,7 @@ export const AuthModal = () => {
     setConfirmPassword('');
     setName('');
     setPhone('');
+    setOtpContext('register');
     setOtpValues(['', '', '', '', '', '']);
   };
 
@@ -155,25 +164,36 @@ export const AuthModal = () => {
     setIsLoading(true);
     try {
       const response = await verifyMemberOtp({ email, otp: code });
-      const userData = response.user || response.data?.user || response.data || {};
-      const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
-      const refreshToken = response.refreshToken || response.data?.refreshToken;
+      const isVerified = response.isEmailVerified ?? response.data?.isEmailVerified ?? true;
 
+      if (otpContext === 'forgot') {
+        setMode('reset');
+        setPassword('');
+        setConfirmPassword('');
+        addToast('OTP verified successfully. Set your new password to continue.', 'success');
+        return;
+      }
+
+      if (!isVerified) {
+        addToast('Verification could not be completed. Please try again.', 'error');
+        return;
+      }
+
+      const userData = response.user || response.data?.user || response.data || {};
       const displayName = userData.name || name || email.split('@')[0];
       const verifiedUser = {
         name: displayName,
         email: userData.email || email,
         phone: userData.phone || phone,
         tier: userData.tier || 'Privé Connoisseur',
-        raw: userData
+        raw: userData,
       };
 
-      setUser(verifiedUser, { accessToken, refreshToken });
+      setUser(verifiedUser, null);
       addToast(`OTP verified successfully! Welcome, ${displayName}.`, 'success');
       handleClose();
     } catch (err) {
-      // Show generic error for any backend failure
-      addToast('An unexpected error occurred. Please try again.', 'error');
+      addToast(err?.message || 'An unexpected error occurred. Please try again.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -220,9 +240,9 @@ export const AuthModal = () => {
     setIsLoading(true);
     try {
       const response = await loginMember({ email, password });
-      
-      // If backend signals OTP required
-      if (response.requiresOtp || response.data?.requiresOtp) {
+
+      if (response.requiresOtp || response.isEmailVerified === false || response.data?.requiresOtp || response.data?.isEmailVerified === false) {
+        setOtpContext('register');
         setMode('otp');
         setResendTimer(180);
         addToast('Verification required. Enter the 6-digit code sent to your email.', 'info');
@@ -238,15 +258,14 @@ export const AuthModal = () => {
         name: displayName,
         email: userData.email || email,
         tier: userData.tier || 'Elite Connoisseur',
-        raw: userData
+        raw: userData,
       };
 
       setUser(loggedInUser, { accessToken, refreshToken });
       addToast(`Login successful! Welcome back, ${displayName}.`, 'success');
       handleClose();
     } catch (err) {
-      // Generic login error
-      addToast('Login failed. Please try again.', 'error');
+      addToast(err?.message || 'Login failed. Please try again.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -292,7 +311,6 @@ export const AuthModal = () => {
       };
 
       const response = await registerMember(memberPayload);
-      
       const userData = response.user || response.data || response;
       const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
       const refreshToken = response.refreshToken || response.data?.refreshToken;
@@ -304,20 +322,89 @@ export const AuthModal = () => {
           email: userData.email || email,
           phone: userData.phone || phone,
           tier: 'Privé Connoisseur',
-          raw: userData
+          raw: userData,
         };
         setUser(registeredUser, { accessToken, refreshToken });
         addToast(`Welcome to Decantre, ${displayName}!`, 'success');
         handleClose();
       } else {
-        // Switch to OTP verification UI if backend requires verification
+        setOtpContext('register');
         setMode('otp');
         setResendTimer(180);
         addToast('Account created! Please verify the 6-digit code sent to your email.', 'success');
       }
     } catch (err) {
-      // Generic registration error
-      addToast('Registration failed. Please try again later.', 'error');
+      addToast(err?.message || 'Registration failed. Please try again later.', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    const emailValidationError = validateEmail(email);
+    setEmailError(emailValidationError);
+
+    if (emailValidationError) {
+      addToast('Please enter a valid email address.', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await forgotMemberPassword({ email });
+      setOtpContext('forgot');
+      setMode('otp');
+      setResendTimer(180);
+      addToast('A password reset OTP has been sent to your email.', 'success');
+    } catch (err) {
+      addToast(err?.message || 'Unable to request a password reset right now.', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!password || !confirmPassword) {
+      addToast('Please enter and confirm your new password.', 'error');
+      return;
+    }
+    if (password.length < 6) {
+      addToast('Password must be at least 6 characters.', 'error');
+      return;
+    }
+    if (password !== confirmPassword) {
+      addToast('Your new passwords do not match.', 'error');
+      return;
+    }
+
+    const code = otpValues.join('');
+    if (code.length !== 6) {
+      addToast('Please enter the full 6-digit verification code.', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await resetMemberPassword({ email, otp: code, password });
+      const userData = response.user || response.data?.user || response.data || {};
+      const accessToken = response.accessToken || response.data?.accessToken;
+      const refreshToken = response.refreshToken || response.data?.refreshToken;
+      const displayName = userData.name || email.split('@')[0];
+      const refreshedUser = {
+        name: displayName,
+        email: userData.email || email,
+        phone: userData.phone || '',
+        tier: userData.tier || 'Privé Connoisseur',
+        raw: userData,
+      };
+
+      setUser(refreshedUser, { accessToken, refreshToken });
+      addToast('Password reset complete. Your new member session is active.', 'success');
+      handleClose();
+    } catch (err) {
+      addToast(err?.message || 'Password reset failed. Please try again.', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -365,8 +452,121 @@ export const AuthModal = () => {
             </h2>
           </div>
 
-          {/* Mode Render: OTP VERIFICATION VIEW */}
-          {mode === 'otp' ? (
+          {/* Mode Render: forgot password */}
+          {mode === 'forgot' ? (
+            <form onSubmit={handleForgotPassword} className="space-y-6">
+              <div className="text-center space-y-2">
+                <p className="text-xs text-zinc-300 font-sans font-light leading-relaxed">
+                  Enter your registered email to receive a password reset OTP.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-semibold block">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
+                  <input
+                    type="email"
+                    placeholder=""
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError(validateEmail(e.target.value));
+                    }}
+                    onBlur={(e) => setEmailError(validateEmail(e.target.value))}
+                    className={`w-full bg-zinc-800/80 border ${emailError ? 'border-rose-500' : 'border-zinc-700/80'} focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500`}
+                    required
+                  />
+                  {emailError && <p className="mt-1.5 text-[10px] text-rose-400">{emailError}</p>}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setMode('login')}
+                  className="text-zinc-500 hover:text-white flex items-center gap-1 cursor-pointer bg-transparent border-none"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back</span>
+                </button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full max-w-[220px] py-3 bg-gradient-to-r from-gold via-[#DAA520] to-gold hover:opacity-90 disabled:opacity-50 text-black font-sans text-xs uppercase tracking-[0.25em] font-bold transition-opacity flex items-center justify-center gap-2 cursor-pointer rounded-none border-none shadow-md"
+                >
+                  {isLoading ? (
+                    <div className="w-4 h-4 rounded-full border-2 border-black border-r-transparent animate-spin" />
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-4 h-4" />
+                      <span>Send OTP</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          ) : mode === 'reset' ? (
+            <form onSubmit={handleResetPassword} className="space-y-6">
+              <div className="text-center space-y-2">
+                <p className="text-xs text-zinc-300 font-sans font-light leading-relaxed">
+                  Create a new password for:
+                </p>
+                <p className="text-xs font-mono text-gold font-semibold">"{email}"</p>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-semibold block">
+                  New Password
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
+                  <input
+                    type="password"
+                    placeholder=""
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-semibold block">
+                  Confirm New Password
+                </label>
+                <div className="relative">
+                  <Key className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
+                  <input
+                    type="password"
+                    placeholder=""
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-4 bg-gradient-to-r from-gold via-[#DAA520] to-gold hover:opacity-90 disabled:opacity-50 text-black font-sans text-xs uppercase tracking-[0.25em] font-bold transition-opacity flex items-center justify-center gap-2 cursor-pointer rounded-none border-none shadow-md"
+              >
+                {isLoading ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-black border-r-transparent animate-spin" />
+                ) : (
+                  <>
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Reset Password</span>
+                  </>
+                )}
+              </button>
+            </form>
+          ) : mode === 'otp' ? (
             <form onSubmit={handleVerifyOTP} className="space-y-6">
               <div className="text-center space-y-2">
                 <p className="text-xs text-zinc-300 font-sans font-light leading-relaxed">
@@ -635,15 +835,24 @@ export const AuthModal = () => {
               </div>
 
               {/* Toggle Mode */}
-              <div className="text-center pt-2">
+              <div className="text-center pt-2 space-y-2">
                 {mode === 'login' ? (
-                  <button
-                    type="button"
-                    onClick={() => setMode('register')}
-                    className="text-[10px] uppercase tracking-widest text-zinc-500 hover:text-gold transition-colors font-sans cursor-pointer bg-transparent border-none outline-none"
-                  >
-                    Don't have an account? <span className="text-gold font-bold underline">Register here</span>
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setMode('forgot')}
+                      className="block w-full text-[10px] uppercase tracking-widest text-zinc-500 hover:text-gold transition-colors font-sans cursor-pointer bg-transparent border-none outline-none"
+                    >
+                      Forgot your password? <span className="text-gold font-bold underline">Reset here</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMode('register')}
+                      className="text-[10px] uppercase tracking-widest text-zinc-500 hover:text-gold transition-colors font-sans cursor-pointer bg-transparent border-none outline-none"
+                    >
+                      Don't have an account? <span className="text-gold font-bold underline">Register here</span>
+                    </button>
+                  </>
                 ) : (
                   <button
                     type="button"

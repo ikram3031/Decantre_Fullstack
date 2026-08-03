@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Heart, ShoppingBag, ArrowRight, ShieldCheck } from 'lucide-react';
+import { User, Heart, ShoppingBag, ArrowRight, ShieldCheck, PackageCheck, CircleUserRound } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+
+const tabs = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'orders', label: 'Orders' },
+  { key: 'wishlist', label: 'Wishlist' },
+];
 
 export const MyAccount = () => {
   const { user, setAuthModal, currentTheme } = useApp();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('overview');
   const isLight = currentTheme === 'light';
 
   if (!user) {
@@ -72,48 +79,94 @@ export const MyAccount = () => {
               </div>
             </div>
 
-            <div className="space-y-5">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.35em] text-zinc-400">Order History</p>
-                  <h3 className="text-2xl font-serif tracking-tight">Recent Purchases</h3>
-                </div>
+            <div className="flex flex-wrap gap-2">
+              {tabs.map((tab) => (
                 <button
-                  onClick={() => navigate('/shop')}
-                  className="inline-flex items-center gap-2 rounded-sm bg-gold px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-black hover:bg-gold/90"
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`rounded-sm border px-4 py-2 text-[10px] uppercase tracking-[0.25em] font-bold transition-colors ${
+                    activeTab === tab.key
+                      ? 'border-gold bg-gold text-black'
+                      : isLight
+                        ? 'border-zinc-300 bg-white text-zinc-700'
+                        : 'border-white/10 bg-zinc-900 text-zinc-300'
+                  }`}
                 >
-                  Continue Shopping
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  {tab.label}
                 </button>
-              </div>
-
-              {Array.isArray(user.orders) && user.orders.length > 0 ? (
-                <div className="space-y-3">
-                  {user.orders.slice(0, 4).map((order) => (
-                    <div key={order.id || order.orderNumber} className={`rounded-sm border ${isLight ? 'border-zinc-200 bg-white' : 'border-white/10 bg-zinc-900/80'} p-4`}>
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div>
-                          <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">Order</p>
-                          <p className="mt-1 text-sm font-semibold">{order.id || order.orderNumber}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">Total</p>
-                          <p className="mt-1 text-sm font-semibold">{order.total || order.amount || '৳0'}</p>
-                        </div>
-                      </div>
-                      <div className="mt-3 text-xs text-zinc-400">
-                        <p>{order.date || 'Date unavailable'}</p>
-                        <p>{order.status ? `Status: ${order.status}` : ''}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className={`rounded-sm border ${isLight ? 'border-zinc-200 bg-white' : 'border-white/10 bg-zinc-900/80'} p-6 text-center`}>
-                  <p className="text-sm text-zinc-400">No recent orders found. Your purchase history will appear here after checkout.</p>
-                </div>
-              )}
+              ))}
             </div>
+
+            {activeTab === 'overview' && (
+              <div className="space-y-5">
+                <div className="rounded-sm border border-gold/20 bg-gold/5 p-5">
+                  <p className="text-[10px] uppercase tracking-[0.35em] text-zinc-400">Private access</p>
+                  <p className="mt-3 text-sm text-zinc-300">
+                    Your dashboard keeps your account profile, active orders, and saved favorites aligned in one secure place.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'orders' && (
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.35em] text-zinc-400">Order History</p>
+                    <h3 className="text-2xl font-serif tracking-tight">Recent Purchases</h3>
+                  </div>
+                  <button
+                    onClick={() => navigate('/shop')}
+                    className="inline-flex items-center gap-2 rounded-sm bg-gold px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-black hover:bg-gold/90"
+                  >
+                    Continue Shopping
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {Array.isArray(user.orders) && user.orders.length > 0 ? (
+                  <div className="space-y-3">
+                    {user.orders.slice(0, 4).map((order) => (
+                      <div key={order.id || order.orderNumber} className={`rounded-sm border ${isLight ? 'border-zinc-200 bg-white' : 'border-white/10 bg-zinc-900/80'} p-4`}>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                          <div>
+                            <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">Order</p>
+                            <p className="mt-1 text-sm font-semibold">{order.id || order.orderNumber}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[11px] uppercase tracking-[0.35em] text-zinc-400">Total</p>
+                            <p className="mt-1 text-sm font-semibold">{order.total || order.amount || '৳0'}</p>
+                          </div>
+                        </div>
+                        <div className="mt-3 text-xs text-zinc-400">
+                          <p>{order.date || 'Date unavailable'}</p>
+                          <p>{order.status ? `Status: ${order.status}` : ''}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={`rounded-sm border ${isLight ? 'border-zinc-200 bg-white' : 'border-white/10 bg-zinc-900/80'} p-6 text-center`}>
+                    <p className="text-sm text-zinc-400">No recent orders found. Your purchase history will appear here after checkout.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'wishlist' && (
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.35em] text-zinc-400">Saved Fragrances</p>
+                    <h3 className="text-2xl font-serif tracking-tight">Wishlist</h3>
+                  </div>
+                </div>
+                <div className={`rounded-sm border ${isLight ? 'border-zinc-200 bg-white' : 'border-white/10 bg-zinc-900/80'} p-6 text-center`}>
+                  <p className="text-sm text-zinc-400">Your saved fragrance shortlist is shown here once you add products to favorites.</p>
+                </div>
+              </div>
+            )}
           </section>
 
           <aside className="space-y-4">

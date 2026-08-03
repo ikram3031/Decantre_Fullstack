@@ -14,6 +14,36 @@ import {
 
 const { Types } = mongoose;
 
+const createAccessToken = (member) => {
+  return jwt.sign(
+    { userId: member.id, role: member.role, email: member.email },
+    env.ACCESS_TOKEN_SECRET,
+    { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "20m" },
+  );
+};
+
+const createRefreshToken = () => {
+  return crypto.randomBytes(48).toString("hex");
+};
+
+const issueMemberTokens = async (member) => {
+  const refreshToken = createRefreshToken();
+  const refreshTokenExpiresAt = new Date(
+    Date.now() + (env.REFRESH_TOKEN_EXPIRES_MS || 30 * 24 * 60 * 60 * 1000),
+  );
+
+  member.refreshToken = refreshToken;
+  member.refreshTokenExpiresAt = refreshTokenExpiresAt;
+  await member.save();
+
+  return {
+    accessToken: createAccessToken(member),
+    accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "20m",
+    refreshToken,
+    refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+  };
+};
+
 // List members with search, pagination, and optional segment filtering.
 export const listMembers = async (req, res, next) => {
   try {
@@ -385,6 +415,71 @@ export const verifyMemberOtp = async (req, res, next) => {
   }
 };
 
+// Rotate a member refresh token and issue a fresh access token pair.
+export const refreshMemberToken = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body ?? {};
+
+    if (!refreshToken) {
+      return res.status(400).json({
+        status: "error",
+        message: "refreshToken is required",
+      });
+    }
+
+    const member = await MemberModel.findOne({ refreshToken }).select(
+      "+refreshToken +refreshTokenExpiresAt",
+    );
+    if (!member || !member.refreshTokenExpiresAt || member.refreshTokenExpiresAt < new Date()) {
+      return res.status(401).json({
+        status: "error",
+        message: "Invalid or expired refresh token",
+      });
+    }
+
+    const tokenBundle = await issueMemberTokens(member);
+
+    return res.json({
+      status: "success",
+      data: {
+        ...tokenBundle,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Clear the stored refresh token so the member session can no longer be rotated.
+export const logoutMember = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body ?? {};
+
+    if (!refreshToken) {
+      return res.status(400).json({
+        status: "error",
+        message: "refreshToken is required",
+      });
+    }
+
+    const member = await MemberModel.findOne({ refreshToken }).select(
+      "+refreshToken +refreshTokenExpiresAt",
+    );
+    if (member) {
+      member.refreshToken = undefined;
+      member.refreshTokenExpiresAt = undefined;
+      await member.save();
+    }
+
+    return res.json({
+      status: "success",
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Authenticate a member and issue new access and refresh tokens.
 export const loginMember = async (req, res, next) => {
   try {
@@ -468,19 +563,7 @@ export const loginMember = async (req, res, next) => {
         .json({ status: "error", message: "Invalid credentials" });
     }
 
-    const refreshToken = crypto.randomBytes(48).toString("hex");
-    const refreshTokenExpiresAt = new Date(
-      Date.now() + (env.REFRESH_TOKEN_EXPIRES_MS || 7 * 24 * 60 * 60 * 1000),
-    );
-    member.refreshToken = refreshToken;
-    member.refreshTokenExpiresAt = refreshTokenExpiresAt;
-    await member.save();
-
-    const accessToken = jwt.sign(
-      { userId: member.id, role: member.role, email: member.email },
-      env.ACCESS_TOKEN_SECRET,
-      { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "15m" },
-    );
+    const tokenBundle = await issueMemberTokens(member);
 
     res.json({
       status: "success",
@@ -493,10 +576,7 @@ export const loginMember = async (req, res, next) => {
           phone: member.phone,
           role: member.role,
         },
-        accessToken,
-        accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "15m",
-        refreshToken,
-        refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+        ...tokenBundle,
       },
     });
   } catch (error) {
@@ -716,19 +796,7 @@ export const resetPassword = async (req, res, next) => {
     member.isEmailVerified = true;
     member.emailVerifiedAt = new Date();
 
-    const refreshToken = crypto.randomBytes(48).toString("hex");
-    const refreshTokenExpiresAt = new Date(
-      Date.now() + (env.REFRESH_TOKEN_EXPIRES_MS || 7 * 24 * 60 * 60 * 1000),
-    );
-    member.refreshToken = refreshToken;
-    member.refreshTokenExpiresAt = refreshTokenExpiresAt;
-    await member.save();
-
-    const accessToken = jwt.sign(
-      { userId: member.id, role: member.role, email: member.email },
-      env.ACCESS_TOKEN_SECRET,
-      { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "15m" },
-    );
+    const tokenBundle = await issueMemberTokens(member);
 
     return res.json({
       status: "success",
@@ -743,10 +811,7 @@ export const resetPassword = async (req, res, next) => {
           phone: member.phone,
           role: member.role,
         },
-        accessToken,
-        accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "15m",
-        refreshToken,
-        refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+        ...tokenBundle,
       },
     });
   } catch (error) {

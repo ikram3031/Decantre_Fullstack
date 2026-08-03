@@ -52,6 +52,123 @@ const fetchWithRetry = async (
 	}
 };
 
+const getStoredMemberTokens = () => {
+	if (typeof window === "undefined") {
+		return { accessToken: null, refreshToken: null };
+	}
+
+	return {
+		accessToken: localStorage.getItem("luxury_access_token") || null,
+		refreshToken: localStorage.getItem("luxury_refresh_token") || null,
+	};
+};
+
+const setStoredMemberTokens = (accessToken, refreshToken) => {
+	if (typeof window === "undefined") return;
+	if (accessToken) {
+		localStorage.setItem("luxury_access_token", accessToken);
+	} else {
+		localStorage.removeItem("luxury_access_token");
+	}
+	if (refreshToken) {
+		localStorage.setItem("luxury_refresh_token", refreshToken);
+	} else {
+		localStorage.removeItem("luxury_refresh_token");
+	}
+};
+
+const clearStoredMemberTokens = () => {
+	if (typeof window === "undefined") return;
+	localStorage.removeItem("luxury_access_token");
+	localStorage.removeItem("luxury_refresh_token");
+};
+
+const refreshMemberSession = async () => {
+	const { refreshToken } = getStoredMemberTokens();
+	if (!refreshToken) {
+		throw new Error("No refresh token available.");
+	}
+
+	const apiBaseUrl = getApiBaseUrl();
+	const res = await fetchWithRetry(
+		`${apiBaseUrl}/api/v1/members/refresh-token`,
+		{
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ refreshToken }),
+		},
+		8000,
+		1,
+	);
+
+	if (!res.ok) {
+		clearStoredMemberTokens();
+		throw new Error("Session expired. Please log in again.");
+	}
+
+	const json = await res.json().catch(() => null);
+	const nextTokenBundle = json?.data || {};
+	const nextAccessToken = nextTokenBundle.accessToken || null;
+	const nextRefreshToken = nextTokenBundle.refreshToken || refreshToken;
+	setStoredMemberTokens(nextAccessToken, nextRefreshToken);
+
+	return {
+		accessToken: nextAccessToken,
+		refreshToken: nextRefreshToken,
+	};
+};
+
+export const authFetch = async (url, options = {}, timeout = 10000) => {
+	const { accessToken } = getStoredMemberTokens();
+	const headers = new Headers(options.headers || {});
+
+	if (accessToken) {
+		headers.set("Authorization", `Bearer ${accessToken}`);
+	}
+
+	if (
+		options.body &&
+		!(options.body instanceof FormData) &&
+		!headers.has("Content-Type")
+	) {
+		headers.set("Content-Type", "application/json");
+	}
+
+	let res = await fetchWithRetry(
+		url,
+		{ ...options, headers },
+		timeout,
+		3,
+	);
+
+	if (res.status === 401) {
+		try {
+			const refreshed = await refreshMemberSession();
+			const retryHeaders = new Headers(options.headers || {});
+			retryHeaders.set("Authorization", `Bearer ${refreshed.accessToken}`);
+			if (
+				options.body &&
+				!(options.body instanceof FormData) &&
+				!retryHeaders.has("Content-Type")
+			) {
+				retryHeaders.set("Content-Type", "application/json");
+			}
+
+			res = await fetchWithRetry(
+				url,
+				{ ...options, headers: retryHeaders },
+				timeout,
+				3,
+			);
+		} catch (_) {
+			clearStoredMemberTokens();
+			throw new Error("Your session has expired. Please log in again.");
+		}
+	}
+
+	return res;
+};
+
 /**
  * Fetch Products
  */
@@ -357,6 +474,28 @@ export async function verifyMemberOtp(payload) {
 }
 
 /**
+ * Forgot Member Password (via /members/forgot-password)
+ */
+export async function forgotMemberPassword(payload) {
+	const apiBaseUrl = getApiBaseUrl();
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/forgot-password`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(payload),
+	});
+	const json = await res.json().catch(() => null);
+	if (!res.ok) {
+		const errorMsg =
+			json?.errors?.join(", ") ||
+			json?.message ||
+			json?.error ||
+			"Password reset request failed.";
+		throw new Error(errorMsg);
+	}
+	return json;
+}
+
+/**
  * Reset Member Password (via /members/reset-password)
  */
 export async function resetMemberPassword(payload) {
@@ -379,12 +518,56 @@ export async function resetMemberPassword(payload) {
 }
 
 /**
+ * Refresh Member Access Token (via /members/refresh-token)
+ */
+export async function refreshMemberToken(payload) {
+	const apiBaseUrl = getApiBaseUrl();
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/refresh-token`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(payload),
+	});
+	const json = await res.json().catch(() => null);
+	if (!res.ok) {
+		const errorMsg =
+			json?.errors?.join(", ") ||
+			json?.message ||
+			json?.error ||
+			"Token refresh failed.";
+		throw new Error(errorMsg);
+	}
+	return json;
+}
+
+/**
+ * Logout Member Session (via /members/logout)
+ */
+export async function logoutMember(payload) {
+	const apiBaseUrl = getApiBaseUrl();
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/logout`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(payload),
+	});
+	const json = await res.json().catch(() => null);
+	if (!res.ok) {
+		const errorMsg =
+			json?.errors?.join(", ") ||
+			json?.message ||
+			json?.error ||
+			"Logout failed.";
+		throw new Error(errorMsg);
+	}
+	return json;
+}
+
+/**
  * MEMBERS API COLLECTION (/api/v1/members)
  */
 
 export async function fetchMembers() {
 	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/members`, {
+	const res = await authFetch(`${apiBaseUrl}/api/v1/members`, {
 		method: "GET",
 		headers: { "Content-Type": "application/json" },
 	});
@@ -399,7 +582,7 @@ export async function fetchMembers() {
 
 export async function fetchMemberById(memberId) {
 	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
+	const res = await authFetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
 		method: "GET",
 		headers: { "Content-Type": "application/json" },
 	});
@@ -412,7 +595,7 @@ export async function fetchMemberById(memberId) {
 
 export async function createMember(memberPayload) {
 	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/members`, {
+	const res = await authFetch(`${apiBaseUrl}/api/v1/members`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(memberPayload),
@@ -431,7 +614,7 @@ export async function createMember(memberPayload) {
 
 export async function updateMember(memberId, updatePayload) {
 	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
+	const res = await authFetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
 		method: "PUT",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(updatePayload),
@@ -450,7 +633,7 @@ export async function updateMember(memberId, updatePayload) {
 
 export async function deleteMember(memberId) {
 	const apiBaseUrl = getApiBaseUrl();
-	const res = await fetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
+	const res = await authFetch(`${apiBaseUrl}/api/v1/members/${memberId}`, {
 		method: "DELETE",
 		headers: { "Content-Type": "application/json" },
 	});
