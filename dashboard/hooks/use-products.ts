@@ -64,13 +64,19 @@ type BackendProduct = {
   stock?: number | string;
   stockQuantity?: number | string;
   stockStatus?: string;
-  stock_status?: string;
   imageUrl?: string;
   thumbnailUrl?: string;
   image_url?: string;
   thumbnail_url?: string;
   type?: string;
   variants?: BackendVariant[];
+};
+
+type BackendMeta = {
+  total?: number;
+  totalPages?: number;
+  page?: number;
+  limit?: number;
 };
 
 // ─── Fetch ────────────────────────────────────────────────────────────────────
@@ -90,7 +96,7 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
 
   const responseData = response.data;
   let productList: BackendProduct[] = [];
-  let rawMeta: { total?: number; totalPages?: number; page?: number; limit?: number } | null = null;
+  let rawMeta: BackendMeta | null = null;
 
   if (Array.isArray(responseData)) {
     productList = responseData as BackendProduct[];
@@ -100,9 +106,10 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
     'data' in responseData &&
     Array.isArray((responseData as { data: unknown }).data)
   ) {
-    productList = (responseData as { data: unknown }).data as BackendProduct[];
-    if ('meta' in responseData) {
-      rawMeta = (responseData as { meta: typeof rawMeta }).meta;
+    const responseObject = responseData as { data: unknown; meta?: unknown };
+    productList = responseObject.data as BackendProduct[];
+    if (responseObject.meta && typeof responseObject.meta === 'object') {
+      rawMeta = responseObject.meta as BackendMeta;
     }
   }
 
@@ -146,19 +153,25 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
     })();
 
     return {
-      id: p.id || p._id || 'UNKNOWN',
-      name: p.name || '',
-      sku: p.sku || p.did || 'SKU-UNKNOWN',
-      category: categoryName,
-      brand: brandName,
-      price: Number(p.price ?? 0),
-      offerPrice: p.offerPrice != null ? Number(p.offerPrice) : null,
-      stock: typeof p.stock === 'number' ? p.stock : Number(p.stockQuantity ?? 10),
-      status: (p.stockStatus || p.stock_status) === 'instock' ? 'In Stock' : 'Out of Stock',
-      image: resolveImageUrl(p.imageUrl || p.thumbnailUrl || p.image_url || p.thumbnail_url),
-      type: productType,
-      variants,
-    };
+			id: p.id || p._id || "UNKNOWN",
+			name: p.name || "",
+			sku: p.sku || p.did || "SKU-UNKNOWN",
+			category: categoryName,
+			brand: brandName,
+			price: Number(p.price ?? 0),
+			offerPrice: p.offerPrice != null ? Number(p.offerPrice) : null,
+			stock:
+				typeof p.stock === "number" ? p.stock : Number(p.stockQuantity ?? 10),
+			status:
+				(p.stockStatus || p.stockStatus) === "instock"
+					? "In Stock"
+					: "Out of Stock",
+			image: resolveImageUrl(
+				p.imageUrl || p.thumbnailUrl || p.image_url || p.thumbnail_url,
+			),
+			type: productType,
+			variants,
+		};
   });
 
   const total = rawMeta?.total ?? mappedProducts.length;

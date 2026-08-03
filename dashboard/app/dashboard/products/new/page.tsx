@@ -29,6 +29,7 @@ import {
   type BrandCacheEntry,
 } from "@/lib/category-cache";
 import Image from "next/image";
+import { getApiErrorMessage } from '../../../../lib/error-handler';
 
 interface VariantRow {
   size: string;
@@ -246,10 +247,7 @@ export default function NewProductPage() {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       router.push("/dashboard/products");
     } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to create product.";
-      toast.error(message);
+      toast.error(getApiErrorMessage(err, 'Failed to create product.'));
     } finally {
       setIsCreating(false);
     }

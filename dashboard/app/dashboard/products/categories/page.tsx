@@ -32,6 +32,7 @@ import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { getApiErrorMessage } from '@/lib/error-handler';
 
 function slugify(text: string): string {
   return text
@@ -116,11 +117,7 @@ export default function CategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ['categories-cache'] });
       setIsOpen(false);
     } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err && typeof err.response === 'object' && err.response !== null
-          ? (err.response as { data?: { message?: string } }).data?.message
-          : undefined;
-      toast.error(message || 'Failed to save category');
+      toast.error(getApiErrorMessage(err, 'Failed to save category'));
     } finally {
       setIsSubmitting(false);
     }
@@ -138,11 +135,7 @@ export default function CategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ['categories-cache'] });
       setDeleteTarget(null);
     } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err && typeof err.response === 'object' && err.response !== null
-          ? (err.response as { data?: { message?: string } }).data?.message
-          : undefined;
-      toast.error(message || 'Failed to delete category');
+      toast.error(getApiErrorMessage(err, 'Failed to delete category'));
     } finally {
       setIsDeleting(false);
     }

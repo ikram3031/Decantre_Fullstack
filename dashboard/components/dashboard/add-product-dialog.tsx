@@ -23,6 +23,7 @@ import { Plus, Trash2, Layers, Package } from 'lucide-react';
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { getApiErrorMessage } from '../../lib/error-handler';
 import {
   useCategories,
   useBrands,
@@ -203,10 +204,7 @@ export function AddProductDialog() {
       resetForm();
       setOpen(false);
     } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || 'Failed to create product.';
-      toast.error(message);
+      toast.error(getApiErrorMessage(err, 'Failed to create product.'));
     } finally {
       setIsCreating(false);
     }

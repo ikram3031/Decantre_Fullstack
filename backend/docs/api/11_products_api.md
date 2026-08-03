@@ -83,7 +83,7 @@ A product object returned by the API contains (not exhaustive):
 - `did` — deterministic id (if present)
 - `name`, `slug`, `description`
 - `price`, `offerPrice`, `variants` (if any)
-- `stock_status` — `instock` / `outofstock` / `preorder`
+- `stockStatus` — `instock` / `outofstock` / `preorder`
 - `image_url`, `thumbnail_url`, `images` array
 - `brand` (ObjectId or populated object)
 - `categories` (array of ObjectIds or populated objects)

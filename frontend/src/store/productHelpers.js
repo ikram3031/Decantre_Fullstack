@@ -253,7 +253,7 @@ export const mapRemoteProduct = (product = {}) => {
         price: effectivePrice,
         originalPrice: originalPrice,
         stockQuantity: v.stockQuantity ?? 0,
-        stock_status: (v.stockQuantity ?? 1) > 0 ? "instock" : "outofstock",
+        stockStatus: (v.stockQuantity ?? 1) > 0 ? "instock" : "outofstock",
         sku: v.sku || "",
         raw: v,
       };
@@ -269,7 +269,7 @@ export const mapRemoteProduct = (product = {}) => {
       size: v.size || "Standard",
       price: Number(v.price || 0),
       originalPrice: v.originalPrice ? Number(v.originalPrice) : null,
-      stock_status: v.stock_status || "instock",
+      stockStatus: v.stockStatus || "instock",
       raw: v,
     }));
   }
@@ -292,7 +292,7 @@ export const mapRemoteProduct = (product = {}) => {
       price: topPrice,
       originalPrice: topOriginalPrice,
       stockQuantity: product.stockQuantity ?? 0,
-      stock_status: product.stockStatus || "instock",
+      stockStatus: product.stockStatus || "instock",
       sku: product.sku || "",
       raw: product,
     });

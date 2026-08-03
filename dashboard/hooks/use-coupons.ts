@@ -7,9 +7,21 @@ export interface CouponsListResponse {
   status: string;
 }
 
+const normalizeCoupon = (coupon: Coupon & { _id?: string }): Coupon => {
+  if (!coupon) return coupon as Coupon;
+
+  const normalizedId = coupon.id || coupon._id;
+  return {
+    ...coupon,
+    id: normalizedId || '',
+  } as Coupon;
+};
+
 const fetchCoupons = async (): Promise<Coupon[]> => {
   const response = await apiClient.get<CouponsListResponse>('/api/v1/coupons');
-  return response.data.data || [];
+  const coupons = response.data?.data ?? [];
+
+  return (Array.isArray(coupons) ? coupons : []).map((coupon) => normalizeCoupon(coupon as Coupon & { _id?: string }));
 };
 
 export function useCoupons() {

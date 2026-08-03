@@ -96,7 +96,7 @@ export const createProduct = async (req, res, next) => {
       notes: Array.isArray(body.notes) ? body.notes : [],
       categories: categoryIds,
       brand: brandDids,
-      stockStatus: body.stockStatus || body.stock_status || "instock",
+      stockStatus: body.stockStatus || "instock",
       createdBy: userId,
     };
 
@@ -272,8 +272,6 @@ export const updateProduct = async (req, res, next) => {
     if (body.tags !== undefined) product.tags = body.tags;
     if (body.notes !== undefined) product.notes = body.notes;
     if (body.stockStatus !== undefined) product.stockStatus = body.stockStatus;
-    if (body.stock_status !== undefined)
-      product.stockStatus = body.stock_status;
 
     if (userId) {
       product.updatedBy = userId;

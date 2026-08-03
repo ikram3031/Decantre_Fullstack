@@ -8,6 +8,30 @@ import { toast } from 'sonner';
 export const GENERIC_ERROR_MESSAGE = 'An unexpected error occurred. Please try again later.';
 
 /**
+ * Safely extract a backend API error message from an unknown catch payload.
+ * This avoids repeated `err.response...` access in every page component.
+ */
+export function getApiErrorMessage(error: unknown, customFallback?: string): string {
+  const apiErr = error as {
+    response?: {
+      data?: {
+        message?: string;
+        errors?: string[];
+      };
+    };
+    message?: string;
+  };
+
+  return (
+    apiErr?.response?.data?.message ||
+    apiErr?.response?.data?.errors?.join(', ') ||
+    apiErr?.message ||
+    customFallback ||
+    GENERIC_ERROR_MESSAGE
+  );
+}
+
+/**
  * Sanitizes any raw or backend error message into a safe, generic message.
  * Ensures no internal error details (e.g. coin errors, database traces, or raw exceptions) are exposed.
  */
@@ -18,7 +42,7 @@ export function getGenericErrorMessage(error: any, customFallback?: string): str
 
   const rawMessage = typeof error === 'string'
     ? error
-    : error?.response?.data?.message || error?.message || '';
+    : getApiErrorMessage(error, '');
 
   const lowerMsg = rawMessage.toLowerCase();
 

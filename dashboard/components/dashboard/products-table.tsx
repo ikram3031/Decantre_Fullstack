@@ -97,8 +97,8 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
     setIsUpdatingStock(true);
     try {
       await apiClient.put(`/api/v1/products/${stockTarget.id}`, {
-        stock_status: 'outofstock',
-      });
+				stockStatus: "outofstock",
+			});
       toast.success(`"${stockTarget.name}" set to Out of Stock.`);
       queryClient.invalidateQueries({ queryKey: ['products'] });
       setStockTarget(null);

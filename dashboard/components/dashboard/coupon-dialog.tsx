@@ -23,6 +23,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import { toast } from 'sonner';
 import { Search, Info } from 'lucide-react';
+import { getApiErrorMessage } from '@/lib/error-handler';
 import type { Coupon } from '@/types';
 
 interface CouponDialogProps {
@@ -161,9 +162,23 @@ export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogP
   const setIsUnlimited = (value: boolean) => setFormState((prev) => ({ ...prev, isUnlimited: value }));
   const setUsageLimit = (value: string) => setFormState((prev) => ({ ...prev, usageLimit: value }));
 
-  const setSelectedProducts = (value: string[]) => setFormState((prev) => ({ ...prev, selectedProducts: value }));
-  const setSelectedCategories = (value: string[]) => setFormState((prev) => ({ ...prev, selectedCategories: value }));
-  const setSelectedBrands = (value: string[]) => setFormState((prev) => ({ ...prev, selectedBrands: value }));
+  const setSelectedProducts = (value: string[] | ((prev: string[]) => string[])) =>
+    setFormState((prev) => ({
+      ...prev,
+      selectedProducts: typeof value === 'function' ? value(prev.selectedProducts) : value,
+    }));
+
+  const setSelectedCategories = (value: string[] | ((prev: string[]) => string[])) =>
+    setFormState((prev) => ({
+      ...prev,
+      selectedCategories: typeof value === 'function' ? value(prev.selectedCategories) : value,
+    }));
+
+  const setSelectedBrands = (value: string[] | ((prev: string[]) => string[])) =>
+    setFormState((prev) => ({
+      ...prev,
+      selectedBrands: typeof value === 'function' ? value(prev.selectedBrands) : value,
+    }));
 
   const setProductSearch = (value: string) => setFormState((prev) => ({ ...prev, productSearch: value }));
   const setCategorySearch = (value: string) => setFormState((prev) => ({ ...prev, categorySearch: value }));
@@ -228,6 +243,11 @@ export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogP
     );
   };
 
+  const getCouponIdentifier = (coupon?: Coupon | null) => {
+    if (!coupon) return '';
+    return coupon.id || (coupon as Coupon & { _id?: string })._id || '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -284,8 +304,10 @@ export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogP
         applicableBrands: selectedBrands,
       };
 
-      if (isEdit && couponToEdit) {
-        await apiClient.put(`/api/v1/coupons/${couponToEdit.id}`, body);
+      const couponId = getCouponIdentifier(couponToEdit);
+
+      if (isEdit && couponToEdit && couponId) {
+        await apiClient.put(`/api/v1/coupons/${couponId}`, body);
         toast.success(`Coupon "${body.code}" updated successfully.`);
       } else {
         await apiClient.post('/api/v1/coupons', body);
@@ -296,8 +318,7 @@ export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogP
       onOpenChange(false);
     } catch (err: unknown) {
       console.error(err);
-      const errorMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      toast.error(errorMessage || 'Failed to save coupon.');
+      toast.error(getApiErrorMessage(err, 'Failed to save coupon.'));
     } finally {
       setIsSubmitting(false);
     }

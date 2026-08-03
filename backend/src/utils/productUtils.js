@@ -44,14 +44,14 @@ export const serializeProduct = (product) => {
   const id = source?._id?.toString?.() ?? source?.id ?? null;
 
   return {
-    ...rest,
-    id,
-    stock_status: source?.stockStatus ?? null,
-    created_at: source?.createdAt ?? null,
-    updated_at: source?.updatedAt ?? null,
-    image_url: source?.imageUrl ?? null,
-    thumbnail_url: source?.thumbnailUrl ?? null,
-  };
+		...rest,
+		id,
+		stockStatus: source?.stockStatus ?? null,
+		created_at: source?.createdAt ?? null,
+		updated_at: source?.updatedAt ?? null,
+		image_url: source?.imageUrl ?? null,
+		thumbnail_url: source?.thumbnailUrl ?? null,
+	};
 };
 
 /**

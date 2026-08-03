@@ -29,6 +29,7 @@ import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { getApiErrorMessage } from '@/lib/error-handler';
 import type { Route } from 'next';
 import type { Order } from '@/types';
 
@@ -72,7 +73,7 @@ export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesC
       setDeleteTarget(null);
     } catch (err: unknown) {
       console.error(err);
-      toast.error('Failed to delete order.');
+      toast.error(getApiErrorMessage(err, 'Failed to delete order.'));
     } finally {
       setIsDeleting(false);
     }

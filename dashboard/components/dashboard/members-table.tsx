@@ -28,11 +28,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 
 import { apiClient } from '@/lib/api-client';
-import { isAxiosError } from 'axios';
 import { useAuth } from '@/lib/auth-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { getApiErrorMessage } from '@/lib/error-handler';
 
 interface MembersTableProps {
   searchQuery: string;
@@ -121,10 +121,7 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
       setNewPassword('');
       setConfirmPassword('');
     } catch (err: unknown) {
-      const message = isAxiosError(err) && err.response?.data?.message
-        ? String(err.response.data.message)
-        : 'Failed to change password.';
-      toast.error(message);
+      toast.error(getApiErrorMessage(err, 'Failed to change password.'));
     } finally {
       setIsChangingPassword(false);
     }

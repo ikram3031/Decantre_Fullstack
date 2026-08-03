@@ -210,7 +210,6 @@ export const ProductDetail = () => {
       const swatchRaw = activeSwatch.raw;
       return (
         swatchRaw.stock_status === 'outofstock' || 
-        swatchRaw.stockStatus === 'outofstock' || 
         swatchRaw.stockQuantity === 0
       );
     }
@@ -356,7 +355,6 @@ export const ProductDetail = () => {
                   const isSelected = selectedSize === swatch.size;
                   const isSwatchOut = swatch.raw && (
                     swatch.raw.stock_status === 'outofstock' || 
-                    swatch.raw.stockStatus === 'outofstock' || 
                     swatch.raw.stockQuantity === 0
                   );
                   return (

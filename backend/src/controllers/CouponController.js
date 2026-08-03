@@ -2,6 +2,21 @@ import { CouponModel } from "../models/coupon.model.js";
 import { logger } from "../config/logger.js";
 import { validateCouponPayload } from "../utils/couponValidation.js";
 
+const normalizeCouponPayload = (coupon) => {
+  if (!coupon || typeof coupon !== "object") return coupon;
+
+  const normalized = { ...coupon };
+  if (normalized._id) {
+    normalized.id = normalized._id.toString();
+    delete normalized._id;
+  }
+
+  return normalized;
+};
+
+const normalizeCouponList = (coupons) =>
+  Array.isArray(coupons) ? coupons.map(normalizeCouponPayload) : normalizeCouponPayload(coupons);
+
 export const getAllCoupons = async (req, res) => {
   try {
     const coupons = await CouponModel.find()
@@ -9,7 +24,7 @@ export const getAllCoupons = async (req, res) => {
       .populate("applicableCategories", "name did slug")
       .populate("applicableBrands", "name did slug")
       .lean();
-    res.json({ status: "success", data: coupons });
+    res.json({ status: "success", data: normalizeCouponList(coupons) });
   } catch (err) {
     logger.error({ err }, "Failed to fetch coupons");
     res.status(500).json({ status: "error", message: "Unable to fetch coupons" });
@@ -32,7 +47,7 @@ export const getCouponById = async (req, res) => {
       return res.status(404).json({ status: "error", message: "Coupon not found" });
     }
 
-    res.json({ status: "success", data: coupon });
+    res.json({ status: "success", data: normalizeCouponPayload(coupon) });
   } catch (err) {
     logger.error({ err }, "Failed to fetch coupon by id");
     res.status(500).json({ status: "error", message: "Unable to fetch coupon" });
@@ -65,7 +80,7 @@ export const createCoupon = async (req, res) => {
       .populate("applicableBrands", "name did slug")
       .lean();
 
-    res.status(201).json({ status: "success", data: populatedCoupon });
+    res.status(201).json({ status: "success", data: normalizeCouponPayload(populatedCoupon) });
   } catch (err) {
     logger.error({ err }, "Failed to create coupon");
     res.status(500).json({ status: "error", message: "Unable to create coupon" });
@@ -104,7 +119,7 @@ export const updateCoupon = async (req, res) => {
       .populate("applicableBrands", "name did slug")
       .lean();
 
-    res.json({ status: "success", data: populatedCoupon });
+    res.json({ status: "success", data: normalizeCouponPayload(populatedCoupon) });
   } catch (err) {
     logger.error({ err }, "Failed to update coupon");
     res.status(500).json({ status: "error", message: "Unable to update coupon" });

@@ -23,6 +23,7 @@ import {
 import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { getApiErrorMessage } from '@/lib/error-handler';
 
 export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -61,7 +62,7 @@ export default function UsersPage() {
       setNewUserPassword('');
       setNewUserRole('Admin');
     } catch (err: unknown) {
-      toast.error(err?.response?.data?.message || 'Failed to invite user.');
+      toast.error(getApiErrorMessage(err, 'Failed to invite user.'));
     } finally {
       setIsSubmitting(false);
     }

@@ -29,6 +29,7 @@ import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { getApiErrorMessage } from '@/lib/error-handler';
 import type { Coupon } from '@/types';
 
 interface CouponsTableProps {
@@ -66,15 +67,24 @@ export function CouponsTable({
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const getCouponIdentifier = (coupon: Coupon & { _id?: string }) => coupon.id || coupon._id;
+
   // Toggle active status
   const handleToggleActive = async (coupon: Coupon, currentStatus: boolean) => {
+    const couponId = getCouponIdentifier(coupon as Coupon & { _id?: string });
+
+    if (!couponId) {
+      toast.error('Unable to update coupon because its identifier is missing.');
+      return;
+    }
+
     try {
-      await apiClient.put(`/api/v1/coupons/${coupon.id}`, { active: !currentStatus });
+      await apiClient.put(`/api/v1/coupons/${couponId}`, { active: !currentStatus });
       toast.success(`Coupon "${coupon.code}" is now ${!currentStatus ? 'Active' : 'Inactive'}.`);
       queryClient.invalidateQueries({ queryKey: ['coupons'] });
     } catch (err: unknown) {
       console.error(err);
-      toast.error('Failed to update coupon status.');
+      toast.error(getApiErrorMessage(err, 'Failed to update coupon status.'));
     }
   };
 
@@ -89,7 +99,7 @@ export function CouponsTable({
       setDeleteTarget(null);
     } catch (err: unknown) {
       console.error(err);
-      toast.error('Failed to delete coupon.');
+      toast.error(getApiErrorMessage(err, 'Failed to delete coupon.'));
     } finally {
       setIsDeleting(false);
     }

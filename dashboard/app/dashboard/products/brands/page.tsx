@@ -25,6 +25,7 @@ import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { getApiErrorMessage } from '@/lib/error-handler';
 
 function slugify(text: string): string {
   return text
@@ -34,23 +35,6 @@ function slugify(text: string): string {
     .replace(/[\s_]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
-}
-
-function getApiErrorMessage(err: unknown, fallback: string): string {
-  const apiErr = err as {
-    response?: {
-      data?: {
-        message?: string;
-        errors?: string[];
-      };
-    };
-  };
-
-  return (
-    apiErr?.response?.data?.message ||
-    apiErr?.response?.data?.errors?.join(', ') ||
-    fallback
-  );
 }
 
 export default function BrandsPage() {
