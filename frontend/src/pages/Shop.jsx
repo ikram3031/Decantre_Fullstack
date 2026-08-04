@@ -404,6 +404,25 @@ export const Shop = () => {
     return brandParam ? brandParam.split(',') : [];
   }, [brandParam]);
 
+  const isAnyFilterApplied = useMemo(() => {
+    return (
+      (selectedCategory && selectedCategory !== 'All') ||
+      brandFilters.length > 0 ||
+      searchQuery !== '' ||
+      minPriceParam !== null ||
+      maxPriceParam !== null ||
+      sortOrder !== 'newest'
+    );
+  }, [selectedCategory, brandFilters, searchQuery, minPriceParam, maxPriceParam, sortOrder]);
+
+  const handleResetAll = () => {
+    setSearchParams(new URLSearchParams(), { preventScrollReset: true });
+    setSortOrder('newest');
+    setBrandFilters([]);
+    setSelectedCategory('All');
+    setSearchQuery('');
+  };
+
   const renderFilterContent = () => (
     <div className="space-y-8 text-left">
       <div>
@@ -414,6 +433,22 @@ export const Shop = () => {
       </div>
 
       <div className="space-y-6">
+        {/* Reset All Button */}
+        <div className={`flex items-center justify-between border-b ${isLight ? 'border-zinc-200' : 'border-white/5'} pb-3`}>
+          <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-semibold">Active Filters</span>
+          <button
+            type="button"
+            onClick={handleResetAll}
+            disabled={!isAnyFilterApplied}
+            className={`text-[10px] uppercase tracking-wider font-bold transition-all ${
+              isAnyFilterApplied
+                ? 'text-gold hover:text-gold/80 cursor-pointer underline underline-offset-4'
+                : `${isLight ? 'text-zinc-400' : 'text-zinc-600'} cursor-not-allowed opacity-50`
+            }`}
+          >
+            Reset All
+          </button>
+        </div>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold block">Category</span>
