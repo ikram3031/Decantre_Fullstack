@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, Sparkles, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -373,17 +373,30 @@ export const Shop = () => {
     setSearchParams(params, { preventScrollReset: true });
   };
 
-  const handlePriceRangeChange = ({ min, max }) => {
-    const params = new URLSearchParams(searchParams);
-    if (min === priceLimits.min && max === priceLimits.max) {
-      params.delete('minPrice');
-      params.delete('maxPrice');
-    } else {
-      params.set('minPrice', min);
-      params.set('maxPrice', max);
-    }
-    setSearchParams(params, { preventScrollReset: true });
-  };
+  const handlePriceRangeChange = useCallback(({ min, max }) => {
+    setSearchParams(prevParams => {
+      const params = new URLSearchParams(prevParams);
+      let changed = false;
+
+      if (min === priceLimits.min && max === priceLimits.max) {
+        if (params.has('minPrice') || params.has('maxPrice')) {
+          params.delete('minPrice');
+          params.delete('maxPrice');
+          changed = true;
+        }
+      } else {
+        if (params.get('minPrice') !== String(min)) {
+          params.set('minPrice', min);
+          changed = true;
+        }
+        if (params.get('maxPrice') !== String(max)) {
+          params.set('maxPrice', max);
+          changed = true;
+        }
+      }
+      return changed ? params : prevParams;
+    }, { preventScrollReset: true });
+  }, [setSearchParams, priceLimits.min, priceLimits.max]);
 
   const isLight = currentTheme === 'light';
 
