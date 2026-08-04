@@ -531,10 +531,10 @@ export const Header = ({
                 {/* 4. Brand */}
                 <div className="bg-zinc-900/80 border border-white/10 rounded-sm overflow-hidden">
                   <div className="w-full flex items-center justify-between py-2.5 px-4 bg-zinc-900/90 hover:bg-zinc-800/80 transition-colors">
+                    {/* AGY: Removed navigation link to deleted /atelier page, clicking Brand text now just expands/toggles the sub-menu */}
                     <button
                       onClick={() => {
-                        navigate('/atelier');
-                        handleNavLinkClick();
+                        toggleNode('brand');
                       }}
                       className="font-semibold text-zinc-100 hover:text-gold text-left cursor-pointer flex-grow"
                     >

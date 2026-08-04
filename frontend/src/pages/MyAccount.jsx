@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Heart, ShoppingBag, ArrowRight, ShieldCheck, LogOut, Edit3, Clipboard } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -17,22 +17,83 @@ export const MyAccount = () => {
   const isLight = currentTheme === 'light';
 
   // Profile Update Form State
-  const [name, setName] = useState(user?.name || '');
+  const [name, setName] = useState(user?.name || user?.raw?.name || '');
+  const [phone, setPhone] = useState(user?.phone || user?.raw?.phone || '');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // AGY: Toggles read-only details vs edit inputs
+
+  const getAddressValue = (section, field) => {
+    const sec = user?.[section] || user?.raw?.[section] || {};
+    return sec[field] || '';
+  };
 
   // Billing address state
-  const [billingAddress, setBillingAddress] = useState(user?.billingInfo?.address || '');
-  const [billingCity, setBillingCity] = useState(user?.billingInfo?.city || '');
-  const [billingState, setBillingState] = useState(user?.billingInfo?.state || '');
-  const [billingZip, setBillingZip] = useState(user?.billingInfo?.zip || '');
-  const [billingCountry, setBillingCountry] = useState(user?.billingInfo?.country || 'Bangladesh');
+  const [billingAddress, setBillingAddress] = useState(getAddressValue('billingInfo', 'address1') || getAddressValue('billingInfo', 'address') || '');
+  const [billingCity, setBillingCity] = useState(getAddressValue('billingInfo', 'city') || '');
+  const [billingState, setBillingState] = useState(getAddressValue('billingInfo', 'state') || '');
+  const [billingZip, setBillingZip] = useState(getAddressValue('billingInfo', 'postcode') || getAddressValue('billingInfo', 'zip') || '');
+  const [billingCountry, setBillingCountry] = useState(getAddressValue('billingInfo', 'country') || 'Bangladesh');
+  const [billingPhone, setBillingPhone] = useState(getAddressValue('billingInfo', 'phone') || ''); // AGY: Billing Phone State
 
   // Shipping address state
-  const [shippingAddress, setShippingAddress] = useState(user?.shippingInfo?.address || '');
-  const [shippingCity, setShippingCity] = useState(user?.shippingInfo?.city || '');
-  const [shippingState, setShippingState] = useState(user?.shippingInfo?.state || '');
-  const [shippingZip, setShippingZip] = useState(user?.shippingInfo?.zip || '');
-  const [shippingCountry, setShippingCountry] = useState(user?.shippingInfo?.country || 'Bangladesh');
+  const [shippingAddress, setShippingAddress] = useState(getAddressValue('shippingInfo', 'address1') || getAddressValue('shippingInfo', 'address') || '');
+  const [shippingCity, setShippingCity] = useState(getAddressValue('shippingInfo', 'city') || '');
+  const [shippingState, setShippingState] = useState(getAddressValue('shippingInfo', 'state') || '');
+  const [shippingZip, setShippingZip] = useState(getAddressValue('shippingInfo', 'postcode') || getAddressValue('shippingInfo', 'zip') || '');
+  const [shippingCountry, setShippingCountry] = useState(getAddressValue('shippingInfo', 'country') || 'Bangladesh');
+  const [shippingPhone, setShippingPhone] = useState(getAddressValue('shippingInfo', 'phone') || ''); // AGY: Shipping Phone State
+
+  // AGY: Sync form state variables automatically when user prop context updates
+  useEffect(() => {
+    setName(user?.name || user?.raw?.name || '');
+    setPhone(user?.phone || user?.raw?.phone || '');
+    setBillingAddress(getAddressValue('billingInfo', 'address1') || getAddressValue('billingInfo', 'address') || '');
+    setBillingCity(getAddressValue('billingInfo', 'city') || '');
+    setBillingState(getAddressValue('billingInfo', 'state') || '');
+    setBillingZip(getAddressValue('billingInfo', 'postcode') || getAddressValue('billingInfo', 'zip') || '');
+    setBillingCountry(getAddressValue('billingInfo', 'country') || 'Bangladesh');
+    setBillingPhone(getAddressValue('billingInfo', 'phone') || '');
+    setShippingAddress(getAddressValue('shippingInfo', 'address1') || getAddressValue('shippingInfo', 'address') || '');
+    setShippingCity(getAddressValue('shippingInfo', 'city') || '');
+    setShippingState(getAddressValue('shippingInfo', 'state') || '');
+    setShippingZip(getAddressValue('shippingInfo', 'postcode') || getAddressValue('shippingInfo', 'zip') || '');
+    setShippingCountry(getAddressValue('shippingInfo', 'country') || 'Bangladesh');
+    setShippingPhone(getAddressValue('shippingInfo', 'phone') || '');
+  }, [user]);
+
+  // AGY: Added helper to map raw/technical error structures to customer-friendly descriptions
+  const getFriendlyErrorMessage = (error, defaultMsg = 'An unexpected error occurred. Please try again.') => {
+    const rawMessage = error?.message || String(error);
+    if (!rawMessage) return defaultMsg;
+
+    const lowerMsg = rawMessage.toLowerCase();
+    if (lowerMsg.includes('billinginfo') || lowerMsg.includes('shippinginfo') || lowerMsg.includes('required')) {
+      return 'Something went wrong. Please check your address book inputs and try again.';
+    }
+    if (lowerMsg.includes('failed to fetch') || lowerMsg.includes('networkerror')) {
+      return 'Network connection issue. Please check your internet connection.';
+    }
+    return rawMessage;
+  };
+
+  // AGY: Reset inputs back to original user state and exit edit mode
+  const handleCancelEdit = () => {
+    setName(user?.name || user?.raw?.name || '');
+    setPhone(user?.phone || user?.raw?.phone || '');
+    setBillingAddress(getAddressValue('billingInfo', 'address1') || getAddressValue('billingInfo', 'address') || '');
+    setBillingCity(getAddressValue('billingInfo', 'city') || '');
+    setBillingState(getAddressValue('billingInfo', 'state') || '');
+    setBillingZip(getAddressValue('billingInfo', 'postcode') || getAddressValue('billingInfo', 'zip') || '');
+    setBillingCountry(getAddressValue('billingInfo', 'country') || 'Bangladesh');
+    setBillingPhone(getAddressValue('billingInfo', 'phone') || '');
+    setShippingAddress(getAddressValue('shippingInfo', 'address1') || getAddressValue('shippingInfo', 'address') || '');
+    setShippingCity(getAddressValue('shippingInfo', 'city') || '');
+    setShippingState(getAddressValue('shippingInfo', 'state') || '');
+    setShippingZip(getAddressValue('shippingInfo', 'postcode') || getAddressValue('shippingInfo', 'zip') || '');
+    setShippingCountry(getAddressValue('shippingInfo', 'country') || 'Bangladesh');
+    setShippingPhone(getAddressValue('shippingInfo', 'phone') || '');
+    setIsEditing(false);
+  };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -42,39 +103,58 @@ export const MyAccount = () => {
     }
     setIsUpdating(true);
     try {
+      const nameParts = name.trim().split(/\s+/);
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '.';
+
+      const memberPhone = phone.trim() || user?.phone || user?.raw?.phone || '.';
+      const memberEmail = user?.email || user?.raw?.email || '';
+
       const billingInfo = {
-        fullName: name.trim(),
-        email: user.email,
-        phone: user.phone || '',
-        address: billingAddress.trim(),
+        firstName,
+        lastName,
+        address1: billingAddress.trim(),
+        district: billingCity.trim() || 'Dhaka',
         city: billingCity.trim(),
-        state: billingState.trim(),
-        zip: billingZip.trim(),
+        state: billingState.trim() || 'Dhaka',
+        postcode: billingZip.trim(),
         country: billingCountry.trim(),
+        email: memberEmail,
+        phone: billingPhone.trim() || memberPhone // AGY: Sync billing phone
       };
       
       const shippingInfo = {
-        fullName: name.trim(),
-        email: user.email,
-        phone: user.phone || '',
-        address: shippingAddress.trim(),
+        firstName,
+        lastName,
+        address1: shippingAddress.trim(),
+        district: shippingCity.trim() || 'Dhaka',
         city: shippingCity.trim(),
-        state: shippingState.trim(),
-        zip: shippingZip.trim(),
+        state: shippingState.trim() || 'Dhaka',
+        postcode: shippingZip.trim(),
         country: shippingCountry.trim(),
+        email: memberEmail,
+        phone: shippingPhone.trim() || memberPhone // AGY: Sync shipping phone
       };
 
-      const updatedUser = await updateMember(user.id || user._id, {
+      // AGY: Passes the phone number in the body payload
+      const updatedUser = await updateMember(user.id || user._id || user.raw?.id || user.raw?._id, {
         name: name.trim(),
+        phone: phone.trim(),
         billingInfo,
         shippingInfo
       });
 
       // Update state and storage
-      setUser({ ...user, ...updatedUser });
+      setUser({
+        ...user,
+        name: updatedUser.name || user.name,
+        phone: updatedUser.phone || user.phone,
+        raw: { ...user.raw, ...updatedUser }
+      });
       addToast('Your personal profile and address books have been updated.', 'success');
+      setIsEditing(false); // AGY: Exit edit mode on success
     } catch (err) {
-      addToast(err.message || 'Failed to update profile.', 'error');
+      addToast(getFriendlyErrorMessage(err), 'error');
     } finally {
       setIsUpdating(false);
     }
@@ -86,6 +166,7 @@ export const MyAccount = () => {
     setShippingState(billingState);
     setShippingZip(billingZip);
     setShippingCountry(billingCountry);
+    setShippingPhone(billingPhone); // AGY: Sync phone too
     addToast('Billing address copied to shipping address.', 'info');
   };
 
@@ -198,179 +279,331 @@ export const MyAccount = () => {
                   </p>
                 </div>
 
-                {/* Edit Form */}
-                <form onSubmit={handleUpdateProfile} className="space-y-6">
-                  
-                  {/* Basic Details Section */}
-                  <div className="space-y-4">
-                    <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-zinc-200 border-b border-white/5 pb-2">
-                      Profile Name
-                    </h3>
-                    <div>
-                      <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Display Name</label>
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                        placeholder="Enter full name"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Grid: Billing & Shipping Address Edit */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
-                    
-                    {/* Billing address block */}
-                    <div className="space-y-4">
-                      <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-zinc-200 border-b border-white/5 pb-2">
-                        Billing Address
-                      </h3>
-                      <div className="space-y-3">
-                        <div>
-                          <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Street Address</label>
-                          <input
-                            type="text"
-                            value={billingAddress}
-                            onChange={(e) => setBillingAddress(e.target.value)}
-                            className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                            placeholder="Street address / house / apartment"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">City</label>
-                            <input
-                              type="text"
-                              value={billingCity}
-                              onChange={(e) => setBillingCity(e.target.value)}
-                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                              placeholder="City"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">State / Division</label>
-                            <input
-                              type="text"
-                              value={billingState}
-                              onChange={(e) => setBillingState(e.target.value)}
-                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                              placeholder="State"
-                            />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">ZIP / Postal Code</label>
-                            <input
-                              type="text"
-                              value={billingZip}
-                              onChange={(e) => setBillingZip(e.target.value)}
-                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                              placeholder="ZIP"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Country</label>
-                            <input
-                              type="text"
-                              value={billingCountry}
-                              onChange={(e) => setBillingCountry(e.target.value)}
-                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                              placeholder="Country"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Shipping address block */}
-                    <div className="space-y-4">
+                {/* AGY: Conditionally render read-only profile details or editable form based on isEditing state */}
+                {!isEditing ? (
+                  <div className="space-y-6 animate-fade-in">
+                    {/* Basic Info Read Only */}
+                    <div className="space-y-4 bg-zinc-950/40 p-6 border border-white/5 rounded-sm">
                       <div className="flex items-center justify-between border-b border-white/5 pb-2">
                         <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-zinc-200">
-                          Shipping Address
+                          Profile Details
                         </h3>
                         <button
                           type="button"
-                          onClick={copyBillingToShipping}
-                          className="text-[9px] uppercase tracking-wider font-bold text-gold hover:underline flex items-center gap-1 cursor-pointer bg-transparent border-none"
+                          onClick={() => setIsEditing(true)}
+                          className="inline-flex items-center gap-1.5 text-xs text-gold font-bold hover:underline cursor-pointer bg-transparent border-none uppercase tracking-wider"
                         >
-                          <Clipboard className="w-3 h-3" />
-                          Same as Billing
+                          <Edit3 className="w-3.5 h-3.5" />
+                          Edit Profile
                         </button>
                       </div>
-                      <div className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                         <div>
-                          <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Street Address</label>
-                          <input
-                            type="text"
-                            value={shippingAddress}
-                            onChange={(e) => setShippingAddress(e.target.value)}
-                            className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                            placeholder="Street address / house / apartment"
-                          />
+                          <span className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-0.5">Display Name</span>
+                          <span className="text-xs font-sans text-white">{name || 'N/A'}</span>
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">City</label>
-                            <input
-                              type="text"
-                              value={shippingCity}
-                              onChange={(e) => setShippingCity(e.target.value)}
-                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                              placeholder="City"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">State / Division</label>
-                            <input
-                              type="text"
-                              value={shippingState}
-                              onChange={(e) => setShippingState(e.target.value)}
-                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                              placeholder="State"
-                            />
-                          </div>
+                        <div>
+                          <span className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-0.5">Email Address</span>
+                          <span className="text-xs font-sans text-white">{user?.email || 'N/A'}</span>
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">ZIP / Postal Code</label>
-                            <input
-                              type="text"
-                              value={shippingZip}
-                              onChange={(e) => setShippingZip(e.target.value)}
-                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                              placeholder="ZIP"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Country</label>
-                            <input
-                              type="text"
-                              value={shippingCountry}
-                              onChange={(e) => setShippingCountry(e.target.value)}
-                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
-                              placeholder="Country"
-                            />
-                          </div>
+                        <div>
+                          <span className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-0.5">Phone Number</span>
+                          <span className="text-xs font-sans text-white">{phone || 'N/A'}</span>
                         </div>
                       </div>
                     </div>
 
-                  </div>
+                    {/* Address Blocks Read Only */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Billing Address Read Only */}
+                      <div className="space-y-4 bg-zinc-950/40 p-6 border border-white/5 rounded-sm">
+                        <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-zinc-200 border-b border-white/5 pb-2">
+                          Billing Address
+                        </h3>
+                        <div className="space-y-3.5 text-xs font-sans text-zinc-300">
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">Street Address</span>
+                            <span>{billingAddress || 'N/A'}</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">City</span>
+                              <span>{billingCity || 'N/A'}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">State / Division</span>
+                              <span>{billingState || 'N/A'}</span>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">ZIP / Postal Code</span>
+                              <span>{billingZip || 'N/A'}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">Country</span>
+                              <span>{billingCountry || 'N/A'}</span>
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">Phone Number</span>
+                            <span>{billingPhone || 'N/A'}</span>
+                          </div>
+                        </div>
+                      </div>
 
-                  <div className="pt-4 border-t border-white/5">
-                    <button
-                      type="submit"
-                      disabled={isUpdating}
-                      className="inline-flex items-center gap-2 rounded-sm bg-gold px-8 py-3 text-xs font-bold uppercase tracking-[0.25em] text-black hover:bg-gold/90 transition-all cursor-pointer disabled:opacity-55"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                      {isUpdating ? 'Saving Changes…' : 'Save Address Books'}
-                    </button>
+                      {/* Shipping Address Read Only */}
+                      <div className="space-y-4 bg-zinc-950/40 p-6 border border-white/5 rounded-sm">
+                        <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-zinc-200 border-b border-white/5 pb-2">
+                          Shipping Address
+                        </h3>
+                        <div className="space-y-3.5 text-xs font-sans text-zinc-300">
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">Street Address</span>
+                            <span>{shippingAddress || 'N/A'}</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">City</span>
+                              <span>{shippingCity || 'N/A'}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">State / Division</span>
+                              <span>{shippingState || 'N/A'}</span>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">ZIP / Postal Code</span>
+                              <span>{shippingZip || 'N/A'}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">Country</span>
+                              <span>{shippingCountry || 'N/A'}</span>
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider text-zinc-500 block">Phone Number</span>
+                            <span>{shippingPhone || 'N/A'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </form>
+                ) : (
+                  /* Edit Form Mode */
+                  <form onSubmit={handleUpdateProfile} className="space-y-6 animate-fade-in">
+                    
+                    {/* Basic Details Section */}
+                    <div className="space-y-4">
+                      <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-zinc-200 border-b border-white/5 pb-2">
+                        Profile Details
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Display Name</label>
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                            placeholder="Enter full name"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Phone Number</label>
+                          <input
+                            type="text"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                            placeholder="Enter phone number"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Grid: Billing & Shipping Address Edit */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
+                      
+                      {/* Billing address block */}
+                      <div className="space-y-4">
+                        <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-zinc-200 border-b border-white/5 pb-2">
+                          Billing Address
+                        </h3>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Street Address</label>
+                            <input
+                              type="text"
+                              value={billingAddress}
+                              onChange={(e) => setBillingAddress(e.target.value)}
+                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                              placeholder="Street address / house / apartment"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">City</label>
+                              <input
+                                type="text"
+                                value={billingCity}
+                                onChange={(e) => setBillingCity(e.target.value)}
+                                className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                                placeholder="City"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">State / Division</label>
+                              <input
+                                type="text"
+                                value={billingState}
+                                onChange={(e) => setBillingState(e.target.value)}
+                                className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                                placeholder="State"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">ZIP / Postal Code</label>
+                              <input
+                                type="text"
+                                value={billingZip}
+                                onChange={(e) => setBillingZip(e.target.value)}
+                                className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                                placeholder="ZIP"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Country</label>
+                              <input
+                                type="text"
+                                value={billingCountry}
+                                onChange={(e) => setBillingCountry(e.target.value)}
+                                className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                                placeholder="Country"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Phone Number</label>
+                            <input
+                              type="text"
+                              value={billingPhone}
+                              onChange={(e) => setBillingPhone(e.target.value)}
+                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                              placeholder="Billing Phone"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Shipping address block */}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                          <h3 className="text-xs font-sans font-bold uppercase tracking-widest text-zinc-200">
+                            Shipping Address
+                          </h3>
+                          <button
+                            type="button"
+                            onClick={copyBillingToShipping}
+                            className="text-[9px] uppercase tracking-wider font-bold text-gold hover:underline flex items-center gap-1 cursor-pointer bg-transparent border-none"
+                          >
+                            <Clipboard className="w-3 h-3" />
+                            Same as Billing
+                          </button>
+                        </div>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Street Address</label>
+                            <input
+                              type="text"
+                              value={shippingAddress}
+                              onChange={(e) => setShippingAddress(e.target.value)}
+                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                              placeholder="Street address / house / apartment"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">City</label>
+                              <input
+                                type="text"
+                                value={shippingCity}
+                                onChange={(e) => setShippingCity(e.target.value)}
+                                className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                                placeholder="City"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">State / Division</label>
+                              <input
+                                type="text"
+                                value={shippingState}
+                                onChange={(e) => setShippingState(e.target.value)}
+                                className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                                placeholder="State"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">ZIP / Postal Code</label>
+                              <input
+                                type="text"
+                                value={shippingZip}
+                                onChange={(e) => setShippingZip(e.target.value)}
+                                className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                                placeholder="ZIP"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Country</label>
+                              <input
+                                type="text"
+                                value={shippingCountry}
+                                onChange={(e) => setShippingCountry(e.target.value)}
+                                className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                                placeholder="Country"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] uppercase tracking-wider text-zinc-400 block mb-1">Phone Number</label>
+                            <input
+                              type="text"
+                              value={shippingPhone}
+                              onChange={(e) => setShippingPhone(e.target.value)}
+                              className="w-full rounded-sm border border-white/10 bg-zinc-900/60 p-3 text-xs text-white focus:border-gold focus:outline-none"
+                              placeholder="Shipping Phone"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <div className="pt-4 border-t border-white/5 flex items-center gap-3">
+                      <button
+                        type="submit"
+                        disabled={isUpdating}
+                        className="inline-flex items-center gap-2 rounded-sm bg-gold px-8 py-3 text-xs font-bold uppercase tracking-[0.25em] text-black hover:bg-gold/90 transition-all cursor-pointer disabled:opacity-55"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        {isUpdating ? 'Saving Changes…' : 'Save Changes'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleCancelEdit}
+                        className="inline-flex items-center gap-2 rounded-sm border border-white/10 bg-zinc-900/40 px-8 py-3 text-xs font-bold uppercase tracking-[0.25em] text-zinc-400 hover:text-white transition-all cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
 
               </div>
             )}

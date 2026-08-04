@@ -116,7 +116,7 @@
     { "id": "season", "label": "SEASON", "path": "/season" },
     { "id": "combo", "label": "COMBO", "path": "/combo" },
     { "id": "shop", "label": "SHOP", "path": "/shop" },
-    { "id": "brand", "label": "BRAND", "path": "/atelier" },
+    { "id": "brand", "label": "BRAND", "path": "" },
     { "id": "full-bottles", "label": "FULL BOTTLES", "path": "/shop?category=Full Bottles" },
     { "id": "faq", "label": "FAQ", "path": "/faq" },
     { "id": "about-us", "label": "ABOUT US", "path": "/about-us" },

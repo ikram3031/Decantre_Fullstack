@@ -595,7 +595,15 @@ export const useAppStore = create((set, get) => {
         get().addToast(json?.message || 'Your order has been placed successfully!', 'success');
       } catch (err) {
         set({ isProcessingOrder: false });
-        get().addToast(err?.message || 'Something went wrong', 'error');
+        // AGY: Mask raw backend/technical errors with user-friendly warnings
+        const rawMsg = err?.message || '';
+        let userMsg = 'Failed to place order. Please try again.';
+        if (rawMsg.toLowerCase().includes('failed to fetch') || rawMsg.toLowerCase().includes('networkerror')) {
+          userMsg = 'Network connection issue. Please check your internet connection.';
+        } else if (rawMsg) {
+          userMsg = rawMsg;
+        }
+        get().addToast(userMsg, 'error');
       }
     },
 
@@ -694,8 +702,28 @@ export const useAppStore = create((set, get) => {
       let shippingFee = 0;
       if (paymentMethod !== 'instore' && cartSubtotal > 0) {
         const activeDistrict = (sameAsBilling ? (shippingInfo.district || '') : (shippingAddress.district || '')).trim().toLowerCase();
-        if (activeDistrict === 'dhaka' || activeDistrict.includes('dhaka')) {
-          shippingFee = 80;
+        const activeThana = (sameAsBilling ? (shippingInfo.thana || '') : (shippingAddress.thana || '')).trim().toLowerCase();
+
+        if (activeDistrict === 'dhaka') {
+          if (['savar', 'ashulia', 'dhamrai', 'keraniganj'].includes(activeThana)) {
+            shippingFee = 100;
+          } else if (['nawabganj', 'dohar'].includes(activeThana)) {
+            shippingFee = 120;
+          } else {
+            shippingFee = 80;
+          }
+        } else if (activeDistrict === 'gazipur') {
+          if (['tongi', 'gazipur sadar', 'konabari', 'kashimpur'].includes(activeThana)) {
+            shippingFee = 100;
+          } else {
+            shippingFee = 120;
+          }
+        } else if (activeDistrict === 'narayanganj') {
+          if (['narayanganj sadar', 'bandar', 'fatullah', 'siddhirganj', 'rupganj', 'sonargaon'].includes(activeThana)) {
+            shippingFee = 100;
+          } else {
+            shippingFee = 120;
+          }
         } else {
           shippingFee = 120;
         }

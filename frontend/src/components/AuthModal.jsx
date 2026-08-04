@@ -503,7 +503,7 @@ export const AuthModal = () => {
               Decantre
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif font-light text-white tracking-widest uppercase">
-              {mode === 'profile' ? 'My Profile' : mode === 'otp' ? 'OTP Verification' : mode === 'login' ? 'Member Login' : 'Become a Member'}
+              {mode === 'profile' ? 'My Profile' : mode === 'otp' ? 'OTP Verification' : mode === 'login' ? 'Member Login' : mode === 'forgot' ? 'Forgot Password' : mode === 'reset' ? 'Reset Password' : 'Become a Member'}
             </h2>
           </div>
 

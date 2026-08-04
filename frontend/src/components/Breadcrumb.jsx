@@ -92,7 +92,6 @@ export const Breadcrumb = ({ items }) => {
     '/wishlist': 'Wishlist',
     '/season': 'Seasonal Collections',
     '/combo': 'Combo Bundles',
-    '/atelier': 'Brand Atelier',
     '/about-us': 'About Us',
     '/faq': 'Frequently Asked Questions',
     '/contact-us': 'Contact Us',
