@@ -442,7 +442,7 @@ export const Shop = () => {
                   }`}
                 >
                   <span>{category.name}</span>
-                  {category.product_count !== undefined ? (
+                  {category.slug === 'All' && category.product_count !== undefined ? (
                     <span className="ml-2 text-[10px] text-zinc-500">({category.product_count})</span>
                   ) : null}
                 </button>
