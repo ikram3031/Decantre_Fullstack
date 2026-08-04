@@ -1,22 +1,22 @@
 .PHONY: deploy build-bg build-fg build-dash logs status down
 
 deploy:
-	git pull origin master
+	git pull origin Decantre
 	docker compose -f docker-compose.dev.yml build --no-cache
 	docker compose -f docker-compose.dev.yml up -d
 
 build-bg:
-	git pull origin master
+	git pull origin Decantre
 	docker compose -f docker-compose.dev.yml build --no-cache backend
 	docker compose -f docker-compose.dev.yml up -d backend
 
 build-fg:
-	git pull origin master
+	git pull origin Decantre
 	docker compose -f docker-compose.dev.yml build --no-cache frontend
 	docker compose -f docker-compose.dev.yml up -d frontend
 
 build-dash:
-	git pull origin master
+	git pull origin Decantre
 	docker compose -f docker-compose.dev.yml build --no-cache dashboard
 	docker compose -f docker-compose.dev.yml up -d dashboard
 
