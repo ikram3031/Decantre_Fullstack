@@ -189,7 +189,9 @@ export async function fetchProducts(opts = {}) {
 		opts.filter ||
 		opts.name ||
 		opts.slug ||
-		opts.did;
+		opts.did ||
+		opts.minPrice !== undefined ||
+		opts.maxPrice !== undefined;
 
 	let res;
 	try {
@@ -204,6 +206,8 @@ export async function fetchProducts(opts = {}) {
 			if (opts.name) body.name = opts.name;
 			if (opts.slug) body.slug = opts.slug;
 			if (opts.did) body.did = opts.did;
+			if (opts.minPrice !== undefined) body.minPrice = opts.minPrice;
+			if (opts.maxPrice !== undefined) body.maxPrice = opts.maxPrice;
 			body.skip = skip;
 			body.limit = limit;
 			body.sortBy = sortBy;

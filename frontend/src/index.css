@@ -222,3 +222,63 @@ select:focus {
   box-shadow: none !important;
   outline: none !important;
 }
+
+/* Custom styles for the dual range slider thumbs */
+.thumb,
+.thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.thumb {
+  pointer-events: none;
+  position: absolute;
+  height: 0;
+  width: 100%;
+  outline: none;
+}
+
+.thumb--left {
+  z-index: 20;
+}
+
+.thumb--right {
+  z-index: 21;
+}
+
+/* Webkit / Blink */
+.thumb::-webkit-slider-thumb {
+  background-color: #C5A059;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 14px;
+  width: 14px;
+  margin-top: 0px;
+  pointer-events: all;
+  position: relative;
+  transition: transform 0.1s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.thumb::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+}
+
+/* Firefox */
+.thumb::-moz-range-thumb {
+  background-color: #C5A059;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 14px;
+  width: 14px;
+  pointer-events: all;
+  position: relative;
+  transition: transform 0.1s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.thumb::-moz-range-thumb:hover {
+  transform: scale(1.25);
+}

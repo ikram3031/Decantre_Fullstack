@@ -1,17 +1,36 @@
 import { CategoryModel } from "../models/category.model.js";
+import { ProductModel } from "../models/product.model.js";
 import { logger } from "../config/logger.js";
+import { PLACEHOLDER_IMAGE_URL } from "../utils/productUtils.js";
 
 /**
  * GET /api/v1/categories
- * Returns an array of all categories (populated with parent reference).
+ * Returns an array of all categories with live product counts.
  */
-// GET /categories - সব ক্যাটাগরির তালিকা দেখায়
 export const getAllCategories = async (req, res) => {
   try {
-    const categories = await CategoryModel.find()
-      .populate({ path: "parent", select: "name slug" })
-      .lean();
-    res.json({ status: "success", data: categories });
+    const [categories, counts] = await Promise.all([
+      CategoryModel.find()
+        .populate({ path: "parent", select: "name slug" })
+        .lean(),
+      ProductModel.aggregate([
+        { $match: { imageUrl: { $ne: PLACEHOLDER_IMAGE_URL } } },
+        { $unwind: "$categories" },
+        { $group: { _id: "$categories", count: { $sum: 1 } } }
+      ])
+    ]);
+
+    const countMap = {};
+    for (const c of counts) {
+      countMap[c._id.toString()] = c.count;
+    }
+
+    const data = categories.map(cat => ({
+      ...cat,
+      product_count: countMap[cat._id?.toString()] || 0
+    }));
+
+    res.json({ status: "success", data });
   } catch (err) {
     logger.error({ err }, "Failed to fetch categories");
     res.status(500).json({ status: "error", message: "Unable to fetch categories" });

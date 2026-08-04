@@ -40,20 +40,30 @@ export const Header = ({
     };
 
     if (brands && brands.length > 0) {
+      // Identify the 3 parent brands (those with parent === null)
+      const parentBrands = brands.filter(b => typeof b === 'object' && !b.parent);
+      const parentIdMap = {};
+      for (const p of parentBrands) {
+        const slug = (p.slug || p.name || '').toLowerCase();
+        if (slug.includes('niche')) parentIdMap[p.id || p._id] = 'niche';
+        else if (slug.includes('designer')) parentIdMap[p.id || p._id] = 'designer';
+        else if (slug.includes('arabian') || slug.includes('uae')) parentIdMap[p.id || p._id] = 'arabian';
+      }
+
+      // Group child brands by their parent reference
       brands.forEach((b) => {
-        const name = typeof b === 'string' ? b : (b.name || b.slug || '');
+        if (typeof b !== 'object' || !b.parent) return;
+        const name = b.name || b.slug || '';
         if (!name) return;
-        const brandObj = typeof b === 'object' ? b : {};
+
+        const parentRef = typeof b.parent === 'object' ? (b.parent.id || b.parent._id || b.parent) : b.parent;
+        const catKey = parentIdMap[parentRef] || 'niche';
+
         const firstChar = name.trim().charAt(0).toUpperCase();
         const groupKey = getGroup(firstChar);
-        const type = (brandObj.type || brandObj.category || '').toLowerCase();
-
-        if (type.includes('arabian') || type.includes('uae')) {
-          if (!arabianGroups[groupKey].includes(name)) arabianGroups[groupKey].push(name);
-        } else if (type.includes('designer')) {
-          if (!designerGroups[groupKey].includes(name)) designerGroups[groupKey].push(name);
-        } else {
-          if (!nicheGroups[groupKey].includes(name)) nicheGroups[groupKey].push(name);
+        const targetGroups = catKey === 'arabian' ? arabianGroups : catKey === 'designer' ? designerGroups : nicheGroups;
+        if (!targetGroups[groupKey].includes(name)) {
+          targetGroups[groupKey].push(name);
         }
       });
     }
@@ -165,7 +175,8 @@ export const Header = ({
   // Navigate to shop filtered by selected brand
   const handleBrandClick = (brandName) => {
     setActiveDropdown(null);
-    navigate(`/shop?${buildQueryString({ brand: brandName })}`);
+    const slugified = String(brandName).toLowerCase().trim().replace(/\s+/g, '-');
+    navigate(`/shop?${buildQueryString({ brand: slugified })}`);
   };
 
   // Top search panel states
@@ -558,7 +569,8 @@ export const Header = ({
                             <div className="w-full flex items-center justify-between py-2 px-3 bg-zinc-900/90 hover:bg-zinc-800/90 transition-colors">
                                 <button
                                   onClick={() => {
-                                    navigate(`/shop?${buildQueryString({ brand: cat.name.toLowerCase() })}`);
+                                    const slugified = String(cat.name).toLowerCase().trim().replace(/\s+/g, '-');
+                                    navigate(`/shop?${buildQueryString({ brand: slugified })}`);
                                     handleNavLinkClick();
                                   }}
                                   className="text-xs font-semibold text-zinc-200 hover:text-gold text-left cursor-pointer flex-grow flex items-center justify-between pr-2"

@@ -145,7 +145,16 @@ export const buildProductFilter = async (input = {}) => {
 
   const brandInput = source.brand ?? source.brands;
   if (brandInput) {
-    const brandValues = Array.isArray(brandInput) ? brandInput : [brandInput];
+    const rawValues = Array.isArray(brandInput) ? brandInput : [brandInput];
+    const brandValues = [];
+    rawValues.forEach(val => {
+      if (typeof val === 'string' && val.includes(',')) {
+        brandValues.push(...val.split(','));
+      } else {
+        brandValues.push(val);
+      }
+    });
+
     const resolved = [];
 
     for (const brandValue of brandValues) {
@@ -189,6 +198,65 @@ export const buildProductFilter = async (input = {}) => {
   const did = normalizeValue(source.did);
   if (did) {
     filter.did = did;
+  }
+
+  // Price range filters
+  const minPrice = Number(source.minPrice ?? source.min_price);
+  const maxPrice = Number(source.maxPrice ?? source.max_price);
+
+  if (!isNaN(minPrice) || !isNaN(maxPrice)) {
+    const minVal = !isNaN(minPrice) ? minPrice : 0;
+    const maxVal = !isNaN(maxPrice) ? maxPrice : Infinity;
+
+    const priceConditions = [];
+
+    // Simple products price filter
+    const simpleOfferPriceCond = { $gt: 0, $ne: null, $gte: minVal };
+    const simplePriceCond = { $gte: minVal };
+    if (maxVal !== Infinity) {
+      simpleOfferPriceCond.$lte = maxVal;
+      simplePriceCond.$lte = maxVal;
+    }
+
+    const simpleCond = {
+      type: "simple",
+      $or: [
+        { offerPrice: simpleOfferPriceCond },
+        { $or: [{ offerPrice: null }, { offerPrice: 0 }], price: simplePriceCond }
+      ]
+    };
+    priceConditions.push(simpleCond);
+
+    // Variant products price filter
+    const variantOfferPriceCond = { $gt: 0, $ne: null, $gte: minVal };
+    const variantPriceCond = { $gte: minVal };
+    if (maxVal !== Infinity) {
+      variantOfferPriceCond.$lte = maxVal;
+      variantPriceCond.$lte = maxVal;
+    }
+
+    const variantCond = {
+      type: "variant",
+      variants: {
+        $elemMatch: {
+          $or: [
+            { offerPrice: variantOfferPriceCond },
+            { $or: [{ offerPrice: null }, { offerPrice: 0 }], price: variantPriceCond }
+          ]
+        }
+      }
+    };
+    priceConditions.push(variantCond);
+
+    if (filter.$or) {
+      filter.$and = [
+        { $or: filter.$or },
+        { $or: priceConditions }
+      ];
+      delete filter.$or;
+    } else {
+      filter.$or = priceConditions;
+    }
   }
 
   return filter;

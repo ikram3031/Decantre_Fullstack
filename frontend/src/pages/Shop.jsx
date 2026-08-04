@@ -7,6 +7,7 @@ import { formatBDT } from '../utils/formatCurrency';
 import { ProductCard } from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/Skeleton';
 import { Pagination } from '../components/ui/Pagination';
+import { PriceRangeSlider } from '../components/PriceRangeSlider';
 import menuData from '../data/menuData.json';
 import { getDefaultSelection } from '../store/productHelpers';
 
@@ -42,8 +43,9 @@ export const Shop = () => {
   const categoryParam = searchParams.get('category');
   const brandParam = searchParams.get('brand');
   const searchParam = searchParams.get('search');
+  const minPriceParam = searchParams.get('minPrice');
+  const maxPriceParam = searchParams.get('maxPrice');
 
-  const [maxPrice, setMaxPrice] = useState(30000);
   const [sortOrder, setSortOrder] = useState('newest');
   const [brandFilters, setBrandFilters] = useState([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
@@ -81,10 +83,10 @@ export const Shop = () => {
     max: 30000
   };
 
-  // Mapped client-side filter for the price range
+  // Mapped client-side filter for the price range (Now backend handled)
   const displayedProducts = useMemo(() => {
-    return allProducts.filter((prod) => prod.basePrice <= maxPrice);
-  }, [allProducts, maxPrice]);
+    return allProducts;
+  }, [allProducts]);
 
   const categoryOptions = useMemo(
     () => [{ id: 'all', name: 'All', slug: 'All', product_count: totalProducts || allProducts.length }, ...categories],
@@ -93,7 +95,7 @@ export const Shop = () => {
 
   const gridColumnsClass = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-6';
 
-  // Group brands into Parent-Child hierarchy (Niche / Designer -> Alphabetic Ranges -> Brand items)
+  // Group brands into Parent-Child hierarchy (Niche / Designer / Arabian -> Alphabetic Ranges -> Brand items)
   const structuredBrandHierarchy = useMemo(() => {
     const nicheGroups = { 'A-E': [], 'F-J': [], 'K-O': [], 'P-T': [], 'U-Z': [] };
     const designerGroups = { 'A-E': [], 'F-J': [], 'K-O': [], 'P-T': [], 'U-Z': [] };
@@ -108,22 +110,34 @@ export const Shop = () => {
     };
 
     if (brands && brands.length > 0) {
+      // Identify the 3 parent brands (those with parent === null)
+      const parentBrands = brands.filter(b => typeof b === 'object' && !b.parent);
+      const parentIdMap = {}; // parentId -> category key ('niche' | 'designer' | 'arabian')
+      for (const p of parentBrands) {
+        const slug = (p.slug || p.name || '').toLowerCase();
+        if (slug.includes('niche')) parentIdMap[p.id || p._id] = 'niche';
+        else if (slug.includes('designer')) parentIdMap[p.id || p._id] = 'designer';
+        else if (slug.includes('arabian') || slug.includes('uae')) parentIdMap[p.id || p._id] = 'arabian';
+      }
+
+      // Group child brands by their parent reference
       brands.forEach((b) => {
-        const name = typeof b === 'string' ? b : (b.name || b.slug || '');
+        if (typeof b !== 'object') return;
+        // Skip parent brands themselves
+        if (!b.parent) return;
+        const name = b.name || b.slug || '';
         if (!name) return;
-        const brandObj = typeof b === 'object' ? b : {};
+
+        const parentRef = typeof b.parent === 'object' ? (b.parent.id || b.parent._id || b.parent) : b.parent;
+        const catKey = parentIdMap[parentRef] || 'niche'; // fallback to niche
+
         const firstChar = name.trim().charAt(0).toUpperCase();
         const groupKey = getGroup(firstChar);
-        const type = (brandObj.type || brandObj.category || '').toLowerCase();
+        const item = { id: b.id || b._id || name, name, slug: b.slug || name };
 
-        const item = { id: brandObj.id || name, name, slug: brandObj.slug || name };
-
-        if (type.includes('arabian') || type.includes('uae')) {
-          if (!arabianGroups[groupKey].some(i => i.name === name)) arabianGroups[groupKey].push(item);
-        } else if (type.includes('designer')) {
-          if (!designerGroups[groupKey].some(i => i.name === name)) designerGroups[groupKey].push(item);
-        } else {
-          if (!nicheGroups[groupKey].some(i => i.name === name)) nicheGroups[groupKey].push(item);
+        const targetGroups = catKey === 'arabian' ? arabianGroups : catKey === 'designer' ? designerGroups : nicheGroups;
+        if (!targetGroups[groupKey].some(i => i.name === name)) {
+          targetGroups[groupKey].push(item);
         }
       });
     }
@@ -174,7 +188,7 @@ export const Shop = () => {
 
   useEffect(() => {
     if (brandParam) {
-      setBrandFilters([brandParam]);
+      setBrandFilters(brandParam.split(',').filter(Boolean));
     } else {
       setBrandFilters([]);
     }
@@ -219,15 +233,23 @@ export const Shop = () => {
     if (selectedCategory && selectedCategory !== 'All') {
       opts.category = categoryVal;
     }
-    if (brandFilters.length === 1) {
-      const targetBrand = brandFilters[0];
-      const selectedBrandObj = brands.find(
-        b => b.slug === targetBrand || b.name === targetBrand || b.id === targetBrand || toSlug(b.slug || b.name) === toSlug(targetBrand)
-      );
-      opts.brand = selectedBrandObj ? (selectedBrandObj.id || selectedBrandObj.slug || selectedBrandObj.name) : targetBrand;
+    if (brandFilters.length > 0) {
+      const resolvedBrands = brandFilters.map(targetBrand => {
+        const selectedBrandObj = brands.find(
+          b => b.slug === targetBrand || b.name === targetBrand || b.id === targetBrand || toSlug(b.slug || b.name) === toSlug(targetBrand)
+        );
+        return selectedBrandObj ? (selectedBrandObj.id || selectedBrandObj.slug || selectedBrandObj.name) : targetBrand;
+      });
+      opts.brand = resolvedBrands.join(',');
     }
     if (searchQuery) {
       opts.q = searchQuery;
+    }
+    if (minPriceParam) {
+      opts.minPrice = Number(minPriceParam);
+    }
+    if (maxPriceParam) {
+      opts.maxPrice = Number(maxPriceParam);
     }
 
     setIsLoadingProducts(true);
@@ -257,7 +279,7 @@ export const Shop = () => {
     setTotalPages(1);
     setTotalProducts(0);
     loadProductsPage(1, false);
-  }, [fetchProducts, selectedCategory, brandFilters, searchQuery, sortOrder, categories, brands]);
+  }, [fetchProducts, selectedCategory, brandFilters, searchQuery, sortOrder, categories, brands, minPriceParam, maxPriceParam]);
 
   const productGridRef = React.useRef(null);
 
@@ -271,14 +293,66 @@ export const Shop = () => {
 
   const handleBrandToggle = (brandSlug) => {
     const params = new URLSearchParams(searchParams);
+    const currentBrands = brandParam ? brandParam.split(',') : [];
+    
+    // Find parent-child associations
+    const parentCategories = ['niche', 'designer', 'arabian'];
+    
+    let updated = [...currentBrands];
+    
     if (brandSlug === 'All') {
       params.delete('brand');
-    } else {
-      if (brandParam === brandSlug) {
-        params.delete('brand');
+    } else if (parentCategories.includes(brandSlug)) {
+      // Toggling a Parent Category
+      if (updated.includes(brandSlug)) {
+        // Uncheck parent
+        updated = updated.filter(b => b !== brandSlug);
       } else {
-        params.set('brand', brandSlug);
+        // Check parent
+        updated.push(brandSlug);
+        // Remove all child brands belonging to this parent since parent covers them all
+        const parentObj = structuredBrandHierarchy.find(p => p.id === brandSlug);
+        if (parentObj) {
+          const childSlugs = [];
+          Object.values(parentObj.ranges).forEach(rangeList => {
+            rangeList.forEach(brand => {
+              childSlugs.push(String(brand.slug || brand.name).toLowerCase().trim().replace(/\s+/g, '-'));
+            });
+          });
+          updated = updated.filter(b => !childSlugs.includes(b));
+        }
       }
+    } else {
+      // Toggling a Child Brand (brandSlug is always pre-slugified)
+      if (updated.includes(brandSlug)) {
+        updated = updated.filter(b => b !== brandSlug);
+      } else {
+        updated.push(brandSlug);
+        
+        // Find which parent category this child belongs to and uncheck that parent
+        let foundParentId = null;
+        for (const parent of structuredBrandHierarchy) {
+          for (const rangeList of Object.values(parent.ranges)) {
+            if (rangeList.some(brand => {
+              return String(brand.slug || brand.name).toLowerCase().trim().replace(/\s+/g, '-') === brandSlug;
+            })) {
+              foundParentId = parent.id;
+              break;
+            }
+          }
+          if (foundParentId) break;
+        }
+        
+        if (foundParentId && updated.includes(foundParentId)) {
+          updated = updated.filter(b => b !== foundParentId);
+        }
+      }
+    }
+    
+    if (updated.length > 0) {
+      params.set('brand', updated.join(','));
+    } else {
+      params.delete('brand');
     }
     setSearchParams(params, { preventScrollReset: true });
   };
@@ -299,7 +373,23 @@ export const Shop = () => {
     setSearchParams(params, { preventScrollReset: true });
   };
 
+  const handlePriceRangeChange = ({ min, max }) => {
+    const params = new URLSearchParams(searchParams);
+    if (min === priceLimits.min && max === priceLimits.max) {
+      params.delete('minPrice');
+      params.delete('maxPrice');
+    } else {
+      params.set('minPrice', min);
+      params.set('maxPrice', max);
+    }
+    setSearchParams(params, { preventScrollReset: true });
+  };
+
   const isLight = currentTheme === 'light';
+
+  const selectedBrandsList = useMemo(() => {
+    return brandParam ? brandParam.split(',') : [];
+  }, [brandParam]);
 
   const renderFilterContent = () => (
     <div className="space-y-8 text-left">
@@ -312,7 +402,18 @@ export const Shop = () => {
 
       <div className="space-y-6">
         <div className="space-y-3">
-          <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold block">Category</span>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold block">Category</span>
+            {selectedCategory && selectedCategory !== 'All' && (
+              <button
+                type="button"
+                onClick={() => handleCategorySelect('All')}
+                className="text-[10px] uppercase tracking-wide text-gold hover:underline cursor-pointer"
+              >
+                Clear
+              </button>
+            )}
+          </div>
           <div className="space-y-2">
             {categoryOptions.map((category) => {
               const catSlug = category.slug ? String(category.slug).toLowerCase().trim().replace(/\s+/g, '-') : category.slug;
@@ -340,30 +441,71 @@ export const Shop = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold block">Brands</span>
-            <button
-              type="button"
-              onClick={handleClearBrands}
-              className="text-[10px] uppercase tracking-wide text-gold hover:underline animate-fade-in cursor-pointer"
-            >
-              Clear
-            </button>
+            {selectedBrandsList.length > 0 && (
+              <button
+                type="button"
+                onClick={handleClearBrands}
+                className="text-[10px] uppercase tracking-wide text-gold hover:underline cursor-pointer"
+              >
+                Clear All
+              </button>
+            )}
           </div>
+
+          {/* Selected Brand Chips */}
+          {selectedBrandsList.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 pb-2">
+              {selectedBrandsList.map((slug) => {
+                const matchedBrand = brands.find(b => (b.slug || b.name || '').toLowerCase().trim().replace(/\s+/g, '-') === slug.toLowerCase());
+                const dispName = matchedBrand ? (matchedBrand.name || matchedBrand.slug) : slug;
+                return (
+                  <div
+                    key={slug}
+                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-gold/10 border border-gold/30 text-[10px] text-gold font-sans font-medium"
+                  >
+                    <span>{dispName}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleBrandToggle(slug)}
+                      className="hover:text-white text-gold cursor-pointer transition-colors font-bold text-xs"
+                    >
+                      ×
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           <div className="space-y-3">
             {structuredBrandHierarchy.map((parent) => {
               const isParentExpanded = expandedParents[parent.id] === true;
               const rangeKeys = Object.keys(parent.ranges);
               if (rangeKeys.length === 0) return null;
 
+              const parentSlug = parent.id;
+              const isParentSelected = selectedBrandsList.includes(parentSlug);
+
               return (
                 <div key={parent.id} className={`border rounded-[4px] overflow-hidden ${isLight ? 'border-zinc-200 bg-zinc-50' : 'border-white/10 bg-luxury-dark/40'}`}>
-                  <button
-                    type="button"
-                    onClick={() => toggleParent(parent.id)}
-                    className="w-full flex items-center justify-between p-2.5 text-xs font-semibold text-gold cursor-pointer"
-                  >
-                    <span>{parent.name}</span>
-                    <span className="text-zinc-400 font-bold">{isParentExpanded ? '−' : '+'}</span>
-                  </button>
+                  <div className="w-full flex items-center justify-between p-2.5 text-xs font-semibold">
+                    <label className="flex items-center gap-2.5 cursor-pointer text-zinc-300 flex-1">
+                      <input
+                        type="checkbox"
+                        checked={isParentSelected}
+                        onChange={() => handleBrandToggle(parentSlug)}
+                        className={`h-3.5 w-3.5 accent-gold rounded-[3px] border cursor-pointer ${isLight ? 'border-zinc-300 bg-zinc-50' : 'border-white/10 bg-luxury-dark'}`}
+                      />
+                      <span className="text-gold font-semibold select-none">{parent.name}</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => toggleParent(parent.id)}
+                      className="px-2 text-zinc-400 font-bold hover:text-gold cursor-pointer transition-colors"
+                    >
+                      {isParentExpanded ? '−' : '+'}
+                    </button>
+                  </div>
 
                   {isParentExpanded && (
                     <div className="px-3 pb-3 space-y-3 border-t border-white/5 pt-2">
@@ -375,18 +517,16 @@ export const Shop = () => {
                           <div className="space-y-1.5 pl-1">
                             {parent.ranges[range].map((brand) => {
                               const brandSlug = String(brand.slug || brand.name).toLowerCase().trim().replace(/\s+/g, '-');
-                              const isChecked = brandFilters.some(
-                                b => b === brand.slug || b === brand.name || String(b).toLowerCase().trim().replace(/\s+/g, '-') === brandSlug
-                              );
+                              const isChecked = selectedBrandsList.includes(brandSlug);
                               return (
                                 <label key={brand.id || brand.name} className={`flex items-center gap-2.5 text-xs cursor-pointer ${isLight ? 'text-zinc-700' : 'text-zinc-300'}`}>
                                   <input
                                     type="checkbox"
                                     checked={isChecked}
-                                    onChange={() => handleBrandToggle(brand.slug || brand.name)}
+                                    onChange={() => handleBrandToggle(brandSlug)}
                                     className={`h-3.5 w-3.5 accent-gold rounded-[3px] border cursor-pointer ${isLight ? 'border-zinc-300 bg-zinc-50' : 'border-white/10 bg-luxury-dark'}`}
                                   />
-                                  <span className="truncate">{brand.name}</span>
+                                  <span className="truncate select-none">{brand.name}</span>
                                 </label>
                               );
                             })}
@@ -401,24 +541,15 @@ export const Shop = () => {
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">Maximum Price</span>
-            <span className="text-xs font-mono text-gold font-semibold">{formatBDT(maxPrice)}</span>
-          </div>
-          <input
-            type="range"
-            min={priceLimits.min}
-            max={priceLimits.max}
-            step={Math.max(1, Math.ceil((priceLimits.max - priceLimits.min) / 100))}
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(Number(e.target.value))}
-            className="w-full accent-gold bg-zinc-800 h-1 rounded-[4px] cursor-pointer"
+        <div className="space-y-3 pb-4">
+          <PriceRangeSlider 
+            minLimit={priceLimits.min}
+            maxLimit={priceLimits.max}
+            initialMin={minPriceParam ? Number(minPriceParam) : undefined}
+            initialMax={maxPriceParam ? Number(maxPriceParam) : undefined}
+            onChange={handlePriceRangeChange}
+            isLight={isLight}
           />
-          <div className="flex justify-between text-[9px] text-zinc-600 font-mono">
-            <span>{formatBDT(priceLimits.min)}</span>
-            <span>{formatBDT(priceLimits.max)}</span>
-          </div>
         </div>
       </div>
 
