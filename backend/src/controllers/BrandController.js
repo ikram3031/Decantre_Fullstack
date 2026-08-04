@@ -47,7 +47,7 @@ export const createBrand = async (req, res) => {
       name,
       slug,
       description,
-      createdBy: req.user?._id || null,
+      createdBy: req.body.createdBy || req.user?._id || req.user?.id || null,
     });
 
     await brand.save();
@@ -77,7 +77,7 @@ export const updateBrand = async (req, res) => {
     if (slug) brand.slug = slug;
     if (description !== undefined) brand.description = description;
 
-    brand.updatedBy = req.user?._id || null;
+    brand.updatedBy = req.body.updatedBy || req.user?._id || req.user?.id || null;
     await brand.save();
 
     res.json({ status: "success", data: brand });

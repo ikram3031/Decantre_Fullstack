@@ -120,7 +120,7 @@ const handleInvoiceRequest = async (req, res) => {
     invoiceUrl:
       req.body.invoiceUrl || req.query.invoiceUrl || `https://yourdomain.com/invoice/${invoiceNumber}`,
     notes: req.body.notes || req.query.notes || "Thank you for your business.",
-    logoUrl: req.body.logoUrl || req.query.logoUrl || "https://sparksuite.github.io/simple-html-invoice-template/images/logo.png",
+    logoUrl: req.body.logoUrl || req.query.logoUrl || "https://server.decantrebd.com/uploads/logo.webp",
   };
 
   try {

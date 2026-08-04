@@ -7,7 +7,7 @@
  * @param {string} [params.logoUrl] - URL of the Decantre logo (provided by server)
  * @returns {string} HTML email string
  */
-export const buildOtpEmailHtml = ({ name, otp, logoUrl = "https://example.com/logo.png" }) => {
+export const buildOtpEmailHtml = ({ name, otp, logoUrl = "cid:logo" }) => {
   const finalName = name || "Valued Customer";
   
   return `
@@ -148,7 +148,6 @@ export const buildOtpEmailHtml = ({ name, otp, logoUrl = "https://example.com/lo
       </div>
       <div class="footer">
         <p>&copy; ${new Date().getFullYear()} <a href="https://decantre.com">Decantre</a>. All rights reserved.</p>
-        <p>Premium Fragrance Decants & Luxuries</p>
       </div>
     </div>
   </div>

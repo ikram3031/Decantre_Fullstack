@@ -67,7 +67,7 @@ export const createCategory = async (req, res) => {
       slug,
       description,
       parent: parentId,
-      createdBy: req.user?._id || null,
+      createdBy: req.body.createdBy || req.user?._id || req.user?.id || null,
     });
 
     await category.save();
@@ -106,7 +106,7 @@ export const updateCategory = async (req, res) => {
       category.parent = parentId;
     }
 
-    category.updatedBy = req.user?._id || null;
+    category.updatedBy = req.body.updatedBy || req.user?._id || req.user?.id || null;
     await category.save();
 
     res.json({ status: "success", data: category });

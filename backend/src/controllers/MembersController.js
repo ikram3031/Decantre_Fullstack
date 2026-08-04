@@ -167,6 +167,7 @@ export const createMember = async (req, res, next) => {
       passwordHash: await hashPassword(payload.password),
       billingInfo: sanitizeInfo(payload.billingInfo),
       shippingInfo: sanitizeInfo(payload.shippingInfo),
+      createdBy: payload.createdBy || req.user?.userId || req.user?.id || null,
     });
 
     res.status(201).json({ status: "success", data: member });
@@ -187,6 +188,7 @@ export const updateMember = async (req, res, next) => {
 
     const payload = req.body ?? {};
     const updates = {};
+    updates.updatedBy = payload.updatedBy || req.user?.userId || req.user?.id || null;
 
     if (payload.name) {
       updates.name = payload.name.trim();

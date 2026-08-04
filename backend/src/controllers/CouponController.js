@@ -70,8 +70,8 @@ export const createCoupon = async (req, res) => {
       ...validation.normalized,
       validFrom: validation.normalized.validFrom ? new Date(validation.normalized.validFrom) : null,
       validTo: validation.normalized.validTo ? new Date(validation.normalized.validTo) : null,
-      createdBy: req.user?._id || null,
-      updatedBy: req.user?._id || null,
+      createdBy: req.body.createdBy || req.user?._id || req.user?.id || null,
+      updatedBy: req.body.updatedBy || req.body.createdBy || req.user?._id || req.user?.id || null,
     });
 
     const populatedCoupon = await CouponModel.findById(coupon._id)
@@ -108,7 +108,7 @@ export const updateCoupon = async (req, res) => {
       ...validation.normalized,
       validFrom: validation.normalized.validFrom ? new Date(validation.normalized.validFrom) : null,
       validTo: validation.normalized.validTo ? new Date(validation.normalized.validTo) : null,
-      updatedBy: req.user?._id || null,
+      updatedBy: req.body.updatedBy || req.user?._id || req.user?.id || null,
     });
 
     await coupon.save();

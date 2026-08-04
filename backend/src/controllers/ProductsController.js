@@ -26,7 +26,7 @@ export const createProduct = async (req, res, next) => {
     const body = req.body || {};
 
     // Resolve createdBy user
-    let userId = req.user?.userId || req.user?.id;
+    let userId = req.body.createdBy || req.user?.userId || req.user?.id;
     if (!userId) {
       const fallbackUser = await UserModel.findOne({
         role: { $in: ["Owner", "Admin"] },
@@ -249,7 +249,7 @@ export const updateProduct = async (req, res, next) => {
     }
 
     // Resolve updatedBy user
-    let userId = req.user?.userId || req.user?.id;
+    let userId = req.body.updatedBy || req.body.createdBy || req.user?.userId || req.user?.id;
     if (!userId) {
       const fallbackUser = await UserModel.findOne({
         role: { $in: ["Owner", "Admin"] },

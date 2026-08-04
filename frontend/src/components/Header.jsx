@@ -302,7 +302,7 @@ export const Header = ({
           <Link to="/" className="flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
             {!logoFailed ? (
               <img 
-                src="https://decantrebd.com/wp-content/uploads/2026/03/decantre-color-logo-transparent.webp" 
+                src="https://server.decantrebd.com/uploads/logo.webp" 
                 alt="DECANTRE" 
                 className={`w-auto max-w-full object-contain transition-all duration-300 ${isScrolled ? 'h-12 md:h-16' : 'h-16 md:h-20 lg:h-22'}`}
                 onError={() => setLogoFailed(true)}
