@@ -15,6 +15,8 @@ import {
   Package,
   Receipt,
   Ticket,
+  X,
+  Menu,
 } from "lucide-react"
 
 import {
@@ -29,6 +31,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/core/ui/sidebar"
 import { DecantreLogo } from "@/components/core/DecantreLogo"
 import { useAuth } from "@/lib/core/auth-context"
@@ -36,25 +39,44 @@ import { useAuth } from "@/lib/core/auth-context"
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { user } = useAuth()
+  const { state, setOpen } = useSidebar()
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="border-b border-sidebar-border px-6 py-4">
-        <div className="flex items-center gap-3">
-          <DecantreLogo className="h-8 w-8 text-primary" />
-          <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-            <span className="font-bold text-lg tracking-tight text-sidebar-foreground">
-              Decantre
-            </span>
-            <span className="text-xs text-sidebar-foreground/60">
-              Perfume Store Dashboard
-            </span>
-          </div>
+      <SidebarHeader className="border-b border-sidebar-border px-6 py-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:justify-center">
+        <div className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
+          {state === "expanded" ? (
+            <>
+              <div className="flex items-center gap-3">
+                <DecantreLogo className="h-8 w-8 text-primary shrink-0" />
+                <div className="flex flex-col">
+                  <span className="font-bold text-lg tracking-tight text-sidebar-foreground">
+                    Decantre
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setOpen(false)}
+                className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all flex items-center justify-center shrink-0"
+                title="Close Sidebar"
+              >
+                <X className="h-[18px] w-[18px]" />
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setOpen(true)}
+              className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all flex items-center justify-center shrink-0"
+              title="Open Sidebar"
+            >
+              <Menu className="h-[18px] w-[18px]" />
+            </button>
+          )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-3 py-4">
-        <SidebarMenu>
+      <SidebarContent className="px-3 py-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-6">
+        <SidebarMenu className="group-data-[collapsible=icon]:gap-4">
           {/* Overview */}
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -243,7 +265,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border p-4">
+      <SidebarFooter className="border-t border-sidebar-border p-4 group-data-[collapsible=icon]:p-2">
         <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center">
           <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
             {user?.email ? user.email.charAt(0).toUpperCase() : "A"}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layers, ShoppingBag, Tag, ChevronRight, Sparkles, Eye, CheckCircle2, Heart } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 
 export const ComboCard = ({ combo, handleOpenProductDetail, wishlist = [], toggleWishlist }) => {
   const { handleAddComboToCart } = useApp();

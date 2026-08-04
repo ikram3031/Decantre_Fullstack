@@ -1,6 +1,6 @@
 import React from 'react';
 import { ProductCard } from '../ProductCard';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../core/context/AppContext';
 
 export const OnSale = () => {
   const { products, productsError, wishlist, toggleWishlist, cardSelections, setCardSelections, handleOpenProductDetail, handleAddToCart, calculateItemPrice } = useApp();

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, Sparkles, HelpCircle } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 
 export const ContactUs = () => {
   const { addToast } = useApp();

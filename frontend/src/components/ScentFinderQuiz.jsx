@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
-import { formatBDT } from '../utils/formatCurrency';
+import { formatBDT } from '../core/utils/formatCurrency';
 
 export const ScentFinderQuiz = ({
   isQuizOpen,

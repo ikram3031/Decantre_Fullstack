@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Heart, ShoppingBag, ArrowRight, ShieldCheck, LogOut, Edit3, Clipboard } from 'lucide-react';
-import { useApp } from '../context/AppContext';
-import { updateMember } from '../lib/api';
+import { useApp } from '../core/context/AppContext';
+import { updateMember } from '../core/lib/api';
 
 const tabs = [
   { key: 'overview', label: 'Overview' },

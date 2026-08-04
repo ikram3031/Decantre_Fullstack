@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { formatBDT } from '../utils/formatCurrency';
+import { formatBDT } from '../core/utils/formatCurrency';
 
 export const PriceRangeSlider = ({ 
   minLimit, 

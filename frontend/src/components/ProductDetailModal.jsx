@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { ShoppingCart, X as XIcon } from 'lucide-react';
-import { formatBDT } from '../utils/formatCurrency';
+import { formatBDT } from '../core/utils/formatCurrency';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 
 export const ProductDetailModal = ({

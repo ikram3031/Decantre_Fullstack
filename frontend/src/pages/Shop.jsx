@@ -2,14 +2,14 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, Sparkles, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useApp } from '../context/AppContext';
-import { formatBDT } from '../utils/formatCurrency';
+import { useApp } from '../core/context/AppContext';
+import { formatBDT } from '../core/utils/formatCurrency';
 import { ProductCard } from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/Skeleton';
 import { Pagination } from '../components/ui/Pagination';
 import { PriceRangeSlider } from '../components/PriceRangeSlider';
 import menuData from '../data/menuData.json';
-import { getDefaultSelection } from '../store/productHelpers';
+import { getDefaultSelection } from '../core/store/productHelpers';
 
 
 const staticBrandHierarchy = menuData.brandHierarchy || {};

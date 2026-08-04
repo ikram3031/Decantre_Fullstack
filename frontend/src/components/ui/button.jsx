@@ -1,6 +1,6 @@
 import React from "react";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
-import { useApp } from "../../context/AppContext";
+import { useApp } from "../../core/context/AppContext";
 
 // Self-contained, lightweight classname utility
 const cn = (...classes) => classes.filter(Boolean).join(" ");

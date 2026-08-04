@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { ProductCard } from '../ProductCard';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../core/context/AppContext';
 
 export const MoreProducts = ({ title = "More Fragrances You May Like", category, currentProductId, limit = 8 }) => {
   const { 

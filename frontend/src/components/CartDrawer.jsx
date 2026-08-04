@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, ShoppingBag, Trash2, Minus, Plus, CheckCircle, CreditCard, ArrowRight, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './ui/sheet';
-import { formatBDT } from '../utils/formatCurrency';
+import { formatBDT } from '../core/utils/formatCurrency';
 
 export const CartDrawer = ({
   isCartOpen,

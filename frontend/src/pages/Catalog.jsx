@@ -1,8 +1,8 @@
 import React from 'react';
 import { SlidersHorizontal, Sparkles } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 import { ProductCard } from '../components/ProductCard';
-import { getDefaultSelection } from '../store/productHelpers';
+import { getDefaultSelection } from '../core/store/productHelpers';
 
 
 export const Catalog = () => {

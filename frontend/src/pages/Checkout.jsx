@@ -17,9 +17,9 @@ import {
   Tag
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { formatBDT as fmtBDT } from '../utils/formatCurrency';
-import { useApp } from '../context/AppContext';
-import { DISTRICTS as districtData } from '../lib/districts.js';
+import { formatBDT as fmtBDT } from '../core/utils/formatCurrency';
+import { useApp } from '../core/context/AppContext';
+import { DISTRICTS as districtData } from '../core/lib/districts.js';
 
 const DISTRICT_THANAS = {
   Dhaka: [

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Compass, Heart, ShoppingBag, Search, Menu, X, ChevronDown, ChevronUp, ChevronRight, User, LogIn, Sparkles, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 import SearchDropdown from './SearchDropdown';
 
 import menuData from '../data/menuData.json';

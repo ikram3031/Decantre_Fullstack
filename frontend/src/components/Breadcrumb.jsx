@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 
 export const Breadcrumb = ({ items }) => {
   const location = useLocation();
