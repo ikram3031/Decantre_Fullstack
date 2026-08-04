@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { buildProductFilter } from './src/utils/productUtils.js';
-import { ProductModel } from './src/models/product.model.js';
+import { buildProductFilter } from './src/core/utils/productUtils.js';
+import { ProductModel } from './src/core/models/product.model.js';
 
 dotenv.config();
 

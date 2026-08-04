@@ -1,0 +1,2 @@
+src/config/config.client.json merge=ours
+src/config/config.core.json merge=ours
