@@ -359,7 +359,7 @@ export const Shop = () => {
 
   const handleCategorySelect = (categorySlug) => {
     const params = new URLSearchParams(searchParams);
-    if (categorySlug === 'All') {
+    if (categorySlug?.toLowerCase() === 'all') {
       params.delete('category');
     } else {
       params.set('category', categorySlug);
