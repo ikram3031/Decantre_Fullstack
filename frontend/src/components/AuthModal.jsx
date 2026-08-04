@@ -23,6 +23,25 @@ export const AuthModal = () => {
     addToast
   } = useApp();
 
+  // Mapping developer jargon and backend validation failures to clean, descriptive customer-facing messages
+  const getFriendlyErrorMessage = (error, defaultMsg = 'An unexpected error occurred. Please try again.') => {
+    const rawMessage = error?.message || String(error);
+    if (!rawMessage) return defaultMsg;
+
+    const lowerMsg = rawMessage.toLowerCase();
+    if (lowerMsg.includes('authorization header missing') || lowerMsg.includes('jwt malformed') || lowerMsg.includes('unauthorized')) {
+      return 'Your authentication session has expired. Please log in again.';
+    }
+    if (lowerMsg.includes('invalid credentials') || lowerMsg.includes('password does not match') || lowerMsg.includes('incorrect password')) {
+      return 'Invalid email or password. Please verify and try again.';
+    }
+    if (lowerMsg.includes('failed to fetch') || lowerMsg.includes('networkerror')) {
+      return 'Network connection issue. Please check your internet connection.';
+    }
+    return rawMessage;
+  };
+
+
   const [mode, setMode] = useState(authModalMode); // 'login' | 'register' | 'otp' | 'profile' | 'forgot' | 'reset'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -208,7 +227,7 @@ export const AuthModal = () => {
       addToast(`OTP verified successfully! Welcome, ${displayName}.`, 'success');
       handleClose();
     } catch (err) {
-      addToast(err?.message || 'An unexpected error occurred. Please try again.', 'error');
+      addToast(getFriendlyErrorMessage(err, 'An unexpected error occurred. Please try again.'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -271,7 +290,7 @@ export const AuthModal = () => {
         setLoginStep(2);
         addToast('Email verified. Please enter your password.', 'success');
       } catch (err) {
-        addToast(err?.message || 'Email check failed. Please check the address.', 'error');
+        addToast(getFriendlyErrorMessage(err, 'Email check failed. Please check the address.'), 'error');
       } finally {
         setIsLoading(false);
       }
@@ -313,7 +332,7 @@ export const AuthModal = () => {
         addToast(`Login successful! Welcome back, ${displayName}.`, 'success');
         handleClose();
       } catch (err) {
-        addToast(err?.message || 'Login failed. Please try again.', 'error');
+        addToast(getFriendlyErrorMessage(err, 'Login failed. Please try again.'), 'error');
       } finally {
         setIsLoading(false);
       }
@@ -383,7 +402,7 @@ export const AuthModal = () => {
         addToast('Account created! Please verify the 6-digit code sent to your email.', 'success');
       }
     } catch (err) {
-      addToast(err?.message || 'Registration failed. Please try again later.', 'error');
+      addToast(getFriendlyErrorMessage(err, 'Registration failed. Please try again later.'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -407,7 +426,7 @@ export const AuthModal = () => {
       setResendTimer(180);
       addToast('A password reset OTP has been sent to your email.', 'success');
     } catch (err) {
-      addToast(err?.message || 'Unable to request a password reset right now.', 'error');
+      addToast(getFriendlyErrorMessage(err, 'Unable to request a password reset right now.'), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -453,7 +472,7 @@ export const AuthModal = () => {
       addToast('Password reset complete. Your new member session is active.', 'success');
       handleClose();
     } catch (err) {
-      addToast(err?.message || 'Password reset failed. Please try again.', 'error');
+      addToast(getFriendlyErrorMessage(err, 'Password reset failed. Please try again.'), 'error');
     } finally {
       setIsLoading(false);
     }

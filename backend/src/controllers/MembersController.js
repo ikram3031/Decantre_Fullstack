@@ -517,16 +517,16 @@ export const checkMemberEmail = async (req, res, next) => {
       await member.save();
 
       // Dispatch verification email containing the 6-digit OTP
-      try {
-        await sendOtpEmail({
-          toEmail: member.email,
-          otp,
-          name: member.name,
-          type: "registration",
-        });
-      } catch (emailError) {
-        logger.error({ error: emailError, email: normalizedEmail }, "Failed to send verification OTP email");
-        return res.status(500).json({ status: "error", message: "Failed to send verification OTP email" });
+      const emailResult = await sendOtpEmail({
+        toEmail: member.email,
+        otp,
+        name: member.name,
+        type: "registration",
+      });
+
+      if (!emailResult.delivered) {
+        logger.error({ email: normalizedEmail, reason: emailResult.reason }, "Failed to send verification OTP email");
+        return res.status(500).json({ status: "error", message: emailResult.reason || "Failed to send verification OTP email" });
       }
 
       console.log(`Generated login verification OTP for unverified user ${normalizedEmail}: ${otp}`);
@@ -590,21 +590,21 @@ export const loginMember = async (req, res, next) => {
       member.emailOtpExpiresAt = otpExpires;
       await member.save();
 
-      try {
-        await sendOtpEmail({
-          toEmail: member.email,
-          otp,
-          name: member.name,
-          type: "registration",
-        });
-      } catch (emailError) {
+      const emailResult = await sendOtpEmail({
+        toEmail: member.email,
+        otp,
+        name: member.name,
+        type: "registration",
+      });
+
+      if (!emailResult.delivered) {
         logger.error(
-          { error: emailError, email: normalizedEmail },
+          { email: normalizedEmail, reason: emailResult.reason },
           "Failed to send verification OTP email during unverified login attempt",
         );
         return res
           .status(500)
-          .json({ status: "error", message: "Verification required, but failed to send OTP email" });
+          .json({ status: "error", message: emailResult.reason || "Verification required, but failed to send OTP email" });
       }
 
       console.log(`Generated login verification OTP for unverified user ${normalizedEmail}: ${otp}`);
@@ -688,21 +688,21 @@ export const resendMemberOtp = async (req, res, next) => {
     member.emailOtpExpiresAt = otpExpires;
     await member.save();
 
-    try {
-      await sendOtpEmail({
-        toEmail: member.email,
-        otp,
-        name: member.name,
-        type: "registration",
-      });
-    } catch (emailError) {
+    const emailResult = await sendOtpEmail({
+      toEmail: member.email,
+      otp,
+      name: member.name,
+      type: "registration",
+    });
+
+    if (!emailResult.delivered) {
       logger.error(
-        { error: emailError, email: trimmedEmail },
+        { email: trimmedEmail, reason: emailResult.reason },
         "Failed to resend OTP email",
       );
       return res
         .status(500)
-        .json({ status: "error", message: "Failed to send OTP email" });
+        .json({ status: "error", message: emailResult.reason || "Failed to send OTP email" });
     }
 
     console.log(`Resend OTP for ${trimmedEmail}: ${otp}`);
@@ -795,21 +795,21 @@ export const forgotPassword = async (req, res, next) => {
     member.emailOtpExpiresAt = otpExpires;
     await member.save();
 
-    try {
-      await sendOtpEmail({
-        toEmail: member.email,
-        otp,
-        name: member.name,
-        type: "forgot-password",
-      });
-    } catch (emailError) {
+    const emailResult = await sendOtpEmail({
+      toEmail: member.email,
+      otp,
+      name: member.name,
+      type: "forgot-password",
+    });
+
+    if (!emailResult.delivered) {
       logger.error(
-        { error: emailError, email: trimmedEmail },
+        { email: trimmedEmail, reason: emailResult.reason },
         "Failed to send password reset OTP email",
       );
       return res.status(500).json({
         status: "error",
-        message: "Failed to send password reset email",
+        message: emailResult.reason || "Failed to send password reset email",
       });
     }
 
