@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import path from "path";
 import { fileURLToPath } from "url";
-import { buildOtpEmailHtml } from "../templates/otpEmailTemplate.js";
+import { buildOtpEmailHtml } from "../../templates/otpEmailTemplate.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
