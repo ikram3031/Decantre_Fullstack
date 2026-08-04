@@ -749,17 +749,32 @@ export const Shop = () => {
             </div>
 
             {totalPages > 1 && (
-              <div className="flex flex-col items-center gap-3 border-t border-white/5 pt-4 lg:hidden">
-                <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
-                  Page {page} of {totalPages}
-                </span>
-                <Pagination
-                  currentPage={page}
-                  totalPages={totalPages}
-                  onPageChange={(nextPage) => handlePageChange(nextPage)}
-                  isLight={isLight}
-                  className="justify-center"
-                />
+              <div className="flex items-center justify-between border-b border-white/5 pb-4 lg:hidden w-full gap-4">
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1}
+                  className={`h-9 px-4 rounded-[4px] border ${
+                    isLight 
+                      ? 'border-zinc-200 text-zinc-800 hover:bg-zinc-50' 
+                      : 'border-gold/20 text-gold hover:bg-gold/10'
+                  } text-[10px] uppercase tracking-widest font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-30 flex-1 text-center`}
+                >
+                  Previous
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages}
+                  className={`h-9 px-4 rounded-[4px] border ${
+                    isLight 
+                      ? 'border-zinc-200 text-zinc-800 hover:bg-zinc-50' 
+                      : 'border-gold/20 text-gold hover:bg-gold/10'
+                  } text-[10px] uppercase tracking-widest font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-30 flex-1 text-center`}
+                >
+                  Next
+                </button>
               </div>
             )}
 
