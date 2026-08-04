@@ -88,7 +88,7 @@ export function RevenueChart() {
                   color: isDark ? '#f9fafb' : '#111827',
                   borderRadius: '6px',
                 }}
-                formatter={(value: number | string) => [value, 'Orders']}
+                formatter={(value: any) => [value, 'Orders']}
               />
               <Line
                 type="monotone"
