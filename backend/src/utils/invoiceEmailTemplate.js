@@ -189,8 +189,8 @@ export const buildInvoiceEmailHtml = ({
             </tr>
           </table>
           <p style="margin-top: 20px; color: #666;">${finalNotes}</p>
-          <p style="margin-top: 20px;">
-            <a class="button" href="${invoiceUrl}">View this invoice online</a>
+          <p style="margin-top: 30px; text-align: center;">
+            <a href="${invoiceUrl}" style="display: inline-block; padding: 12px 28px; background-color: #C5A059; color: #ffffff; text-decoration: none; border-radius: 4px; font-weight: bold; font-family: sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">See & Download Invoice</a>
           </p>
         </div>
       </body>

@@ -15,7 +15,8 @@ export const ThankYou = () => {
   const searchParams = new URLSearchParams(location.search);
   const orderIdFromUrl = searchParams.get('orderId') || searchParams.get('orderNumber') || searchParams.get('id');
   const persistedOrderNumber = typeof window !== 'undefined' ? window.localStorage.getItem('luxury_last_order_number') : null;
-  const orderNumber = orderIdFromUrl || apiOrderNumber || persistedOrderNumber || "";
+  const rawOrderNumber = orderIdFromUrl || apiOrderNumber || persistedOrderNumber || "";
+  const orderNumber = rawOrderNumber ? (rawOrderNumber.toString().startsWith('D') ? rawOrderNumber : `D${rawOrderNumber}`) : "";
   const formattedDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',

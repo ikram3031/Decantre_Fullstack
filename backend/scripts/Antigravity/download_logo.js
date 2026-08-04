@@ -12,7 +12,7 @@ async function downloadLogo() {
     fs.mkdirSync(destDir, { recursive: true });
   }
   
-  const destPath = path.join(destDir, "decantre-logo.webp");
+  const destPath = path.join(destDir, "logo.webp");
   console.log(`Downloading logo from ${url} to ${destPath}...`);
   
   const res = await fetch(url);

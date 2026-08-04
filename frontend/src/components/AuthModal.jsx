@@ -73,7 +73,7 @@ export const AuthModal = () => {
     setLoginStep(1); // Reset login flow step back to email check
   }, [authModalMode, isAuthModalOpen]);
 
-  // OTP Countdown Timer — auto-resends when it reaches 0
+  // OTP Countdown Timer
   useEffect(() => {
     if (mode !== 'otp') return;
     if (resendTimer <= 0) return;
@@ -82,8 +82,6 @@ export const AuthModal = () => {
       setResendTimer((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          // Auto-trigger resend when timer expires
-          handleAutoResend();
           return 0;
         }
         return prev - 1;
@@ -91,7 +89,6 @@ export const AuthModal = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, resendTimer]);
 
   if (!isAuthModalOpen) return null;
@@ -239,21 +236,11 @@ export const AuthModal = () => {
     await triggerResend();
   };
 
-  // Called automatically when timer hits 0
-  const handleAutoResend = async () => {
-    if (isResending) return;
-    await triggerResend({ auto: true });
-  };
-
-  const triggerResend = async ({ auto = false } = {}) => {
+  const triggerResend = async () => {
     setIsResending(true);
     try {
       await resendMemberOtp({ email });
-      if (auto) {
-        addToast('OTP expired — a new code has been sent to your email.', 'info');
-      } else {
-        addToast('A new 6-digit verification code has been dispatched to your email.', 'success');
-      }
+      addToast('A new 6-digit verification code has been dispatched to your email.', 'success');
       setResendTimer(180);
       setOtpValues(['', '', '', '', '', '']);
       otpInputsRef.current[0]?.focus();
@@ -487,7 +474,7 @@ export const AuthModal = () => {
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[999] flex items-start sm:items-center justify-center p-4 pt-10 sm:pt-0 bg-black/80 backdrop-blur-md"
+        className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
         onClick={handleClose}
       >
         <motion.div
@@ -495,7 +482,7 @@ export const AuthModal = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-          className="relative w-full max-w-md max-h-[calc(100vh-2rem)] bg-zinc-900/95 border border-zinc-700/80 rounded-sm overflow-hidden shadow-2xl p-6 sm:p-8 overflow-y-auto"
+          className="relative w-full max-w-md max-h-[calc(100vh-3rem)] bg-zinc-900/95 border border-zinc-700/80 rounded-sm overflow-hidden shadow-2xl p-6 sm:p-8 overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Decorative Top Accent Line */}

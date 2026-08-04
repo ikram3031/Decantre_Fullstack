@@ -37,7 +37,7 @@ export function RecentTransactionsTable() {
     <Card className="col-span-1 lg:col-span-3">
       <CardHeader>
         <CardTitle>Recent Transactions</CardTitle>
-        <CardDescription>You have {orders?.length || 0} recent transactions.</CardDescription>
+        <CardDescription>You have {orders?.data?.length || 0} recent transactions.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
@@ -59,8 +59,8 @@ export function RecentTransactionsTable() {
                   <TableCell className="text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
                 </TableRow>
               ))
-            ) : orders && orders.length > 0 ? (
-              orders.slice(0, 5).map((tx) => (
+            ) : orders?.data && orders.data.length > 0 ? (
+              orders.data.slice(0, 5).map((tx) => (
                 <TableRow key={tx.id}>
                   <TableCell className="font-medium">{tx.id}</TableCell>
                   <TableCell>{tx.customerName}</TableCell>

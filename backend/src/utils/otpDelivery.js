@@ -64,8 +64,8 @@ export async function sendOtpEmail({
       html,
       attachments: [
         {
-          filename: 'decantre-logo.webp',
-          path: path.join(__dirname, '../assets/decantre-logo.webp'),
+          filename: 'logo.webp',
+          path: path.join(__dirname, '../assets/logo.webp'),
           cid: 'logo' // maps to src="cid:logo" in email HTML
         }
       ]
