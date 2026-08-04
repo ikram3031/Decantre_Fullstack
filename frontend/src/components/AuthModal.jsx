@@ -9,7 +9,9 @@ import {
   resendMemberOtp,
   forgotMemberPassword,
   resetMemberPassword,
+  checkMemberEmail, // Import email checking API helper
 } from '../lib/api';
+
 
 export const AuthModal = () => {
   const {
@@ -31,6 +33,8 @@ export const AuthModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [loginStep, setLoginStep] = useState(1); // 1: check email status, 2: password input flow
+
 
   // OTP State (6 Digits)
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
@@ -47,6 +51,7 @@ export const AuthModal = () => {
   // Synchronize internal state with global state trigger
   React.useEffect(() => {
     setMode(authModalMode);
+    setLoginStep(1); // Reset login flow step back to email check
   }, [authModalMode, isAuthModalOpen]);
 
   // OTP Countdown Timer — auto-resends when it reaches 0
@@ -74,6 +79,7 @@ export const AuthModal = () => {
 
   const handleClose = () => {
     setAuthModal(false);
+    setLoginStep(1); // Reset step back to 1 on modal close
     // Reset fields
     setEmail('');
     setPassword('');
@@ -174,6 +180,15 @@ export const AuthModal = () => {
         return;
       }
 
+      if (response.requiresPasswordReset || response.data?.requiresPasswordReset) {
+        setOtpContext('forgot');
+        setMode('reset');
+        setPassword('');
+        setConfirmPassword('');
+        addToast('OTP verified successfully. Please reset your password to activate your account.', 'success');
+        return;
+      }
+
       if (!isVerified) {
         addToast('Verification could not be completed. Please try again.', 'error');
         return;
@@ -232,42 +247,76 @@ export const AuthModal = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      addToast('Please enter both your email and password.', 'error');
+
+    // Step 1: Query email verification status
+    if (loginStep === 1) {
+      if (!email) {
+        addToast('Please enter your email address.', 'error');
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const response = await checkMemberEmail({ email });
+
+        // Trigger OTP verification flow if user email is unverified
+        if (response.requiresOtp || response.isEmailVerified === false) {
+          setOtpContext('register');
+          setMode('otp');
+          setResendTimer(180);
+          addToast('Verification required. Enter the 6-digit code sent to your email.', 'info');
+          return;
+        }
+
+        // Email verified, proceed to password submission step
+        setLoginStep(2);
+        addToast('Email verified. Please enter your password.', 'success');
+      } catch (err) {
+        addToast(err?.message || 'Email check failed. Please check the address.', 'error');
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const response = await loginMember({ email, password });
-
-      if (response.requiresOtp || response.isEmailVerified === false || response.data?.requiresOtp || response.data?.isEmailVerified === false) {
-        setOtpContext('register');
-        setMode('otp');
-        setResendTimer(180);
-        addToast('Verification required. Enter the 6-digit code sent to your email.', 'info');
+    // Step 2: Validate password and log in
+    if (loginStep === 2) {
+      if (!email || !password) {
+        addToast('Please enter both your email and password.', 'error');
         return;
       }
 
-      const userData = response.user || response.data?.user || response.data || {};
-      const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
-      const refreshToken = response.refreshToken || response.data?.refreshToken;
+      setIsLoading(true);
+      try {
+        const response = await loginMember({ email, password });
 
-      const displayName = userData.name || userData.fullName || email.split('@')[0];
-      const loggedInUser = {
-        name: displayName,
-        email: userData.email || email,
-        tier: userData.tier || 'Elite Connoisseur',
-        raw: userData,
-      };
+        if (response.requiresOtp || response.isEmailVerified === false || response.data?.requiresOtp || response.data?.isEmailVerified === false) {
+          setOtpContext('register');
+          setMode('otp');
+          setResendTimer(180);
+          addToast('Verification required. Enter the 6-digit code sent to your email.', 'info');
+          return;
+        }
 
-      setUser(loggedInUser, { accessToken, refreshToken });
-      addToast(`Login successful! Welcome back, ${displayName}.`, 'success');
-      handleClose();
-    } catch (err) {
-      addToast(err?.message || 'Login failed. Please try again.', 'error');
-    } finally {
-      setIsLoading(false);
+        const userData = response.user || response.data?.user || response.data || {};
+        const accessToken = response.accessToken || response.token || response.data?.token || response.data?.accessToken;
+        const refreshToken = response.refreshToken || response.data?.refreshToken;
+
+        const displayName = userData.name || userData.fullName || email.split('@')[0];
+        const loggedInUser = {
+          name: displayName,
+          email: userData.email || email,
+          tier: userData.tier || 'Elite Connoisseur',
+          raw: userData,
+        };
+
+        setUser(loggedInUser, { accessToken, refreshToken });
+        addToast(`Login successful! Welcome back, ${displayName}.`, 'success');
+        handleClose();
+      } catch (err) {
+        addToast(err?.message || 'Login failed. Please try again.', 'error');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -768,34 +817,49 @@ export const AuthModal = () => {
                     type="email"
                     placeholder=""
                     value={email}
+                    disabled={mode === 'login' && loginStep === 2}
                     onChange={(e) => {
                       setEmail(e.target.value);
                       setEmailError(validateEmail(e.target.value));
                     }}
                     onBlur={(e) => setEmailError(validateEmail(e.target.value))}
-                    className={`w-full bg-zinc-800/80 border ${emailError ? 'border-rose-500' : 'border-zinc-700/80'} focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500`}
+                    className={`w-full bg-zinc-800/80 border ${emailError ? 'border-rose-500' : 'border-zinc-700/80'} focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500 disabled:opacity-50`}
                     required
                   />
                   {emailError && <p className="mt-1.5 text-[10px] text-rose-400">{emailError}</p>}
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-semibold block">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
-                  <input
-                    type="password"
-                    placeholder=""
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
-                    required
-                  />
+              {/* Password field only shown directly for registration or step 2 of login */}
+              {(mode === 'register' || (mode === 'login' && loginStep === 2)) && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] uppercase tracking-[0.2em] text-zinc-400 font-semibold block">
+                      Password
+                    </label>
+                    {mode === 'login' && loginStep === 2 && (
+                      <button
+                        type="button"
+                        onClick={() => setLoginStep(1)}
+                        className="text-[10px] uppercase tracking-wider text-gold hover:underline cursor-pointer bg-transparent border-none outline-none flex items-center gap-1 font-bold"
+                      >
+                        <ArrowLeft className="w-3 h-3" /> Change Email
+                      </button>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-gold/60 absolute left-3.5 top-3.5" />
+                    <input
+                      type="password"
+                      placeholder=""
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 rounded-sm py-3.5 pl-11 pr-4 text-xs font-sans text-white focus:outline-none transition-colors placeholder-zinc-500"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {mode === 'register' && (
                 <div className="space-y-1.5">
@@ -828,7 +892,11 @@ export const AuthModal = () => {
                   ) : (
                     <>
                       <ShieldCheck className="w-4 h-4" />
-                      <span>{mode === 'login' ? 'Log In' : 'Become a Member'}</span>
+                      <span>
+                        {mode === 'login'
+                          ? (loginStep === 1 ? 'Next' : 'Log In')
+                          : 'Become a Member'}
+                      </span>
                     </>
                   )}
                 </button>

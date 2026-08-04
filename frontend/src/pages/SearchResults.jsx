@@ -5,6 +5,8 @@ import { useApp } from '../context/AppContext';
 import { formatBDT } from '../utils/formatCurrency';
 import { ProductCard } from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/Skeleton';
+import { getDefaultSelection } from '../store/productHelpers';
+
 
 export const SearchResults = () => {
   const {
@@ -144,7 +146,7 @@ export const SearchResults = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
           {!isLoadingProducts && allProducts.map((prod) => {
-            const currentSel = cardSelections[prod.id] || { size: '100ml', concentration: 'Eau de Parfum' };
+            const currentSel = cardSelections[prod.id] || getDefaultSelection(prod);
             return (
               <ProductCard
                 key={prod.id}

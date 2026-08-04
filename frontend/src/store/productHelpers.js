@@ -346,3 +346,16 @@ export const mapRemoteProduct = (product = {}) => {
     raw: product,
   };
 };
+
+export const getDefaultSelection = (product = {}) => {
+  const variations = product.variations || [];
+  if (variations.length === 0) {
+    return { size: "", concentration: "Eau de Parfum" };
+  }
+  // Find variation with the lowest price
+  const lowest = variations.reduce((min, curr) => {
+    return (curr.price < min.price) ? curr : min;
+  }, variations[0]);
+  return { size: lowest?.size || "", concentration: "Eau de Parfum" };
+};
+

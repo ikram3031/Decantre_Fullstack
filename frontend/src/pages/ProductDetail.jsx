@@ -1,11 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useAppStore } from '../store/useAppStore';
 import { formatBDT } from '../utils/formatCurrency';
 import { mapRemoteProduct, resolveBrandName, resolveCategoryName } from '../store/productHelpers';
 import { fetchProductDetails, fetchProducts } from '../lib/api';
 import { MoreProducts } from '../components/sections/MoreProducts';
-import { RecentlyViewedProducts } from '../utils/utilityFunctions';
+import { RecentlyViewedProducts } from '../components/sections/RecentlyViewedProducts';
+
+const addToRecentlyViewed = (id) => {
+  if (!id) return;
+  try {
+    const stored = localStorage.getItem('recently_viewed');
+    let list = stored ? JSON.parse(stored) : [];
+    if (!Array.isArray(list)) list = [];
+    
+    // Filter out if already exists, and push to front (max 10)
+    list = list.filter(item => String(item) !== String(id));
+    list.unshift(id);
+    list = list.slice(0, 10);
+    
+    localStorage.setItem('recently_viewed', JSON.stringify(list));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 import { 
   ArrowLeft, 
   ShoppingCart, 
@@ -28,23 +47,20 @@ import {
   MessageSquare
 } from 'lucide-react';
 
-import addToRecentlyViewed from '../utils/recentlyViewed';
-
 export const ProductDetail = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { 
-    products, 
-    wishlist, 
-    toggleWishlist, 
-    handleAddToCart, 
-    cart,
-    setIsCartOpen,
-    addToast,
-    user,
-    setAuthModal,
-    currentTheme
-  } = useApp();
+  
+  // Use specific selectors to avoid subscribing to the entire store
+  const products = useAppStore((state) => state.products);
+  const wishlist = useAppStore((state) => state.wishlist);
+  const toggleWishlist = useAppStore((state) => state.toggleWishlist);
+  const handleAddToCart = useAppStore((state) => state.handleAddToCart);
+  const setIsCartOpen = useAppStore((state) => state.setIsCartOpen);
+  const addToast = useAppStore((state) => state.addToast);
+  const user = useAppStore((state) => state.user);
+  const setAuthModal = useAppStore((state) => state.setAuthModal);
+  const currentTheme = useAppStore((state) => state.currentTheme);
 
   const isLight = currentTheme === 'light';
   const did = searchParams.get('did') || searchParams.get('id');
@@ -95,7 +111,6 @@ export const ProductDetail = () => {
         if (fetched) {
           setProduct(fetched);
           setIsLoading(false);
-          // Add to recently viewed in localStorage
           addToRecentlyViewed(fetched.id);
           return;
         }
@@ -126,7 +141,7 @@ export const ProductDetail = () => {
     };
 
     loadProductDetail();
-  }, [did, products]);
+  }, [did]);
 
   // Dynamic variations directly from API
   const decantSwatches = React.useMemo(() => {
@@ -153,6 +168,22 @@ export const ProductDetail = () => {
       setSelectedSize(decantSwatches[0].size);
     }
   }, [decantSwatches, selectedSize]);
+
+  const activeSwatch = decantSwatches.find(s => s.size === selectedSize) || decantSwatches[0] || { size: 'Full Bottle', price: product?.price || product?.basePrice };
+
+  const isSwatchOutOfStock = React.useMemo(() => {
+    if (!product) return true;
+    if (product.stockStatus === 'outofstock') return true;
+    if (activeSwatch && activeSwatch.raw) {
+      const swatchRaw = activeSwatch.raw;
+      return (
+        swatchRaw.stock_status === 'outofstock' || 
+        swatchRaw.stockStatus === 'outofstock' || 
+        swatchRaw.stockQuantity === 0
+      );
+    }
+    return product.stockQuantity === 0;
+  }, [product, activeSwatch]);
 
   if (isLoading) {
     return (
@@ -184,21 +215,7 @@ export const ProductDetail = () => {
     );
   }
 
-  const activeSwatch = decantSwatches.find(s => s.size === selectedSize) || decantSwatches[0] || {};
   const unitPrice = activeSwatch.price ?? product.basePrice ?? 980;
-
-  const isSwatchOutOfStock = React.useMemo(() => {
-    if (!product) return true;
-    if (product.stockStatus === 'outofstock') return true;
-    if (activeSwatch && activeSwatch.raw) {
-      const swatchRaw = activeSwatch.raw;
-      return (
-        swatchRaw.stock_status === 'outofstock' || 
-        swatchRaw.stockQuantity === 0
-      );
-    }
-    return product.stockQuantity === 0;
-  }, [product, activeSwatch]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -321,53 +338,56 @@ export const ProductDetail = () => {
             </div>
 
             {/* 3-Column Variation Swatches */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-sans uppercase tracking-widest text-zinc-400 font-bold">
-                  Select Decant Size:
-                </span>
-                <button 
-                  onClick={() => setIsSizeGuideOpen(true)}
-                  className="text-[10px] uppercase tracking-wider text-gold hover:underline cursor-pointer"
-                >
-                  Size & Spray Guide
-                </button>
-              </div>
+            {product.type === 'variant' && decantSwatches.length > 1 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-sans uppercase tracking-widest text-zinc-400 font-bold">
+                    Select Decant Size:
+                  </span>
+                  <button 
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="text-[10px] uppercase tracking-wider text-gold hover:underline cursor-pointer"
+                  >
+                    Size & Spray Guide
+                  </button>
+                </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {decantSwatches.map((swatch) => {
-                  const isSelected = selectedSize === swatch.size;
-                  const isSwatchOut = swatch.raw && (
-                    swatch.raw.stock_status === 'outofstock' || 
-                    swatch.raw.stockQuantity === 0
-                  );
-                  return (
-                    <button
-                      key={swatch.size}
-                      onClick={() => setSelectedSize(swatch.size)}
-                      className={`p-3.5 rounded-sm border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
-                        isSelected
-                          ? 'border-gold bg-gold/15 text-gold font-bold shadow-md ring-1 ring-gold/50'
-                          : isLight
-                            ? 'border-zinc-200 bg-white text-zinc-800 hover:border-black'
-                            : 'border-white/10 bg-black/40 text-zinc-300 hover:border-gold/40'
-                      }`}
-                    >
-                      <span className="text-xs font-mono font-bold block">{swatch.label}</span>
-                      <span className="text-[11px] text-gold font-mono font-semibold block mt-1">{formatBDT(swatch.price)}</span>
-                      {swatch.sprays && (
-                        <span className="text-[10px] text-zinc-400 font-mono block mt-2">{swatch.sprays}</span>
-                      )}
-                      {isSwatchOut && (
-                        <span className="absolute top-1 right-1 text-[7px] uppercase font-bold text-red-500 bg-red-500/10 px-1 py-0.5 rounded">
-                          Out of Stock
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {decantSwatches.map((swatch) => {
+                    const isSelected = selectedSize === swatch.size;
+                    const isSwatchOut = swatch.raw && (
+                      swatch.raw.stock_status === 'outofstock' || 
+                      swatch.raw.stockStatus === 'outofstock' || 
+                      swatch.raw.stockQuantity === 0
+                    );
+                    return (
+                      <button
+                        key={swatch.size}
+                        onClick={() => setSelectedSize(swatch.size)}
+                        className={`p-3.5 rounded-sm border text-left transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+                          isSelected
+                            ? 'border-gold bg-gold/15 text-gold font-bold shadow-md ring-1 ring-gold/50'
+                            : isLight
+                              ? 'border-zinc-200 bg-white text-zinc-800 hover:border-black'
+                              : 'border-white/10 bg-black/40 text-zinc-300 hover:border-gold/40'
+                        }`}
+                      >
+                        <span className="text-xs font-mono font-bold block">{swatch.label}</span>
+                        <span className="text-[11px] text-gold font-mono font-semibold block mt-1">{formatBDT(swatch.price)}</span>
+                        {swatch.sprays && (
+                          <span className="text-[10px] text-zinc-400 font-mono block mt-2">{swatch.sprays}</span>
+                        )}
+                        {isSwatchOut && (
+                          <span className="absolute top-1 right-1 text-[7px] uppercase font-bold text-red-500 bg-red-500/10 px-1 py-0.5 rounded">
+                            Out of Stock
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity Picker */}
             <div className="space-y-2">

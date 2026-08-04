@@ -386,6 +386,29 @@ export async function createOrder(orderPayload) {
 }
 
 /**
+ * Check Member Email (via /members/check-email)
+ * Checks if email exists and is verified.
+ */
+export async function checkMemberEmail(emailPayload) {
+	const apiBaseUrl = getApiBaseUrl();
+	const res = await fetch(`${apiBaseUrl}/api/v1/members/check-email`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(emailPayload),
+	});
+	const json = await res.json().catch(() => null);
+	if (!res.ok) {
+		const errorMsg =
+			json?.errors?.join(", ") ||
+			json?.message ||
+			json?.error ||
+			"Email check failed. Please check the address.";
+		throw new Error(errorMsg);
+	}
+	return json;
+}
+
+/**
  * Member Login (via /members/login)
  */
 export async function loginMember(credentials) {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Heart, ShoppingBag, ArrowRight, ShieldCheck, PackageCheck, CircleUserRound } from 'lucide-react';
+import { User, Heart, ShoppingBag, ArrowRight, ShieldCheck, PackageCheck, CircleUserRound, LogOut } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 const tabs = [
@@ -10,7 +10,7 @@ const tabs = [
 ];
 
 export const MyAccount = () => {
-  const { user, setAuthModal, currentTheme } = useApp();
+  const { user, setUser, setAuthModal, currentTheme } = useApp();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const isLight = currentTheme === 'light';
@@ -189,6 +189,18 @@ export const MyAccount = () => {
                   <span className="flex items-center gap-2">
                     <ShoppingBag className="w-4 h-4 text-gold" />
                     Review Cart
+                  </span>
+                </button>
+                <button
+                  onClick={() => {
+                    setUser(null);
+                    navigate('/');
+                  }}
+                  className="w-full rounded-sm border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-left text-sm text-rose-400 hover:border-rose-500 hover:bg-rose-500/20"
+                >
+                  <span className="flex items-center gap-2">
+                    <LogOut className="w-4 h-4 text-rose-400" />
+                    Log Out
                   </span>
                 </button>
               </div>

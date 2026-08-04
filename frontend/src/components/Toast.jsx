@@ -4,29 +4,48 @@ import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
 export const Toast = ({ toasts, onClose }) => {
   return (
     <div id="toast-manager" className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] flex flex-col gap-3 max-w-[90vw] sm:max-w-md w-full px-4 sm:px-0">
-      {toasts.map((toast) => (
-        <div 
-          key={toast.id} 
-          id={`toast-${toast.id}`}
-          className="px-4 py-3 rounded-md shadow-2xl flex items-center justify-between gap-4 border bg-white text-zinc-900 animate-fade-in transition-all duration-300 border-zinc-200/80"
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            {toast.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />}
-            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />}
-            {toast.type === 'info' && <Info className="w-5 h-5 text-amber-600 shrink-0" />}
-            <span className="text-xs sm:text-sm font-sans font-medium text-zinc-900 tracking-wide break-words">
-              {toast.text}
-            </span>
-          </div>
-          <button 
-            onClick={() => onClose(toast.id)}
-            className="text-zinc-400 hover:text-zinc-800 p-1.5 hover:bg-zinc-100 rounded-full transition-all cursor-pointer shrink-0"
-            aria-label="Close notification"
+      {toasts.map((toast) => {
+        // Resolve dynamic styles based on toast type for luxury look
+        const type = toast.type || 'info';
+        let bgClass = 'bg-zinc-950/95 border-[#C5A059]/30 text-amber-50 shadow-xl';
+        let iconColor = 'text-[#C5A059]';
+        let closeBtnClass = 'text-[#C5A059]/60 hover:text-white hover:bg-[#C5A059]/10';
+        let IconComponent = Info;
+
+        if (type === 'success') {
+          bgClass = 'bg-zinc-950/95 border-emerald-500/30 text-emerald-50 shadow-xl';
+          iconColor = 'text-emerald-400';
+          closeBtnClass = 'text-emerald-400/60 hover:text-emerald-200 hover:bg-emerald-500/10';
+          IconComponent = CheckCircle2;
+        } else if (type === 'error') {
+          bgClass = 'bg-zinc-950/95 border-rose-500/30 text-rose-50 shadow-xl';
+          iconColor = 'text-rose-400';
+          closeBtnClass = 'text-rose-400/60 hover:text-rose-200 hover:bg-rose-500/10';
+          IconComponent = AlertCircle;
+        }
+
+        return (
+          <div 
+            key={toast.id} 
+            id={`toast-${toast.id}`}
+            className={`px-4 py-3.5 rounded-sm shadow-2xl flex items-center justify-between gap-4 border backdrop-blur-sm animate-fade-in transition-all duration-300 ${bgClass}`}
           >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      ))}
+            <div className="flex items-center gap-3 min-w-0">
+              <IconComponent className={`w-5 h-5 shrink-0 ${iconColor}`} />
+              <span className="text-xs sm:text-[13px] font-sans tracking-wide break-words font-medium">
+                {toast.text}
+              </span>
+            </div>
+            <button 
+              onClick={() => onClose(toast.id)}
+              className={`p-1.5 rounded-full transition-all cursor-pointer shrink-0 ${closeBtnClass}`}
+              aria-label="Close notification"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 };

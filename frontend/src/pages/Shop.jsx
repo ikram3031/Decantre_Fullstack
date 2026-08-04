@@ -8,6 +8,8 @@ import { ProductCard } from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/Skeleton';
 import { Pagination } from '../components/ui/Pagination';
 import menuData from '../data/menuData.json';
+import { getDefaultSelection } from '../store/productHelpers';
+
 
 const staticBrandHierarchy = menuData.brandHierarchy || {};
 
@@ -622,7 +624,7 @@ export const Shop = () => {
             {/* Perfume list */}
             <div className={gridColumnsClass}>
               {!isLoadingProducts && displayedProducts.map((prod) => {
-                const currentSel = cardSelections[prod.id] || { size: '100ml', concentration: 'Eau de Parfum' };
+                const currentSel = cardSelections[prod.id] || getDefaultSelection(prod);
                 return (
                   <ProductCard 
                     key={prod.id}

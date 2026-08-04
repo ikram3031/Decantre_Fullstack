@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createMember, getMemberById, listMembers, updateMember, deleteMember, registerMember, verifyMemberOtp, loginMember, resendMemberOtp, forgotPassword, resetPassword, changeMemberPassword, refreshMemberToken, logoutMember } from "../controllers/MembersController.js";
+import { createMember, getMemberById, listMembers, updateMember, deleteMember, registerMember, verifyMemberOtp, loginMember, checkMemberEmail, resendMemberOtp, forgotPassword, resetPassword, changeMemberPassword, refreshMemberToken, logoutMember } from "../controllers/MembersController.js";
 import { authenticateToken, authorizeRoles } from "../middlewares/auth.middleware.js";
 
 const membersRouter = Router();
@@ -7,6 +7,7 @@ const membersRouter = Router();
 // Public member auth and email-verification flow.
 membersRouter.post("/register", registerMember);
 membersRouter.post("/login", loginMember);
+membersRouter.post("/check-email", checkMemberEmail); // Step 1: verify email exist/verified status
 membersRouter.post("/refresh-token", refreshMemberToken);
 membersRouter.post("/logout", logoutMember);
 membersRouter.post("/verify-otp", verifyMemberOtp);

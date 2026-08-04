@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { ProductCard } from '../components/ProductCard';
+import { getDefaultSelection } from '../store/productHelpers';
 import { Sparkles, Heart, Compass } from 'lucide-react';
+
 import { Link } from 'react-router-dom';
 
 export const Wishlist = () => {
@@ -55,7 +57,7 @@ export const Wishlist = () => {
             {/* Grid of Wishlist Products */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {wishlistedProducts.map((prod) => {
-                const currentSel = cardSelections[prod.id] || { size: '100ml', concentration: 'Eau de Parfum' };
+                const currentSel = cardSelections[prod.id] || getDefaultSelection(prod);
                 return (
                   <ProductCard
                     key={prod.id}
@@ -108,7 +110,7 @@ export const Wishlist = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {recommendedProducts.map((prod) => {
-                  const currentSel = cardSelections[prod.id] || { size: '100ml', concentration: 'Eau de Parfum' };
+                  const currentSel = cardSelections[prod.id] || getDefaultSelection(prod);
                   return (
                     <ProductCard
                       key={prod.id}

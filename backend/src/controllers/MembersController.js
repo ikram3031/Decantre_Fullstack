@@ -389,10 +389,21 @@ export const verifyMemberOtp = async (req, res, next) => {
         .json({ status: "error", message: "Invalid or expired OTP" });
     }
 
+    if (!member.isEmailVerified) {
+      return res.json({
+        status: "success",
+        requiresPasswordReset: true,
+        message: "OTP verified successfully. Please reset your password to activate your account.",
+        data: {
+          email: member.email,
+          otp: trimmedOtp,
+        },
+      });
+    }
+
     member.emailOtp = undefined;
     member.emailOtpExpiresAt = undefined;
     member.isEmailVerified = true;
-    member.verified = true;
     member.emailVerifiedAt = new Date();
     await member.save();
 
@@ -474,6 +485,70 @@ export const logoutMember = async (req, res, next) => {
     return res.json({
       status: "success",
       message: "Logged out successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Check if member email exists and is verified. Sends OTP if unverified.
+export const checkMemberEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body ?? {};
+    const normalizedEmail = typeof email === "string" ? email.toLowerCase().trim() : "";
+
+    if (!normalizedEmail) {
+      return res.status(400).json({ status: "error", message: "Email is required" });
+    }
+
+    // Lookup member by email and select OTP fields
+    const member = await MemberModel.findOne({ email: normalizedEmail }).select("+emailOtp +emailOtpExpiresAt");
+    if (!member) {
+      return res.status(404).json({ status: "error", message: "No member account found with this email" });
+    }
+
+    // If migrated user or unverified email, generate and send verification OTP
+    if (!member.isEmailVerified) {
+      const otp = String(Math.floor(100000 + Math.random() * 900000));
+      const otpExpires = new Date(Date.now() + 3 * 60 * 1000); // 3 minutes expiration
+
+      member.emailOtp = otp;
+      member.emailOtpExpiresAt = otpExpires;
+      await member.save();
+
+      // Dispatch verification email containing the 6-digit OTP
+      try {
+        await sendOtpEmail({
+          toEmail: member.email,
+          otp,
+          name: member.name,
+          type: "registration",
+        });
+      } catch (emailError) {
+        logger.error({ error: emailError, email: normalizedEmail }, "Failed to send verification OTP email");
+        return res.status(500).json({ status: "error", message: "Failed to send verification OTP email" });
+      }
+
+      console.log(`Generated login verification OTP for unverified user ${normalizedEmail}: ${otp}`);
+
+      return res.status(200).json({
+        status: "success",
+        requiresOtp: true,
+        isEmailVerified: false,
+        message: "Your email is not verified. A verification code has been sent to your email.",
+        data: {
+          email: member.email,
+          expiresAt: otpExpires.toISOString(),
+        },
+      });
+    }
+
+    // Email is verified, user can proceed to password input step
+    return res.status(200).json({
+      status: "success",
+      requiresOtp: false,
+      isEmailVerified: true,
+      message: "Email is verified. Please enter your password.",
     });
   } catch (error) {
     next(error);
