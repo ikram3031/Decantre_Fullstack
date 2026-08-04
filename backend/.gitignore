@@ -40,4 +40,4 @@ Thumbs.db
 uploads*
 
 # Client Specific Config
-src/config/config.client.json
+src/config/config.client.json

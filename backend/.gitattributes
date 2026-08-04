@@ -1,2 +1,3 @@
+# Protect client and core backend config files from merge overrides
 src/config/config.client.json merge=ours
 src/config/config.core.json merge=ours
