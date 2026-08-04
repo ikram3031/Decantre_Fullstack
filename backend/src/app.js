@@ -53,22 +53,7 @@ export async function createApp() {
     res.json({ "API is live": true });
   });
 
-  app.use("/api/v1/products", productsRouter);
-  app.use("/api/v1/images", imagesRouter);
-  // app.use("/api/v1/export", exportRouter);
-  app.use("/api/v1/auth", authRouter);
-  app.use("/api/v1/users", usersRouter);
-  app.use("/api/v1/assets", assetsRouter);
-  app.use("/api/v1/members", membersRouter);
-  app.use("/api/v1/sendEmail", emailRouter);
-  app.use("/api/v1/orders", ordersRouter);
-  app.use("/api/v1/payments", paymentsRouter);
-  app.use("/api/v1/billing", billingRouter);
-  app.use("/api/v1/categories", categoriesRouter);
-  app.use("/api/v1/brands", brandRouter);
-  app.use("/api/v1/dashboard", dashboardRouter);
-  app.use("/api/v1/coupons", couponRouter);
-  app.get("/api/v1/search-products", searchProducts);
+  app.use("/api/v1", coreRouter);
 
   app.use((req, res) => {
     res.status(404).json({ status: "error", message: "Resource not found" });
