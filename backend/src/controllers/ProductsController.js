@@ -159,25 +159,29 @@ export const listProducts = async (req, res, next) => {
     const paginationSource =
       method === "POST" ? req.body || {} : req.query || {};
     const { skip, limit } = parsePagination(paginationSource);
-    const sort = buildProductSort(
-      paginationSource.sortBy ?? paginationSource.sortby,
-      paginationSource.order,
-    );
+    
+    // For sorting, if using `sort=price_low_to_high` or `sortby`, parse it
+    const sortByParam = paginationSource.sort || paginationSource.sortBy || paginationSource.sortby;
+    let parsedSortBy = sortByParam;
+    let parsedOrder = paginationSource.order;
+
+    if (sortByParam === 'price_low_to_high') {
+      parsedSortBy = 'price';
+      parsedOrder = 'asc';
+    } else if (sortByParam === 'price_high_to_low') {
+      parsedSortBy = 'price';
+      parsedOrder = 'desc';
+    } else if (sortByParam === 'newest') {
+      parsedSortBy = 'createdAt';
+      parsedOrder = 'desc';
+    }
+
+    const sort = buildProductSort(parsedSortBy, parsedOrder);
 
     // Build query filter
-    let filter = {};
-    if (method === "GET") {
-      const q = (req.query.q || "").trim();
-      if (q) {
-        filter.$or = [
-          { name: { $regex: q, $options: "i" } },
-          { slug: { $regex: q, $options: "i" } },
-          { description: { $regex: q, $options: "i" } },
-        ];
-      }
-    } else {
-      filter = await buildProductFilter(req.body || {});
-    }
+    // Use the combined source from POST body or GET query
+    const filterInput = method === "POST" ? req.body || {} : req.query || {};
+    const filter = await buildProductFilter(filterInput);
 
     const filteredQuery = {
       ...filter,
@@ -193,15 +197,21 @@ export const listProducts = async (req, res, next) => {
         .lean(),
     ]);
 
+    const totalPages = Math.ceil(total / limit) || 1;
+    const currentPage = Math.floor(skip / limit) + 1;
+
     res.json({
-      data: rows.map(serializeProduct),
-      totalRows: total,
+      success: true,
+      message: "Products retrieved successfully",
       meta: {
-        total,
-        skip,
+        total_products: total,
+        current_page: currentPage,
         limit,
-        totalPages: Math.ceil(total / limit),
+        total_pages: totalPages,
+        has_next_page: currentPage < totalPages,
+        has_prev_page: currentPage > 1
       },
+      data: rows.map(serializeProduct),
     });
   } catch (err) {
     next(err);

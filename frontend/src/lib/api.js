@@ -181,63 +181,32 @@ export async function fetchProducts(opts = {}) {
 	const order = opts.order || "desc";
 	const q = opts.q || opts.search || opts.keyword || "";
 
-	const hasFilters =
-		opts.category ||
-		opts.brand ||
-		opts.season ||
-		opts.tags ||
-		opts.filter ||
-		opts.name ||
-		opts.slug ||
-		opts.did ||
-		opts.minPrice !== undefined ||
-		opts.maxPrice !== undefined;
+	const params = new URLSearchParams();
+	
+	if (q) params.set("q", q);
+	if (opts.category) params.set("category", opts.category);
+	if (opts.brand) params.set("brand", opts.brand);
+	if (opts.season) params.set("season", opts.season);
+	if (opts.tags) params.set("tags", opts.tags);
+	if (opts.filter) params.set("filter", opts.filter);
+	if (opts.name) params.set("name", opts.name);
+	if (opts.slug) params.set("slug", opts.slug);
+	if (opts.did) params.set("did", opts.did);
+	if (opts.minPrice !== undefined) params.set("min_price", opts.minPrice);
+	if (opts.maxPrice !== undefined) params.set("max_price", opts.maxPrice);
 
-	let res;
+	params.set("skip", String(skip));
+	params.set("limit", String(limit));
+	params.set("sortBy", sortBy);
+	params.set("order", order);
+
 	try {
-		if (hasFilters) {
-			const body = {};
-			if (q) body.q = q;
-			if (opts.category) body.category = opts.category;
-			if (opts.brand) body.brand = opts.brand;
-			if (opts.season) body.season = opts.season;
-			if (opts.tags) body.tags = opts.tags;
-			if (opts.filter) body.filter = opts.filter;
-			if (opts.name) body.name = opts.name;
-			if (opts.slug) body.slug = opts.slug;
-			if (opts.did) body.did = opts.did;
-			if (opts.minPrice !== undefined) body.minPrice = opts.minPrice;
-			if (opts.maxPrice !== undefined) body.maxPrice = opts.maxPrice;
-			body.skip = skip;
-			body.limit = limit;
-			body.sortBy = sortBy;
-			body.order = order;
-
-			res = await fetchWithRetry(
-				`${apiBaseUrl}/api/v1/products/search`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(body),
-				},
-				10000,
-				3,
-			);
-		} else {
-			const params = new URLSearchParams();
-			if (q) params.set("q", q);
-			params.set("skip", String(skip));
-			params.set("limit", String(limit));
-			params.set("sortBy", sortBy);
-			params.set("order", order);
-
-			res = await fetchWithRetry(
-				`${apiBaseUrl}/api/v1/products?${params.toString()}`,
-				{},
-				10000,
-				3,
-			);
-		}
+		const res = await fetchWithRetry(
+			`${apiBaseUrl}/api/v1/products?${params.toString()}`,
+			{ method: "GET" },
+			10000,
+			3,
+		);
 
 		if (!res.ok) {
 			throw new Error(`Server error: ${res.status}`);
@@ -251,7 +220,7 @@ export async function fetchProducts(opts = {}) {
 				: [];
 		const mapped = list.map(mapRemoteProduct);
 		mapped._meta = json.meta || null;
-		mapped._totalRows = json.totalRows || list.length;
+		mapped._totalRows = json.meta?.total_products ?? json.totalRows ?? list.length;
 		return mapped;
 	} catch (err) {
 		console.error("fetchProducts Error:", err);

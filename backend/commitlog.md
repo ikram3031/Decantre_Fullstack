@@ -1,5 +1,21 @@
 # Commit Log / Change Log
 
+## [2026-08-05]
+
+### 1. Products API & Filters Refactoring
+- **API Endpoint Conversion**:
+  - Converted the search/filter API from `POST /search` to `GET /api/v1/products` to adhere to REST best practices.
+  - Implemented standard URL Query parameter parsing for filters (category, brand, min_price, max_price, sort).
+- **Backend Refactoring**:
+  - Updated `ProductsController.js` and `productUtils.js` to parse URL params efficiently.
+  - Standardized the API response format to `{ success, message, meta, data }`.
+  - Fixed a query leak where `min_price` and `max_price` were directly being passed to MongoDB.
+- **Frontend Refactoring**:
+  - Migrated `api.js` `fetchProducts` to exclusively use `GET` and properly map `res.meta.total_products`.
+  - Fixed an infinite re-render loop in `Shop.jsx` causing the `PriceRangeSlider` to lock up or continuously fetch by wrapping `handlePriceRangeChange` in `useCallback` with stable URL parameter mapping.
+- **Database Optimization**:
+  - Added new indexes for `categories` and `createdAt` in `product.model.js` to improve query performance.
+
 ## [2026-07-26]
 
 ### 1. Order API Updates

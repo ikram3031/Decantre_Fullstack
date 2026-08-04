@@ -129,6 +129,8 @@ const productSchema = new Schema(
 // Price Filtering index (Duto price ebong offerPrice index kora, jeno fast query kora jay)
 productSchema.index({ price: 1, offerPrice: 1 });
 productSchema.index({ "variants.price": 1, "variants.offerPrice": 1 });
+productSchema.index({ categories: 1 });
+productSchema.index({ createdAt: -1 });
 productSchema.index({ tags: 1 });
 productSchema.index({ name: "text", description: "text", tags: "text" });
 
