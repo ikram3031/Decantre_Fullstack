@@ -505,6 +505,11 @@ export const useAppStore = create((set, get) => {
       const paymentDetails = get().paymentDetails;
       if (cart.length === 0) return;
 
+      const billingDistrict = (shippingInfo.district || '').trim();
+      const billingThana = (shippingInfo.thana || '').trim();
+      const shippingDistrict = (shippingAddress.district || '').trim();
+      const shippingThana = (shippingAddress.thana || '').trim();
+
       const requiredBilling = [
         shippingInfo.fullName,
         shippingInfo.phone,
@@ -518,12 +523,22 @@ export const useAppStore = create((set, get) => {
         return;
       }
 
+      if (['Dhaka', 'Gazipur', 'Narayanganj'].includes(billingDistrict) && !billingThana) {
+        get().addToast('Please select a Thana / Upazila for the selected billing district.', 'error');
+        return;
+      }
+
       if (paymentMethod !== 'instore' && !sameAsBilling) {
         if (!shippingAddress.fullName || !shippingAddress.fullName.trim() ||
             !shippingAddress.phone || !shippingAddress.phone.trim() ||
             !shippingAddress.address || !shippingAddress.address.trim() ||
             !shippingAddress.district || !shippingAddress.district.trim()) {
           get().addToast('Please enter required shipping fields: Recipient Name, Phone Number, Address, and District.', 'error');
+          return;
+        }
+
+        if (['Dhaka', 'Gazipur', 'Narayanganj'].includes(shippingDistrict) && !shippingThana) {
+          get().addToast('Please select a Thana / Upazila for the selected shipping district.', 'error');
           return;
         }
       }

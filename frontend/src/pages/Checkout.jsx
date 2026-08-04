@@ -260,6 +260,10 @@ export const Checkout = () => {
     const shippingPhoneValidationError = paymentMethod !== 'instore' && !sameAsBilling
       ? validatePhoneValue(shipPhone || '')
       : '';
+    const billingDistrict = (district || '').trim();
+    const billingThana = (thana || '').trim();
+    const shippingDistrict = (shipDistrict || '').trim();
+    const shippingThana = (shipThana || '').trim();
 
     setEmailError(emailValidationError);
     setPhoneError(phoneValidationError);
@@ -283,6 +287,30 @@ export const Checkout = () => {
     if (shippingPhoneValidationError) {
       addToast('Please enter a valid recipient phone number in format +8801[3-8]XXXXXXXX.', 'error');
       return;
+    }
+
+    if (['Dhaka', 'Gazipur', 'Narayanganj'].includes(billingDistrict) && !billingThana) {
+      addToast('Please select a Thana / Upazila for the selected billing district.', 'error');
+      return;
+    }
+
+    if (paymentMethod !== 'instore' && !sameAsBilling && ['Dhaka', 'Gazipur', 'Narayanganj'].includes(shippingDistrict) && !shippingThana) {
+      addToast('Please select a Thana / Upazila for the selected shipping district.', 'error');
+      return;
+    }
+
+    setShippingInfo((prev) => ({
+      ...prev,
+      district: billingDistrict,
+      thana: billingThana
+    }));
+
+    if (paymentMethod !== 'instore' && !sameAsBilling) {
+      setShippingAddress((prev) => ({
+        ...prev,
+        district: shippingDistrict,
+        thana: shippingThana
+      }));
     }
 
     handleCheckoutSubmit(e);
