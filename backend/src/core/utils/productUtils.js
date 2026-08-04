@@ -130,17 +130,22 @@ export const buildProductFilter = async (input = {}) => {
 
       const categoryQuery = /^[0-9a-fA-F]{16}$/.test(normalizedCategory)
         ? { did: normalizedCategory }
-        : { slug: normalizedCategory };
+        : {
+            $or: [
+              { slug: normalizedCategory },
+              { slug: { $regex: normalizedCategory, $options: "i" } }
+            ]
+          };
 
-      const categoryDoc = await CategoryModel.findOne(categoryQuery).lean();
-      if (categoryDoc?._id) {
-        resolved.push(categoryDoc._id);
+      const categoryDocs = await CategoryModel.find(categoryQuery).lean();
+      for (const categoryDoc of categoryDocs) {
+        if (categoryDoc?._id) {
+          resolved.push(categoryDoc._id);
+        }
       }
     }
 
-    if (resolved.length > 0) {
-      filter.categories = { $in: resolved };
-    }
+    filter.categories = { $in: resolved };
   }
 
   const brandInput = source.brand ?? source.brands;
@@ -165,24 +170,35 @@ export const buildProductFilter = async (input = {}) => {
       const normalizedBrand = normalizeValue(brandValue);
       if (!normalizedBrand) continue;
 
+      let brandDocs = [];
       if (/^[0-9a-fA-F]{16}$/.test(normalizedBrand)) {
-        resolved.push(normalizedBrand);
-        continue;
+        brandDocs = await BrandModel.find({ did: normalizedBrand }).lean();
+      } else {
+        const brandQuery = /^[0-9a-fA-F]{24}$/.test(normalizedBrand)
+          ? { _id: normalizedBrand }
+          : {
+              $or: [
+                { slug: normalizedBrand },
+                { slug: { $regex: normalizedBrand, $options: "i" } }
+              ]
+            };
+        brandDocs = await BrandModel.find(brandQuery).lean();
       }
 
-      const brandQuery = /^[0-9a-fA-F]{24}$/.test(normalizedBrand)
-        ? { _id: normalizedBrand }
-        : { slug: normalizedBrand };
-
-      const brandDoc = await BrandModel.findOne(brandQuery).lean();
-      if (brandDoc?.did) {
-        resolved.push(brandDoc.did);
+      for (const brandDoc of brandDocs) {
+        if (brandDoc.did) {
+          resolved.push(brandDoc.did);
+        }
+        const subBrands = await BrandModel.find({ parent: brandDoc._id }).lean();
+        subBrands.forEach(sub => {
+          if (sub.did) {
+            resolved.push(sub.did);
+          }
+        });
       }
     }
 
-    if (resolved.length > 0) {
-      filter.brand = { $in: resolved };
-    }
+    filter.brand = { $in: resolved };
   }
 
   const type = normalizeValue(source.type);

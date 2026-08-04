@@ -274,7 +274,7 @@ export const Shop = () => {
   };
 
   useEffect(() => {
-    setAllProducts([]);
+    // Keep previous data of allProducts to prevent jarring flashes/layout shifts
     setPage(1);
     setTotalPages(1);
     setTotalProducts(0);
@@ -728,8 +728,8 @@ export const Shop = () => {
               </div>
             )}
 
-            {/* Loading skeleton */}
-            {isLoadingProducts && (
+            {/* Loading skeleton (Only on initial load when no products are present) */}
+            {isLoadingProducts && displayedProducts.length === 0 && (
               <ProductGridSkeleton count={6} />
             )}
 
@@ -765,37 +765,61 @@ export const Shop = () => {
               </div>
             )}
 
-            {/* Perfume list */}
-            <div className={gridColumnsClass}>
-              {!isLoadingProducts && displayedProducts.map((prod) => {
-                const currentSel = cardSelections[prod.id] || getDefaultSelection(prod);
-                return (
-                  <ProductCard 
-                    key={prod.id}
-                    product={prod}
-                    currentSel={currentSel}
-                    onSizeChange={(size) => {
-                      setCardSelections(prev => ({
-                        ...prev,
-                        [prod.id]: { ...currentSel, size }
-                      }));
-                    }}
-                    onConcentrationChange={(concentration) => {
-                      setCardSelections(prev => ({
-                        ...prev,
-                        [prod.id]: { ...currentSel, concentration }
-                      }));
-                    }}
-                    wishlist={wishlist}
-                    toggleWishlist={toggleWishlist}
-                    handleOpenProductDetail={handleOpenProductDetail}
-                    handleAddToCart={handleAddToCart}
-                    calculateItemPrice={calculateItemPrice}
-                    isLargeCard={false}
-                  />
-                );
-              })}
-            </div>
+            {/* Perfume list with premium loader overlay */}
+            {displayedProducts.length > 0 && (
+              <div className="relative">
+                <AnimatePresence>
+                  {isLoadingProducts && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className={`absolute inset-0 z-10 ${isLight ? 'bg-white/40' : 'bg-black/40'} backdrop-blur-[2px] flex items-center justify-center rounded-sm`}
+                    >
+                      <div className={`flex flex-col items-center gap-3 border p-6 rounded-md shadow-2xl ${isLight ? 'bg-white border-zinc-200 text-black' : 'bg-luxury-dark border-gold/20 text-white'}`}>
+                        {/* Premium Golden Spinner */}
+                        <div className="relative w-10 h-10">
+                          <div className="absolute inset-0 rounded-full border-2 border-gold/20"></div>
+                          <div className="absolute inset-0 rounded-full border-2 border-t-gold animate-spin"></div>
+                        </div>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-semibold">Updating Collection...</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className={`${gridColumnsClass} transition-all duration-300 ${isLoadingProducts ? 'opacity-40 pointer-events-none filter blur-[1px]' : ''}`}>
+                  {displayedProducts.map((prod) => {
+                    const currentSel = cardSelections[prod.id] || getDefaultSelection(prod);
+                    return (
+                      <ProductCard 
+                        key={prod.id}
+                        product={prod}
+                        currentSel={currentSel}
+                        onSizeChange={(size) => {
+                          setCardSelections(prev => ({
+                            ...prev,
+                            [prod.id]: { ...currentSel, size }
+                          }));
+                        }}
+                        onConcentrationChange={(concentration) => {
+                          setCardSelections(prev => ({
+                            ...prev,
+                            [prod.id]: { ...currentSel, concentration }
+                          }));
+                        }}
+                        wishlist={wishlist}
+                        toggleWishlist={toggleWishlist}
+                        handleOpenProductDetail={handleOpenProductDetail}
+                        handleAddToCart={handleAddToCart}
+                        calculateItemPrice={calculateItemPrice}
+                        isLargeCard={false}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {totalPages > 1 && (
               <div className="flex flex-col items-center gap-3 border-t border-white/5 pt-4">
