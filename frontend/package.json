@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 8001",
-    "build": "vite build",
+    "prebuild": "node -e \"const fs = require('fs'); if (!fs.existsSync('src/config.theme.client.json')) fs.writeFileSync('src/config.theme.client.json', '{}');\"",
+    "build": "npm run prebuild && vite build",
     "prod": "serve -s dist -l 8001",
     "preview": "vite preview --host 0.0.0.0",
     "lint": "echo 'No lint check needed'"

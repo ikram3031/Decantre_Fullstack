@@ -10,4 +10,4 @@ src/config.theme.client.json
 .vscode/
 *.vscode
 .vscode*
-dashboard/
+dashboard
