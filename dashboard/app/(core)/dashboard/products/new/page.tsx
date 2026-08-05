@@ -35,16 +35,20 @@ interface VariantRow {
   size: string;
   price: string;
   offerPrice: string;
-  stockQuantity: string;
   sku: string;
+  imageUrl?: string;
+  imageFile?: File | null;
+  imagePreview?: string;
 }
 
 const emptyVariant = (): VariantRow => ({
   size: "",
   price: "",
   offerPrice: "",
-  stockQuantity: "0",
   sku: "",
+  imageUrl: "",
+  imageFile: null,
+  imagePreview: "",
 });
 
 interface AttributeValue {
@@ -86,6 +90,7 @@ export default function NewProductPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState("");
+  const [mainImageFile, setMainImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Type toggle
@@ -97,6 +102,7 @@ export default function NewProductPage() {
   const [price, setPrice] = useState("");
   const [offerPrice, setOfferPrice] = useState("");
   const [stockQuantity, setStockQuantity] = useState("");
+  const [stockStatus, setStockStatus] = useState("instock");
   const [sku, setSku] = useState("");
 
   // Variant product fields
@@ -145,6 +151,33 @@ export default function NewProductPage() {
     setVariantInputModes((prev) => ({ ...prev, [nextIndex]: "preset" }));
   };
 
+  const addAllPresets = () => {
+    const activeGroup = attributeGroups.find((g) => g.slug === selectedAttributeGroup);
+    if (!activeGroup) {
+      toast.error("Please select a Variation Type first.");
+      return;
+    }
+    
+    const newVariants = activeGroup.values.map((val) => ({
+      size: val.name,
+      price: "",
+      offerPrice: "",
+      sku: "",
+      imageUrl: "",
+      imageFile: null,
+      imagePreview: "",
+    }));
+    
+    setVariants(newVariants);
+    
+    const modes: Record<number, "preset" | "custom"> = {};
+    newVariants.forEach((_, idx) => {
+      modes[idx] = "preset";
+    });
+    setVariantInputModes(modes);
+    toast.success(`Loaded all ${newVariants.length} presets from "${activeGroup.name}".`);
+  };
+
   const removeVariant = (index: number) => {
     setVariants((prev) => prev.filter((_, i) => i !== index));
     setVariantInputModes((prev) => {
@@ -157,57 +190,41 @@ export default function NewProductPage() {
   const updateVariant = (
     index: number,
     field: keyof VariantRow,
-    value: string,
+    value: any,
   ) => {
     setVariants((prev) =>
       prev.map((v, i) => (i === index ? { ...v, [field]: value } : v)),
     );
   };
 
-  // Image Upload handler
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Image Select handler (deferred upload)
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const file = files[0];
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
-    setIsUploading(true);
+    setMainImageFile(file);
+  };
 
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("type", "product");
+  const handleVariantImageSelect = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    try {
-      const response = await apiClient.post<{ data: { imageUrl: string } }>(
-        "/api/v1/images/upload?type=product",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
-
-      const path = response.data?.data?.imageUrl;
-      if (path) {
-        setUploadedImageUrl(path);
-        toast.success("Image uploaded successfully!");
-      } else {
-        throw new Error("Image URL not found in response");
-      }
-    } catch {
-      toast.error("Failed to upload image. Please try again.");
-      setImagePreview("");
-      setUploadedImageUrl("");
-    } finally {
-      setIsUploading(false);
-    }
+    const file = files[0];
+    const previewUrl = URL.createObjectURL(file);
+    updateVariant(index, "imageFile", file);
+    updateVariant(index, "imagePreview", previewUrl);
   };
 
   const removeUploadedImage = () => {
     setImagePreview("");
     setUploadedImageUrl("");
+    setMainImageFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -240,13 +257,68 @@ export default function NewProductPage() {
 
     setIsCreating(true);
     try {
+      // 1. Upload main product image if selected
+      let finalMainImageUrl = uploadedImageUrl;
+      if (mainImageFile) {
+        const formData = new FormData();
+        formData.append("image", mainImageFile);
+        formData.append("type", "product");
+        const uploadRes = await apiClient.post<{ data: { imageUrl: string } }>(
+          `/api/v1/images/upload?type=product&productSlug=${slug.trim()}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+        finalMainImageUrl = uploadRes.data?.data?.imageUrl || "";
+      }
+
+      // 2. Upload variant images sequentially
+      const uploadedVariants = [];
+      const validVariants = variants.filter((v) => v.size.trim() && v.price);
+
+      for (let i = 0; i < validVariants.length; i++) {
+        const v = validVariants[i];
+        let varImageUrl = v.imageUrl || "";
+
+        if (v.imageFile) {
+          const formData = new FormData();
+          formData.append("image", v.imageFile);
+          formData.append("type", "product");
+          const uploadRes = await apiClient.post<{ data: { imageUrl: string } }>(
+            `/api/v1/images/upload?type=product&productSlug=${slug.trim()}&variantName=${v.size.trim()}`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            },
+          );
+          varImageUrl = uploadRes.data?.data?.imageUrl || "";
+        }
+
+        uploadedVariants.push({
+          size: v.size.trim(),
+          price: parseFloat(v.price),
+          offerPrice: v.offerPrice ? parseFloat(v.offerPrice) : null,
+          sku: v.sku.trim(),
+          sortOrder: i,
+          imageUrl: varImageUrl || null,
+        });
+      }
+
+      // 3. Compile product payload with global stock and final image URLs
       const body: Record<string, unknown> = {
         name: name.trim(),
         slug: slug.trim(),
         description: description.trim() || name.trim(),
         type: productType,
-        imageUrl: uploadedImageUrl || undefined,
+        imageUrl: finalMainImageUrl || undefined,
         season,
+        stockStatus,
+        stockQuantity: stockQuantity ? parseInt(stockQuantity, 10) : 0,
       };
 
       if (categorySlug) body.category = categorySlug;
@@ -255,27 +327,9 @@ export default function NewProductPage() {
       if (productType === "simple") {
         body.price = parseFloat(price);
         body.offerPrice = offerPrice ? parseFloat(offerPrice) : null;
-        body.stockQuantity = parseInt(stockQuantity || "0", 10);
         body.sku = sku.trim();
-        body.stockStatus =
-          parseInt(stockQuantity || "0", 10) > 0 ? "instock" : "outofstock";
       } else {
-        body.variants = variants
-          .filter((v) => v.size.trim() && v.price)
-          .map((v, i) => ({
-            size: v.size.trim(),
-            price: parseFloat(v.price),
-            offerPrice: v.offerPrice ? parseFloat(v.offerPrice) : null,
-            stockQuantity: parseInt(v.stockQuantity || "0", 10),
-            sku: v.sku.trim(),
-            sortOrder: i,
-          }));
-
-        const totalStock = variants.reduce(
-          (sum, v) => sum + parseInt(v.stockQuantity || "0", 10),
-          0,
-        );
-        body.stockStatus = totalStock > 0 ? "instock" : "outofstock";
+        body.variants = uploadedVariants;
       }
 
       await apiClient.post("/api/v1/products", body);
@@ -295,7 +349,7 @@ export default function NewProductPage() {
   };
 
   return (
-    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 max-w-4xl mx-auto">
+    <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between border-b pb-4">
         <div className="space-y-1">
@@ -391,12 +445,37 @@ export default function NewProductPage() {
               </div>
             </div>
 
+            {/* Global Stock Fields (Applicable for both Simple and Variant products) */}
+            <div className="grid grid-cols-2 gap-4 pb-4 border-b">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold">Stock Status *</label>
+                <Select value={stockStatus} onValueChange={(val) => setStockStatus(val || "instock")}>
+                  <SelectTrigger className="h-9">
+                    <SelectValue placeholder="Select stock status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="instock">In Stock</SelectItem>
+                    <SelectItem value="outofstock">Out of Stock</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold">Stock Quantity (Optional)</label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 50"
+                  value={stockQuantity}
+                  onChange={(e) => setStockQuantity(e.target.value)}
+                />
+              </div>
+            </div>
+
             {/* ─── Simple Product Fields ─── */}
             {productType === "simple" && (
               <div className="space-y-4 pt-1">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold">Price (৳)</label>
+                    <label className="text-xs font-semibold">Price (৳) *</label>
                     <Input
                       type="number"
                       step="0.01"
@@ -416,19 +495,6 @@ export default function NewProductPage() {
                       placeholder="Optional"
                       value={offerPrice}
                       onChange={(e) => setOfferPrice(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold">
-                      Stock Quantity
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="50"
-                      value={stockQuantity}
-                      onChange={(e) => setStockQuantity(e.target.value)}
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -472,7 +538,18 @@ export default function NewProductPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex justify-end">
+                  <div className="flex justify-end gap-2">
+                    {selectedAttributeGroup && (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        className="h-9 text-xs gap-1"
+                        onClick={addAllPresets}
+                      >
+                        Add All Presets
+                      </Button>
+                    )}
                     <Button
                       type="button"
                       variant="outline"
@@ -493,8 +570,41 @@ export default function NewProductPage() {
                     return (
                       <div
                         key={i}
-                        className="grid grid-cols-[1.8fr_1.4fr_1.4fr_1fr_auto] gap-3 items-end rounded-lg border border-border/80 p-3 bg-muted/20"
+                        className="grid grid-cols-[auto_1.8fr_1.2fr_1.2fr_1.5fr_auto] gap-3 items-end rounded-lg border border-border/80 p-3 bg-muted/20"
                       >
+                        {/* Variant Image Selector */}
+                        <div className="flex flex-col items-center gap-1.5 self-center pb-0.5">
+                          <span className="text-[10px] font-semibold text-muted-foreground">Image</span>
+                          <div className="relative w-9 h-9 border rounded flex items-center justify-center cursor-pointer overflow-hidden group hover:border-primary">
+                            {v.imagePreview ? (
+                              <>
+                                <img src={v.imagePreview} alt="variant" className="w-full h-full object-cover" />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    updateVariant(i, "imageFile", null);
+                                    updateVariant(i, "imagePreview", "");
+                                  }}
+                                  className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <X className="w-3 h-3 text-white" />
+                                </button>
+                              </>
+                            ) : (
+                              <label htmlFor={`variant-image-${i}`} className="cursor-pointer p-2 text-muted-foreground hover:text-primary flex items-center justify-center w-full h-full">
+                                <UploadCloud className="w-4 h-4" />
+                              </label>
+                            )}
+                            <input
+                              type="file"
+                              id={`variant-image-${i}`}
+                              className="hidden"
+                              accept="image/*"
+                              onChange={(e) => handleVariantImageSelect(i, e)}
+                            />
+                          </div>
+                        </div>
+
                         <div className="space-y-1">
                           <label className="text-[10px] font-semibold text-muted-foreground">
                             {activeGroup?.name || "Variation Value"}
@@ -555,7 +665,7 @@ export default function NewProductPage() {
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-semibold text-muted-foreground">
-                            Price (৳)
+                            Price (৳) *
                           </label>
                           <Input
                             type="number"
@@ -564,7 +674,7 @@ export default function NewProductPage() {
                             placeholder="199"
                             value={v.price}
                             onChange={(e) =>
-                              updateVariant(i, "price", e.target.value)
+                                updateVariant(i, "price", e.target.value)
                             }
                             className="h-9"
                           />
@@ -586,14 +696,13 @@ export default function NewProductPage() {
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-semibold text-muted-foreground">
-                            Stock
+                            SKU
                           </label>
                           <Input
-                            type="number"
-                            placeholder="0"
-                            value={v.stockQuantity}
+                            placeholder="e.g. SKU-10ml"
+                            value={v.sku}
                             onChange={(e) =>
-                              updateVariant(i, "stockQuantity", e.target.value)
+                              updateVariant(i, "sku", e.target.value)
                             }
                             className="h-9"
                           />
@@ -672,7 +781,7 @@ export default function NewProductPage() {
               <input
                 type="file"
                 ref={fileInputRef}
-                onChange={handleImageUpload}
+                onChange={handleImageSelect}
                 accept="image/*"
                 className="hidden"
               />

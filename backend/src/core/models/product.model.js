@@ -49,6 +49,7 @@ const productSchema = new Schema(
         stockQuantity: { type: Number, default: 0, min: 0 },
         sku: { type: String, trim: true },
         sortOrder: { type: Number, default: 0 },
+        imageUrl: { type: String, default: null, trim: true },
       },
     ],
 

@@ -114,6 +114,7 @@ export const createProduct = async (req, res, next) => {
               v.stockQuantity !== undefined ? Number(v.stockQuantity) : 0,
             sku: v.sku || "",
             sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : i,
+            imageUrl: v.imageUrl || null,
           }))
         : [];
     } else {
@@ -337,6 +338,7 @@ export const updateProduct = async (req, res, next) => {
                 v.stockQuantity !== undefined ? Number(v.stockQuantity) : 0,
               sku: v.sku || "",
               sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : i,
+              imageUrl: v.imageUrl || null,
             }))
           : [];
       }

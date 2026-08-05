@@ -20,12 +20,11 @@ export const uploadProductImage = async (req, res, next) => {
     }
 
     const now = new Date();
-    const year = String(now.getFullYear());
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
+    const yy = String(now.getFullYear()).slice(-2);
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    const dateFolder = `${yy}${mm}${dd}`; // Format folder as YYMMDD
 
-    // Dynamic subfolder structure: YYYY/MM-DD
-    const dateFolder = path.join(year, `${month}-${day}`);
     const destinationDir = path.join(process.cwd(), "uploads", dateFolder);
 
     // Ensure the directory exists
@@ -48,8 +47,26 @@ export const uploadProductImage = async (req, res, next) => {
       req.query.type === "product" || req.body.type === "product";
 
     if (isProduct) {
-      const mainFilename = `product_${slugName}_${timestamp}.webp`;
-      const thumbFilename = `thumb_${slugName}_${timestamp}.webp`;
+      const productSlug = req.query.productSlug || req.body.productSlug;
+      const variantName = req.query.variantName || req.body.variantName;
+
+      let mainFilename;
+      let thumbFilename;
+
+      if (productSlug) {
+        const cleanSlug = String(productSlug).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        if (variantName) {
+          const cleanVariant = String(variantName).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          mainFilename = `${cleanSlug}_${cleanVariant}_${timestamp}.webp`;
+          thumbFilename = `thumb_${cleanSlug}_${cleanVariant}_${timestamp}.webp`;
+        } else {
+          mainFilename = `${cleanSlug}_main_${timestamp}.webp`;
+          thumbFilename = `thumb_${cleanSlug}_main_${timestamp}.webp`;
+        }
+      } else {
+        mainFilename = `product_${slugName}_${timestamp}.webp`;
+        thumbFilename = `thumb_${slugName}_${timestamp}.webp`;
+      }
 
       const mainFilePath = path.join(destinationDir, mainFilename);
       const thumbFilePath = path.join(destinationDir, thumbFilename);
@@ -79,8 +96,8 @@ export const uploadProductImage = async (req, res, next) => {
         .toFile(thumbFilePath);
 
       // Construct public URLs
-      const mainUrl = `/uploads/${year}/${month}-${day}/${mainFilename}`;
-      const thumbUrl = `/uploads/${year}/${month}-${day}/${thumbFilename}`;
+      const mainUrl = `/uploads/${dateFolder}/${mainFilename}`;
+      const thumbUrl = `/uploads/${dateFolder}/${thumbFilename}`;
 
       return res.status(200).json({
         status: "success",
@@ -100,7 +117,7 @@ export const uploadProductImage = async (req, res, next) => {
         .webp({ quality: 90 })
         .toFile(filePath);
 
-      const imageUrl = `/uploads/${year}/${month}-${day}/${filename}`;
+      const imageUrl = `/uploads/${dateFolder}/${filename}`;
 
       return res.status(200).json({
         status: "success",
