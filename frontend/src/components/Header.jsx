@@ -39,15 +39,26 @@ export const Header = ({
       return 'U-Z';
     };
 
+    let nicheParent = null;
+    let designerParent = null;
+    let arabianParent = null;
+
     if (brands && brands.length > 0) {
       // Identify the 3 parent brands (those with parent === null)
       const parentBrands = brands.filter(b => typeof b === 'object' && !b.parent);
       const parentIdMap = {};
       for (const p of parentBrands) {
         const slug = (p.slug || p.name || '').toLowerCase();
-        if (slug.includes('niche')) parentIdMap[p.id || p._id] = 'niche';
-        else if (slug.includes('designer')) parentIdMap[p.id || p._id] = 'designer';
-        else if (slug.includes('arabian') || slug.includes('uae')) parentIdMap[p.id || p._id] = 'arabian';
+        if (slug.includes('niche')) {
+          parentIdMap[p.id || p._id] = 'niche';
+          nicheParent = p;
+        } else if (slug.includes('designer')) {
+          parentIdMap[p.id || p._id] = 'designer';
+          designerParent = p;
+        } else if (slug.includes('arabian') || slug.includes('uae')) {
+          parentIdMap[p.id || p._id] = 'arabian';
+          arabianParent = p;
+        }
       }
 
       // Group child brands by their parent reference
@@ -62,8 +73,11 @@ export const Header = ({
         const firstChar = name.trim().charAt(0).toUpperCase();
         const groupKey = getGroup(firstChar);
         const targetGroups = catKey === 'arabian' ? arabianGroups : catKey === 'designer' ? designerGroups : nicheGroups;
-        if (!targetGroups[groupKey].includes(name)) {
-          targetGroups[groupKey].push(name);
+        if (!targetGroups[groupKey].some(item => item.name === name)) {
+          targetGroups[groupKey].push({
+            name,
+            slug: b.slug
+          });
         }
       });
     }
@@ -73,24 +87,38 @@ export const Header = ({
       const res = {};
       Object.keys(groups).forEach((key) => {
         if (groups[key].length > 0) {
-          groups[key].sort();
+          groups[key].sort((a, b) => a.name.localeCompare(b.name));
           res[key] = groups[key];
         }
       });
-      return Object.keys(res).length > 0 ? res : fallbackStatic;
+      if (Object.keys(res).length > 0) {
+        return res;
+      }
+      
+      const fallbackRes = {};
+      Object.keys(fallbackStatic).forEach((key) => {
+        fallbackRes[key] = fallbackStatic[key].map((name) => ({
+          name,
+          slug: String(name).toLowerCase().trim().replace(/\s+/g, '-')
+        }));
+      });
+      return fallbackRes;
     };
 
     return {
       niche: {
-        name: 'Niche Perfumes',
+        name: nicheParent?.name || 'Niche Perfumes',
+        slug: nicheParent?.slug || 'niche',
         ranges: filterRanges(nicheGroups, brandHierarchy.niche?.ranges || {})
       },
       designer: {
-        name: 'Designer Fragrances',
+        name: designerParent?.name || 'Designer Fragrances',
+        slug: designerParent?.slug || 'designer',
         ranges: filterRanges(designerGroups, brandHierarchy.designer?.ranges || {})
       },
       arabian: {
-        name: 'Arabian & UAE Fragrances',
+        name: arabianParent?.name || 'Arabian & UAE Fragrances',
+        slug: arabianParent?.slug || 'arabian',
         ranges: filterRanges(arabianGroups, brandHierarchy.arabian?.ranges || {})
       }
     };
@@ -569,8 +597,7 @@ export const Header = ({
                             <div className="w-full flex items-center justify-between py-2 px-3 bg-zinc-900/90 hover:bg-zinc-800/90 transition-colors">
                                 <button
                                   onClick={() => {
-                                    const slugified = String(cat.name).toLowerCase().trim().replace(/\s+/g, '-');
-                                    navigate(`/shop?${buildQueryString({ brand: slugified })}`);
+                                    navigate(`/shop?${buildQueryString({ brand: cat.slug })}`);
                                     handleNavLinkClick();
                                   }}
                                   className="text-xs font-semibold text-zinc-200 hover:text-gold text-left cursor-pointer flex-grow flex items-center justify-between pr-2"
@@ -609,16 +636,16 @@ export const Header = ({
 
                                       {isRangeExpanded && (
                                         <div className="pl-3 pr-2 py-1.5 flex flex-col gap-1 bg-black/60 border-t border-white/5">
-                                          {cat.ranges[range].map((brandName) => (
+                                          {cat.ranges[range].map((brandObj) => (
                                             <button
-                                              key={brandName}
+                                              key={brandObj.name}
                                               onClick={() => {
-                                                handleBrandClick(brandName);
+                                                navigate(`/shop?${buildQueryString({ brand: brandObj.slug })}`);
                                                 handleNavLinkClick();
                                               }}
                                               className="w-full text-left py-1 px-2 text-[11px] text-zinc-300 hover:text-gold hover:bg-white/5 rounded-xs transition-colors flex items-center justify-between cursor-pointer font-sans"
                                             >
-                                              <span>{brandName}</span>
+                                              <span>{brandObj.name}</span>
                                             </button>
                                           ))}
                                         </div>
