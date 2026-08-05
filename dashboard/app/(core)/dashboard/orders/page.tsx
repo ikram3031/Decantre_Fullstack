@@ -75,8 +75,8 @@ export default function OrdersPage() {
     }
   };
 
-  const handleBulkStatusChange = async (status: string) => {
-    if (status === 'placeholder') return;
+  const handleBulkStatusChange = async (status: string | null) => {
+    if (!status || status === 'placeholder') return;
     try {
       await apiClient.post('/api/v1/orders/bulk-update', { ids: selectedIds, status });
       toast.success(`Selected orders updated to status "${status}".`);
@@ -87,8 +87,8 @@ export default function OrdersPage() {
     }
   };
 
-  const handleBulkPaymentChange = async (paymentStatus: string) => {
-    if (paymentStatus === 'placeholder') return;
+  const handleBulkPaymentChange = async (paymentStatus: string | null) => {
+    if (!paymentStatus || paymentStatus === 'placeholder') return;
     try {
       await apiClient.post('/api/v1/orders/bulk-update', { ids: selectedIds, paymentStatus });
       toast.success(`Selected orders updated to payment status "${paymentStatus}".`);
