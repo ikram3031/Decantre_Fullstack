@@ -121,17 +121,17 @@ export const AuthModal = () => {
     if (digitsOnly.startsWith('+880')) return digitsOnly;
     if (digitsOnly.startsWith('880')) return `+${digitsOnly}`;
     if (digitsOnly.startsWith('01')) return `+880${digitsOnly.slice(1)}`;
-    if (/^1[3-8]\d{8}$/.test(digitsOnly)) return `+880${digitsOnly}`;
+    if (/^1[3-9]\d{8}$/.test(digitsOnly)) return `+880${digitsOnly}`;
     return digitsOnly;
   };
 
   const validatePhoneValue = (value) => {
     const normalized = normalizePhoneValue(value);
     if (!normalized) return 'Phone number is required.';
-    const phoneRegex = /^\+8801[3-8]\d{8}$/;
+    const phoneRegex = /^\+8801[3-9]\d{8}$/;
     return phoneRegex.test(normalized)
       ? ''
-      : 'Please enter a valid Bangladeshi number in format +8801[3-8]XXXXXXXX.';
+      : 'Please enter a valid Bangladeshi number in format +8801[3-9]XXXXXXXX.';
   };
 
   const handlePhoneChange = (value) => {
@@ -343,7 +343,7 @@ export const AuthModal = () => {
       return;
     }
     if (phoneValidationError) {
-      addToast('Please enter a valid Bangladeshi phone number in format +8801[3-8]XXXXXXXX.', 'error');
+      addToast('Please enter a valid Bangladeshi phone number in format +8801[3-9]XXXXXXXX.', 'error');
       return;
     }
     if (password !== confirmPassword) {

@@ -282,12 +282,12 @@ export const Checkout = () => {
     }
 
     if (phoneValidationError) {
-      addToast('Please enter a valid Bangladeshi phone number in format +8801[3-8]XXXXXXXX.', 'error');
+      addToast('Please enter a valid Bangladeshi phone number in format +8801[3-9]XXXXXXXX.', 'error');
       return;
     }
 
     if (shippingPhoneValidationError) {
-      addToast('Please enter a valid recipient phone number in format +8801[3-8]XXXXXXXX.', 'error');
+      addToast('Please enter a valid recipient phone number in format +8801[3-9]XXXXXXXX.', 'error');
       return;
     }
 
