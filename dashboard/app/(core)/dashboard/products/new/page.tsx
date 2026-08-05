@@ -29,7 +29,7 @@ import {
   type BrandCacheEntry,
 } from "@/lib/core/category-cache";
 import Image from "next/image";
-import { getApiErrorMessage } from '../../../../lib/error-handler';
+import { getApiErrorMessage } from '@/lib/core/error-handler';
 
 interface VariantRow {
   size: string;
