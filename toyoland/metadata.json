@@ -1,0 +1,6 @@
+{
+  "name": "Toyoland",
+  "description": "Kids & Toddler Store for Organic Children Apparel, Footwear, Accessories, Montessori Toys & Nursery Decor",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
