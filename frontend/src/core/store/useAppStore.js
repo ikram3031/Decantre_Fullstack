@@ -586,6 +586,7 @@ export const useAppStore = create((set, get) => {
           shippingFee: pricing.shippingFee,
           tax: 0,
           discountTotalAmount: pricing.discountAmount,
+          couponCode: appliedCoupon ? appliedCoupon.code : null,
           total: pricing.cartTotal,
           items: cart.map((item) => ({
             name: item.product.name,
@@ -681,6 +682,12 @@ export const useAppStore = create((set, get) => {
     applyPromoCode: async (e) => {
       if (e) e.preventDefault();
       set({ promoError: '' });
+
+      if (get().appliedCoupon) {
+        set({ promoError: 'A coupon is already applied. Remove it before applying a new one.' });
+        return;
+      }
+
       const code = get().promoCode.trim().toUpperCase();
       if (!code) {
         set({ promoError: 'Please enter a coupon code.' });
@@ -739,6 +746,16 @@ export const useAppStore = create((set, get) => {
           appliedDiscount: 0
         });
       }
+    },
+
+    removePromoCode: () => {
+      set({
+        appliedCoupon: null,
+        appliedDiscount: 0,
+        promoCode: '',
+        promoError: ''
+      });
+      get().addToast('Coupon removed successfully.', 'success');
     },
 
     // Getters for computed states

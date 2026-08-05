@@ -76,6 +76,7 @@ export const buildOrderDocument = async (payload) => {
     paymentMethod: normalizeText(payload.paymentMethod),
     shippingAddress: payload.shippingAddress ?? {},
     discountTotalAmount: Number(payload.discountTotalAmount || 0),
+    couponCode: payload.couponCode ? String(payload.couponCode).trim().toUpperCase() : null,
     items: normalizeOrderItems(payload.items),
     totals: {
       subtotal: Number(payload.subtotal || 0),

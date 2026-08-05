@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { validateOrderPayload } from '../helper/orderHelper.js';
 import { OrderModel } from '../models/order.model.js';
 import { MemberModel } from '../models/member.model.js';
+import { CouponModel } from '../models/coupon.model.js';
 import {
   buildAllowedOrderUpdates,
   buildOrderDocument,
@@ -18,6 +19,33 @@ export const createOrder = async (req, res, next) => {
   try {
     const payload = req.body ?? {};
     const validationErrors = validateOrderPayload(payload);
+
+    // Backend validation: Ensure multiple coupons are not added at once
+    if (payload.couponCode) {
+      const code = String(payload.couponCode).trim().toUpperCase();
+      if (code.includes(',') || code.includes(' ') || code.includes(';')) {
+        validationErrors.push('Only one coupon can be applied to an order');
+      } else {
+        const coupon = await CouponModel.findOne({ code });
+        if (!coupon) {
+          validationErrors.push('Coupon code is invalid or has expired');
+        } else if (!coupon.active) {
+          validationErrors.push('Coupon is currently inactive');
+        } else {
+          const now = new Date();
+          if (coupon.validFrom && now < new Date(coupon.validFrom)) {
+            validationErrors.push('Coupon promotion has not started yet');
+          }
+          if (coupon.validTo && now > new Date(coupon.validTo)) {
+            validationErrors.push('Coupon code has expired');
+          }
+          const subtotal = Number(payload.subtotal || 0);
+          if (subtotal < Number(coupon.minOrderAmount || 0)) {
+            validationErrors.push(`Coupon requires a minimum purchase of ৳${coupon.minOrderAmount}`);
+          }
+        }
+      }
+    }
 
     if (validationErrors.length > 0) {
       return res.status(400).json({

@@ -59,6 +59,7 @@ const orderSchema = new Schema(
     shippingAddress: { type: Schema.Types.Mixed, default: {} },
     shippingTotalAmount: { type: Number, default: 0, min: 0 },
     discountTotalAmount: { type: Number, default: 0, min: 0 },
+    couponCode: { type: String, default: null, trim: true, uppercase: true },
     items: { type: [orderItemSchema], required: true, validate: [(items) => items.length > 0, "items must contain at least one item"] },
     totals: { type: orderTotalsSchema, required: true },
   },
