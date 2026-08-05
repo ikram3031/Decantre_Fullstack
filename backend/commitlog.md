@@ -1,5 +1,12 @@
 # Commit Log / Change Log
 
+## [2026-08-06]
+
+### 1. Dashboard Product API & Metadata Fixes
+- **Dashboard API Endpoint Alignment**:
+  - Updated `dashboard/hooks/core/use-products.ts` so product search/filter queries use `POST /api/v1/products/search` instead of `POST /api/v1/products` (which was triggering product creation).
+  - Resolved backend metadata key mapping for `total_products`, `total_pages`, and `current_page` to ensure pagination and total item counts calculate properly.
+
 ## [2026-08-05]
 
 ### 1. Products API & Filters Refactoring

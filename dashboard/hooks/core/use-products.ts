@@ -91,12 +91,12 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
   if (params?.brand) body.brand = params.brand;
 
   const response = (body.category || body.brand || body.q)
-    ? await apiClient.post<unknown>('/api/v1/products', body)
+    ? await apiClient.post<unknown>('/api/v1/products/search', body)
     : await apiClient.get<unknown>('/api/v1/products', { params: { q: params?.search, limit, page } });
 
   const responseData = response.data;
   let productList: BackendProduct[] = [];
-  let rawMeta: BackendMeta | null = null;
+  let rawMeta: Record<string, number> | null = null;
 
   if (Array.isArray(responseData)) {
     productList = responseData as BackendProduct[];
@@ -109,7 +109,7 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
     const responseObject = responseData as { data: unknown; meta?: unknown };
     productList = responseObject.data as BackendProduct[];
     if (responseObject.meta && typeof responseObject.meta === 'object') {
-      rawMeta = responseObject.meta as BackendMeta;
+      rawMeta = responseObject.meta as Record<string, number>;
     }
   }
 
@@ -174,14 +174,18 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
 		};
   });
 
-  const total = rawMeta?.total ?? mappedProducts.length;
+  const total = rawMeta?.total_products ?? rawMeta?.total ?? mappedProducts.length;
+  const metaPage = rawMeta?.current_page ?? rawMeta?.page ?? page;
+  const metaLimit = rawMeta?.limit ?? limit;
+  const totalPages = rawMeta?.total_pages ?? rawMeta?.totalPages ?? (Math.ceil(total / metaLimit) || 1);
+
   return {
     data: mappedProducts,
     meta: {
       total,
-      page: rawMeta?.page ?? page,
-      limit: rawMeta?.limit ?? limit,
-      totalPages: rawMeta?.totalPages ?? (Math.ceil(total / limit) || 1),
+      page: metaPage,
+      limit: metaLimit,
+      totalPages,
     },
   };
 };
