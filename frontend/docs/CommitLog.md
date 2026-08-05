@@ -2,6 +2,17 @@
 
 > New logs are always added at the top of this file.
 
+## D-02 | 2026-08-06
+- Created `frontend/src/core/v2` directory containing TypeScript-friendly versions of all core modules.
+- Created `types/index.ts` with strong TypeScript definitions for Product, Variation, Badge, Category, Brand, Combo, CartItem, User, Shipping, Order, Toast & AppState.
+- Converted `context/AppContext.jsx` to `context/AppContext.tsx`.
+- Converted `lib/api.js` to `lib/api.ts` with typed API functions and token refresh handling.
+- Converted `lib/districts.js` to `lib/districts.ts` with `District` interface.
+- Converted `store/productHelpers.js` to `store/productHelpers.ts` with typed normalization functions.
+- Converted `store/useAppStore.js` to `store/useAppStore.ts` with fully typed Zustand `AppState` interface.
+- Converted `utils/formatCurrency.js` and `utils/utilityFunctions.js` to TypeScript (`.ts`).
+- Created central barrel export file `v2/index.ts`.
+
 ## D-01 | 2026-07-18
 - Added full Decantre branding across site copy and UI labels.
 - Updated `Footer.jsx`, `AboutUs.jsx`, `ContactUs.jsx`, `Shop.jsx`, `ProductCard.jsx`, `ProductDetailModal.jsx`, `TrustBadges.jsx`, `HeroSlider.jsx`, `CartDrawer.jsx`, `PrivacyPolicy.jsx`, `ReturnPolicy.jsx`, `TermsAndCondition.jsx`, `ThankYou.jsx`, `Home.jsx`, `Atelier.jsx`, `Catalog.jsx`, `Reviews.jsx`, `Header.jsx`, and `productHelpers.js`.
