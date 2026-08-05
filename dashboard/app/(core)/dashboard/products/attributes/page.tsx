@@ -364,12 +364,12 @@ export default function AttributesPage() {
 
       {/* Delete Confirmation */}
       <ConfirmDeleteDialog
-        isOpen={!!deleteTarget}
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
         title="Delete Attribute"
         description={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
         isDeleting={isDeleting}
         onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
       />
     </div>
   );
