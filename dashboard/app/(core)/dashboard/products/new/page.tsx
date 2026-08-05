@@ -507,7 +507,7 @@ export default function NewProductPage() {
                                   setVariantInputModes((prev) => ({ ...prev, [i]: "custom" }));
                                   updateVariant(i, "size", "");
                                 } else {
-                                  updateVariant(i, "size", val);
+                                  updateVariant(i, "size", val || "");
                                 }
                               }}
                             >
