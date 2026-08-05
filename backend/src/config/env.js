@@ -6,9 +6,9 @@ dotenv.config();
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().lte(65535).default(5092),
-  MONGODB_URI: z.string().min(1, "MONGODB_URI is required"),
-  MONGODB_DB_NAME: z.string().min(1).default("perfume-store"),
-  ACCESS_TOKEN_SECRET: z.string().min(20, "ACCESS_TOKEN_SECRET is required"),
+  MONGODB_URI: z.string().default("mongodb://admin:11223345@mongodb:27017/toyoland-store?authSource=admin"),
+  MONGODB_DB_NAME: z.string().min(1).default("toyoland-store"),
+  ACCESS_TOKEN_SECRET: z.string().default("toyoland_super_secret_jwt_key_2026_safe_fallback"),
   ACCESS_TOKEN_EXPIRES_IN: z.string().default("15m"),
   REFRESH_TOKEN_EXPIRES_MS: z.coerce.number().int().positive().default(30 * 24 * 60 * 60 * 1000),
   ALLOW_SUPER_ADMIN_CREATION: z.coerce.boolean().default(false),
