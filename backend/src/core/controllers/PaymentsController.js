@@ -288,3 +288,28 @@ export const bulkUpdatePayments = async (req, res, next) => {
   }
 };
 
+// Bulk Delete Payments
+export const bulkDeletePayments = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ status: "error", message: "No payment IDs provided" });
+    }
+
+    const objectIds = ids.map((id) => (Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null)).filter(Boolean);
+    const deleteQuery = {
+      $or: [
+        { _id: { $in: objectIds } },
+        { did: { $in: ids } }
+      ]
+    };
+
+    const result = await PaymentModel.deleteMany(deleteQuery);
+    return res.json({ status: "success", message: `${result.deletedCount} payment records deleted successfully` });
+  } catch (error) {
+    logger.error({ error }, "Failed to bulk delete payments");
+    next(error);
+  }
+};
+
+

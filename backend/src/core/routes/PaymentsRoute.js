@@ -6,6 +6,7 @@ import {
   listPayments,
   updatePayment,
   bulkUpdatePayments,
+  bulkDeletePayments,
 } from "../controllers/PaymentsController.js";
 import { authenticateToken } from "../middlewares/auth.middleware.js";
 
@@ -19,6 +20,9 @@ paymentsRouter.post("/", createPayment);
 
 // Batch update status and amounts for multiple payments
 paymentsRouter.post("/bulk-update", bulkUpdatePayments);
+
+// Batch delete multiple payment records
+paymentsRouter.post("/bulk-delete", bulkDeletePayments);
 
 // Retrieve payments with filtering and pagination
 paymentsRouter.get("/", listPayments);
