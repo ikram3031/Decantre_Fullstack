@@ -1,0 +1,9 @@
+{
+  "clientSlug": "app",
+  "appName": "StoreApp",
+  "brandName": "Store",
+  "domain": "localhost",
+  "storagePrefix": "app_",
+  "defaultCategory": "All",
+  "defaultBrand": "Store"
+}

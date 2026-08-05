@@ -1,0 +1,87 @@
+services:
+  # MongoDB - Database for Toyoland
+  mongodb:
+    image: mongo:7.0
+    container_name: toyoland-mongodb-dev
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-11223345}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-toyoland-store}
+    ports:
+      - "${MONGODB_PORT:-27018}:27017"
+    volumes:
+      - mongodb-toyoland-data:/data/db
+      - ./toyoland-mongodb-init.js:/docker-entrypoint-initdb.d/init.js:ro
+    networks:
+      - toyoland-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Toyoland Backend API (if exists)
+  # Uncomment if you have a backend Dockerfile in toyoland directory
+  # toyoland-backend:
+  #   build:
+  #     context: ./toyoland-backend
+  #     dockerfile: Dockerfile
+  #   container_name: toyoland-backend-dev
+  #   restart: always
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     PORT: ${BACKEND_PORT:-5093}
+  #     NODE_ENV: development
+  #     MONGO_URI: mongodb://admin:11223345@mongodb:27017/toyoland-store?authSource=admin
+  #   ports:
+  #     - "${BACKEND_PORT:-5093}:${BACKEND_PORT:-5093}"
+  #   volumes:
+  #     - ./toyoland-backend/src:/app/src
+  #     - /app/node_modules
+  #     - /var/www/toyoland-uploads:/app/uploads
+  #   depends_on:
+  #     mongodb:
+  #       condition: service_healthy
+  #   networks:
+  #     - toyoland-network
+
+  # Toyoland Frontend (Next.js)
+  toyoland-frontend:
+    build:
+      context: ./toyoland
+      dockerfile: Dockerfile
+    container_name: toyoland-frontend-dev
+    restart: always
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      PORT: 8006
+    ports:
+      - "${TOYOLAND_FRONTEND_PORT:-8006}:8006"
+    volumes:
+      - ./toyoland/app:/app/app
+      - ./toyoland/components:/app/components
+      - ./toyoland/lib:/app/lib
+      - ./toyoland/public:/app/public
+      - ./toyoland/hooks:/app/hooks
+      - /app/node_modules
+    networks:
+      - toyoland-network
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8006 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+networks:
+  toyoland-network:
+    driver: bridge
+
+volumes:
+  mongodb-toyoland-data:
+    driver: local

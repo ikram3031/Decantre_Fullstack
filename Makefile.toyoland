@@ -1,0 +1,90 @@
+.PHONY: toyoland-up toyoland-down toyoland-build toyoland-logs toyoland-bash toyoland-mongo toyoland-clean toyoland-restart toyoland-status
+
+# Toyoland Docker Commands
+
+toyoland-up:
+	docker-compose -f docker-compose.toyoland.yml up -d
+	@echo "✓ Toyoland services started"
+	@docker-compose -f docker-compose.toyoland.yml ps
+
+toyoland-down:
+	docker-compose -f docker-compose.toyoland.yml down
+	@echo "✓ Toyoland services stopped"
+
+toyoland-build:
+	docker-compose -f docker-compose.toyoland.yml build --no-cache
+	@echo "✓ Toyoland images rebuilt"
+
+toyoland-rebuild: toyoland-build toyoland-up
+	@echo "✓ Toyoland rebuilt and restarted"
+
+toyoland-logs:
+	docker-compose -f docker-compose.toyoland.yml logs -f
+
+toyoland-logs-frontend:
+	docker-compose -f docker-compose.toyoland.yml logs -f toyoland-frontend
+
+toyoland-logs-mongodb:
+	docker-compose -f docker-compose.toyoland.yml logs -f mongodb
+
+toyoland-bash:
+	docker exec -it toyoland-frontend-dev sh
+
+toyoland-mongo:
+	docker exec -it toyoland-mongodb-dev mongosh -u admin -p 11223345 --authenticationDatabase admin
+
+toyoland-mongo-toyoland-store:
+	docker exec -it toyoland-mongodb-dev mongosh -u admin -p 11223345 --authenticationDatabase admin toyoland-store
+
+toyoland-status:
+	docker-compose -f docker-compose.toyoland.yml ps
+
+toyoland-clean:
+	docker-compose -f docker-compose.toyoland.yml down -v
+	docker volume rm toyoland-mongodb-data || true
+	@echo "✓ Toyoland cleaned"
+
+toyoland-restart: toyoland-down toyoland-up
+	@echo "✓ Toyoland restarted"
+
+toyoland-shell-frontend:
+	docker exec -it toyoland-frontend-dev /bin/bash
+
+toyoland-shell-mongodb:
+	docker exec -it toyoland-mongodb-dev /bin/bash
+
+toyoland-prune:
+	docker system prune -f --filter "label!=keep"
+	@echo "✓ Docker system pruned"
+
+toyoland-inspect:
+	@echo "=== Toyoland Services ==="
+	@docker-compose -f docker-compose.toyoland.yml ps
+	@echo ""
+	@echo "=== Network ==="
+	@docker network inspect toyoland_toyoland-network
+	@echo ""
+	@echo "=== Volumes ==="
+	@docker volume ls | grep toyoland
+
+# Help command
+toyoland-help:
+	@echo "Toyoland Docker Commands:"
+	@echo ""
+	@echo "  make toyoland-up              - Start all services"
+	@echo "  make toyoland-down            - Stop all services"
+	@echo "  make toyoland-build           - Build images"
+	@echo "  make toyoland-rebuild         - Rebuild and restart"
+	@echo "  make toyoland-logs            - View all logs"
+	@echo "  make toyoland-logs-frontend   - View frontend logs"
+	@echo "  make toyoland-logs-mongodb    - View MongoDB logs"
+	@echo "  make toyoland-status          - Show service status"
+	@echo "  make toyoland-mongo           - Open MongoDB shell"
+	@echo "  make toyoland-bash            - Bash in frontend"
+	@echo "  make toyoland-shell-frontend  - Shell in frontend"
+	@echo "  make toyoland-shell-mongodb   - Shell in MongoDB"
+	@echo "  make toyoland-clean           - Stop and remove volumes"
+	@echo "  make toyoland-restart         - Restart services"
+	@echo "  make toyoland-inspect         - Show detailed info"
+	@echo "  make toyoland-prune           - Clean Docker system"
+	@echo ""

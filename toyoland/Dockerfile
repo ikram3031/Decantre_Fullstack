@@ -12,8 +12,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ARG NEXT_PUBLIC_API_URL=https://server.decantrebd.com
-ARG NEXT_PUBLIC_IMAGE_BASE_URL=https://server.decantrebd.com
+ARG NEXT_PUBLIC_API_URL=http://localhost:5092
+ARG NEXT_PUBLIC_IMAGE_BASE_URL=http://localhost:5092
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_IMAGE_BASE_URL=$NEXT_PUBLIC_IMAGE_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -25,7 +25,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=8002
+ENV PORT=8006
 ENV HOSTNAME="0.0.0.0"
 
 RUN addgroup --system --gid 1001 nodejs
@@ -37,6 +37,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-EXPOSE 8002
+EXPOSE 8006
 
 CMD ["node", "server.js"]

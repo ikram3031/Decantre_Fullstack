@@ -22,17 +22,16 @@ export const useAppStore = create((set, get) => {
     isCategoriesLoading: false,
     isBrandsLoading: false,
 
-    // Hydration check for Next.js SSR
     isHydrated: false,
 
     initStore: () => {
       if (typeof window === "undefined") return;
       try {
-        const cachedCart = localStorage.getItem('luxury_cart');
-        const cachedWishlist = localStorage.getItem('luxury_wishlist');
-        const cachedUser = localStorage.getItem('luxury_user');
-        const cachedCategories = localStorage.getItem('luxury_categories');
-        const cachedBrands = localStorage.getItem('luxury_brands');
+        const cachedCart = localStorage.getItem('toyoland_cart');
+        const cachedWishlist = localStorage.getItem('toyoland_wishlist');
+        const cachedUser = localStorage.getItem('toyoland_user');
+        const cachedCategories = localStorage.getItem('toyoland_categories');
+        const cachedBrands = localStorage.getItem('toyoland_brands');
 
         set({
           cart: cachedCart ? JSON.parse(cachedCart) : [],
@@ -115,7 +114,7 @@ export const useAppStore = create((set, get) => {
       set({ cart: updatedCart });
       if (typeof window !== 'undefined') {
         try {
-          localStorage.setItem('luxury_cart', JSON.stringify(updatedCart));
+          localStorage.setItem('toyoland_cart', JSON.stringify(updatedCart));
         } catch (e) {}
       }
     },
@@ -126,7 +125,7 @@ export const useAppStore = create((set, get) => {
       set({ cart: updatedCart });
       if (typeof window !== 'undefined') {
         try {
-          localStorage.setItem('luxury_cart', JSON.stringify(updatedCart));
+          localStorage.setItem('toyoland_cart', JSON.stringify(updatedCart));
         } catch (e) {}
       }
     },
@@ -135,7 +134,7 @@ export const useAppStore = create((set, get) => {
       set({ cart: [] });
       if (typeof window !== 'undefined') {
         try {
-          localStorage.removeItem('luxury_cart');
+          localStorage.removeItem('toyoland_cart');
         } catch (e) {}
       }
     },

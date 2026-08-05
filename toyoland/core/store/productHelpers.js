@@ -6,7 +6,7 @@ export const getApiBaseUrl = () => {
   if (envUrl) {
     return envUrl.replace(/\/$/, "");
   }
-  return "https://server.decantrebd.com";
+  return "http://localhost:5092";
 };
 
 export const normalizeProductImage = (rawImage = "") => {
@@ -14,10 +14,6 @@ export const normalizeProductImage = (rawImage = "") => {
   if (!imageUrl || imageUrl === "undefined") return "";
   if (imageUrl.startsWith("//")) imageUrl = `https:${imageUrl}`;
 
-  imageUrl = imageUrl.replace(
-    /webiste\.decantrebd\.com|webste\.decantrebd\.com/gi,
-    "decantrebd.com",
-  );
   imageUrl = imageUrl.replace(/\/content\//gi, "/uploads/");
 
   if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
@@ -69,9 +65,9 @@ export const normalizeProductBadges = (product = {}) => {
     }
     if (product.isFeatured) {
       badges.push({
-        name: "decantre-choice",
-        text: "DECANTRE CHOICE",
-        color: "#bf9b30",
+        name: "featured",
+        text: "FEATURED",
+        color: "#4F46E5",
         priority: 1,
       });
     }
@@ -83,7 +79,7 @@ export const normalizeProductBadges = (product = {}) => {
 const getCachedCategories = () => {
   if (typeof window === "undefined") return [];
   try {
-    const cached = localStorage.getItem("luxury_categories");
+    const cached = localStorage.getItem("toyoland_categories");
     return cached ? JSON.parse(cached) : [];
   } catch (e) {
     return [];
@@ -93,7 +89,7 @@ const getCachedCategories = () => {
 const getCachedBrands = () => {
   if (typeof window === "undefined") return [];
   try {
-    const cached = localStorage.getItem("luxury_brands");
+    const cached = localStorage.getItem("toyoland_brands");
     return cached ? JSON.parse(cached) : [];
   } catch (e) {
     return [];
@@ -101,7 +97,7 @@ const getCachedBrands = () => {
 };
 
 export const resolveCategoryName = (catValue) => {
-  if (!catValue) return "Unisex";
+  if (!catValue) return "Toys";
   if (typeof catValue === "object") {
     if (catValue.name) return catValue.name;
     if (catValue.title) return catValue.title;
@@ -119,7 +115,7 @@ export const resolveCategoryName = (catValue) => {
 };
 
 export const resolveBrandName = (brandValue) => {
-  if (!brandValue) return "Decantre";
+  if (!brandValue) return "Toyoland";
   if (typeof brandValue === "object") {
     if (brandValue.name) return brandValue.name;
     if (brandValue.title) return brandValue.title;
@@ -138,7 +134,7 @@ export const resolveBrandName = (brandValue) => {
 
 const normalizeCategory = (product = {}) => {
   if (product.category && typeof product.category === "object") {
-    return product.category.name || product.category.title || "Unisex";
+    return product.category.name || product.category.title || "Toys";
   }
   if (product.category) {
     return resolveCategoryName(product.category);
@@ -146,20 +142,20 @@ const normalizeCategory = (product = {}) => {
   if (Array.isArray(product.categories) && product.categories.length > 0) {
     const firstCat = product.categories[0];
     return typeof firstCat === "object"
-      ? firstCat.name || firstCat.title || "Unisex"
+      ? firstCat.name || firstCat.title || "Toys"
       : resolveCategoryName(firstCat);
   }
-  return "Unisex";
+  return "Toys";
 };
 
 const normalizeBrand = (product = {}) => {
   if (product.brand && typeof product.brand === "object") {
-    return product.brand.name || product.brand.title || "Decantre";
+    return product.brand.name || product.brand.title || "Toyoland";
   }
   if (product.brand) {
     return resolveBrandName(product.brand);
   }
-  return "Decantre";
+  return "Toyoland";
 };
 
 export const mapRemoteProduct = (product = {}) => {
@@ -185,17 +181,7 @@ export const mapRemoteProduct = (product = {}) => {
     product.sizes ||
     []
   ).map((v) => {
-    let size = v.size || v.name || v.title || v.volume || "";
-
-    const rawVol = v.volume ?? v.attributes?.volume ?? v.attributes?.size;
-
-    if (!size && rawVol) {
-      if (typeof rawVol === "number") size = `${rawVol}ml`;
-      else if (typeof rawVol === "string")
-        size = rawVol.includes("ml") ? rawVol : `${rawVol}ml`;
-    }
-
-    if (!size) size = "5ml";
+    let size = v.size || v.name || v.title || "";
 
     const vOriginalPrice =
       Number(
@@ -222,7 +208,6 @@ export const mapRemoteProduct = (product = {}) => {
       id: v.id || v._id || `${product.id || product._id || "v"}-${size}`,
       _id: v._id || v.id,
       size,
-      volume: rawVol || size,
       price: vPrice,
       originalPrice: vOriginalPrice > vPrice ? vOriginalPrice : vPrice,
       sku: vSku,
@@ -270,18 +255,7 @@ export const mapRemoteProduct = (product = {}) => {
     stockQuantity: product.stockQuantity ?? 0,
     sku: product.sku || "",
     description: product.description || product.content || "",
-    season: product.season || "All-Season",
     tags: Array.isArray(product.tags) ? product.tags : [],
-    notes: Array.isArray(product.notes)
-      ? product.notes
-      : typeof product.notes === "object"
-        ? product.notes
-        : [],
-    scentFamily:
-      product.scentFamily ||
-      (Array.isArray(product.tags) ? product.tags.join(", ") : ""),
-    longevity: product.longevity || 4,
-    sillage: product.sillage || 4,
     image: normalizeProductImage(rawImage),
     images:
       galleryImages.length > 0
@@ -299,10 +273,10 @@ export const mapRemoteProduct = (product = {}) => {
 export const getDefaultSelection = (product = {}) => {
   const variations = product.variations || [];
   if (variations.length === 0) {
-    return { size: "", concentration: "Eau de Parfum" };
+    return { size: "", color: "" };
   }
   const lowest = variations.reduce((min, curr) => {
     return curr.price < min.price ? curr : min;
   }, variations[0]);
-  return { size: lowest?.size || "", concentration: "Eau de Parfum" };
+  return { size: lowest?.size || "" };
 };

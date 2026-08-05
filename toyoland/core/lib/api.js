@@ -5,7 +5,7 @@ export const getApiBaseUrl = () => {
     typeof process !== "undefined" && process.env
       ? process.env.NEXT_PUBLIC_API_URL
       : "";
-  return envUrl ? envUrl.replace(/\/$/, "") : "https://server.decantrebd.com";
+  return envUrl ? envUrl.replace(/\/$/, "") : "http://localhost:5092";
 };
 
 export const getImageBaseUrl = () => {
@@ -94,7 +94,7 @@ export const fetchCategories = async () => {
     const categories = Array.isArray(json) ? json : json?.data || [];
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem("luxury_categories", JSON.stringify(categories));
+        localStorage.setItem("toyoland_categories", JSON.stringify(categories));
       } catch (e) {}
     }
     return categories;
@@ -113,7 +113,7 @@ export const fetchBrands = async () => {
     const brands = Array.isArray(json) ? json : json?.data || [];
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem("luxury_brands", JSON.stringify(brands));
+        localStorage.setItem("toyoland_brands", JSON.stringify(brands));
       } catch (e) {}
     }
     return brands;
