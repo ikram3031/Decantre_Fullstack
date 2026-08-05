@@ -452,7 +452,7 @@ export default function NewProductPage() {
                     <Select
                       value={selectedAttributeGroup}
                       onValueChange={(val) => {
-                        setSelectedAttributeGroup(val);
+                        setSelectedAttributeGroup(val || "");
                         const modes: Record<number, "preset" | "custom"> = {};
                         variants.forEach((_, idx) => {
                           modes[idx] = "preset";
