@@ -5,7 +5,8 @@ import {
   fetchBrands as apiFetchBrands, 
   fetchProductDetails as apiFetchProductDetails,
   fetchCombos as apiFetchCombos,
-  createOrder as apiCreateOrder 
+  createOrder as apiCreateOrder,
+  fetchCouponByCode
 } from '../lib/api';
 
 const parseQuery = (queryString) => {
@@ -184,6 +185,7 @@ export const useAppStore = create((set, get) => {
     isCheckoutMode: false,
     promoCode: '',
     appliedDiscount: 0,
+    appliedCoupon: null,
     promoError: '',
     paymentMethod: 'cod',
     sameAsBilling: true,
@@ -583,6 +585,7 @@ export const useAppStore = create((set, get) => {
           subtotal: pricing.cartSubtotal,
           shippingFee: pricing.shippingFee,
           tax: 0,
+          discountTotalAmount: pricing.discountAmount,
           total: pricing.cartTotal,
           items: cart.map((item) => ({
             name: item.product.name,
@@ -662,7 +665,8 @@ export const useAppStore = create((set, get) => {
           bankAmount: ''
         },
         promoCode: '',
-        appliedDiscount: 0
+        appliedDiscount: 0,
+        appliedCoupon: null
       });
     },
 
@@ -674,18 +678,66 @@ export const useAppStore = create((set, get) => {
       });
     },
 
-    applyPromoCode: (e) => {
+    applyPromoCode: async (e) => {
       if (e) e.preventDefault();
       set({ promoError: '' });
       const code = get().promoCode.trim().toUpperCase();
-      if (code === 'GOLDEN20' || code === 'DECANTRE') {
-        set({ appliedDiscount: 0.20 });
-        get().addToast('Exclusive 20% elite discount applied successfully.', 'success');
-      } else if (code === 'MAJESTY') {
-        set({ appliedDiscount: 0.15 });
-        get().addToast('15% premium coupon code accepted.', 'success');
-      } else {
-        set({ promoError: 'This luxury credential code has expired or is invalid.' });
+      if (!code) {
+        set({ promoError: 'Please enter a coupon code.' });
+        return;
+      }
+
+      try {
+        const coupon = await fetchCouponByCode(code);
+        if (!coupon) {
+          set({ promoError: 'This luxury credential code has expired or is invalid.', appliedCoupon: null, appliedDiscount: 0 });
+          return;
+        }
+
+        if (!coupon.active) {
+          set({ promoError: 'This coupon is currently inactive.', appliedCoupon: null, appliedDiscount: 0 });
+          return;
+        }
+
+        const now = new Date();
+        if (coupon.validFrom && now < new Date(coupon.validFrom)) {
+          set({ promoError: 'This coupon promotion has not started yet.', appliedCoupon: null, appliedDiscount: 0 });
+          return;
+        }
+        if (coupon.validTo && now > new Date(coupon.validTo)) {
+          set({ promoError: 'This coupon code has expired.', appliedCoupon: null, appliedDiscount: 0 });
+          return;
+        }
+
+        // Run pricing check on current subtotal
+        const pricing = get().getCartPricing();
+        const minOrder = Number(coupon.minOrderAmount || 0);
+        if (pricing.cartSubtotal < minOrder) {
+          set({ promoError: `This coupon requires a minimum purchase of ৳${minOrder}.`, appliedCoupon: null, appliedDiscount: 0 });
+          return;
+        }
+
+        const discountVal = Number(coupon.discountValue || 0);
+        const appliedDisc = coupon.discountType === 'percentage' ? (discountVal / 100) : 0;
+
+        set({
+          appliedCoupon: coupon,
+          appliedDiscount: appliedDisc,
+          promoError: ''
+        });
+
+        const successMsg = coupon.discountType === 'percentage'
+          ? `Exclusive ${discountVal}% discount applied successfully.`
+          : `Promo discount of ৳${discountVal} applied successfully.`;
+
+        get().addToast(successMsg, 'success');
+      } catch (err) {
+        console.error(err);
+        set({
+          promoError: err.message || 'This luxury credential code is invalid.',
+          appliedCoupon: null,
+          appliedDiscount: 0
+        });
       }
     },
 
@@ -706,13 +758,29 @@ export const useAppStore = create((set, get) => {
     getCartPricing: () => {
       const cart = get().cart;
       const appliedDiscount = get().appliedDiscount;
+      const appliedCoupon = get().appliedCoupon;
       const paymentMethod = get().paymentMethod;
       const shippingInfo = get().shippingInfo;
       const sameAsBilling = get().sameAsBilling;
       const shippingAddress = get().shippingAddress;
 
       const cartSubtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
-      const discountAmount = Math.round(cartSubtotal * appliedDiscount);
+      
+      let discountAmount = 0;
+      if (appliedCoupon) {
+        // If the coupon requires minimum purchase, validate again (in case cart content changed)
+        const minOrder = Number(appliedCoupon.minOrderAmount || 0);
+        if (cartSubtotal >= minOrder) {
+          if (appliedCoupon.discountType === 'percentage') {
+            discountAmount = Math.round(cartSubtotal * (Number(appliedCoupon.discountValue || 0) / 100));
+          } else {
+            discountAmount = Math.round(Number(appliedCoupon.discountValue || 0));
+          }
+        }
+      } else {
+        // Fallback for legacy discount percentage
+        discountAmount = Math.round(cartSubtotal * appliedDiscount);
+      }
 
       let shippingFee = 0;
       if (paymentMethod !== 'instore' && cartSubtotal > 0) {

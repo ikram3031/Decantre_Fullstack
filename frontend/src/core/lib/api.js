@@ -639,3 +639,16 @@ export async function deleteMember(memberId) {
 	}
 	return json;
 }
+
+export async function fetchCouponByCode(code) {
+	const apiBaseUrl = getApiBaseUrl();
+	const res = await fetchWithRetry(`${apiBaseUrl}/api/v1/coupons/${encodeURIComponent(code)}`, {
+		method: "GET",
+		headers: { "Content-Type": "application/json" },
+	});
+	const json = await res.json().catch(() => null);
+	if (!res.ok) {
+		throw new Error(json?.message || json?.error || "Invalid coupon code.");
+	}
+	return json?.data || json;
+}
