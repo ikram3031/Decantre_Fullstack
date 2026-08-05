@@ -249,6 +249,7 @@ export const deleteOrder = async (req, res, next) => {
 };
 
 // Bulk delete orders and clean up linked member references and payment records.
+// This allows deleting multiple orders and atomically cascades deletion side-effects.
 export const bulkDeleteOrders = async (req, res, next) => {
   try {
     const { ids } = req.body;
@@ -256,9 +257,10 @@ export const bulkDeleteOrders = async (req, res, next) => {
       return res.status(400).json({ status: 'error', message: 'No order IDs provided' });
     }
 
-    // Convert IDs to ObjectIds if valid
+    // Convert IDs to Mongoose ObjectIds where applicable
     const objectIds = ids.map(id => Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null).filter(Boolean);
 
+    // Build query targeting ObjectIds, custom short IDs (did), or order numbers
     const deleteQuery = {
       $or: [
         { _id: { $in: objectIds } },
@@ -273,14 +275,15 @@ export const bulkDeleteOrders = async (req, res, next) => {
       return res.status(404).json({ status: 'error', message: 'No orders found to delete' });
     }
 
-    // Perform bulk delete
+    // Perform bulk delete of order documents
     await OrderModel.deleteMany(deleteQuery);
 
-    // Clean up members and payments
+    // Collect distinct member IDs, dids, and database ObjectIds
     const memberIds = [...new Set(orders.map(o => o.member).filter(Boolean))];
     const orderDids = orders.map(o => o.did).filter(Boolean);
     const orderDbIds = orders.map(o => o._id);
 
+    // Pull order references from the member profiles and recalculate totals
     if (memberIds.length > 0 && orderDids.length > 0) {
       try {
         await MemberModel.updateMany(
@@ -295,6 +298,7 @@ export const bulkDeleteOrders = async (req, res, next) => {
       }
     }
 
+    // Delete all linked payment documents in bulk
     try {
       await PaymentModel.deleteMany({ orderId: { $in: orderDbIds } });
     } catch (payErr) {
@@ -306,4 +310,90 @@ export const bulkDeleteOrders = async (req, res, next) => {
     next(error);
   }
 };
+
+// Bulk update orders status and paymentStatus.
+// This allows updating multiple orders at once, syncing payments and member totals.
+export const bulkUpdateOrders = async (req, res, next) => {
+  try {
+    const { ids, status, paymentStatus } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ status: 'error', message: 'No order IDs provided' });
+    }
+
+    // Convert IDs to Mongoose ObjectIds where applicable
+    const objectIds = ids.map(id => Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null).filter(Boolean);
+
+    // Query targeting ObjectIds, custom short IDs (did), or order numbers
+    const query = {
+      $or: [
+        { _id: { $in: objectIds } },
+        { did: { $in: ids } },
+        { orderNumber: { $in: ids } }
+      ]
+    };
+
+    // Prepare update parameters
+    const updateFields = {};
+    if (status) {
+      updateFields.status = status.toLowerCase();
+    }
+
+    // Find affected orders first to read references before updating
+    const orders = await OrderModel.find(query).lean();
+    if (orders.length === 0) {
+      return res.status(404).json({ status: 'error', message: 'No orders found' });
+    }
+
+    // Update order documents status in bulk
+    if (Object.keys(updateFields).length > 0) {
+      await OrderModel.updateMany(query, { $set: updateFields });
+    }
+
+    // Identify distinct member IDs affected by the updates
+    const memberIds = [...new Set(orders.map(o => o.member).filter(Boolean))];
+
+    // Loop through each order to update payments
+    for (const order of orders) {
+      const updatedOrder = await OrderModel.findById(order._id).lean();
+      if (!updatedOrder) continue;
+
+      // If a specific paymentStatus is requested in bulk payload, update the linked payment document
+      if (paymentStatus) {
+        const pStatus = paymentStatus.toLowerCase();
+        const totalAmount = Number(updatedOrder.totals?.total || 0);
+        const paidAmount = pStatus === 'paid' ? totalAmount : 0;
+        const pendingAmount = Math.max(0, totalAmount - paidAmount);
+
+        await PaymentModel.findOneAndUpdate(
+          { orderId: updatedOrder._id },
+          {
+            paymentMethod: updatedOrder.paymentMethod,
+            paymentPhone: updatedOrder.customer?.phone || '',
+            totalAmount,
+            paidAmount,
+            pendingAmount,
+            amount: paidAmount,
+            status: pStatus,
+          },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+      } else {
+        // Fall back to standard payment sync based on order state
+        await syncPaymentDocument(updatedOrder);
+      }
+    }
+
+    // Recalculate member totals
+    if (memberIds.length > 0) {
+      for (const mId of memberIds) {
+        await updateMemberTotals(mId).catch(err => console.error(err));
+      }
+    }
+
+    return res.json({ status: 'success', message: 'Orders updated successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 

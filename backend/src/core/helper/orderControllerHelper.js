@@ -88,6 +88,7 @@ export const buildOrderDocument = async (payload) => {
 };
 
 // Upsert the linked payment record so it reflects the created order totals.
+// NOTE: We map orderData.paymentStatus to the correct Mongoose schema path 'status' (not paymentStatus).
 export const syncPaymentDocument = async (orderData) => {
   const totalAmount = Number(orderData.totals?.total || 0);
   const paidAmount = isPaidPaymentMethod(orderData.paymentMethod) ? totalAmount : 0;
@@ -103,7 +104,7 @@ export const syncPaymentDocument = async (orderData) => {
       paidAmount,
       pendingAmount,
       amount: paidAmount,
-      paymentStatus,
+      status: paymentStatus, // Explicitly map to status field in database schema
       createdBy: orderData.createdBy || null,
     },
     { upsert: true, new: true, setDefaultsOnInsert: true },
