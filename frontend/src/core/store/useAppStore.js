@@ -586,7 +586,7 @@ export const useAppStore = create((set, get) => {
           shippingFee: pricing.shippingFee,
           tax: 0,
           discountTotalAmount: pricing.discountAmount,
-          couponCode: appliedCoupon ? appliedCoupon.code : null,
+          couponCode: appliedCoupon?.code || undefined,
           total: pricing.cartTotal,
           items: cart.map((item) => ({
             name: item.product.name,

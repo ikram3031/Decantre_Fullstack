@@ -20,9 +20,10 @@ export const createOrder = async (req, res, next) => {
     const payload = req.body ?? {};
     const validationErrors = validateOrderPayload(payload);
 
-    // Backend validation: Ensure multiple coupons are not added at once
-    if (payload.couponCode) {
-      const code = String(payload.couponCode).trim().toUpperCase();
+    // Backend validation: Ensure multiple coupons are not added at once (optional field)
+    const rawCoupon = payload.couponCode;
+    if (rawCoupon && typeof rawCoupon === 'string' && rawCoupon.trim() !== '' && rawCoupon.trim().toLowerCase() !== 'null' && rawCoupon.trim().toLowerCase() !== 'undefined') {
+      const code = rawCoupon.trim().toUpperCase();
       if (code.includes(',') || code.includes(' ') || code.includes(';')) {
         validationErrors.push('Only one coupon can be applied to an order');
       } else {
