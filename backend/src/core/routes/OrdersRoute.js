@@ -5,6 +5,7 @@ import {
   getOrderById,
   listOrders,
   updateOrder,
+  bulkDeleteOrders,
 } from "../controllers/OrdersController.js";
 import {
   authenticateToken,
@@ -38,6 +39,12 @@ ordersRouter.delete(
   authenticateToken,
   authorizeRoles("Owner", "Admin"),
   deleteOrder,
+);
+ordersRouter.post(
+  "/bulk-delete",
+  authenticateToken,
+  authorizeRoles("Owner", "Admin"),
+  bulkDeleteOrders,
 );
 
 export default ordersRouter;

@@ -84,6 +84,15 @@ export const listOrders = async (req, res, next) => {
       filter.status = req.query.status;
     }
 
+    if (req.query.paymentStatus) {
+      const pStatus = req.query.paymentStatus.toLowerCase();
+      if (pStatus === 'paid') {
+        filter.status = { $in: ['completed', 'shipped'] };
+      } else if (pStatus === 'pending') {
+        filter.status = { $nin: ['completed', 'shipped'] };
+      }
+    }
+
     if (req.query.email) {
       filter['customer.email'] = req.query.email.toLowerCase().trim();
     }
@@ -203,7 +212,7 @@ export const deleteOrder = async (req, res, next) => {
     if (Types.ObjectId.isValid(orderId)) {
       query = { _id: orderId };
     } else {
-      query = { $or: [{ did: orderId }, { id: orderId }] };
+      query = { $or: [{ did: orderId }, { orderNumber: orderId }] };
     }
 
     const deletedOrder = await OrderModel.findOneAndDelete(query).lean();
@@ -238,3 +247,63 @@ export const deleteOrder = async (req, res, next) => {
     next(error);
   }
 };
+
+// Bulk delete orders and clean up linked member references and payment records.
+export const bulkDeleteOrders = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ status: 'error', message: 'No order IDs provided' });
+    }
+
+    // Convert IDs to ObjectIds if valid
+    const objectIds = ids.map(id => Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null).filter(Boolean);
+
+    const deleteQuery = {
+      $or: [
+        { _id: { $in: objectIds } },
+        { did: { $in: ids } },
+        { orderNumber: { $in: ids } }
+      ]
+    };
+
+    // Find orders to identify linked members and payments before deletion
+    const orders = await OrderModel.find(deleteQuery).lean();
+    if (orders.length === 0) {
+      return res.status(404).json({ status: 'error', message: 'No orders found to delete' });
+    }
+
+    // Perform bulk delete
+    await OrderModel.deleteMany(deleteQuery);
+
+    // Clean up members and payments
+    const memberIds = [...new Set(orders.map(o => o.member).filter(Boolean))];
+    const orderDids = orders.map(o => o.did).filter(Boolean);
+    const orderDbIds = orders.map(o => o._id);
+
+    if (memberIds.length > 0 && orderDids.length > 0) {
+      try {
+        await MemberModel.updateMany(
+          { _id: { $in: memberIds } },
+          { $pull: { orders: { did: { $in: orderDids } } } }
+        );
+        for (const mId of memberIds) {
+          await updateMemberTotals(mId).catch(err => console.error(err));
+        }
+      } catch (memErr) {
+        console.error("Error cleaning up members on bulk order delete:", memErr);
+      }
+    }
+
+    try {
+      await PaymentModel.deleteMany({ orderId: { $in: orderDbIds } });
+    } catch (payErr) {
+      console.error("Error deleting payments on bulk order delete:", payErr);
+    }
+
+    return res.json({ status: 'success', message: 'Orders deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+

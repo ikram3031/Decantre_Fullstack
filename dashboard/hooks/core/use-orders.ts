@@ -8,6 +8,7 @@ export type { Order, OrderDetails };
 interface FetchOrdersParams {
   search?: string;
   status?: string;
+  paymentStatus?: string;
   page?: number;
   limit?: number;
 }
@@ -42,6 +43,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
       page,
     };
     if (params?.status) queryParams.status = params.status.toLowerCase();
+    if (params?.paymentStatus) queryParams.paymentStatus = params.paymentStatus.toLowerCase();
     if (params?.search) queryParams.email = params.search;
 
     const response = await apiClient.get<{ data?: unknown[]; meta?: unknown }>('/api/v1/orders', { params: queryParams });

@@ -33,6 +33,7 @@ import { toast } from 'sonner';
 export default function OrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [paymentFilter, setPaymentFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -53,12 +54,16 @@ export default function OrdersPage() {
     setSelectedIds([]);
   };
 
+  const handlePayment = (v: string | null) => {
+    setPaymentFilter(v ?? 'All');
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
   const handleBulkDelete = async () => {
     setIsBulkDeleting(true);
     try {
-      await Promise.all(
-        selectedIds.map((id) => apiClient.delete(`/api/v1/orders/${id}`))
-      );
+      await apiClient.post('/api/v1/orders/bulk-delete', { ids: selectedIds });
       toast.success('Selected orders deleted successfully.');
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       setSelectedIds([]);
@@ -87,41 +92,59 @@ export default function OrdersPage() {
 
       </div>
       
-      <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
         <div className="relative flex-1 w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search by order ID or customer..."
-            className="pl-8"
+            className="pl-8 h-9"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-start sm:justify-end">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Status:</span>
+            <Select value={statusFilter} onValueChange={handleStatus}>
+              <SelectTrigger className="w-[140px] h-9">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Processing">Processing</SelectItem>
+                <SelectItem value="Shipped">Shipped</SelectItem>
+                <SelectItem value="Cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Payment:</span>
+            <Select value={paymentFilter} onValueChange={handlePayment}>
+              <SelectTrigger className="w-[140px] h-9">
+                <SelectValue placeholder="Payment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="Paid">Paid</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {selectedIds.length > 0 && (
             <Button
               variant="destructive"
-              size="sm"
+              size="icon"
               onClick={() => setBulkDeleteOpen(true)}
-              className="flex items-center gap-1 mr-2 text-xs"
+              className="h-9 w-9 flex items-center justify-center shrink-0"
+              title={`Delete Selected (${selectedIds.length})`}
             >
-              <Trash2 className="h-3.5 w-3.5" />
-              Delete Selected ({selectedIds.length})
+              <Trash2 className="h-4 w-4" />
             </Button>
           )}
-          <Select value={statusFilter} onValueChange={handleStatus}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Statuses</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Processing">Processing</SelectItem>
-              <SelectItem value="Shipped">Shipped</SelectItem>
-              <SelectItem value="Cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </div>
       
@@ -130,6 +153,7 @@ export default function OrdersPage() {
           <OrdersTable
             searchQuery={searchQuery}
             statusFilter={statusFilter}
+            paymentFilter={paymentFilter}
             page={currentPage}
             onTotalPagesChange={setTotalPages}
             selectedIds={selectedIds}

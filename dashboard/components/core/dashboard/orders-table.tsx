@@ -36,6 +36,7 @@ import type { Order } from '@/types';
 interface OrdersTableProps {
   searchQuery: string;
   statusFilter: string;
+  paymentFilter: string;
   page?: number;
   onTotalPagesChange?: (totalPages: number) => void;
   selectedIds: string[];
@@ -45,6 +46,7 @@ interface OrdersTableProps {
 export function OrdersTable({
   searchQuery,
   statusFilter,
+  paymentFilter,
   page = 1,
   onTotalPagesChange,
   selectedIds,
@@ -56,6 +58,7 @@ export function OrdersTable({
   const { data: responseData, isLoading, isError, error } = useOrders({
     search: searchQuery,
     status: statusFilter !== 'All' ? statusFilter : undefined,
+    paymentStatus: paymentFilter !== 'All' ? paymentFilter : undefined,
     page,
     limit: 15,
   });
