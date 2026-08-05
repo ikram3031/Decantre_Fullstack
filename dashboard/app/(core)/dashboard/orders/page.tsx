@@ -24,20 +24,50 @@ import {
   PaginationPrevious,
 } from '@/components/core/ui/pagination';
 
+import { Trash2 } from 'lucide-react';
+import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
+import { apiClient } from '@/lib/core/api-client';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
 export default function OrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const handleSearch = (q: string) => {
     setSearchQuery(q);
     setCurrentPage(1);
+    setSelectedIds([]);
   };
 
   const handleStatus = (v: string | null) => {
     setStatusFilter(v ?? 'All');
     setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleBulkDelete = async () => {
+    setIsBulkDeleting(true);
+    try {
+      await Promise.all(
+        selectedIds.map((id) => apiClient.delete(`/api/v1/orders/${id}`))
+      );
+      toast.success('Selected orders deleted successfully.');
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      setSelectedIds([]);
+      setBulkDeleteOpen(false);
+    } catch {
+      toast.error('Failed to delete some orders.');
+    } finally {
+      setIsBulkDeleting(false);
+    }
   };
 
   return (
@@ -68,18 +98,31 @@ export default function OrdersPage() {
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <Select value={statusFilter} onValueChange={handleStatus}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="All">All Statuses</SelectItem>
-            <SelectItem value="Pending">Pending</SelectItem>
-            <SelectItem value="Processing">Processing</SelectItem>
-            <SelectItem value="Shipped">Shipped</SelectItem>
-            <SelectItem value="Cancelled">Cancelled</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          {selectedIds.length > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setBulkDeleteOpen(true)}
+              className="flex items-center gap-1 mr-2 text-xs"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Delete Selected ({selectedIds.length})
+            </Button>
+          )}
+          <Select value={statusFilter} onValueChange={handleStatus}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All Statuses</SelectItem>
+              <SelectItem value="Pending">Pending</SelectItem>
+              <SelectItem value="Processing">Processing</SelectItem>
+              <SelectItem value="Shipped">Shipped</SelectItem>
+              <SelectItem value="Cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <div className="bg-card text-card-foreground shadow-sm border rounded-lg">
@@ -89,6 +132,8 @@ export default function OrdersPage() {
             statusFilter={statusFilter}
             page={currentPage}
             onTotalPagesChange={setTotalPages}
+            selectedIds={selectedIds}
+            onSelectedIdsChange={setSelectedIds}
           />
 
           {/* Pagination */}
@@ -157,6 +202,15 @@ export default function OrdersPage() {
           </div>
         </div>
       </div>
+
+      <ConfirmDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        onConfirm={handleBulkDelete}
+        isDeleting={isBulkDeleting}
+        title="Delete Selected Orders"
+        description={`Are you sure you want to permanently delete the ${selectedIds.length} selected orders? This action cannot be undone.`}
+      />
     </div>
   );
 }

@@ -34,6 +34,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/core/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/core/ui/select';
 
 import { apiClient } from '@/lib/core/api-client';
 import { useQueryClient } from '@tanstack/react-query';
@@ -47,9 +54,19 @@ interface ProductsTableProps {
   brandFilter: string;
   page?: number;
   onTotalPagesChange?: (totalPages: number) => void;
+  selectedIds: string[];
+  onSelectedIdsChange: (ids: string[]) => void;
 }
 
-export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page = 1, onTotalPagesChange }: ProductsTableProps) {
+export function ProductsTable({
+  searchQuery,
+  categoryFilter,
+  brandFilter,
+  page = 1,
+  onTotalPagesChange,
+  selectedIds,
+  onSelectedIdsChange,
+}: ProductsTableProps) {
   const queryClient = useQueryClient();
 
   const { data: responseData, isLoading, isError, error } = useProducts({
@@ -80,6 +97,7 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
       await apiClient.delete(`/api/v1/products/${deleteTarget.id}`);
       toast.success(`Product "${deleteTarget.name}" deleted.`);
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      onSelectedIdsChange(selectedIds.filter(id => id !== deleteTarget.id));
       setDeleteTarget(null);
     } catch {
       toast.error('Failed to delete product.');
@@ -88,18 +106,25 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
     }
   };
 
-  // ── Update Stock ──────────────────────────────────────────────────────────
+  // ── Update Stock Status ──────────────────────────────────────────────────
   const [stockTarget, setStockTarget] = useState<Product | null>(null);
+  const [targetStockStatus, setTargetStockStatus] = useState<string>('instock');
   const [isUpdatingStock, setIsUpdatingStock] = useState(false);
 
-  const handleSetOutOfStock = async () => {
+  useEffect(() => {
+    if (stockTarget) {
+      setTargetStockStatus(stockTarget.status === 'In Stock' ? 'instock' : 'outofstock');
+    }
+  }, [stockTarget]);
+
+  const handleUpdateStockStatus = async () => {
     if (!stockTarget) return;
     setIsUpdatingStock(true);
     try {
       await apiClient.put(`/api/v1/products/${stockTarget.id}`, {
-				stockStatus: "outofstock",
-			});
-      toast.success(`"${stockTarget.name}" set to Out of Stock.`);
+        stockStatus: targetStockStatus,
+      });
+      toast.success(`Stock status of "${stockTarget.name}" updated successfully.`);
       queryClient.invalidateQueries({ queryKey: ['products'] });
       setStockTarget(null);
     } catch {
@@ -121,17 +146,37 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
     );
   }
 
+  const isAllPageSelected = products.length > 0 && products.every(p => selectedIds.includes(p.id));
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px] px-4">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                checked={isAllPageSelected}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    const pageIds = products.map(p => p.id);
+                    const newSelected = Array.from(new Set([...selectedIds, ...pageIds]));
+                    onSelectedIdsChange(newSelected);
+                  } else {
+                    const pageIds = products.map(p => p.id);
+                    onSelectedIdsChange(selectedIds.filter(id => !pageIds.includes(id)));
+                  }
+                }}
+              />
+            </TableHead>
             <TableHead className="w-[280px] min-w-[180px]">Product</TableHead>
             <TableHead className="w-[120px]">SKU</TableHead>
             <TableHead className="w-[140px]">Category</TableHead>
             <TableHead className="w-[120px]">Brand</TableHead>
             <TableHead className="w-[100px]">Price</TableHead>
-            <TableHead className="w-[110px]">Stock</TableHead>
+            <TableHead className="w-[80px]">Stock</TableHead>
+            <TableHead className="w-[110px]">Status</TableHead>
             <TableHead className="w-[60px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -139,6 +184,9 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
               <TableRow key={i}>
+                <TableCell className="w-[50px] px-4">
+                  <Skeleton className="h-4 w-4 rounded" />
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-9 w-9 rounded-md flex-shrink-0" />
@@ -149,6 +197,7 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
                 <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                <TableCell><Skeleton className="h-4 w-8" /></TableCell>
                 <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
                 <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto rounded-md" /></TableCell>
               </TableRow>
@@ -156,6 +205,20 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
           ) : products && products.length > 0 ? (
             products.map((product) => (
               <TableRow key={product.id}>
+                <TableCell className="w-[50px] px-4">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                    checked={selectedIds.includes(product.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        onSelectedIdsChange([...selectedIds, product.id]);
+                      } else {
+                        onSelectedIdsChange(selectedIds.filter(id => id !== product.id));
+                      }
+                    }}
+                  />
+                </TableCell>
                 {/* Product name + image */}
                 <TableCell className="max-w-[280px]">
                   <div className="flex items-center gap-3 min-w-0">
@@ -190,6 +253,9 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
                 {/* Price */}
                 <TableCell className="w-[100px] font-medium">৳{product.price.toFixed(2)}</TableCell>
 
+                {/* Stock Quantity */}
+                <TableCell className="w-[80px] font-mono text-sm">{product.stock ?? 0}</TableCell>
+
                 {/* Stock status */}
                 <TableCell className="w-[110px]">
                   {product.status === 'In Stock' ? (
@@ -216,10 +282,9 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem
                         onClick={() => setStockTarget(product)}
-                        disabled={product.status !== 'In Stock'}
                       >
                         <PackageX className="h-4 w-4 mr-2 text-muted-foreground" />
-                        Update Stock
+                        Update Stock Status
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
@@ -235,7 +300,7 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center">
+              <TableCell colSpan={9} className="h-24 text-center">
                 No products found.
               </TableCell>
             </TableRow>
@@ -243,22 +308,46 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
         </TableBody>
       </Table>
 
-      {/* Update Stock Dialog */}
+      {/* Update Stock Status Dialog */}
       <Dialog open={!!stockTarget} onOpenChange={(open) => !open && setStockTarget(null)}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <PackageX className="h-5 w-5 text-destructive" />
-              Set Out of Stock
+              <PackageX className="h-5 w-5 text-primary" />
+              Update Stock Status
             </DialogTitle>
             <DialogDescription>
-              Are you sure you want to mark{' '}
-              <span className="font-semibold text-foreground">`{stockTarget?.name}`</span>{' '}
-              as <span className="font-semibold text-destructive">Out of Stock</span>?
-              <br />
-              <span className="text-xs mt-1 block">This will hide the product from the store until stock is replenished.</span>
+              Modify the inventory availability status for <span className="font-semibold text-foreground">"{stockTarget?.name}"</span>.
             </DialogDescription>
           </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-semibold text-muted-foreground">Current Stock Quantity:</span>
+              <span className="text-sm font-semibold font-mono">{stockTarget?.stock ?? 0}</span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-semibold text-muted-foreground">Current Status:</span>
+              <span className="text-sm font-semibold">
+                {stockTarget?.status === 'In Stock' ? (
+                  <span className="text-emerald-600">In Stock</span>
+                ) : (
+                  <span className="text-red-600">Out of Stock</span>
+                )}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-semibold text-muted-foreground">New Availability:</span>
+              <Select value={targetStockStatus} onValueChange={setTargetStockStatus}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="instock">In Stock</SelectItem>
+                  <SelectItem value="outofstock">Out of Stock</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <DialogFooter>
             <Button
               variant="outline"
@@ -268,11 +357,10 @@ export function ProductsTable({ searchQuery, categoryFilter, brandFilter, page =
               Cancel
             </Button>
             <Button
-              variant="destructive"
-              onClick={handleSetOutOfStock}
+              onClick={handleUpdateStockStatus}
               disabled={isUpdatingStock}
             >
-              {isUpdatingStock ? 'Updating...' : 'Yes, Set Out of Stock'}
+              {isUpdatingStock ? 'Updating...' : 'Update Status'}
             </Button>
           </DialogFooter>
         </DialogContent>

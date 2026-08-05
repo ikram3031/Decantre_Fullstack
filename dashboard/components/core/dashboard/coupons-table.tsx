@@ -39,6 +39,8 @@ interface CouponsTableProps {
   page?: number;
   onTotalPagesChange?: (totalPages: number) => void;
   onEditClick: (coupon: Coupon) => void;
+  selectedIds: string[];
+  onSelectedIdsChange: (ids: string[]) => void;
 }
 
 export function CouponsTable({
@@ -48,6 +50,8 @@ export function CouponsTable({
   page = 1,
   onTotalPagesChange,
   onEditClick,
+  selectedIds,
+  onSelectedIdsChange,
 }: CouponsTableProps) {
   const queryClient = useQueryClient();
   const { data: coupons = [], isLoading, isError, error } = useCoupons();
@@ -158,11 +162,30 @@ export function CouponsTable({
     return <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white">Live</Badge>;
   };
 
+  const isAllPageSelected = paginatedCoupons.length > 0 && paginatedCoupons.every(c => selectedIds.includes(c.id));
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px] px-4">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                checked={isAllPageSelected}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    const pageIds = paginatedCoupons.map(c => c.id);
+                    const newSelected = Array.from(new Set([...selectedIds, ...pageIds]));
+                    onSelectedIdsChange(newSelected);
+                  } else {
+                    const pageIds = paginatedCoupons.map(c => c.id);
+                    onSelectedIdsChange(selectedIds.filter(id => !pageIds.includes(id)));
+                  }
+                }}
+              />
+            </TableHead>
             <TableHead className="w-[180px]">Coupon Code</TableHead>
             <TableHead className="w-[140px]">Discount</TableHead>
             <TableHead className="w-[130px]">Min Purchase</TableHead>
@@ -177,6 +200,9 @@ export function CouponsTable({
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
               <TableRow key={i}>
+                <TableCell className="w-[50px] px-4">
+                  <Skeleton className="h-4 w-4 rounded" />
+                </TableCell>
                 <TableCell><Skeleton className="h-5 w-24" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-16" /></TableCell>
@@ -203,6 +229,20 @@ export function CouponsTable({
 
               return (
                 <TableRow key={coupon.id}>
+                  <TableCell className="w-[50px] px-4">
+                    <input
+                      type="checkbox"
+                      className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                      checked={selectedIds.includes(coupon.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          onSelectedIdsChange([...selectedIds, coupon.id]);
+                        } else {
+                          onSelectedIdsChange(selectedIds.filter(id => id !== coupon.id));
+                        }
+                      }}
+                    />
+                  </TableCell>
                   {/* Coupon Code & Copy */}
                   <TableCell className="font-semibold">
                     <div className="flex items-center gap-1.5 group/code">
@@ -321,7 +361,7 @@ export function CouponsTable({
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+              <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
                 No coupons found.
               </TableCell>
             </TableRow>

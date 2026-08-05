@@ -38,9 +38,18 @@ interface OrdersTableProps {
   statusFilter: string;
   page?: number;
   onTotalPagesChange?: (totalPages: number) => void;
+  selectedIds: string[];
+  onSelectedIdsChange: (ids: string[]) => void;
 }
 
-export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesChange }: OrdersTableProps) {
+export function OrdersTable({
+  searchQuery,
+  statusFilter,
+  page = 1,
+  onTotalPagesChange,
+  selectedIds,
+  onSelectedIdsChange,
+}: OrdersTableProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -129,11 +138,30 @@ export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesC
     );
   }
 
+  const isAllPageSelected = orders.length > 0 && orders.every(order => selectedIds.includes(order.id));
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px] px-4">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                checked={isAllPageSelected}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    const pageIds = orders.map(order => order.id);
+                    const newSelected = Array.from(new Set([...selectedIds, ...pageIds]));
+                    onSelectedIdsChange(newSelected);
+                  } else {
+                    const pageIds = orders.map(order => order.id);
+                    onSelectedIdsChange(selectedIds.filter(id => !pageIds.includes(id)));
+                  }
+                }}
+              />
+            </TableHead>
             <TableHead className="w-[150px]">Order ID</TableHead>
             <TableHead className="w-[180px]">Customer Name</TableHead>
             <TableHead className="w-[110px]">Date</TableHead>
@@ -147,6 +175,9 @@ export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesC
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
               <TableRow key={i}>
+                <TableCell className="w-[50px] px-4">
+                  <Skeleton className="h-4 w-4 rounded" />
+                </TableCell>
                 <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-24" /></TableCell>
@@ -159,6 +190,20 @@ export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesC
           ) : orders && orders.length > 0 ? (
             orders.map((order) => (
               <TableRow key={order.id}>
+                <TableCell className="w-[50px] px-4">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                    checked={selectedIds.includes(order.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        onSelectedIdsChange([...selectedIds, order.id]);
+                      } else {
+                        onSelectedIdsChange(selectedIds.filter(id => id !== order.id));
+                      }
+                    }}
+                  />
+                </TableCell>
                 <TableCell className="max-w-[150px]">
                   <span className="font-semibold truncate block" title={order.orderNumber}>{order.orderNumber}</span>
                 </TableCell>
@@ -201,7 +246,7 @@ export function OrdersTable({ searchQuery, statusFilter, page = 1, onTotalPagesC
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center">
+              <TableCell colSpan={8} className="h-24 text-center">
                 No orders found.
               </TableCell>
             </TableRow>

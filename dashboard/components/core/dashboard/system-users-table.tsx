@@ -25,25 +25,47 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/core/ui/avatar
 import { Alert, AlertDescription, AlertTitle } from '@/components/core/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { Switch } from '@/components/core/ui/switch';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 interface SystemUsersTableProps {
   searchQuery: string;
   roleFilter: string;
+  page?: number;
+  onTotalPagesChange?: (totalPages: number) => void;
+  selectedIds: string[];
+  onSelectedIdsChange: (ids: string[]) => void;
 }
 
 import { apiClient } from '@/lib/core/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
 
-export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTableProps) {
+export function SystemUsersTable({
+  searchQuery,
+  roleFilter,
+  page = 1,
+  onTotalPagesChange,
+  selectedIds,
+  onSelectedIdsChange,
+}: SystemUsersTableProps) {
   const queryClient = useQueryClient();
 
-  const { data: users, isLoading, isError, error } = useSystemUsers({
+  const { data: responseData, isLoading, isError, error } = useSystemUsers({
     search: searchQuery,
     role: roleFilter !== 'All' ? roleFilter : undefined,
+    page,
+    limit: 15,
   });
+
+  const users = responseData?.data ?? [];
+  const totalPages = responseData?.meta?.totalPages ?? 1;
+
+  useEffect(() => {
+    if (onTotalPagesChange && responseData?.meta) {
+      onTotalPagesChange(totalPages);
+    }
+  }, [totalPages, onTotalPagesChange, responseData]);
 
   const [toggling, setToggling] = useState<string | null>(null);
 
@@ -71,6 +93,7 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
       await apiClient.delete(`/api/v1/users/${deleteTarget.id}`);
       toast.success(`Access revoked for ${deleteTarget.name}.`);
       queryClient.invalidateQueries({ queryKey: ['system-users'] });
+      onSelectedIdsChange(selectedIds.filter(id => id !== deleteTarget.id));
       setDeleteTarget(null);
     } catch {
       toast.error('Failed to revoke access.');
@@ -104,11 +127,30 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
     );
   }
 
+  const isAllPageSelected = users.length > 0 && users.every(u => selectedIds.includes(u.id));
+
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px] px-4">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                checked={isAllPageSelected}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    const pageIds = users.map(u => u.id);
+                    const newSelected = Array.from(new Set([...selectedIds, ...pageIds]));
+                    onSelectedIdsChange(newSelected);
+                  } else {
+                    const pageIds = users.map(u => u.id);
+                    onSelectedIdsChange(selectedIds.filter(id => !pageIds.includes(id)));
+                  }
+                }}
+              />
+            </TableHead>
             <TableHead>User</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Assigned Role</TableHead>
@@ -121,6 +163,9 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
           {isLoading ? (
             Array.from({ length: 5 }).map((_, i) => (
               <TableRow key={i}>
+                <TableCell className="w-[50px] px-4">
+                  <Skeleton className="h-4 w-4 rounded" />
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-10 w-10 rounded-full" />
@@ -137,6 +182,20 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
           ) : users && users.length > 0 ? (
             users.map((user) => (
               <TableRow key={user.id}>
+                <TableCell className="w-[50px] px-4">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                    checked={selectedIds.includes(user.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        onSelectedIdsChange([...selectedIds, user.id]);
+                      } else {
+                        onSelectedIdsChange(selectedIds.filter(id => id !== user.id));
+                      }
+                    }}
+                  />
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
@@ -194,7 +253,7 @@ export function SystemUsersTable({ searchQuery, roleFilter }: SystemUsersTablePr
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
+              <TableCell colSpan={7} className="h-24 text-center">
                 No system users found.
               </TableCell>
             </TableRow>

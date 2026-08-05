@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/core/ui/button";
 import { Input } from "@/components/core/ui/input";
@@ -47,6 +47,19 @@ const emptyVariant = (): VariantRow => ({
   sku: "",
 });
 
+interface AttributeValue {
+  name: string;
+  slug: string;
+  color?: string | null;
+}
+
+interface AttributeGroup {
+  _id: string;
+  name: string;
+  slug: string;
+  values: AttributeValue[];
+}
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -88,6 +101,22 @@ export default function NewProductPage() {
 
   // Variant product fields
   const [variants, setVariants] = useState<VariantRow[]>([emptyVariant()]);
+  const [attributeGroups, setAttributeGroups] = useState<AttributeGroup[]>([]);
+  const [selectedAttributeGroup, setSelectedAttributeGroup] = useState<string>("");
+  const [variantInputModes, setVariantInputModes] = useState<Record<number, "preset" | "custom">>({});
+
+  // Fetch attribute groups
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const res = await apiClient.get<{ data: AttributeGroup[] }>("/api/v1/dashboard/attributes");
+        setAttributeGroups(res.data?.data || []);
+      } catch (err) {
+        console.error("Failed to fetch attributes", err);
+      }
+    };
+    fetchAttributes();
+  }, []);
 
   // Category & Brand
   const [categorySlug, setCategorySlug] = useState("");
@@ -112,10 +141,17 @@ export default function NewProductPage() {
 
   const addVariant = () => {
     setVariants((prev) => [...prev, emptyVariant()]);
+    const nextIndex = variants.length;
+    setVariantInputModes((prev) => ({ ...prev, [nextIndex]: "preset" }));
   };
 
   const removeVariant = (index: number) => {
     setVariants((prev) => prev.filter((_, i) => i !== index));
+    setVariantInputModes((prev) => {
+      const copy = { ...prev };
+      delete copy[index];
+      return copy;
+    });
   };
 
   const updateVariant = (
@@ -410,94 +446,171 @@ export default function NewProductPage() {
             {/* ─── Variant Product Fields ─── */}
             {productType === "variant" && (
               <div className="space-y-4 pt-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">
-                    Define product sizes and individual configurations.
-                  </span>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-8 text-xs gap-1"
-                    onClick={addVariant}
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Add Size Variant
-                  </Button>
+                <div className="grid grid-cols-2 gap-4 items-end">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold">Variation Type (Attribute Group)</label>
+                    <Select
+                      value={selectedAttributeGroup}
+                      onValueChange={(val) => {
+                        setSelectedAttributeGroup(val);
+                        const modes: Record<number, "preset" | "custom"> = {};
+                        variants.forEach((_, idx) => {
+                          modes[idx] = "preset";
+                        });
+                        setVariantInputModes(modes);
+                      }}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select type (e.g. Size, Volume)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {attributeGroups.map((group) => (
+                          <SelectItem key={group.slug} value={group.slug}>
+                            {group.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-9 text-xs gap-1"
+                      onClick={addVariant}
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Add Variation Row
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="space-y-3">
-                  {variants.map((v, i) => (
-                    <div
-                      key={i}
-                      className="grid grid-cols-[1.5fr_1.5fr_1.5fr_1.5fr_auto] gap-3 items-end rounded-lg border border-border/80 p-3 bg-muted/20"
-                    >
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-semibold text-muted-foreground">
-                          Size
-                        </label>
-                        <Input
-                          required
-                          placeholder="e.g. 2ml"
-                          value={v.size}
-                          onChange={(e) =>
-                            updateVariant(i, "size", e.target.value)
-                          }
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-semibold text-muted-foreground">
-                          Price (৳)
-                        </label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          required
-                          placeholder="199"
-                          value={v.price}
-                          onChange={(e) =>
-                            updateVariant(i, "price", e.target.value)
-                          }
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-semibold text-muted-foreground">
-                          Offer Price
-                        </label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          placeholder="Optional"
-                          value={v.offerPrice}
-                          onChange={(e) =>
-                            updateVariant(i, "offerPrice", e.target.value)
-                          }
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-semibold text-muted-foreground">
-                          Stock
-                        </label>
-                        <Input
-                          type="number"
-                          placeholder="0"
-                          value={v.stockQuantity}
-                          onChange={(e) =>
-                            updateVariant(i, "stockQuantity", e.target.value)
-                          }
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive self-end"
-                        onClick={() => removeVariant(i)}
-                        disabled={variants.length <= 1}
+                  {variants.map((v, i) => {
+                    const activeGroup = attributeGroups.find(g => g.slug === selectedAttributeGroup);
+                    const presetValues = activeGroup ? activeGroup.values : [];
+
+                    return (
+                      <div
+                        key={i}
+                        className="grid grid-cols-[1.8fr_1.4fr_1.4fr_1fr_auto] gap-3 items-end rounded-lg border border-border/80 p-3 bg-muted/20"
                       >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-semibold text-muted-foreground">
+                            {activeGroup?.name || "Variation Value"}
+                          </label>
+                          {variantInputModes[i] !== "custom" && presetValues.length > 0 ? (
+                            <Select
+                              value={v.size}
+                              onValueChange={(val) => {
+                                if (val === "[custom]") {
+                                  setVariantInputModes((prev) => ({ ...prev, [i]: "custom" }));
+                                  updateVariant(i, "size", "");
+                                } else {
+                                  updateVariant(i, "size", val);
+                                }
+                              }}
+                            >
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Select value" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {presetValues.map((pv) => (
+                                  <SelectItem key={pv.slug} value={pv.name}>
+                                    {pv.name}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="[custom]">
+                                  + Custom / Type value...
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <div className="flex gap-1 items-center">
+                              <Input
+                                required
+                                placeholder="e.g. 50ml"
+                                value={v.size}
+                                onChange={(e) =>
+                                  updateVariant(i, "size", e.target.value)
+                                }
+                                className="h-9"
+                              />
+                              {presetValues.length > 0 && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-9 px-1 text-[10px] text-primary"
+                                  onClick={() => {
+                                    setVariantInputModes((prev) => ({ ...prev, [i]: "preset" }));
+                                    updateVariant(i, "size", "");
+                                  }}
+                                >
+                                  Presets
+                                </Button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-semibold text-muted-foreground">
+                            Price (৳)
+                          </label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            required
+                            placeholder="199"
+                            value={v.price}
+                            onChange={(e) =>
+                              updateVariant(i, "price", e.target.value)
+                            }
+                            className="h-9"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-semibold text-muted-foreground">
+                            Offer Price
+                          </label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            placeholder="Optional"
+                            value={v.offerPrice}
+                            onChange={(e) =>
+                              updateVariant(i, "offerPrice", e.target.value)
+                            }
+                            className="h-9"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-semibold text-muted-foreground">
+                            Stock
+                          </label>
+                          <Input
+                            type="number"
+                            placeholder="0"
+                            value={v.stockQuantity}
+                            onChange={(e) =>
+                              updateVariant(i, "stockQuantity", e.target.value)
+                            }
+                            className="h-9"
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive self-end"
+                          onClick={() => removeVariant(i)}
+                          disabled={variants.length <= 1}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

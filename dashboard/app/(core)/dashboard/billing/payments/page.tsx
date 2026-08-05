@@ -20,6 +20,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/core/ui/table';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/core/ui/pagination';
 import { usePayments, PaymentRecord } from '@/hooks/core/use-payments';
 
 const METHOD_COLORS: Record<string, string> = {
@@ -33,19 +42,19 @@ function getStatusBadge(status: PaymentRecord['status']) {
   switch (status) {
     case 'Completed':
       return (
-        <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 gap-1">
+        <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 gap-1" variant="outline">
           <CheckCircle2 className="h-3 w-3" />Completed
         </Badge>
       );
     case 'Pending':
       return (
-        <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 gap-1">
+        <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 gap-1" variant="outline">
           <Clock className="h-3 w-3" />Pending
         </Badge>
       );
     case 'Failed':
       return (
-        <Badge className="bg-red-500/15 text-red-600 border-red-500/30 gap-1">
+        <Badge className="bg-red-500/15 text-red-600 border-red-500/30 gap-1" variant="outline">
           <XCircle className="h-3 w-3" />Failed
         </Badge>
       );
@@ -54,7 +63,7 @@ function getStatusBadge(status: PaymentRecord['status']) {
 
 function getMethodBadge(method: string) {
   const cls = METHOD_COLORS[method] ?? 'bg-muted text-muted-foreground';
-  return <Badge className={`${cls} gap-1`}>{method}</Badge>;
+  return <Badge className={`${cls} gap-1`} variant="outline">{method}</Badge>;
 }
 
 export default function PaymentsPage() {
@@ -62,6 +71,7 @@ export default function PaymentsPage() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [methodFilter, setMethodFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const { data: paymentsResponse, isLoading, isError } = usePayments({
     search: searchQuery || undefined,
@@ -73,19 +83,7 @@ export default function PaymentsPage() {
 
   const payments = useMemo(() => paymentsResponse?.items || [], [paymentsResponse?.items]);
   const meta = paymentsResponse?.meta;
-
-  const filtered = useMemo(() => {
-    return payments.filter((p) => {
-      const searchLower = searchQuery.toLowerCase();
-      const matchesSearch =
-        p.customerName.toLowerCase().includes(searchLower) ||
-        p.id.toLowerCase().includes(searchLower) ||
-        p.invoiceId.toLowerCase().includes(searchLower);
-      const matchesStatus = statusFilter === 'All' || p.status === statusFilter;
-      const matchesMethod = methodFilter === 'All' || p.method === methodFilter;
-      return matchesSearch && matchesStatus && matchesMethod;
-    });
-  }, [payments, searchQuery, statusFilter, methodFilter]);
+  const totalPages = meta?.totalPages ?? 1;
 
   const totalCollected = useMemo(
     () =>
@@ -110,6 +108,30 @@ export default function PaymentsPage() {
         .reduce((s, p) => s + p.amount, 0),
     [payments]
   );
+
+  const handleSearch = (q: string) => {
+    setSearchQuery(q);
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleMethodFilter = (v: string | null) => {
+    setMethodFilter(v ?? 'All');
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleStatusFilter = (v: string | null) => {
+    setStatusFilter(v ?? 'All');
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleBulkExport = () => {
+    alert(`Exporting ${selectedIds.length} payments...`);
+  };
+
+  const isAllPageSelected = payments.length > 0 && payments.every(p => selectedIds.includes(p.id));
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
@@ -166,32 +188,45 @@ export default function PaymentsPage() {
               placeholder="Search by customer, payment ID or invoice..."
               className="pl-9"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
-          <Select value={methodFilter} onValueChange={(v) => setMethodFilter(v ?? 'All')}>
-            <SelectTrigger className="w-full sm:w-36">
-              <SelectValue placeholder="Method" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Methods</SelectItem>
-              <SelectItem value="Cash">Cash</SelectItem>
-              <SelectItem value="Card">Card</SelectItem>
-              <SelectItem value="bKash">bKash</SelectItem>
-              <SelectItem value="Nagad">Nagad</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v ?? 'All')}>
-            <SelectTrigger className="w-full sm:w-36">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Status</SelectItem>
-              <SelectItem value="Completed">Completed</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Failed">Failed</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2 items-center w-full sm:w-auto">
+            {selectedIds.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkExport}
+                className="flex items-center gap-1.5 mr-2"
+              >
+                <Download className="h-4 w-4" />
+                Export Selected ({selectedIds.length})
+              </Button>
+            )}
+            <Select value={methodFilter} onValueChange={handleMethodFilter}>
+              <SelectTrigger className="w-full sm:w-36">
+                <SelectValue placeholder="Method" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Methods</SelectItem>
+                <SelectItem value="Cash">Cash</SelectItem>
+                <SelectItem value="Card">Card</SelectItem>
+                <SelectItem value="bKash">bKash</SelectItem>
+                <SelectItem value="Nagad">Nagad</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={handleStatusFilter}>
+              <SelectTrigger className="w-full sm:w-36">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Status</SelectItem>
+                <SelectItem value="Completed">Completed</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Failed">Failed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Table */}
@@ -199,6 +234,23 @@ export default function PaymentsPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px] px-4">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                    checked={isAllPageSelected}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        const pageIds = payments.map(p => p.id);
+                        const newSelected = Array.from(new Set([...selectedIds, ...pageIds]));
+                        setSelectedIds(newSelected);
+                      } else {
+                        const pageIds = payments.map(p => p.id);
+                        setSelectedIds(selectedIds.filter(id => !pageIds.includes(id)));
+                      }
+                    }}
+                  />
+                </TableHead>
                 <TableHead>Invoice</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Method</TableHead>
@@ -209,20 +261,42 @@ export default function PaymentsPage() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                    Loading payments...
-                  </TableCell>
-                </TableRow>
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="w-[50px] px-4">
+                      <span className="h-4 w-4 block bg-muted animate-pulse rounded" />
+                    </TableCell>
+                    <TableCell><span className="h-4 w-24 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-4 w-32 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-5 w-16 block bg-muted animate-pulse rounded-full" /></TableCell>
+                    <TableCell><span className="h-4 w-24 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-4 w-16 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-5 w-20 block bg-muted animate-pulse rounded-full" /></TableCell>
+                  </TableRow>
+                ))
               ) : isError ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                    Failed to load payments. Please refresh.
+                  <TableCell colSpan={7} className="h-24 text-center text-red-500">
+                    Failed to load payments. Please refresh the page.
                   </TableCell>
                 </TableRow>
-              ) : filtered.length > 0 ? (
-                filtered.map((p) => (
+              ) : payments.length > 0 ? (
+                payments.map((p) => (
                   <TableRow key={p.id}>
+                    <TableCell className="w-[50px] px-4">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                        checked={selectedIds.includes(p.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds([...selectedIds, p.id]);
+                          } else {
+                            setSelectedIds(selectedIds.filter(id => id !== p.id));
+                          }
+                        }}
+                      />
+                    </TableCell>
                     <TableCell className="text-muted-foreground">{p.invoiceId}</TableCell>
                     <TableCell>{p.customerName}</TableCell>
                     <TableCell>{getMethodBadge(p.method)}</TableCell>
@@ -233,7 +307,7 @@ export default function PaymentsPage() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                     No payments found.
                   </TableCell>
                 </TableRow>
@@ -242,30 +316,80 @@ export default function PaymentsPage() {
           </Table>
         </div>
 
-        {/* Pagination */}
-        <div className="p-4 flex items-center justify-end">
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={!meta || meta.page <= 1}
-            >
-              Prev
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {meta?.page ?? currentPage} of {meta?.totalPages ?? '-'}
-            </span>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setCurrentPage((p) => p + 1)}
-              disabled={!meta || (meta.totalPages ? meta.page >= meta.totalPages : false)}
-            >
-              Next
-            </Button>
+        {/* Pagination Section */}
+        {totalPages > 1 && (
+          <div className="border-t px-4 py-3 bg-muted/10">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) {
+                        setCurrentPage((p) => p - 1);
+                        setSelectedIds([]);
+                      }
+                    }}
+                    aria-disabled={currentPage === 1}
+                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const pageNum = i + 1;
+                  const showPage =
+                    pageNum === 1 ||
+                    pageNum === totalPages ||
+                    Math.abs(pageNum - currentPage) <= 1;
+
+                  if (!showPage) {
+                    if (pageNum === 2 || pageNum === totalPages - 1) {
+                      return (
+                        <PaginationItem key={`ellipsis-${pageNum}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    return null;
+                  }
+
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        href="#"
+                        isActive={currentPage === pageNum}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCurrentPage(pageNum);
+                          setSelectedIds([]);
+                        }}
+                        className="cursor-pointer"
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) {
+                        setCurrentPage((p) => p + 1);
+                        setSelectedIds([]);
+                      }
+                    }}
+                    aria-disabled={currentPage === totalPages}
+                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

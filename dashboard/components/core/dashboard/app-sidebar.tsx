@@ -17,6 +17,7 @@ import {
   Ticket,
   X,
   Menu,
+  Sliders,
 } from "lucide-react"
 
 import {
@@ -168,6 +169,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span>Brands</span>
                 </SidebarMenuSubButton>
               </SidebarMenuSubItem>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/products/attributes"}
+                  render={<Link href={{ pathname: "/dashboard/products/attributes" }} />}
+                >
+                  <Sliders className="h-3.5 w-3.5" />
+                  <span>Attributes</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+              <SidebarMenuSubItem>
+                <SidebarMenuSubButton
+                  isActive={pathname === "/dashboard/products/coupons"}
+                  render={<Link href={{ pathname: "/dashboard/products/coupons" }} />}
+                >
+                  <Ticket className="h-3.5 w-3.5" />
+                  <span>Coupons</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
             </SidebarMenuSub>
           </SidebarMenuItem>
 
@@ -192,18 +211,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Users className="h-4 w-4" />
               <span>Members</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-
-          {/* Coupons */}
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={pathname.startsWith("/dashboard/coupons")}
-              tooltip="Coupons"
-              render={<Link href={{ pathname: "/dashboard/coupons" }} />}
-            >
-              <Ticket className="h-4 w-4" />
-              <span>Coupons</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
 

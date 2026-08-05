@@ -351,9 +351,27 @@ export function CouponDialog({ open, onOpenChange, couponToEdit }: CouponDialogP
           <div className="grid grid-cols-2 gap-4">
             {/* Coupon Code */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Coupon Code
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Coupon Code
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                    let result = 'DEC';
+                    for (let i = 0; i < 5; i++) {
+                      result += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    setCode(result);
+                    toast.success(`Generated code: ${result}`);
+                  }}
+                  className="text-xs text-primary hover:underline font-medium cursor-pointer"
+                  disabled={isSubmitting}
+                >
+                  Generate Code
+                </button>
+              </div>
               <Input
                 placeholder="e.g. SAVE20"
                 value={code}

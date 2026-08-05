@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ProductsTable } from '@/components/core/dashboard/products-table';
 import { Input } from '@/components/core/ui/input';
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, Trash2, PackageX } from 'lucide-react';
 import { useCategories, useBrands } from '@/lib/core/category-cache';
 import {
   Select,
@@ -22,6 +22,19 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/core/ui/pagination';
+import { Button } from '@/components/core/ui/button';
+import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/core/ui/dialog';
+import { apiClient } from '@/lib/core/api-client';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,23 +42,69 @@ export default function ProductsPage() {
   const [brandFilter, setBrandFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [bulkStockOpen, setBulkStockOpen] = useState(false);
+  const [isBulkStockUpdating, setIsBulkStockUpdating] = useState(false);
+
+  const queryClient = useQueryClient();
   const { data: categories = [] } = useCategories();
   const { data: brands = [] } = useBrands();
 
   const handleSearch = (q: string) => {
     setSearchQuery(q);
     setCurrentPage(1);
+    setSelectedIds([]);
   };
 
   const handleCategory = (v: string | null) => {
     setCategoryFilter(v ?? 'All');
     setCurrentPage(1);
+    setSelectedIds([]);
   };
 
   const handleBrand = (v: string | null) => {
     setBrandFilter(v ?? 'All');
     setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleBulkDelete = async () => {
+    setIsBulkDeleting(true);
+    try {
+      await Promise.all(
+        selectedIds.map((id) => apiClient.delete(`/api/v1/products/${id}`))
+      );
+      toast.success('Selected products deleted successfully.');
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      setSelectedIds([]);
+      setBulkDeleteOpen(false);
+    } catch {
+      toast.error('Failed to delete some products.');
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
+  const handleBulkOutOfStock = async () => {
+    setIsBulkStockUpdating(true);
+    try {
+      await Promise.all(
+        selectedIds.map((id) =>
+          apiClient.put(`/api/v1/products/${id}`, { stockStatus: 'outofstock' })
+        )
+      );
+      toast.success('Selected products marked as Out of Stock.');
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      setSelectedIds([]);
+      setBulkStockOpen(false);
+    } catch {
+      toast.error('Failed to update stock status for some products.');
+    } finally {
+      setIsBulkStockUpdating(false);
+    }
   };
 
   return (
@@ -73,7 +132,29 @@ export default function ProductsPage() {
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center w-full sm:w-auto">
+          {selectedIds.length > 0 && (
+            <div className="flex gap-1.5 items-center mr-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setBulkStockOpen(true)}
+                className="flex items-center gap-1 text-xs"
+              >
+                <PackageX className="h-3.5 w-3.5" />
+                Set Out of Stock
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setBulkDeleteOpen(true)}
+                className="flex items-center gap-1 text-xs"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete Selected ({selectedIds.length})
+              </Button>
+            </div>
+          )}
           <Select value={categoryFilter} onValueChange={handleCategory}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Category" />
@@ -108,74 +189,127 @@ export default function ProductsPage() {
             brandFilter={brandFilter}
             page={currentPage}
             onTotalPagesChange={setTotalPages}
+            selectedIds={selectedIds}
+            onSelectedIdsChange={setSelectedIds}
           />
 
           {/* Pagination */}
-          <div className="border-t mt-4 pt-3">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage > 1) setCurrentPage((p) => p - 1);
-                    }}
-                    aria-disabled={currentPage === 1}
-                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
-                  />
-                </PaginationItem>
+          {totalPages > 1 && (
+            <div className="border-t mt-4 pt-3">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) {
+                          setCurrentPage((p) => p - 1);
+                          setSelectedIds([]);
+                        }
+                      }}
+                      aria-disabled={currentPage === 1}
+                      className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    />
+                  </PaginationItem>
 
-                {Array.from({ length: totalPages }).map((_, i) => {
-                  const page = i + 1;
-                  const showPage =
-                    page === 1 ||
-                    page === totalPages ||
-                    Math.abs(page - currentPage) <= 1;
+                  {Array.from({ length: totalPages }).map((_, i) => {
+                    const page = i + 1;
+                    const showPage =
+                      page === 1 ||
+                      page === totalPages ||
+                      Math.abs(page - currentPage) <= 1;
 
-                  if (!showPage) {
-                    if (page === 2 || page === totalPages - 1) {
-                      return (
-                        <PaginationItem key={`ellipsis-${page}`}>
-                          <PaginationEllipsis />
-                        </PaginationItem>
-                      );
+                    if (!showPage) {
+                      if (page === 2 || page === totalPages - 1) {
+                        return (
+                          <PaginationItem key={`ellipsis-${page}`}>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                        );
+                      }
+                      return null;
                     }
-                    return null;
-                  }
 
-                  return (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        href="#"
-                        isActive={currentPage === page}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCurrentPage(page);
-                        }}
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === page}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(page);
+                            setSelectedIds([]);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
 
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (currentPage < totalPages) setCurrentPage((p) => p + 1);
-                    }}
-                    aria-disabled={currentPage === totalPages}
-                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) {
+                          setCurrentPage((p) => p + 1);
+                          setSelectedIds([]);
+                        }
+                      }}
+                      aria-disabled={currentPage === totalPages}
+                      className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Bulk Delete Confirm Dialog */}
+      <ConfirmDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        onConfirm={handleBulkDelete}
+        isDeleting={isBulkDeleting}
+        title="Delete Selected Products"
+        description={`Are you sure you want to delete the ${selectedIds.length} selected products? This action cannot be undone.`}
+      />
+
+      {/* Bulk Out of Stock Dialog */}
+      <Dialog open={bulkStockOpen} onOpenChange={setBulkStockOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <PackageX className="h-5 w-5 text-destructive" />
+              Set Out of Stock
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to mark the {selectedIds.length} selected products as <span className="font-semibold text-destructive">Out of Stock</span>?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setBulkStockOpen(false)}
+              disabled={isBulkStockUpdating}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkOutOfStock}
+              disabled={isBulkStockUpdating}
+            >
+              {isBulkStockUpdating ? 'Updating...' : 'Yes, Mark Out of Stock'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

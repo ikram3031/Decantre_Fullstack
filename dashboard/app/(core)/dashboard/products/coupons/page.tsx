@@ -22,6 +22,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/core/ui/pagination';
+import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
+import { Trash2 } from 'lucide-react';
+import { apiClient } from '@/lib/core/api-client';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { Coupon } from '@/types';
 
 export default function CouponsPage() {
@@ -30,6 +35,11 @@ export default function CouponsPage() {
   const [typeFilter, setTypeFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // Dialog control states
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -38,16 +48,19 @@ export default function CouponsPage() {
   const handleSearch = (q: string) => {
     setSearchQuery(q);
     setCurrentPage(1);
+    setSelectedIds([]);
   };
 
   const handleStatusFilter = (v: string | null) => {
     setStatusFilter(v ?? 'All');
     setCurrentPage(1);
+    setSelectedIds([]);
   };
 
   const handleTypeFilter = (v: string | null) => {
     setTypeFilter(v ?? 'All');
     setCurrentPage(1);
+    setSelectedIds([]);
   };
 
   const handleOpenAddDialog = () => {
@@ -58,6 +71,23 @@ export default function CouponsPage() {
   const handleOpenEditDialog = (coupon: Coupon) => {
     setEditingCoupon(coupon);
     setDialogOpen(true);
+  };
+
+  const handleBulkDelete = async () => {
+    setIsBulkDeleting(true);
+    try {
+      await Promise.all(
+        selectedIds.map((id) => apiClient.delete(`/api/v1/coupons/${id}`))
+      );
+      toast.success('Selected coupons deleted successfully.');
+      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      setSelectedIds([]);
+      setBulkDeleteOpen(false);
+    } catch {
+      toast.error('Failed to delete some coupons.');
+    } finally {
+      setIsBulkDeleting(false);
+    }
   };
 
   return (
@@ -87,7 +117,18 @@ export default function CouponsPage() {
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
+        <div className="flex gap-2 w-full sm:w-auto items-center">
+          {selectedIds.length > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setBulkDeleteOpen(true)}
+              className="flex items-center gap-1 mr-2 text-xs"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Delete Selected ({selectedIds.length})
+            </Button>
+          )}
           {/* Status Filter */}
           <Select value={statusFilter} onValueChange={handleStatusFilter}>
             <SelectTrigger className="w-[150px]">
@@ -123,6 +164,8 @@ export default function CouponsPage() {
           page={currentPage}
           onTotalPagesChange={setTotalPages}
           onEditClick={handleOpenEditDialog}
+          selectedIds={selectedIds}
+          onSelectedIdsChange={setSelectedIds}
         />
 
         {/* Pagination Section */}
@@ -199,6 +242,15 @@ export default function CouponsPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         couponToEdit={editingCoupon}
+      />
+
+      <ConfirmDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        onConfirm={handleBulkDelete}
+        isDeleting={isBulkDeleting}
+        title="Delete Selected Coupons"
+        description={`Are you sure you want to permanently delete the ${selectedIds.length} selected coupons? This action cannot be undone.`}
       />
     </div>
   );

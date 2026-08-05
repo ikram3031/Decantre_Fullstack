@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SystemUsersTable } from '@/components/core/dashboard/system-users-table';
 import { Input } from '@/components/core/ui/input';
 import { Button } from '@/components/core/ui/button';
-import { Search, UserPlus } from 'lucide-react';
+import { Search, UserPlus, Trash2 } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -20,6 +20,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/core/ui/dialog';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/core/ui/pagination';
+import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
 import { apiClient } from '@/lib/core/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -28,6 +38,11 @@ import { getApiErrorMessage } from '@/lib/core/error-handler';
 export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,6 +81,35 @@ export default function UsersPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBulkDelete = async () => {
+    setIsBulkDeleting(true);
+    try {
+      await Promise.all(
+        selectedIds.map((id) => apiClient.delete(`/api/v1/users/${id}`))
+      );
+      toast.success('Selected users deleted successfully.');
+      queryClient.invalidateQueries({ queryKey: ['system-users'] });
+      setSelectedIds([]);
+      setBulkDeleteOpen(false);
+    } catch (err: unknown) {
+      toast.error(getApiErrorMessage(err, 'Failed to delete some users.'));
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
+  const handleSearch = (q: string) => {
+    setSearchQuery(q);
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleRoleFilter = (v: string | null) => {
+    setRoleFilter(v ?? 'All');
+    setCurrentPage(1);
+    setSelectedIds([]);
   };
 
   return (
@@ -152,27 +196,130 @@ export default function UsersPage() {
             placeholder="Search users..."
             className="pl-8"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <Select value={roleFilter} onValueChange={(value: string | null) => setRoleFilter(value ?? 'All')}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Role" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="All">All Roles</SelectItem>
-            <SelectItem value="Admin">Admin</SelectItem>
-            <SelectItem value="Manager">Manager</SelectItem>
-            <SelectItem value="Editor">Editor</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          {selectedIds.length > 0 && (
+            <Button
+              variant="destructive"
+              onClick={() => setBulkDeleteOpen(true)}
+              className="flex items-center gap-1.5"
+            >
+              <Trash2 className="h-4 w-4" />
+              Revoke Selected ({selectedIds.length})
+            </Button>
+          )}
+          <Select value={roleFilter} onValueChange={handleRoleFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All">All Roles</SelectItem>
+              <SelectItem value="Admin">Admin</SelectItem>
+              <SelectItem value="Manager">Manager</SelectItem>
+              <SelectItem value="Editor">Editor</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <div className="bg-card text-card-foreground shadow-sm border rounded-lg">
         <div className="p-6">
-          <SystemUsersTable searchQuery={searchQuery} roleFilter={roleFilter} />
+          <SystemUsersTable
+            searchQuery={searchQuery}
+            roleFilter={roleFilter}
+            page={currentPage}
+            onTotalPagesChange={setTotalPages}
+            selectedIds={selectedIds}
+            onSelectedIdsChange={setSelectedIds}
+          />
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="border-t mt-4 pt-3">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) {
+                          setCurrentPage((p) => p - 1);
+                          setSelectedIds([]);
+                        }
+                      }}
+                      aria-disabled={currentPage === 1}
+                      className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    />
+                  </PaginationItem>
+
+                  {Array.from({ length: totalPages }).map((_, i) => {
+                    const pageNum = i + 1;
+                    const showPage =
+                      pageNum === 1 ||
+                      pageNum === totalPages ||
+                      Math.abs(pageNum - currentPage) <= 1;
+
+                    if (!showPage) {
+                      if (pageNum === 2 || pageNum === totalPages - 1) {
+                        return (
+                          <PaginationItem key={`ellipsis-${pageNum}`}>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                        );
+                      }
+                      return null;
+                    }
+
+                    return (
+                      <PaginationItem key={pageNum}>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === pageNum}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(pageNum);
+                            setSelectedIds([]);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {pageNum}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) {
+                          setCurrentPage((p) => p + 1);
+                          setSelectedIds([]);
+                        }
+                      }}
+                      aria-disabled={currentPage === totalPages}
+                      className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       </div>
+
+      <ConfirmDeleteDialog
+        open={bulkDeleteOpen}
+        onOpenChange={setBulkDeleteOpen}
+        onConfirm={handleBulkDelete}
+        isDeleting={isBulkDeleting}
+        title="Revoke Access for Selected Users"
+        description={`Are you sure you want to revoke access for ${selectedIds.length} selected users? This action cannot be undone.`}
+      />
     </div>
   );
 }

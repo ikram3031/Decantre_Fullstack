@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Input } from '@/components/core/ui/input';
 import { Button } from '@/components/core/ui/button';
-import { Search, Download, CheckCircle2, XCircle, Clock, FileText } from 'lucide-react';
+import { Search, Download, CheckCircle2, XCircle, Clock, FileText, Skeleton } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -20,41 +20,34 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/core/ui/table';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/core/ui/pagination';
+import { useBillings, BillingRecord } from '@/hooks/core/use-billings';
 
-interface Invoice {
-  id: string;
-  customerName: string;
-  amount: number;
-  status: 'Paid' | 'Pending' | 'Failed';
-  date: string;
-  dueDate: string;
-}
-
-const mockInvoices: Invoice[] = [
-  { id: 'INV-2026-001', customerName: 'Nadia Rahman', amount: 15400, status: 'Paid', date: '2026-07-15', dueDate: '2026-07-25' },
-  { id: 'INV-2026-002', customerName: 'Tanvir Hossain', amount: 29050, status: 'Pending', date: '2026-07-28', dueDate: '2026-08-07' },
-  { id: 'INV-2026-003', customerName: 'Farhana Ahmed', amount: 8900, status: 'Paid', date: '2026-07-29', dueDate: '2026-08-08' },
-  { id: 'INV-2026-004', customerName: 'Imtiaz Chowdhury', amount: 12500, status: 'Failed', date: '2026-07-29', dueDate: '2026-08-05' },
-  { id: 'INV-2026-005', customerName: 'Sadia Jahan', amount: 6200, status: 'Pending', date: '2026-07-30', dueDate: '2026-08-10' },
-];
-
-function getStatusBadge(status: Invoice['status']) {
+function getStatusBadge(status: BillingRecord['status']) {
   switch (status) {
     case 'Paid':
       return (
-        <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 gap-1">
+        <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 gap-1" variant="outline">
           <CheckCircle2 className="h-3 w-3" />Paid
         </Badge>
       );
     case 'Pending':
       return (
-        <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 gap-1">
+        <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 gap-1" variant="outline">
           <Clock className="h-3 w-3" />Pending
         </Badge>
       );
     case 'Failed':
       return (
-        <Badge className="bg-red-500/15 text-red-600 border-red-500/30 gap-1">
+        <Badge className="bg-red-500/15 text-red-600 border-red-500/30 gap-1" variant="outline">
           <XCircle className="h-3 w-3" />Failed
         </Badge>
       );
@@ -64,18 +57,37 @@ function getStatusBadge(status: Invoice['status']) {
 export default function BillingsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const filtered = mockInvoices.filter((inv) => {
-    const matchesSearch =
-      inv.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inv.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'All' || inv.status === statusFilter;
-    return matchesSearch && matchesStatus;
+  const { data: responseData, isLoading, isError } = useBillings({
+    search: searchQuery || undefined,
+    status: statusFilter !== 'All' ? statusFilter : undefined,
+    page: currentPage,
+    limit: 15,
   });
 
-  const totalPaid = mockInvoices.filter((i) => i.status === 'Paid').reduce((s, i) => s + i.amount, 0);
-  const totalPending = mockInvoices.filter((i) => i.status === 'Pending').reduce((s, i) => s + i.amount, 0);
-  const totalFailed = mockInvoices.filter((i) => i.status === 'Failed').reduce((s, i) => s + i.amount, 0);
+  const invoices = responseData?.items ?? [];
+  const meta = responseData?.meta;
+  const totalPages = meta?.totalPages ?? 1;
+
+  const handleSearch = (q: string) => {
+    setSearchQuery(q);
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleStatusFilter = (v: string | null) => {
+    setStatusFilter(v ?? 'All');
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleBulkExport = () => {
+    alert(`Exporting ${selectedIds.length} invoices...`);
+  };
+
+  const isAllPageSelected = invoices.length > 0 && invoices.every(inv => selectedIds.includes(inv.id));
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6">
@@ -91,37 +103,6 @@ export default function BillingsPage() {
         </Button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
-        <div className="bg-card border rounded-xl p-5 shadow-sm flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
-            <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Paid</p>
-            <p className="text-xl font-bold">৳{totalPaid.toLocaleString()}</p>
-          </div>
-        </div>
-        <div className="bg-card border rounded-xl p-5 shadow-sm flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-            <Clock className="h-5 w-5 text-amber-500" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Pending</p>
-            <p className="text-xl font-bold">৳{totalPending.toLocaleString()}</p>
-          </div>
-        </div>
-        <div className="bg-card border rounded-xl p-5 shadow-sm flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center">
-            <XCircle className="h-5 w-5 text-red-500" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Failed</p>
-            <p className="text-xl font-bold">৳{totalFailed.toLocaleString()}</p>
-          </div>
-        </div>
-      </div>
-
       {/* Table Card */}
       <div className="bg-card border rounded-xl shadow-sm overflow-hidden">
         {/* Filters */}
@@ -132,20 +113,33 @@ export default function BillingsPage() {
               placeholder="Search by customer name or invoice ID..."
               className="pl-9"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v ?? 'All')}>
-            <SelectTrigger className="w-full sm:w-40">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Status</SelectItem>
-              <SelectItem value="Paid">Paid</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Failed">Failed</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2 items-center w-full sm:w-auto">
+            {selectedIds.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkExport}
+                className="flex items-center gap-1.5"
+              >
+                <Download className="h-4 w-4" />
+                Export Selected ({selectedIds.length})
+              </Button>
+            )}
+            <Select value={statusFilter} onValueChange={handleStatusFilter}>
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Status</SelectItem>
+                <SelectItem value="Paid">Paid</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Failed">Failed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Table */}
@@ -153,6 +147,23 @@ export default function BillingsPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px] px-4">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                    checked={isAllPageSelected}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        const pageIds = invoices.map(inv => inv.id);
+                        const newSelected = Array.from(new Set([...selectedIds, ...pageIds]));
+                        setSelectedIds(newSelected);
+                      } else {
+                        const pageIds = invoices.map(inv => inv.id);
+                        setSelectedIds(selectedIds.filter(id => !pageIds.includes(id)));
+                      }
+                    }}
+                  />
+                </TableHead>
                 <TableHead>Invoice ID</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Date</TableHead>
@@ -163,12 +174,47 @@ export default function BillingsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.length > 0 ? (
-                filtered.map((inv) => (
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="w-[50px] px-4">
+                      <span className="h-4 w-4 block bg-muted animate-pulse rounded" />
+                    </TableCell>
+                    <TableCell><span className="h-4 w-20 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-4 w-28 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-4 w-20 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-4 w-20 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-4 w-16 block bg-muted animate-pulse rounded" /></TableCell>
+                    <TableCell><span className="h-5 w-16 block bg-muted animate-pulse rounded-full" /></TableCell>
+                    <TableCell className="text-right"><span className="h-8 w-8 ml-auto block bg-muted animate-pulse rounded" /></TableCell>
+                  </TableRow>
+                ))
+              ) : isError ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-24 text-center text-red-500">
+                    Failed to load billing invoices. Please refresh the page.
+                  </TableCell>
+                </TableRow>
+              ) : invoices.length > 0 ? (
+                invoices.map((inv) => (
                   <TableRow key={inv.id}>
+                    <TableCell className="w-[50px] px-4">
+                      <input
+                        type="checkbox"
+                        className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                        checked={selectedIds.includes(inv.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds([...selectedIds, inv.id]);
+                          } else {
+                            setSelectedIds(selectedIds.filter(id => id !== inv.id));
+                          }
+                        }}
+                      />
+                    </TableCell>
                     <TableCell className="font-semibold flex items-center gap-2">
                       <FileText className="h-4 w-4 text-muted-foreground" />
-                      {inv.id}
+                      {inv.invoiceId}
                     </TableCell>
                     <TableCell>{inv.customerName}</TableCell>
                     <TableCell>{inv.date}</TableCell>
@@ -184,7 +230,7 @@ export default function BillingsPage() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                     No invoices found.
                   </TableCell>
                 </TableRow>
@@ -192,6 +238,81 @@ export default function BillingsPage() {
             </TableBody>
           </Table>
         </div>
+
+        {/* Pagination Section */}
+        {totalPages > 1 && (
+          <div className="border-t px-4 py-3 bg-muted/10">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) {
+                        setCurrentPage((p) => p - 1);
+                        setSelectedIds([]);
+                      }
+                    }}
+                    aria-disabled={currentPage === 1}
+                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const pageNum = i + 1;
+                  const showPage =
+                    pageNum === 1 ||
+                    pageNum === totalPages ||
+                    Math.abs(pageNum - currentPage) <= 1;
+
+                  if (!showPage) {
+                    if (pageNum === 2 || pageNum === totalPages - 1) {
+                      return (
+                        <PaginationItem key={`ellipsis-${pageNum}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    return null;
+                  }
+
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        href="#"
+                        isActive={currentPage === pageNum}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCurrentPage(pageNum);
+                          setSelectedIds([]);
+                        }}
+                        className="cursor-pointer"
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) {
+                        setCurrentPage((p) => p + 1);
+                        setSelectedIds([]);
+                      }
+                    }}
+                    aria-disabled={currentPage === totalPages}
+                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </div>
     </div>
   );

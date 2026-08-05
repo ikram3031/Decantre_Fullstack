@@ -39,9 +39,18 @@ interface MembersTableProps {
   segmentFilter: string;
   page?: number;
   onTotalPagesChange?: (totalPages: number) => void;
+  selectedIds: string[];
+  onSelectedIdsChange: (ids: string[]) => void;
 }
 
-export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPagesChange }: MembersTableProps) {
+export function MembersTable({
+  searchQuery,
+  segmentFilter,
+  page = 1,
+  onTotalPagesChange,
+  selectedIds,
+  onSelectedIdsChange,
+}: MembersTableProps) {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -89,6 +98,7 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
       await apiClient.delete(`/api/v1/members/${deleteTarget.id}`);
       toast.success(`Member ${deleteTarget.name} deleted.`);
       queryClient.invalidateQueries({ queryKey: ['members'] });
+      onSelectedIdsChange(selectedIds.filter(id => id !== deleteTarget.id));
       setDeleteTarget(null);
     } catch {
       toast.error('Failed to delete member.');
@@ -101,7 +111,7 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
   const handleChangePassword = async () => {
     if (!passwordTarget) return;
 
-    if (!newPassword || newPassword.length < 6) {
+    if (newPassword.length < 6) {
       toast.error('Password must be at least 6 characters.');
       return;
     }
@@ -139,11 +149,30 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
     );
   }
 
+  const isAllPageSelected = members.length > 0 && members.every(m => selectedIds.includes(m.id));
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px] px-4">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                checked={isAllPageSelected}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    const pageIds = members.map(m => m.id);
+                    const newSelected = Array.from(new Set([...selectedIds, ...pageIds]));
+                    onSelectedIdsChange(newSelected);
+                  } else {
+                    const pageIds = members.map(m => m.id);
+                    onSelectedIdsChange(selectedIds.filter(id => !pageIds.includes(id)));
+                  }
+                }}
+              />
+            </TableHead>
             <TableHead className="w-[200px] min-w-[160px]">Customer</TableHead>
             <TableHead className="w-[200px]">Email</TableHead>
             <TableHead className="w-[130px]">Phone</TableHead>
@@ -157,6 +186,9 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
           {isLoading ? (
             Array.from({ length: 15 }).map((_, i) => (
               <TableRow key={i}>
+                <TableCell className="w-[50px] px-4">
+                  <Skeleton className="h-4 w-4 rounded" />
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-10 w-10 rounded-full" />
@@ -174,6 +206,20 @@ export function MembersTable({ searchQuery, segmentFilter, page = 1, onTotalPage
           ) : members && members.length > 0 ? (
             members.map((member) => (
               <TableRow key={member.id}>
+                <TableCell className="w-[50px] px-4">
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                    checked={selectedIds.includes(member.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        onSelectedIdsChange([...selectedIds, member.id]);
+                      } else {
+                        onSelectedIdsChange(selectedIds.filter(id => id !== member.id));
+                      }
+                    }}
+                  />
+                </TableCell>
                 <TableCell className="max-w-[200px]">
                   <div className="flex items-center gap-3 min-w-0">
                     <Avatar className="h-9 w-9 flex-shrink-0">
