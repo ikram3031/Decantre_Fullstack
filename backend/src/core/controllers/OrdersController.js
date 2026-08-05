@@ -3,6 +3,7 @@ import { validateOrderPayload } from '../helper/orderHelper.js';
 import { OrderModel } from '../models/order.model.js';
 import { MemberModel } from '../models/member.model.js';
 import { CouponModel } from '../models/coupon.model.js';
+import { PaymentModel } from '../models/payment.model.js';
 import {
   buildAllowedOrderUpdates,
   buildOrderDocument,
@@ -196,24 +197,41 @@ export const updateOrder = async (req, res, next) => {
 export const deleteOrder = async (req, res, next) => {
   try {
     const { orderId } = req.params;
-    if (!Types.ObjectId.isValid(orderId)) {
-      return res.status(400).json({ status: 'error', message: 'Invalid order ID' });
+
+    // Try finding by _id (if valid ObjectId) or by custom id/did
+    let query = {};
+    if (Types.ObjectId.isValid(orderId)) {
+      query = { _id: orderId };
+    } else {
+      query = { $or: [{ did: orderId }, { id: orderId }] };
     }
 
-    const deletedOrder = await OrderModel.findByIdAndDelete(orderId).lean();
+    const deletedOrder = await OrderModel.findOneAndDelete(query).lean();
     if (!deletedOrder) {
       return res.status(404).json({ status: 'error', message: 'Order not found' });
     }
 
+    // Safe cleanup of member reference
     if (deletedOrder.member) {
-      await MemberModel.updateOne(
-        { _id: deletedOrder.member },
-        { $pull: { orders: { did: deletedOrder.did } } },
-      );
-      await updateMemberTotals(deletedOrder.member);
+      try {
+        if (deletedOrder.did) {
+          await MemberModel.updateOne(
+            { _id: deletedOrder.member },
+            { $pull: { orders: { did: deletedOrder.did } } }
+          );
+        }
+        await updateMemberTotals(deletedOrder.member);
+      } catch (memErr) {
+        console.error("Error updating member totals on order delete:", memErr);
+      }
     }
 
-    await PaymentModel.findOneAndDelete({ orderId: deletedOrder._id });
+    // Safe cleanup of payment record
+    try {
+      await PaymentModel.findOneAndDelete({ orderId: deletedOrder._id });
+    } catch (payErr) {
+      console.error("Error deleting linked payment record:", payErr);
+    }
 
     return res.json({ status: 'success', message: 'Order deleted successfully' });
   } catch (error) {
