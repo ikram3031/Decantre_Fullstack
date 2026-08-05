@@ -31,6 +31,7 @@ type BackendOrder = {
   createdAt?: string;
   totals?: { total?: number };
   status?: string;
+  paymentStatus?: string;
 };
 
 const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersResponse> => {
@@ -70,7 +71,17 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
         fulfillment = 'Cancelled';
       }
 
-      const isPaid = o.status === 'completed' || o.status === 'shipped';
+      let paymentStatus: Order['paymentStatus'] = 'Pending';
+      if (o.paymentStatus) {
+        const p = o.paymentStatus.toLowerCase();
+        if (p === 'paid') paymentStatus = 'Paid';
+        else if (p === 'failed') paymentStatus = 'Failed';
+        else paymentStatus = 'Pending';
+      } else {
+        const isPaid = o.status === 'completed' || o.status === 'shipped';
+        paymentStatus = isPaid ? 'Paid' : 'Pending';
+      }
+
       const id = o._id || o.id || `UNKNOWN-${Math.random().toString(36).slice(2, 10)}`;
 
       return {
@@ -79,7 +90,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
         customerName: o.customer?.fullName || 'Guest Customer',
         date: o.createdAt || new Date().toISOString(),
         totalAmount: o.totals?.total || 0,
-        paymentStatus: isPaid ? 'Paid' : 'Pending',
+        paymentStatus,
         fulfillmentStatus: fulfillment,
       };
     });

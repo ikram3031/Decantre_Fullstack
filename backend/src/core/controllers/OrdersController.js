@@ -73,7 +73,7 @@ export const createOrder = async (req, res, next) => {
   }
 };
 
-// List orders with pagination and optional filtering by status or customer email.
+// List orders with pagination and optional filtering by status, paymentStatus, or customer email.
 export const listOrders = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || '1', 10));
@@ -86,10 +86,20 @@ export const listOrders = async (req, res, next) => {
 
     if (req.query.paymentStatus) {
       const pStatus = req.query.paymentStatus.toLowerCase();
+      const matchingPayments = await PaymentModel.find({ status: pStatus }).distinct('orderId');
       if (pStatus === 'paid') {
-        filter.status = { $in: ['completed', 'shipped'] };
+        filter.$or = [
+          { _id: { $in: matchingPayments } },
+          { status: { $in: ['completed', 'shipped'] } }
+        ];
       } else if (pStatus === 'pending') {
-        filter.status = { $nin: ['completed', 'shipped'] };
+        const paidPayments = await PaymentModel.find({ status: 'paid' }).distinct('orderId');
+        filter.$and = [
+          { _id: { $nin: paidPayments } },
+          { status: { $nin: ['completed', 'shipped'] } }
+        ];
+      } else {
+        filter._id = { $in: matchingPayments };
       }
     }
 
@@ -104,9 +114,23 @@ export const listOrders = async (req, res, next) => {
       .limit(limit)
       .lean();
 
+    const orderIds = orders.map((o) => o._id);
+    const payments = await PaymentModel.find({ orderId: { $in: orderIds } }).select('orderId status').lean();
+    const paymentMap = new Map(payments.map((p) => [p.orderId.toString(), p.status]));
+
+    const data = orders.map((order) => {
+      const pStatus = paymentMap.get(order._id.toString());
+      const fallbackPaid = ['completed', 'shipped'].includes(order.status);
+      const effectivePaymentStatus = pStatus || (fallbackPaid ? 'paid' : 'pending');
+      return {
+        ...order,
+        paymentStatus: effectivePaymentStatus,
+      };
+    });
+
     return res.json({
       status: 'success',
-      data: orders,
+      data,
       meta: {
         total,
         page,
