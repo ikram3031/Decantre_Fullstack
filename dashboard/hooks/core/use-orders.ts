@@ -51,7 +51,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
       ? responseData
       : responseData?.data ?? [];
     const orderList = Array.isArray(rawOrderList) ? (rawOrderList as BackendOrder[]) : [];
-    const meta = responseData?.meta ?? {
+    const meta = (responseData?.meta as any) ?? {
       total: orderList.length,
       page,
       limit,
