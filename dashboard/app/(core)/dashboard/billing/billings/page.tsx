@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Input } from '@/components/core/ui/input';
 import { Button } from '@/components/core/ui/button';
-import { Search, Download, CheckCircle2, XCircle, Clock, FileText, Skeleton } from 'lucide-react';
+import { Search, Download, CheckCircle2, XCircle, Clock, FileText } from 'lucide-react';
+import { Skeleton } from '@/components/core/ui/skeleton';
 import {
   Select,
   SelectContent,
