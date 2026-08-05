@@ -2,14 +2,14 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, Sparkles, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useApp } from '../context/AppContext';
-import { formatBDT } from '../utils/formatCurrency';
+import { useApp } from '../core/context/AppContext';
+import { formatBDT } from '../core/utils/formatCurrency';
 import { ProductCard } from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/Skeleton';
 import { Pagination } from '../components/ui/Pagination';
 import { PriceRangeSlider } from '../components/PriceRangeSlider';
 import menuData from '../data/menuData.json';
-import { getDefaultSelection } from '../store/productHelpers';
+import { getDefaultSelection } from '../core/store/productHelpers';
 
 
 const staticBrandHierarchy = menuData.brandHierarchy || {};
@@ -274,7 +274,7 @@ export const Shop = () => {
   };
 
   useEffect(() => {
-    setAllProducts([]);
+    // Keep previous data of allProducts to prevent jarring flashes/layout shifts
     setPage(1);
     setTotalPages(1);
     setTotalProducts(0);
@@ -359,7 +359,7 @@ export const Shop = () => {
 
   const handleCategorySelect = (categorySlug) => {
     const params = new URLSearchParams(searchParams);
-    if (categorySlug === 'All') {
+    if (categorySlug?.toLowerCase() === 'all') {
       params.delete('category');
     } else {
       params.set('category', categorySlug);
@@ -404,6 +404,25 @@ export const Shop = () => {
     return brandParam ? brandParam.split(',') : [];
   }, [brandParam]);
 
+  const isAnyFilterApplied = useMemo(() => {
+    return (
+      (selectedCategory && selectedCategory !== 'All') ||
+      brandFilters.length > 0 ||
+      searchQuery !== '' ||
+      minPriceParam !== null ||
+      maxPriceParam !== null ||
+      sortOrder !== 'newest'
+    );
+  }, [selectedCategory, brandFilters, searchQuery, minPriceParam, maxPriceParam, sortOrder]);
+
+  const handleResetAll = () => {
+    setSearchParams(new URLSearchParams(), { preventScrollReset: true });
+    setSortOrder('newest');
+    setBrandFilters([]);
+    setSelectedCategory('All');
+    setSearchQuery('');
+  };
+
   const renderFilterContent = () => (
     <div className="space-y-8 text-left">
       <div>
@@ -414,6 +433,22 @@ export const Shop = () => {
       </div>
 
       <div className="space-y-6">
+        {/* Reset All Button */}
+        <div className={`flex items-center justify-between border-b ${isLight ? 'border-zinc-200' : 'border-white/5'} pb-3`}>
+          <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-semibold">Active Filters</span>
+          <button
+            type="button"
+            onClick={handleResetAll}
+            disabled={!isAnyFilterApplied}
+            className={`text-[10px] uppercase tracking-wider font-bold transition-all ${
+              isAnyFilterApplied
+                ? 'text-gold hover:text-gold/80 cursor-pointer underline underline-offset-4'
+                : `${isLight ? 'text-zinc-400' : 'text-zinc-600'} cursor-not-allowed opacity-50`
+            }`}
+          >
+            Reset All
+          </button>
+        </div>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold block">Category</span>
@@ -442,7 +477,7 @@ export const Shop = () => {
                   }`}
                 >
                   <span>{category.name}</span>
-                  {category.product_count !== undefined ? (
+                  {category.slug === 'All' && category.product_count !== undefined ? (
                     <span className="ml-2 text-[10px] text-zinc-500">({category.product_count})</span>
                   ) : null}
                 </button>
@@ -714,22 +749,37 @@ export const Shop = () => {
             </div>
 
             {totalPages > 1 && (
-              <div className="flex flex-col items-center gap-3 border-t border-white/5 pt-4 lg:hidden">
-                <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-semibold">
-                  Page {page} of {totalPages}
-                </span>
-                <Pagination
-                  currentPage={page}
-                  totalPages={totalPages}
-                  onPageChange={(nextPage) => handlePageChange(nextPage)}
-                  isLight={isLight}
-                  className="justify-center"
-                />
+              <div className="flex items-center justify-between border-b border-white/5 pb-4 lg:hidden w-full gap-4">
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1}
+                  className={`h-9 px-4 rounded-[4px] border ${
+                    isLight 
+                      ? 'border-zinc-200 text-zinc-800 hover:bg-zinc-50' 
+                      : 'border-gold/20 text-gold hover:bg-gold/10'
+                  } text-[10px] uppercase tracking-widest font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-30 flex-1 text-center`}
+                >
+                  Previous
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages}
+                  className={`h-9 px-4 rounded-[4px] border ${
+                    isLight 
+                      ? 'border-zinc-200 text-zinc-800 hover:bg-zinc-50' 
+                      : 'border-gold/20 text-gold hover:bg-gold/10'
+                  } text-[10px] uppercase tracking-widest font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-30 flex-1 text-center`}
+                >
+                  Next
+                </button>
               </div>
             )}
 
-            {/* Loading skeleton */}
-            {isLoadingProducts && (
+            {/* Loading skeleton (Only on initial load when no products are present) */}
+            {isLoadingProducts && displayedProducts.length === 0 && (
               <ProductGridSkeleton count={6} />
             )}
 
@@ -765,37 +815,61 @@ export const Shop = () => {
               </div>
             )}
 
-            {/* Perfume list */}
-            <div className={gridColumnsClass}>
-              {!isLoadingProducts && displayedProducts.map((prod) => {
-                const currentSel = cardSelections[prod.id] || getDefaultSelection(prod);
-                return (
-                  <ProductCard 
-                    key={prod.id}
-                    product={prod}
-                    currentSel={currentSel}
-                    onSizeChange={(size) => {
-                      setCardSelections(prev => ({
-                        ...prev,
-                        [prod.id]: { ...currentSel, size }
-                      }));
-                    }}
-                    onConcentrationChange={(concentration) => {
-                      setCardSelections(prev => ({
-                        ...prev,
-                        [prod.id]: { ...currentSel, concentration }
-                      }));
-                    }}
-                    wishlist={wishlist}
-                    toggleWishlist={toggleWishlist}
-                    handleOpenProductDetail={handleOpenProductDetail}
-                    handleAddToCart={handleAddToCart}
-                    calculateItemPrice={calculateItemPrice}
-                    isLargeCard={false}
-                  />
-                );
-              })}
-            </div>
+            {/* Perfume list with premium loader overlay */}
+            {displayedProducts.length > 0 && (
+              <div className="relative">
+                <AnimatePresence>
+                  {isLoadingProducts && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className={`absolute inset-0 z-10 ${isLight ? 'bg-white/40' : 'bg-black/40'} backdrop-blur-[2px] flex items-center justify-center rounded-sm`}
+                    >
+                      <div className={`flex flex-col items-center gap-3 border p-6 rounded-md shadow-2xl ${isLight ? 'bg-white border-zinc-200 text-black' : 'bg-luxury-dark border-gold/20 text-white'}`}>
+                        {/* Premium Golden Spinner */}
+                        <div className="relative w-10 h-10">
+                          <div className="absolute inset-0 rounded-full border-2 border-gold/20"></div>
+                          <div className="absolute inset-0 rounded-full border-2 border-t-gold animate-spin"></div>
+                        </div>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-semibold">Updating Collection...</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className={`${gridColumnsClass} transition-all duration-300 ${isLoadingProducts ? 'opacity-40 pointer-events-none filter blur-[1px]' : ''}`}>
+                  {displayedProducts.map((prod) => {
+                    const currentSel = cardSelections[prod.id] || getDefaultSelection(prod);
+                    return (
+                      <ProductCard 
+                        key={prod.id}
+                        product={prod}
+                        currentSel={currentSel}
+                        onSizeChange={(size) => {
+                          setCardSelections(prev => ({
+                            ...prev,
+                            [prod.id]: { ...currentSel, size }
+                          }));
+                        }}
+                        onConcentrationChange={(concentration) => {
+                          setCardSelections(prev => ({
+                            ...prev,
+                            [prod.id]: { ...currentSel, concentration }
+                          }));
+                        }}
+                        wishlist={wishlist}
+                        toggleWishlist={toggleWishlist}
+                        handleOpenProductDetail={handleOpenProductDetail}
+                        handleAddToCart={handleAddToCart}
+                        calculateItemPrice={calculateItemPrice}
+                        isLargeCard={false}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {totalPages > 1 && (
               <div className="flex flex-col items-center gap-3 border-t border-white/5 pt-4">

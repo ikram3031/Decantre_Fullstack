@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Mail, Lock, User, Key, ShieldCheck, ShoppingBag, LogOut, Award, ArrowLeft, RefreshCw, Phone } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 import {
   loginMember,
   registerMember,
@@ -10,7 +10,7 @@ import {
   forgotMemberPassword,
   resetMemberPassword,
   checkMemberEmail, // Import email checking API helper
-} from '../lib/api';
+} from '../core/lib/api';
 
 
 export const AuthModal = () => {

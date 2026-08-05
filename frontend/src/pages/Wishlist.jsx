@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 import { ProductCard } from '../components/ProductCard';
-import { getDefaultSelection } from '../store/productHelpers';
+import { getDefaultSelection } from '../core/store/productHelpers';
 import { Sparkles, Heart, Compass } from 'lucide-react';
 
 import { Link } from 'react-router-dom';

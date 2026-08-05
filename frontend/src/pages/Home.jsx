@@ -9,7 +9,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 
 import { HeroSlider } from '../components/HeroSlider';
 import { FeaturedProductSlider } from '../components/FeaturedProductSlider';

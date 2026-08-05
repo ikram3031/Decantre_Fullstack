@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { ShieldCheck, Calendar, Compass, ArrowRight, FileText, Sparkles, CheckCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 
 export const ThankYou = () => {
   const location = useLocation();

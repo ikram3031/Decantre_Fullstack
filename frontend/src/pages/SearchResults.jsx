@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Sparkles, Search } from 'lucide-react';
-import { useApp } from '../context/AppContext';
-import { formatBDT } from '../utils/formatCurrency';
+import { useApp } from '../core/context/AppContext';
+import { formatBDT } from '../core/utils/formatCurrency';
 import { ProductCard } from '../components/ProductCard';
 import { ProductGridSkeleton } from '../components/Skeleton';
-import { getDefaultSelection } from '../store/productHelpers';
+import { getDefaultSelection } from '../core/store/productHelpers';
 
 
 export const SearchResults = () => {

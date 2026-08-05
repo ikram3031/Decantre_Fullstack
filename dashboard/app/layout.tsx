@@ -1,10 +1,10 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Inter, Nunito_Sans } from "next/font/google";
-import { cn } from "@/lib/utils";
-import { ThemeProvider } from "@/components/theme-provider";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ReactQueryProvider } from "@/components/providers";
+import { cn } from "@/lib/core/utils";
+import { ThemeProvider } from "@/components/core/theme-provider";
+import { TooltipProvider } from "@/components/core/ui/tooltip";
+import { ReactQueryProvider } from "@/components/core/providers";
 
 const nunitoSansHeading = Nunito_Sans({subsets:['latin'],variable:'--font-heading'});
 

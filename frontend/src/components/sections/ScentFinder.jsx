@@ -1,6 +1,6 @@
 import React from 'react';
 import { Compass, ArrowRight } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../core/context/AppContext';
 
 export const ScentFinder = () => {
   const { startQuiz } = useApp();

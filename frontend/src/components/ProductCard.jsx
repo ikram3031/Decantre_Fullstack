@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingCart } from 'lucide-react';
-import { formatBDT } from '../utils/formatCurrency';
-import { useApp } from '../context/AppContext';
-import { resolveBrandName, resolveCategoryName } from '../store/productHelpers';
+import { formatBDT } from '../core/utils/formatCurrency';
+import { useApp } from '../core/context/AppContext';
+import { resolveBrandName, resolveCategoryName } from '../core/store/productHelpers';
 import defaultPerfumeImage from '../assets/images/perfume_for_him_1784311883603.jpg';
 
 export const ProductCard = ({

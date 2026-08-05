@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 
 import { AnnouncementBar } from './AnnouncementBar';
 import { Header } from './Header';

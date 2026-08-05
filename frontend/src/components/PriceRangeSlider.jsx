@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { formatBDT } from '../utils/formatCurrency';
+import { formatBDT } from '../core/utils/formatCurrency';
 
 export const PriceRangeSlider = ({ 
   minLimit, 
@@ -15,34 +15,84 @@ export const PriceRangeSlider = ({
   const minRef = useRef(null);
   const maxRef = useRef(null);
   
+  const isDraggingRef = useRef(false);
+  const lastLocalChangeRef = useRef(0);
+  const keyboardDebounceTimerRef = useRef(null);
+  
   // Calculate percentage to position the track highlighting
   const getPercent = useCallback(
     (value) => Math.round(((value - minLimit) / (maxLimit - minLimit)) * 100),
     [minLimit, maxLimit]
   );
+
+  const triggerUpdate = useCallback((minVal, maxVal) => {
+    lastLocalChangeRef.current = Date.now();
+    onChange({ min: minVal, max: maxVal });
+  }, [onChange]);
   
   // Update state when initial values change (e.g., from URL params on load)
   useEffect(() => {
-    if (initialMin !== undefined) setMinValue(initialMin);
-    if (initialMax !== undefined) setMaxValue(initialMax);
-  }, [initialMin, initialMax]);
-  
-  // Debounce the onChange callback
+    const timeSinceLastLocalChange = Date.now() - lastLocalChangeRef.current;
+    const isLocalUpdateSettlePeriod = timeSinceLastLocalChange < 1000;
+    const isExternalClear = initialMin === undefined;
+
+    if (isExternalClear || (!isDraggingRef.current && !isLocalUpdateSettlePeriod)) {
+      setMinValue(initialMin ?? minLimit);
+    }
+  }, [initialMin, minLimit]);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onChange({ min: minValue, max: maxValue });
-    }, 300); // 300ms debounce
-    return () => clearTimeout(timer);
-  }, [minValue, maxValue, onChange]);
+    const timeSinceLastLocalChange = Date.now() - lastLocalChangeRef.current;
+    const isLocalUpdateSettlePeriod = timeSinceLastLocalChange < 1000;
+    const isExternalClear = initialMax === undefined;
+
+    if (isExternalClear || (!isDraggingRef.current && !isLocalUpdateSettlePeriod)) {
+      setMaxValue(initialMax ?? maxLimit);
+    }
+  }, [initialMax, maxLimit]);
+
+  useEffect(() => {
+    return () => {
+      if (keyboardDebounceTimerRef.current) clearTimeout(keyboardDebounceTimerRef.current);
+    };
+  }, []);
   
   const handleMinChange = (e) => {
     const value = Math.min(Number(e.target.value), maxValue - 1);
     setMinValue(value);
+    lastLocalChangeRef.current = Date.now();
+
+    if (!isDraggingRef.current) {
+      if (keyboardDebounceTimerRef.current) clearTimeout(keyboardDebounceTimerRef.current);
+      keyboardDebounceTimerRef.current = setTimeout(() => {
+        triggerUpdate(value, maxValue);
+      }, 500);
+    }
   };
   
   const handleMaxChange = (e) => {
     const value = Math.max(Number(e.target.value), minValue + 1);
     setMaxValue(value);
+    lastLocalChangeRef.current = Date.now();
+
+    if (!isDraggingRef.current) {
+      if (keyboardDebounceTimerRef.current) clearTimeout(keyboardDebounceTimerRef.current);
+      keyboardDebounceTimerRef.current = setTimeout(() => {
+        triggerUpdate(minValue, value);
+      }, 500);
+    }
+  };
+
+  const handleInteractionStart = () => {
+    isDraggingRef.current = true;
+    if (keyboardDebounceTimerRef.current) {
+      clearTimeout(keyboardDebounceTimerRef.current);
+    }
+  };
+
+  const handleInteractionEnd = () => {
+    isDraggingRef.current = false;
+    triggerUpdate(minValue, maxValue);
   };
   
   const trackStyle = {
@@ -79,6 +129,10 @@ export const PriceRangeSlider = ({
           value={minValue}
           ref={minRef}
           onChange={handleMinChange}
+          onMouseDown={handleInteractionStart}
+          onTouchStart={handleInteractionStart}
+          onMouseUp={handleInteractionEnd}
+          onTouchEnd={handleInteractionEnd}
           className="absolute top-[13px] w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gold [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-gold [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-sm z-20"
         />
         
@@ -90,6 +144,10 @@ export const PriceRangeSlider = ({
           value={maxValue}
           ref={maxRef}
           onChange={handleMaxChange}
+          onMouseDown={handleInteractionStart}
+          onTouchStart={handleInteractionStart}
+          onMouseUp={handleInteractionEnd}
+          onTouchEnd={handleInteractionEnd}
           className="absolute top-[13px] w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-moz-range-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gold [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-gold [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-sm z-30"
         />
       </div>

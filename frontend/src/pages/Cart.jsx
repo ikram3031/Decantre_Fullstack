@@ -1,8 +1,8 @@
 import React from 'react';
 import { ShoppingBag, Trash2, Minus, Plus, CreditCard, ArrowRight, Sparkles, Gift, Truck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { formatBDT } from '../utils/formatCurrency';
-import { useApp } from '../context/AppContext';
+import { formatBDT } from '../core/utils/formatCurrency';
+import { useApp } from '../core/context/AppContext';
 
 export const Cart = () => {
   const {

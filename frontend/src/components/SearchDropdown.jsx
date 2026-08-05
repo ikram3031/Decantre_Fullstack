@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { fetchProducts } from '../lib/api';
+import { fetchProducts } from '../core/lib/api';
 import { ShoppingCart } from 'lucide-react';
 
 export const SearchDropdown = ({ query, onSelect, maxResults = 6, placeholder = 'Search...' }) => {

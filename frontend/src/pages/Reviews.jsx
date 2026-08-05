@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Star, MessageSquare, Plus, Check, Filter } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../core/context/AppContext';
 
 export const Reviews = () => {
   const { addToast, products } = useApp();

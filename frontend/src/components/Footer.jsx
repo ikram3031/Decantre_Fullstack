@@ -8,7 +8,7 @@ import {
 	MapPin,
 	Phone,
 } from "lucide-react";
-import { useApp } from "../context/AppContext";
+import { useApp } from "../core/context/AppContext";
 
 export const Footer = ({ startQuiz, addToast }) => {
 	const { wishlist, addToast: appAddToast } = useApp();

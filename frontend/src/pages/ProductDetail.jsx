@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { useAppStore } from '../store/useAppStore';
-import { formatBDT } from '../utils/formatCurrency';
-import { mapRemoteProduct, resolveBrandName, resolveCategoryName } from '../store/productHelpers';
-import { fetchProductDetails, fetchProducts } from '../lib/api';
+import { useAppStore } from '../core/store/useAppStore';
+import { formatBDT } from '../core/utils/formatCurrency';
+import { mapRemoteProduct, resolveBrandName, resolveCategoryName } from '../core/store/productHelpers';
+import { fetchProductDetails, fetchProducts } from '../core/lib/api';
 import { MoreProducts } from '../components/sections/MoreProducts';
 import { RecentlyViewedProducts } from '../components/sections/RecentlyViewedProducts';
 
@@ -102,6 +102,8 @@ export const ProductDetail = () => {
       setIsLoading(false);
       return;
     }
+
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
     const loadProductDetail = async () => {
       setIsLoading(true);

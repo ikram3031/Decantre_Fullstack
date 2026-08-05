@@ -4,6 +4,7 @@ import cors from "cors";
 import { errorHandler } from "./core/middlewares/errorHandler.js";
 import { logger } from "./config/logger.js";
 import coreRouter from "./core/routesIndex.js";
+import attributeRouter from "./dashboard/routes/attribute.route.js";
 
 export async function createApp() {
   const app = express();
@@ -54,6 +55,7 @@ export async function createApp() {
   });
 
   app.use("/api/v1", coreRouter);
+  app.use("/api/v1", attributeRouter);
 
   app.use((req, res) => {
     res.status(404).json({ status: "error", message: "Resource not found" });

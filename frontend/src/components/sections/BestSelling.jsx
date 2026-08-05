@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ProductCard } from '../ProductCard';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../core/context/AppContext';
 
 const getVisibleCount = () => {
 
