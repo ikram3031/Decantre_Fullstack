@@ -337,7 +337,7 @@ export function ProductsTable({
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold text-muted-foreground">New Availability:</span>
-              <Select value={targetStockStatus} onValueChange={setTargetStockStatus}>
+              <Select value={targetStockStatus} onValueChange={(val) => setTargetStockStatus(val || "")}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
