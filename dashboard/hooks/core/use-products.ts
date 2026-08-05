@@ -90,9 +90,14 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
   if (params?.category) body.category = params.category;
   if (params?.brand) body.brand = params.brand;
 
+  const getParams: Record<string, string | number> = { limit, page };
+  if (params?.search && params.search.trim() !== '') {
+    getParams.q = params.search.trim();
+  }
+
   const response = (body.category || body.brand || body.q)
     ? await apiClient.post<unknown>('/api/v1/products/search', body)
-    : await apiClient.get<unknown>('/api/v1/products', { params: { q: params?.search, limit, page } });
+    : await apiClient.get<unknown>('/api/v1/products', { params: getParams });
 
   const responseData = response.data;
   let productList: BackendProduct[] = [];

@@ -90,7 +90,8 @@ export const buildProductFilter = async (input = {}) => {
     filter[key] = value;
   });
 
-  const q = normalizeValue(source.q ?? source.search ?? source.keyword);
+  const rawQ = normalizeValue(source.q ?? source.search ?? source.keyword);
+  const q = (typeof rawQ === "string" && (rawQ === "undefined" || rawQ === "null" || rawQ.trim() === "")) ? "" : rawQ;
   if (q) {
     const searchClause = [
       { name: { $regex: q, $options: "i" } },
