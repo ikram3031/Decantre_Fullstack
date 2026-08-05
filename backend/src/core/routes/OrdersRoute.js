@@ -15,13 +15,29 @@ const ordersRouter = Router();
 
 ordersRouter.post("/new-order", createOrder);
 
-ordersRouter.get("/", listOrders);
-ordersRouter.get("/:orderId", getOrderById);
+ordersRouter.get(
+  "/",
+  authenticateToken,
+  authorizeRoles("Owner", "Admin", "Manager"),
+  listOrders,
+);
+ordersRouter.get(
+  "/:orderId",
+  authenticateToken,
+  authorizeRoles("Owner", "Admin", "Manager"),
+  getOrderById,
+);
 ordersRouter.put(
   "/:orderId",
+  authenticateToken,
   authorizeRoles("Owner", "Admin", "Manager"),
   updateOrder,
 );
-ordersRouter.delete("/:orderId", authorizeRoles("Owner", "Admin"), deleteOrder);
+ordersRouter.delete(
+  "/:orderId",
+  authenticateToken,
+  authorizeRoles("Owner", "Admin"),
+  deleteOrder,
+);
 
 export default ordersRouter;
