@@ -1,7 +1,7 @@
 services:
   mongodb:
     image: mongo:7.0
-    container_name: ${MONGODB_CONTAINER_NAME:-decantre-mongodb-dev}
+    container_name: ${MONGODB_CONTAINER_NAME:-decantre-mongodb-live}
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
@@ -10,7 +10,7 @@ services:
     ports:
       - "0.0.0.0:27017:27017"
     volumes:
-      - mongodb-data-dev:/data/db
+      - mongodb-data-live:/data/db
     networks:
       - decantre-network
 
@@ -18,7 +18,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: ${BACKEND_CONTAINER_NAME:-decantre-backend-dev}
+    container_name: ${BACKEND_CONTAINER_NAME:-decantre-backend-live}
     restart: always
     env_file:
       - .env
@@ -27,7 +27,7 @@ services:
     ports:
       - "${BACKEND_PORT:-5092}:${BACKEND_PORT:-5092}"
     volumes:
-      - /var/www/uploads:/app/uploads
+      - /opt/dev/uploads:/app/uploads
     depends_on:
       - mongodb
     networks:
@@ -37,7 +37,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: ${FRONTEND_CONTAINER_NAME:-decantre-frontend-dev}
+    container_name: ${FRONTEND_CONTAINER_NAME:-decantre-frontend-live}
     restart: always
     env_file:
       - .env
@@ -50,7 +50,7 @@ services:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
-    container_name: ${DASHBOARD_CONTAINER_NAME:-decantre-dashboard-dev}
+    container_name: ${DASHBOARD_CONTAINER_NAME:-decantre-dashboard-live}
     restart: always
     env_file:
       - .env
