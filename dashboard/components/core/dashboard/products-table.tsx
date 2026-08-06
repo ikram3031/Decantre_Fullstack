@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import {
   Table,
@@ -24,7 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/core/ui/dropdown-menu';
-import { MoreHorizontal, ImageIcon, PackageX, Trash2 } from 'lucide-react';
+import { MoreHorizontal, ImageIcon, PackageX, Trash2, Eye } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/core/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import {
@@ -220,7 +221,7 @@ export function ProductsTable({
                 </TableCell>
                 {/* Product name + image */}
                 <TableCell className="max-w-[200px]">
-                  <div className="flex items-center gap-3 min-w-0">
+                  <Link href={`/dashboard/products/${product.id}`} className="flex items-center gap-3 min-w-0 hover:underline">
                     {product.image ? (
                       <div className="relative h-9 w-9 overflow-hidden rounded-md border flex-shrink-0">
                         <Image src={product.image} alt={product.name} fill className="object-cover" referrerPolicy="no-referrer" unoptimized />
@@ -231,7 +232,7 @@ export function ProductsTable({
                       </div>
                     )}
                     <span className="font-medium truncate" title={product.name}>{product.name}</span>
-                  </div>
+                  </Link>
                 </TableCell>
 
                 {/* SKU */}
@@ -280,6 +281,12 @@ export function ProductsTable({
                     } />
                     <DropdownMenuContent align="end" className="min-w-[150px]">
                       <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
+                      <DropdownMenuItem asChild>
+                        <Link href={`/dashboard/products/${product.id}`} className="cursor-pointer text-xs flex items-center gap-2">
+                          <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                          View / Edit Product
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         className="cursor-pointer text-xs flex items-center gap-2"
                         onClick={() => setStockTarget(product)}

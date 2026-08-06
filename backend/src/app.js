@@ -2,6 +2,8 @@ import express from "express";
 import path from "path";
 import cors from "cors";
 import { errorHandler } from "./core/middlewares/errorHandler.js";
+import { authenticateToken, authorizeRoles } from "./core/middlewares/auth.middleware.js";
+import fs from "fs";
 import { logger } from "./config/logger.js";
 import coreRouter from "./core/routesIndex.js";
 import attributeRouter from "./dashboard/routes/attribute.route.js";
@@ -56,6 +58,15 @@ export async function createApp() {
 
   app.use("/api/v1", coreRouter);
   app.use("/api/v1", attributeRouter);
+
+  app.get("/api/v1/version", authenticateToken, authorizeRoles("Owner", "Admin"), (req, res) => {
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf-8"));
+      res.json({ status: "success", version: packageJson.version });
+    } catch (error) {
+      res.status(500).json({ status: "error", message: "Could not read version" });
+    }
+  });
 
   app.use((req, res) => {
     res.status(404).json({ status: "error", message: "Resource not found" });
