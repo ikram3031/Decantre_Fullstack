@@ -281,12 +281,12 @@ export function ProductsTable({
                     } />
                     <DropdownMenuContent align="end" className="min-w-[150px]">
                       <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
-                      <DropdownMenuItem asChild>
+                      <DropdownMenuItem render={
                         <Link href={`/dashboard/products/${product.id}`} className="cursor-pointer text-xs flex items-center gap-2">
                           <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                           View / Edit Product
                         </Link>
-                      </DropdownMenuItem>
+                      } />
                       <DropdownMenuItem
                         className="cursor-pointer text-xs flex items-center gap-2"
                         onClick={() => setStockTarget(product)}
