@@ -21,16 +21,53 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Response Interceptor: Handle 401 Unauthorized & Token Refresh logic
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}> = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else if (token) {
+      promise.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// Response Interceptor: Handle 401 Unauthorized & Token Refresh logic with queuing
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
     const requestUrl = originalRequest?.url || '';
-    const authPath = requestUrl.includes('/auth/login') || requestUrl.includes('/auth/refresh-token') || requestUrl.includes('/api/v1/auth/login') || requestUrl.includes('/api/v1/auth/refresh-token');
+    const isAuthRequest =
+      requestUrl.includes('/auth/login') ||
+      requestUrl.includes('/auth/refresh-token') ||
+      requestUrl.includes('/api/v1/auth/login') ||
+      requestUrl.includes('/api/v1/auth/refresh-token');
 
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !authPath) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthRequest) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers = originalRequest.headers || {};
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
+
       try {
         if (typeof window === 'undefined') throw new Error('Not running in client-side');
 
@@ -44,12 +81,18 @@ apiClient.interceptors.response.use(
         const { accessToken, refreshToken: newRefreshToken } = res.data.data;
 
         localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
+        if (newRefreshToken) {
+          localStorage.setItem('refreshToken', newRefreshToken);
+        }
 
+        apiClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
         originalRequest.headers = originalRequest.headers || {};
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
+        processQueue(null, accessToken);
         return apiClient(originalRequest);
       } catch (refreshError) {
+        processQueue(refreshError, null);
         if (typeof window !== 'undefined') {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
@@ -57,13 +100,14 @@ apiClient.interceptors.response.use(
           window.location.replace('/login');
         }
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !isAuthRequest) {
       handleGlobalError(error);
     }
     return Promise.reject(error);
   }
 );
-

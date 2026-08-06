@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env.js";
+import { UserModel } from "../models/user.model.js";
+import { MemberModel } from "../models/member.model.js";
 
-export const authenticateToken = (req, res, next) => {
+export const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ status: "error", message: "Authorization header missing" });
@@ -14,7 +16,30 @@ export const authenticateToken = (req, res, next) => {
 
   try {
     const payload = jwt.verify(token, env.ACCESS_TOKEN_SECRET);
-    req.user = payload;
+    const userId = payload.userId || payload.id || payload.sub;
+
+    if (!userId) {
+      return res.status(401).json({ status: "error", message: "Invalid token payload" });
+    }
+
+    let user = await UserModel.findById(userId).lean();
+    if (!user) {
+      user = await MemberModel.findById(userId).lean();
+    }
+
+    if (!user || user.isActive === false) {
+      return res.status(401).json({ status: "error", message: "User not found or account deactivated" });
+    }
+
+    req.user = {
+      _id: user._id.toString(),
+      id: user._id.toString(),
+      userId: user._id.toString(),
+      did: user.did,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
     return next();
   } catch (error) {
     return res.status(401).json({ status: "error", message: "Invalid or expired access token" });

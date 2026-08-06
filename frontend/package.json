@@ -4,10 +4,14 @@
   "version": "2.0.0",
   "type": "module",
   "scripts": {
-    "predev": "npm run prebuild",
-    "dev": "vite --host 0.0.0.0 --port 3000",
+    "set-env": "node scripts/set-env.js",
     "prebuild": "node -e \"const fs = require('fs'); if (!fs.existsSync('src/config.theme.client.json')) fs.writeFileSync('src/config.theme.client.json', '{}');\"",
+    "dev": "node scripts/set-env.js dev && npm run prebuild && vite --host 0.0.0.0 --port 3000",
+    "live": "node scripts/set-env.js live && npm run prebuild && vite --host 0.0.0.0 --port 3000",
+    "dev:local": "node scripts/set-env.js local && npm run prebuild && vite --host 0.0.0.0 --port 3000",
     "build": "npm run prebuild && vite build",
+    "build:dev": "node scripts/set-env.js dev && npm run prebuild && vite build",
+    "build:live": "node scripts/set-env.js live && npm run prebuild && vite build",
     "prod": "serve -s dist -l 8001",
     "preview": "vite preview --host 0.0.0.0",
     "lint": "echo 'No lint check needed'"

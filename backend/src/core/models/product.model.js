@@ -45,8 +45,7 @@ const productSchema = new Schema(
         _id: false,
         size: { type: String, required: true, trim: true },
         price: { type: Number, required: true, min: 0 },
-        offerPrice: { type: Number, min: 0, default: null }, // Variant-er offer price
-        stockQuantity: { type: Number, default: 0, min: 0 },
+        offerPrice: { type: Number, min: 0, default: null },
         sku: { type: String, trim: true },
         sortOrder: { type: Number, default: 0 },
         imageUrl: { type: String, default: null, trim: true },
