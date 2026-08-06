@@ -23,6 +23,7 @@ export async function createApp() {
       "http://localhost:8001",
       "http://localhost:8005",
       "https://localhost:8005",
+      "http://localhost:3000",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
