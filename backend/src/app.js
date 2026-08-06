@@ -34,6 +34,7 @@ export async function createApp() {
       "http://localhost:8011",
       "http://localhost:8015",
       "http://localhost:3000",
+      "https://localhost:3000",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
