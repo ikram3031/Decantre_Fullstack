@@ -27,7 +27,7 @@ services:
     ports:
       - "${BACKEND_PORT:-5092}:${BACKEND_PORT:-5092}"
     volumes:
-      - /var/www/uploads:/app/uploads
+      - /decantre/uploads:/app/uploads
     depends_on:
       - mongodb
     networks:
