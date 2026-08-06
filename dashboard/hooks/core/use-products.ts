@@ -84,20 +84,16 @@ type BackendMeta = {
 const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProductsResponse> => {
   const limit = params?.limit ?? 15;
   const page = params?.page ?? 1;
-  const body: Record<string, string | number> = { limit, page };
+  const skip = (page - 1) * limit;
 
-  if (params?.search) body.q = params.search;
-  if (params?.category) body.category = params.category;
-  if (params?.brand) body.brand = params.brand;
-
-  const getParams: Record<string, string | number> = { limit, page };
+  const queryParams: Record<string, string | number> = { skip, limit };
   if (params?.search && params.search.trim() !== '') {
-    getParams.q = params.search.trim();
+    queryParams.q = params.search.trim();
   }
+  if (params?.category) queryParams.category = params.category;
+  if (params?.brand) queryParams.brand = params.brand;
 
-  const response = (body.category || body.brand || body.q)
-    ? await apiClient.post<unknown>('/api/v1/products/search', body)
-    : await apiClient.get<unknown>('/api/v1/products', { params: getParams });
+  const response = await apiClient.get<unknown>('/api/v1/products', { params: queryParams });
 
   const responseData = response.data;
   let productList: BackendProduct[] = [];
@@ -180,8 +176,8 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
   });
 
   const total = rawMeta?.total_products ?? rawMeta?.total ?? mappedProducts.length;
-  const metaPage = rawMeta?.current_page ?? rawMeta?.page ?? page;
   const metaLimit = rawMeta?.limit ?? limit;
+  const metaPage = rawMeta?.current_page ?? rawMeta?.page ?? (Math.floor(skip / metaLimit) + 1);
   const totalPages = rawMeta?.total_pages ?? rawMeta?.totalPages ?? (Math.ceil(total / metaLimit) || 1);
 
   return {
