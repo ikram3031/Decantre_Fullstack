@@ -37,6 +37,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: https://service.decantrebd.com
     container_name: decantre-frontend-live
     restart: always
     env_file:
@@ -50,6 +52,8 @@ services:
     build:
       context: ./dashboard
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: https://service.decantrebd.com
     container_name: decantre-dashboard-live
     restart: always
     env_file:

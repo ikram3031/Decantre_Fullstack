@@ -26,6 +26,8 @@ export async function createApp() {
       "https://v2.decantrebd.com",
       "http://server.decantrebd.com",
       "https://server.decantrebd.com",
+      "http://service.decantrebd.com",
+      "https://service.decantrebd.com",
       "http://localhost:8001",
       "http://localhost:8005",
       "https://localhost:8005",
