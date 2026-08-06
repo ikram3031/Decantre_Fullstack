@@ -8,6 +8,7 @@ export type { Order, OrderDetails };
 interface FetchOrdersParams {
   search?: string;
   status?: string;
+  paymentStatus?: string;
   page?: number;
   limit?: number;
 }
@@ -30,6 +31,7 @@ type BackendOrder = {
   createdAt?: string;
   totals?: { total?: number };
   status?: string;
+  paymentStatus?: string;
 };
 
 const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersResponse> => {
@@ -42,6 +44,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
       page,
     };
     if (params?.status) queryParams.status = params.status.toLowerCase();
+    if (params?.paymentStatus) queryParams.paymentStatus = params.paymentStatus.toLowerCase();
     if (params?.search) queryParams.email = params.search;
 
     const response = await apiClient.get<{ data?: unknown[]; meta?: unknown }>('/api/v1/orders', { params: queryParams });
@@ -51,7 +54,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
       ? responseData
       : responseData?.data ?? [];
     const orderList = Array.isArray(rawOrderList) ? (rawOrderList as BackendOrder[]) : [];
-    const meta = responseData?.meta ?? {
+    const meta = (responseData?.meta as any) ?? {
       total: orderList.length,
       page,
       limit,
@@ -68,7 +71,17 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
         fulfillment = 'Cancelled';
       }
 
-      const isPaid = o.status === 'completed' || o.status === 'shipped';
+      let paymentStatus: Order['paymentStatus'] = 'Pending';
+      if (o.paymentStatus) {
+        const p = o.paymentStatus.toLowerCase();
+        if (p === 'paid') paymentStatus = 'Paid';
+        else if (p === 'failed') paymentStatus = 'Failed';
+        else paymentStatus = 'Pending';
+      } else {
+        const isPaid = o.status === 'completed' || o.status === 'shipped';
+        paymentStatus = isPaid ? 'Paid' : 'Pending';
+      }
+
       const id = o._id || o.id || `UNKNOWN-${Math.random().toString(36).slice(2, 10)}`;
 
       return {
@@ -77,7 +90,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
         customerName: o.customer?.fullName || 'Guest Customer',
         date: o.createdAt || new Date().toISOString(),
         totalAmount: o.totals?.total || 0,
-        paymentStatus: isPaid ? 'Paid' : 'Pending',
+        paymentStatus,
         fulfillmentStatus: fulfillment,
       };
     });

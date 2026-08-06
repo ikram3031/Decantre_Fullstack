@@ -8,12 +8,16 @@ const BRAND_STORAGE_KEY = 'decantre_brand_cache';
 const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes
 
 export interface CategoryCacheEntry {
+  id?: string;
+  _id?: string;
   did: string;
   name: string;
   slug: string;
 }
 
 export interface BrandCacheEntry {
+  id?: string;
+  _id?: string;
   did: string;
   name: string;
   slug: string;
@@ -34,16 +38,26 @@ export function getCategoryCache(): CategoryCacheEntry[] {
   }
 }
 
-export function getCategoryName(did: string): string | null {
+export function getCategoryName(val: string): string | null {
+  if (!val) return null;
+  const strVal = String(val).trim();
+  if (!strVal) return null;
+
   const cache = getCategoryCache();
-  return cache.find((c) => c.did === did)?.name ?? null;
+  const found = cache.find(
+    (c) =>
+      (c.did && c.did === strVal) ||
+      (c._id && String(c._id) === strVal) ||
+      (c.id && String(c.id) === strVal) ||
+      (c.slug && c.slug.toLowerCase() === strVal.toLowerCase()) ||
+      (c.name && c.name.toLowerCase() === strVal.toLowerCase())
+  );
+  return found?.name ?? null;
 }
 
 export function getCategoryNamesByDids(dids: string[]): string[] {
   if (!dids || dids.length === 0) return [];
-  const cache = getCategoryCache();
-  const map = new Map(cache.map((c) => [c.did, c.name]));
-  return dids.map((d) => map.get(d)).filter(Boolean) as string[];
+  return dids.map((d) => getCategoryName(d)).filter(Boolean) as string[];
 }
 
 // ─── Brand Cache Helpers ─────────────────────────────────────────────────────
@@ -60,16 +74,26 @@ export function getBrandCache(): BrandCacheEntry[] {
   }
 }
 
-export function getBrandName(did: string): string | null {
+export function getBrandName(val: string): string | null {
+  if (!val) return null;
+  const strVal = String(val).trim();
+  if (!strVal) return null;
+
   const cache = getBrandCache();
-  return cache.find((b) => b.did === did)?.name ?? null;
+  const found = cache.find(
+    (b) =>
+      (b.did && b.did === strVal) ||
+      (b._id && String(b._id) === strVal) ||
+      (b.id && String(b.id) === strVal) ||
+      (b.slug && b.slug.toLowerCase() === strVal.toLowerCase()) ||
+      (b.name && b.name.toLowerCase() === strVal.toLowerCase())
+  );
+  return found?.name ?? null;
 }
 
 export function getBrandNamesByDids(dids: string[]): string[] {
   if (!dids || dids.length === 0) return [];
-  const cache = getBrandCache();
-  const map = new Map(cache.map((b) => [b.did, b.name]));
-  return dids.map((d) => map.get(d)).filter(Boolean) as string[];
+  return dids.map((d) => getBrandName(d)).filter(Boolean) as string[];
 }
 
 // ─── TanStack Query Hooks ────────────────────────────────────────────────────
@@ -79,12 +103,16 @@ interface ApiListResponse<T> {
 }
 
 interface CategoryApiItem {
+  id?: string;
+  _id?: string;
   did?: string;
   name?: string;
   slug?: string;
 }
 
 interface BrandApiItem {
+  id?: string;
+  _id?: string;
   did?: string;
   name?: string;
   slug?: string;
@@ -94,13 +122,11 @@ interface BrandApiItem {
 const isCategoryApiItem = (item: unknown): item is CategoryApiItem =>
   typeof item === 'object' &&
   item !== null &&
-  typeof (item as CategoryApiItem).did === 'string' &&
   typeof (item as CategoryApiItem).name === 'string';
 
 const isBrandApiItem = (item: unknown): item is BrandApiItem =>
   typeof item === 'object' &&
   item !== null &&
-  typeof (item as BrandApiItem).did === 'string' &&
   typeof (item as BrandApiItem).name === 'string';
 
 export function useCategories() {
@@ -113,8 +139,10 @@ export function useCategories() {
       const categories: CategoryCacheEntry[] = (Array.isArray(rawData) ? rawData : [])
         .filter(isCategoryApiItem)
         .map((c) => ({
-          did: c.did,
-          name: c.name,
+          id: c.id ? String(c.id) : undefined,
+          _id: c._id ? String(c._id) : undefined,
+          did: c.did ?? c.slug ?? String(c._id || c.id || ''),
+          name: c.name!,
           slug: c.slug ?? '',
         }));
 
@@ -139,8 +167,10 @@ export function useBrands() {
       const brands: BrandCacheEntry[] = (Array.isArray(rawData) ? rawData : [])
         .filter(isBrandApiItem)
         .map((b) => ({
-          did: b.did,
-          name: b.name,
+          id: b.id ? String(b.id) : undefined,
+          _id: b._id ? String(b._id) : undefined,
+          did: b.did ?? b.slug ?? String(b._id || b.id || ''),
+          name: b.name!,
           slug: b.slug ?? '',
           parent: b.parent,
         }));

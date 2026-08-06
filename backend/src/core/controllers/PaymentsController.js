@@ -210,3 +210,106 @@ export const deletePayment = async (req, res, next) => {
     next(error);
   }
 };
+
+// Bulk Update Payments status and amounts.
+// This allows updating multiple payment records either by their direct payment IDs or by associated order IDs.
+export const bulkUpdatePayments = async (req, res, next) => {
+  try {
+    const { ids, orderIds, status } = req.body;
+
+    // Ensure we have at least one valid array of targets (payment IDs or order IDs)
+    if ((!ids || !Array.isArray(ids) || ids.length === 0) && (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0)) {
+      return res.status(400).json({ status: "error", message: "No payment IDs or order IDs provided" });
+    }
+    if (!status) {
+      return res.status(400).json({ status: "error", message: "status is required" });
+    }
+
+    // Validate the target payment status
+    const targetStatus = status.trim().toLowerCase();
+    if (!["paid", "partial", "pending", "failed"].includes(targetStatus)) {
+      return res.status(400).json({ status: "error", message: "Invalid payment status" });
+    }
+
+    // Build the query filter based on the provided IDs
+    let filter = {};
+    if (ids && Array.isArray(ids) && ids.length > 0) {
+      // Map valid ObjectIds or use string-based did identifier
+      const objectIds = ids.map(id => Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null).filter(Boolean);
+      filter = {
+        $or: [
+          { _id: { $in: objectIds } },
+          { did: { $in: ids } }
+        ]
+      };
+    } else if (orderIds && Array.isArray(orderIds) && orderIds.length > 0) {
+      // Map valid associated Order ObjectIds
+      const objectIds = orderIds.map(id => Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null).filter(Boolean);
+      filter = {
+        orderId: { $in: objectIds }
+      };
+    }
+
+    // Find all payment records matching our query filter
+    const payments = await PaymentModel.find(filter).lean();
+    if (payments.length === 0) {
+      return res.status(404).json({ status: "error", message: "No payments found to update" });
+    }
+
+    // Loop through each payment record to compute new totals and perform updates
+    for (const payment of payments) {
+      const totalAmount = payment.totalAmount || 0;
+      let paidAmount = payment.paidAmount || 0;
+      let pendingAmount = payment.pendingAmount || 0;
+
+      // Recalculate paid and pending values according to the target status
+      if (targetStatus === "paid") {
+        paidAmount = totalAmount;
+        pendingAmount = 0;
+      } else if (targetStatus === "pending" || targetStatus === "failed") {
+        paidAmount = 0;
+        pendingAmount = totalAmount;
+      }
+
+      // Update the database document
+      await PaymentModel.findByIdAndUpdate(payment._id, {
+        status: targetStatus,
+        paidAmount,
+        pendingAmount,
+        amount: paidAmount,
+        updatedBy: req.user?.userId || null,
+      });
+    }
+
+    return res.json({ status: "success", message: "Payments updated successfully" });
+  } catch (error) {
+    logger.error({ error }, "Failed to bulk update payments");
+    next(error);
+  }
+};
+
+// Bulk Delete Payments
+export const bulkDeletePayments = async (req, res, next) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ status: "error", message: "No payment IDs provided" });
+    }
+
+    const objectIds = ids.map((id) => (Types.ObjectId.isValid(id) ? new Types.ObjectId(id) : null)).filter(Boolean);
+    const deleteQuery = {
+      $or: [
+        { _id: { $in: objectIds } },
+        { did: { $in: ids } }
+      ]
+    };
+
+    const result = await PaymentModel.deleteMany(deleteQuery);
+    return res.json({ status: "success", message: `${result.deletedCount} payment records deleted successfully` });
+  } catch (error) {
+    logger.error({ error }, "Failed to bulk delete payments");
+    next(error);
+  }
+};
+
+

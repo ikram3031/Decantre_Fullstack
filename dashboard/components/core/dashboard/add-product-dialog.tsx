@@ -23,7 +23,7 @@ import { Plus, Trash2, Layers, Package } from 'lucide-react';
 import { apiClient } from '@/lib/core/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { getApiErrorMessage } from '../../lib/error-handler';
+import { getApiErrorMessage } from '@/lib/core/error-handler';
 import {
   useCategories,
   useBrands,

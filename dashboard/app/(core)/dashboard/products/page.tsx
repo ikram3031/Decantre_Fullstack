@@ -46,8 +46,8 @@ export default function ProductsPage() {
 
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
-  const [bulkStockOpen, setBulkStockOpen] = useState(false);
   const [isBulkStockUpdating, setIsBulkStockUpdating] = useState(false);
+  const [bulkStockConfirmStatus, setBulkStockConfirmStatus] = useState<'instock' | 'outofstock' | null>(null);
 
   const queryClient = useQueryClient();
   const { data: categories = [] } = useCategories();
@@ -88,18 +88,19 @@ export default function ProductsPage() {
     }
   };
 
-  const handleBulkOutOfStock = async () => {
+  const handleBulkStockStatus = async (status: 'instock' | 'outofstock') => {
     setIsBulkStockUpdating(true);
     try {
       await Promise.all(
         selectedIds.map((id) =>
-          apiClient.put(`/api/v1/products/${id}`, { stockStatus: 'outofstock' })
+          apiClient.put(`/api/v1/products/${id}`, { stockStatus: status })
         )
       );
-      toast.success('Selected products marked as Out of Stock.');
+      toast.success(
+        `Selected products marked as ${status === 'instock' ? 'In Stock' : 'Out of Stock'}.`
+      );
       queryClient.invalidateQueries({ queryKey: ['products'] });
       setSelectedIds([]);
-      setBulkStockOpen(false);
     } catch {
       toast.error('Failed to update stock status for some products.');
     } finally {
@@ -132,52 +133,76 @@ export default function ProductsPage() {
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <div className="flex gap-2 items-center w-full sm:w-auto">
+        <div className="flex items-center gap-2 w-full sm:w-auto ml-auto justify-end">
+          {/* Normal Filters (Visible when 0 items selected) */}
+          {selectedIds.length === 0 && (
+            <>
+              <Select value={categoryFilter} onValueChange={handleCategory}>
+                <SelectTrigger className="w-[180px] h-9 cursor-pointer text-xs">
+                  <span>{categoryFilter === 'All' ? 'Category: All' : `Category: ${categoryFilter}`}</span>
+                </SelectTrigger>
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
+                  <SelectItem value="All">Category: All</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.did} value={cat.name}>{cat.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={brandFilter} onValueChange={handleBrand}>
+                <SelectTrigger className="w-[180px] h-9 cursor-pointer text-xs">
+                  <span>{brandFilter === 'All' ? 'Brand: All' : `Brand: ${brandFilter}`}</span>
+                </SelectTrigger>
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
+                  <SelectItem value="All">Brand: All</SelectItem>
+                  {brands.map((brand) => (
+                    <SelectItem key={brand.did} value={brand.name}>{brand.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </>
+          )}
+
+          {/* Bulk Actions Controls (Visible when 1+ items selected) */}
           {selectedIds.length > 0 && (
-            <div className="flex gap-1.5 items-center mr-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setBulkStockOpen(true)}
-                className="flex items-center gap-1 text-xs"
+            <div className="flex gap-2 items-center">
+              <span className="text-xs text-muted-foreground whitespace-nowrap">{selectedIds.length} selected:</span>
+              <Select
+                value=""
+                onValueChange={(val) => {
+                  if (val === 'instock' || val === 'outofstock') {
+                    setBulkStockConfirmStatus(val);
+                  }
+                }}
+                disabled={isBulkStockUpdating}
               >
-                <PackageX className="h-3.5 w-3.5" />
-                Set Out of Stock
-              </Button>
+                <SelectTrigger className="w-[145px] h-9 border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-medium cursor-pointer text-xs">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <PackageX className="h-4 w-4 flex-shrink-0" />
+                    <span>Change Stock</span>
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
+                  <SelectItem value="instock" className="cursor-pointer text-xs">
+                    Mark In Stock
+                  </SelectItem>
+                  <SelectItem value="outofstock" className="cursor-pointer text-xs">
+                    Mark Out of Stock
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
               <Button
                 variant="destructive"
-                size="sm"
+                size="icon"
                 onClick={() => setBulkDeleteOpen(true)}
-                className="flex items-center gap-1 text-xs"
+                className="h-9 w-9 flex items-center justify-center shrink-0 cursor-pointer"
+                title={`Delete Selected (${selectedIds.length})`}
               >
-                <Trash2 className="h-3.5 w-3.5" />
-                Delete Selected ({selectedIds.length})
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           )}
-          <Select value={categoryFilter} onValueChange={handleCategory}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Categories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat.did} value={cat.name}>{cat.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={brandFilter} onValueChange={handleBrand}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Brand" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Brands</SelectItem>
-              {brands.map((brand) => (
-                <SelectItem key={brand.did} value={brand.name}>{brand.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
       </div>
 
@@ -270,6 +295,42 @@ export default function ProductsPage() {
         </div>
       </div>
 
+      {/* Confirmation Dialog for Bulk Stock Status Change */}
+      <Dialog open={!!bulkStockConfirmStatus} onOpenChange={(open) => !open && setBulkStockConfirmStatus(null)}>
+        <DialogContent className="sm:max-w-[420px] bg-card text-card-foreground">
+          <DialogHeader>
+            <DialogTitle>Confirm Stock Status Change</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to mark the <span className="font-semibold text-foreground">{selectedIds.length}</span> selected products as{' '}
+              <span className="font-semibold text-foreground">
+                {bulkStockConfirmStatus === 'instock' ? 'In Stock' : 'Out of Stock'}
+              </span>?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setBulkStockConfirmStatus(null)}
+              disabled={isBulkStockUpdating}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium cursor-pointer"
+              onClick={async () => {
+                if (bulkStockConfirmStatus) {
+                  await handleBulkStockStatus(bulkStockConfirmStatus);
+                  setBulkStockConfirmStatus(null);
+                }
+              }}
+              disabled={isBulkStockUpdating}
+            >
+              {isBulkStockUpdating ? 'Updating...' : 'Yes, Change Status'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Bulk Delete Confirm Dialog */}
       <ConfirmDeleteDialog
         open={bulkDeleteOpen}
@@ -279,37 +340,6 @@ export default function ProductsPage() {
         title="Delete Selected Products"
         description={`Are you sure you want to delete the ${selectedIds.length} selected products? This action cannot be undone.`}
       />
-
-      {/* Bulk Out of Stock Dialog */}
-      <Dialog open={bulkStockOpen} onOpenChange={setBulkStockOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <PackageX className="h-5 w-5 text-destructive" />
-              Set Out of Stock
-            </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to mark the {selectedIds.length} selected products as <span className="font-semibold text-destructive">Out of Stock</span>?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setBulkStockOpen(false)}
-              disabled={isBulkStockUpdating}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleBulkOutOfStock}
-              disabled={isBulkStockUpdating}
-            >
-              {isBulkStockUpdating ? 'Updating...' : 'Yes, Mark Out of Stock'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

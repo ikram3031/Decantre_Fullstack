@@ -128,8 +128,10 @@ export const Checkout = () => {
     promoCode,
     setPromoCode,
     applyPromoCode,
+    removePromoCode,
     promoError,
-    appliedDiscount
+    appliedDiscount,
+    appliedCoupon
   } = useApp();
 
   const navigate = useNavigate();
@@ -280,12 +282,12 @@ export const Checkout = () => {
     }
 
     if (phoneValidationError) {
-      addToast('Please enter a valid Bangladeshi phone number in format +8801[3-8]XXXXXXXX.', 'error');
+      addToast('Please enter a valid Bangladeshi phone number in format +8801[3-9]XXXXXXXX.', 'error');
       return;
     }
 
     if (shippingPhoneValidationError) {
-      addToast('Please enter a valid recipient phone number in format +8801[3-8]XXXXXXXX.', 'error');
+      addToast('Please enter a valid recipient phone number in format +8801[3-9]XXXXXXXX.', 'error');
       return;
     }
 
@@ -1306,9 +1308,9 @@ export const Checkout = () => {
                       <Tag className="w-4 h-4 text-gold" />
                       <span>Apply Coupon Code</span>
                     </span>
-                    {appliedDiscount > 0 && (
+                    {appliedCoupon && (
                       <span className="text-emerald-400 font-mono text-[11px] font-bold">
-                        ({appliedDiscount * 100}% Applied)
+                        ({appliedCoupon.code} Applied)
                       </span>
                     )}
                   </label>
@@ -1316,18 +1318,29 @@ export const Checkout = () => {
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      placeholder=""
+                      placeholder={appliedCoupon ? `Applied: ${appliedCoupon.code}` : ""}
                       value={promoCode || ''}
                       onChange={(e) => setPromoCode(e.target.value)}
-                      className="flex-1 bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-xs font-mono text-zinc-200 px-3.5 py-2.5 outline-none rounded-sm transition-all uppercase placeholder:normal-case placeholder:text-zinc-500"
+                      disabled={!!appliedCoupon}
+                      className="flex-1 bg-zinc-800/80 border border-zinc-700/80 focus:border-gold/60 text-xs font-mono text-zinc-200 px-3.5 py-2.5 outline-none rounded-sm transition-all uppercase placeholder:normal-case placeholder:text-zinc-500 disabled:opacity-60 disabled:cursor-not-allowed"
                     />
-                    <button
-                      type="button"
-                      onClick={applyPromoCode}
-                      className="bg-gold hover:bg-gold/80 text-black px-4 py-2.5 text-xs font-sans font-bold uppercase tracking-wider rounded-sm transition-all shadow-md shrink-0 cursor-pointer"
-                    >
-                      Apply
-                    </button>
+                    {appliedCoupon ? (
+                      <button
+                        type="button"
+                        onClick={removePromoCode}
+                        className="bg-rose-700 hover:bg-rose-800 text-white px-4 py-2.5 text-xs font-sans font-bold uppercase tracking-wider rounded-sm transition-all shadow-md shrink-0 cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={applyPromoCode}
+                        className="bg-gold hover:bg-gold/80 text-black px-4 py-2.5 text-xs font-sans font-bold uppercase tracking-wider rounded-sm transition-all shadow-md shrink-0 cursor-pointer"
+                      >
+                        Apply
+                      </button>
+                    )}
                   </div>
 
                   {promoError && (
@@ -1337,10 +1350,17 @@ export const Checkout = () => {
                     </p>
                   )}
 
-                  {appliedDiscount > 0 && (
+                  {appliedCoupon && (
                     <p className="text-emerald-400 text-[11px] font-sans font-light flex items-center gap-1.5 bg-emerald-950/20 border border-emerald-500/30 p-2.5 rounded-sm">
                       <IconCheck className="w-3.5 h-3.5 shrink-0" />
-                      <span>Coupon applied successfully! You saved <strong>{appliedDiscount * 100}%</strong> on subtotal.</span>
+                      <span>
+                        Coupon <strong>{appliedCoupon.code}</strong> applied successfully! You saved{' '}
+                        <strong>
+                          {appliedCoupon.discountType === 'percentage'
+                            ? `${appliedCoupon.discountValue}%`
+                            : `৳${appliedCoupon.discountValue}`}
+                        </strong>.
+                      </span>
                     </p>
                   )}
                 </div>

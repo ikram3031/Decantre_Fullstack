@@ -67,7 +67,7 @@ const fetchMembers = async (params?: FetchMembersParams): Promise<FetchMembersRe
 
     const rawData = response.data;
     const memberList: unknown[] = rawData?.data ?? (Array.isArray(rawData) ? rawData : []);
-    const meta = rawData?.meta ?? {
+    const meta = (rawData?.meta as any) ?? {
       total: memberList.length,
       page,
       limit,

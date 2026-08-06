@@ -9,7 +9,6 @@ import {
   buildProductFilter,
   buildProductSort,
   parsePagination,
-  isPlaceholderImageUrl,
 } from "../utils/productUtils.js";
 
 // ==========================================
@@ -114,6 +113,7 @@ export const createProduct = async (req, res, next) => {
               v.stockQuantity !== undefined ? Number(v.stockQuantity) : 0,
             sku: v.sku || "",
             sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : i,
+            imageUrl: v.imageUrl || null,
           }))
         : [];
     } else {
@@ -183,14 +183,10 @@ export const listProducts = async (req, res, next) => {
     const filterInput = method === "POST" ? req.body || {} : req.query || {};
     const filter = await buildProductFilter(filterInput);
 
-    const filteredQuery = {
-      ...filter,
-      imageUrl: { $ne: PLACEHOLDER_IMAGE_URL },
-    };
-
     const [total, rows] = await Promise.all([
-      ProductModel.countDocuments(filteredQuery),
-      ProductModel.find(filteredQuery)
+      ProductModel.countDocuments(filter),
+      ProductModel.find(filter)
+        .populate('categories', 'did name slug')
         .sort(sort)
         .skip(skip)
         .limit(limit)
@@ -231,7 +227,7 @@ export const getSingleProduct = async (req, res, next) => {
 
     const product = await ProductModel.findOne(filter).lean();
 
-    if (!product || isPlaceholderImageUrl(product.imageUrl)) {
+    if (!product) {
       res.status(404).json({ status: "error", message: "Product not found" });
       return;
     }
@@ -337,6 +333,7 @@ export const updateProduct = async (req, res, next) => {
                 v.stockQuantity !== undefined ? Number(v.stockQuantity) : 0,
               sku: v.sku || "",
               sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : i,
+              imageUrl: v.imageUrl || null,
             }))
           : [];
       }

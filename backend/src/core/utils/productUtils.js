@@ -79,7 +79,7 @@ export const buildProductFilter = async (input = {}) => {
   });
 
   Object.entries(source).forEach(([key, value]) => {
-    if (["q", "search", "keyword", "skip", "limit", "sort", "sortBy", "sortby", "order", "filter", "category", "categories", "brand", "brands", "minPrice", "maxPrice", "min_price", "max_price", "rating"].includes(key)) {
+    if (["q", "search", "keyword", "page", "skip", "offset", "limit", "sort", "sortBy", "sortby", "order", "filter", "category", "categories", "brand", "brands", "minPrice", "maxPrice", "min_price", "max_price", "rating"].includes(key)) {
       return;
     }
 
@@ -90,7 +90,8 @@ export const buildProductFilter = async (input = {}) => {
     filter[key] = value;
   });
 
-  const q = normalizeValue(source.q ?? source.search ?? source.keyword);
+  const rawQ = normalizeValue(source.q ?? source.search ?? source.keyword);
+  const q = (typeof rawQ === "string" && (rawQ === "undefined" || rawQ === "null" || rawQ.trim() === "")) ? "" : rawQ;
   if (q) {
     const searchClause = [
       { name: { $regex: q, $options: "i" } },

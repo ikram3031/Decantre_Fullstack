@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/core/ui/button";
 import { Input } from "@/components/core/ui/input";
 import { Switch } from "@/components/core/ui/switch";
@@ -76,8 +76,12 @@ function slugify(text: string): string {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "";
 
-export default function NewProductPage() {
+export default function EditProductPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params?.id as string;
+
+  const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
 
   // Basic fields
@@ -94,9 +98,7 @@ export default function NewProductPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Type toggle
-  const [productType, setProductType] = useState<"simple" | "variant">(
-    "simple",
-  );
+  const [productType, setProductType] = useState<"simple" | "variant">("simple");
 
   // Simple product fields
   const [price, setPrice] = useState("");
@@ -111,6 +113,17 @@ export default function NewProductPage() {
   const [selectedAttributeGroup, setSelectedAttributeGroup] = useState<string>("");
   const [variantInputModes, setVariantInputModes] = useState<Record<number, "preset" | "custom">>({});
 
+  // Category & Brand
+  const [categorySlug, setCategorySlug] = useState("");
+  const [brandSlug, setBrandSlug] = useState("");
+
+  // Season
+  const [season, setSeason] = useState("All-Season");
+
+  const queryClient = useQueryClient();
+  const { data: categories = [] } = useCategories();
+  const { data: brands = [] } = useBrands();
+
   // Fetch attribute groups
   useEffect(() => {
     const fetchAttributes = async () => {
@@ -124,16 +137,69 @@ export default function NewProductPage() {
     fetchAttributes();
   }, []);
 
-  // Category & Brand
-  const [categorySlug, setCategorySlug] = useState("");
-  const [brandSlug, setBrandSlug] = useState("");
+  // Fetch product data
+  useEffect(() => {
+    if (!id || id === 'new') return;
+    
+    const fetchProduct = async () => {
+      setIsLoading(true);
+      try {
+        const res = await apiClient.get(`/api/v1/products/${id}`);
+        const product = res.data?.data || res.data;
+        
+        if (product) {
+          setName(product.name || "");
+          setSlug(product.slug || product.did || "");
+          setSlugManual(true);
+          setDescription(product.description || "");
+          setProductType(product.type === "variant" ? "variant" : "simple");
+          setStockStatus(product.stockStatus || "instock");
+          setStockQuantity(product.stockQuantity?.toString() || "");
+          setSeason(product.season || "All-Season");
+          
+          if (product.category) {
+            setCategorySlug(typeof product.category === 'string' ? product.category : product.category.slug || product.category.did || "");
+          }
+          if (product.brand) {
+             const brandStr = Array.isArray(product.brand) ? product.brand[0] : product.brand;
+             setBrandSlug(brandStr || "");
+          }
+          
+          if (product.imageUrl) {
+            setImagePreview(product.imageUrl);
+            setUploadedImageUrl(product.imageUrl);
+          }
 
-  // Season
-  const [season, setSeason] = useState("All-Season");
-
-  const queryClient = useQueryClient();
-  const { data: categories = [] } = useCategories();
-  const { data: brands = [] } = useBrands();
+          if (product.type === "simple") {
+            setPrice(product.price?.toString() || "");
+            setOfferPrice(product.offerPrice?.toString() || "");
+            setSku(product.sku || "");
+          } else if (product.variants && product.variants.length > 0) {
+            const mappedVariants = product.variants.map((v: any, idx: number) => ({
+              size: v.size || "",
+              price: v.price?.toString() || "",
+              offerPrice: v.offerPrice?.toString() || "",
+              sku: v.sku || "",
+              imageUrl: v.imageUrl || "",
+              imageFile: null,
+              imagePreview: v.imageUrl || "",
+            }));
+            setVariants(mappedVariants);
+            
+            const modes: Record<number, "preset" | "custom"> = {};
+            mappedVariants.forEach((_: any, i: number) => modes[i] = "custom");
+            setVariantInputModes(modes);
+          }
+        }
+      } catch (err) {
+        toast.error("Failed to load product details.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchProduct();
+  }, [id]);
 
   const handleNameChange = useCallback(
     (value: string) => {
@@ -332,12 +398,12 @@ export default function NewProductPage() {
         body.variants = uploadedVariants;
       }
 
-      await apiClient.post("/api/v1/products", body);
-      toast.success("Product created successfully!");
+      await apiClient.put(`/api/v1/products/${id}`, body);
+      toast.success("Product updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["products"] });
       router.push("/dashboard/products");
     } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, 'Failed to create product.'));
+      toast.error(getApiErrorMessage(err, 'Failed to update product.'));
     } finally {
       setIsCreating(false);
     }
@@ -347,6 +413,14 @@ export default function NewProductPage() {
     if (url.startsWith("http://") || url.startsWith("https://")) return url;
     return `${API_BASE}${url.startsWith("/") ? "" : "/"}${url}`;
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-8 min-h-[50vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 max-w-6xl mx-auto">
@@ -360,11 +434,10 @@ export default function NewProductPage() {
             <ArrowLeft className="h-3.5 w-3.5" /> Back to products
           </button>
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Add New Product
+            Edit Product
           </h2>
           <p className="text-sm text-muted-foreground">
-            Create a simple or variant product for your catalog with rich
-            details.
+            Update product details, pricing, and inventory.
           </p>
         </div>
       </div>
@@ -870,7 +943,7 @@ export default function NewProductPage() {
               className="w-full"
               disabled={isCreating || isUploading}
             >
-              {isCreating ? "Creating Product..." : "Save Product"}
+              {isCreating ? "Updating Product..." : "Update Product"}
             </Button>
             <Button
               type="button"
