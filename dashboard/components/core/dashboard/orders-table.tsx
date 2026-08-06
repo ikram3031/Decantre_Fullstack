@@ -91,14 +91,14 @@ export function OrdersTable({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [statusTarget, setStatusTarget] = useState<Order | null>(null);
-  const [targetOrderStatus, setTargetOrderStatus] = useState<string>('Pending');
-  const [targetPaymentStatus, setTargetPaymentStatus] = useState<string>('Pending');
+  const [targetOrderStatus, setTargetOrderStatus] = useState<string>('Not Found');
+  const [targetPaymentStatus, setTargetPaymentStatus] = useState<string>('Not Found');
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
   const handleOpenStatusModal = (order: Order) => {
     setStatusTarget(order);
-    setTargetOrderStatus(order.fulfillmentStatus || 'Pending');
-    setTargetPaymentStatus(order.paymentStatus || 'Pending');
+    setTargetOrderStatus(order.orderStatus || 'Not found');
+    setTargetPaymentStatus(order.paymentStatus || 'Not found');
   };
 
   const handleUpdateStatus = async () => {
@@ -106,7 +106,7 @@ export function OrdersTable({
     setIsUpdatingStatus(true);
     try {
       await apiClient.put(`/api/v1/orders/${statusTarget.id}`, {
-        fulfillmentStatus: targetOrderStatus,
+        orderStatus: targetOrderStatus,
         paymentStatus: targetPaymentStatus,
       });
       toast.success(`Status for order #${statusTarget.orderNumber} updated successfully.`);
@@ -160,18 +160,7 @@ export function OrdersTable({
   };
 
   const getFulfillmentBadge = (status: string) => {
-    switch (status) {
-      case 'Shipped':
-        return <Badge className="bg-emerald-500 hover:bg-emerald-600">Shipped</Badge>;
-      case 'Processing':
-        return <Badge variant="secondary" className="bg-blue-500/20 text-blue-600 hover:bg-blue-500/30 dark:text-blue-400">Processing</Badge>;
-      case 'Cancelled':
-        return <Badge variant="destructive">Cancelled</Badge>;
-      case 'Pending':
-        return <Badge variant="outline">Pending</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
+    return <Badge variant="outline">{status}</Badge>;
   };
 
   if (isError) {
@@ -263,7 +252,7 @@ export function OrdersTable({
                 </TableCell>
                 <TableCell className="w-[120px] font-medium whitespace-nowrap">৳{order.totalAmount.toFixed(2)}</TableCell>
                 <TableCell className="w-[100px]">{getPaymentBadge(order.paymentStatus)}</TableCell>
-                <TableCell className="w-[120px]">{getFulfillmentBadge(order.fulfillmentStatus)}</TableCell>
+                <TableCell className="w-[120px]">{getFulfillmentBadge(order.orderStatus)}</TableCell>
                 <TableCell className="text-right w-[60px]">
                   <DropdownMenu>
                     <DropdownMenuTrigger render={
@@ -318,16 +307,15 @@ export function OrdersTable({
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-muted-foreground">Order Status</label>
-              <Select value={targetOrderStatus} onValueChange={(val) => setTargetOrderStatus(val || "Pending")}>
+              <Select value={targetOrderStatus} onValueChange={(val) => setTargetOrderStatus(val || "Not found")}>
                 <SelectTrigger className="w-full h-9 cursor-pointer">
-                  <SelectValue placeholder="Select order status" />
+                  <SelectValue placeholder="Order status" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border shadow-md" side="bottom">
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Processing">Processing</SelectItem>
-                  <SelectItem value="Shipped">Shipped</SelectItem>
-                  <SelectItem value="Delivered">Delivered</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -336,13 +324,13 @@ export function OrdersTable({
               <label className="text-xs font-semibold text-muted-foreground">Payment Status</label>
               <Select value={targetPaymentStatus} onValueChange={(val) => setTargetPaymentStatus(val || "Pending")}>
                 <SelectTrigger className="w-full h-9 cursor-pointer">
-                  <SelectValue placeholder="Select payment status" />
+                  <SelectValue placeholder="Payment status" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover border shadow-md" side="bottom">
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Paid">Paid</SelectItem>
-                  <SelectItem value="Failed">Failed</SelectItem>
-                  <SelectItem value="Refunded">Refunded</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="partial">Partial</SelectItem>
+                  <SelectItem value="n-a">N/A</SelectItem>
                 </SelectContent>
               </Select>
             </div>

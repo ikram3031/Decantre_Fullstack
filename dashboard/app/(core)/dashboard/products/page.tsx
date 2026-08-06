@@ -40,6 +40,7 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [brandFilter, setBrandFilter] = useState('All');
+  const [stockStatusFilter, setStockStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -67,6 +68,12 @@ export default function ProductsPage() {
 
   const handleBrand = (v: string | null) => {
     setBrandFilter(v ?? 'All');
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const handleStockStatus = (v: string) => {
+    setStockStatusFilter(v);
     setCurrentPage(1);
     setSelectedIds([]);
   };
@@ -133,12 +140,41 @@ export default function ProductsPage() {
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto ml-auto justify-end">
+        <div className="flex items-center gap-2 w-full sm:w-auto ml-auto justify-end flex-wrap">
           {/* Normal Filters (Visible when 0 items selected) */}
           {selectedIds.length === 0 && (
             <>
+              {/* Stock Status Radio Filter */}
+              <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-md border text-xs font-medium shrink-0">
+                <span className="text-[11px] text-muted-foreground px-1.5 font-semibold">Stock:</span>
+                {[
+                  { value: 'all', label: 'All', width: 'w-[52px]' },
+                  { value: 'instock', label: 'In Stock', width: 'w-[84px]' },
+                  { value: 'outofstock', label: 'Out of Stock', width: 'w-[106px]' },
+                ].map((item) => (
+                  <label
+                    key={item.value}
+                    className={`flex items-center justify-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-all select-none whitespace-nowrap ${item.width} ${
+                      stockStatusFilter === item.value
+                        ? 'bg-background text-foreground shadow-sm font-semibold'
+                        : 'text-muted-foreground hover:text-foreground font-normal'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="dashboardStockStatus"
+                      value={item.value}
+                      checked={stockStatusFilter === item.value}
+                      onChange={() => handleStockStatus(item.value)}
+                      className="h-3 w-3 accent-primary cursor-pointer shrink-0"
+                    />
+                    <span>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+
               <Select value={categoryFilter} onValueChange={handleCategory}>
-                <SelectTrigger className="w-[180px] h-9 cursor-pointer text-xs">
+                <SelectTrigger className="w-[160px] h-9 cursor-pointer text-xs">
                   <span>{categoryFilter === 'All' ? 'Category: All' : `Category: ${categoryFilter}`}</span>
                 </SelectTrigger>
                 <SelectContent className="bg-popover border shadow-md" side="bottom">
@@ -150,7 +186,7 @@ export default function ProductsPage() {
               </Select>
 
               <Select value={brandFilter} onValueChange={handleBrand}>
-                <SelectTrigger className="w-[180px] h-9 cursor-pointer text-xs">
+                <SelectTrigger className="w-[160px] h-9 cursor-pointer text-xs">
                   <span>{brandFilter === 'All' ? 'Brand: All' : `Brand: ${brandFilter}`}</span>
                 </SelectTrigger>
                 <SelectContent className="bg-popover border shadow-md" side="bottom">
@@ -212,6 +248,7 @@ export default function ProductsPage() {
             searchQuery={searchQuery}
             categoryFilter={categoryFilter}
             brandFilter={brandFilter}
+            stockStatusFilter={stockStatusFilter}
             page={currentPage}
             onTotalPagesChange={setTotalPages}
             selectedIds={selectedIds}

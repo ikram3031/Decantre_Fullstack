@@ -54,6 +54,7 @@ interface ProductsTableProps {
   searchQuery: string;
   categoryFilter: string;
   brandFilter: string;
+  stockStatusFilter?: string;
   page?: number;
   onTotalPagesChange?: (totalPages: number) => void;
   selectedIds: string[];
@@ -64,6 +65,7 @@ export function ProductsTable({
   searchQuery,
   categoryFilter,
   brandFilter,
+  stockStatusFilter = 'all',
   page = 1,
   onTotalPagesChange,
   selectedIds,
@@ -75,6 +77,7 @@ export function ProductsTable({
     search: searchQuery,
     category: categoryFilter !== 'All' && categoryFilter !== 'LowStock' ? categoryFilter : undefined,
     brand: brandFilter !== 'All' ? brandFilter : undefined,
+    stockStatus: stockStatusFilter !== 'all' ? stockStatusFilter : undefined,
     page,
     limit: 15,
   });
@@ -177,7 +180,7 @@ export function ProductsTable({
             <TableHead className="w-[140px]">Category</TableHead>
             <TableHead className="w-[120px]">Brand</TableHead>
             <TableHead className="w-[100px]">Price</TableHead>
-            <TableHead className="w-[110px]">Status</TableHead>
+            <TableHead className="w-[120px] min-w-[120px]">Status</TableHead>
             <TableHead className="w-[60px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -258,13 +261,13 @@ export function ProductsTable({
                 <TableCell className="w-[100px] font-medium">৳{product.price.toFixed(2)}</TableCell>
 
                 {/* Stock status */}
-                <TableCell className="w-[110px]">
+                <TableCell className="w-[120px] min-w-[120px]">
                   {product.status === 'In Stock' ? (
-                    <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" variant="outline">
+                    <Badge className="w-[100px] inline-flex items-center justify-center text-center bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 whitespace-nowrap shrink-0" variant="outline">
                       In Stock
                     </Badge>
                   ) : (
-                    <Badge variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20" >
+                    <Badge variant="destructive" className="w-[100px] inline-flex items-center justify-center text-center bg-destructive/10 text-destructive border-destructive/20 whitespace-nowrap shrink-0">
                       Out of Stock
                     </Badge>
                   )}

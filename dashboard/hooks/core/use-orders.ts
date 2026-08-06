@@ -62,7 +62,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
     };
 
     const orders: Order[] = orderList.map((o: BackendOrder) => {
-      let fulfillment: Order['fulfillmentStatus'] = 'Pending';
+      let fulfillment: Order['orderStatus'] = 'Pending';
       if (o.status === 'processing') {
         fulfillment = 'Processing';
       } else if (o.status === 'shipped' || o.status === 'completed') {
@@ -91,7 +91,7 @@ const fetchOrders = async (params?: FetchOrdersParams): Promise<FetchOrdersRespo
         date: o.createdAt || new Date().toISOString(),
         totalAmount: o.totals?.total || 0,
         paymentStatus,
-        fulfillmentStatus: fulfillment,
+        orderStatus: fulfillment,
       };
     });
 

@@ -31,8 +31,10 @@ if ! command -v docker &> /dev/null; then
     rm get-docker.sh
 fi
 
-echo -e "${YELLOW}Step 3: Creating project directory...${NC}"
+echo -e "${YELLOW}Step 3: Creating project and upload directories...${NC}"
 mkdir -p $PROJECT_DIR
+mkdir -p /var/www/uploads
+chown -R 1001:1001 /var/www/uploads 2>/dev/null || chmod -R 777 /var/www/uploads
 cd $PROJECT_DIR
 
 echo -e "${YELLOW}Step 4: Cloning/Updating repository...${NC}"
