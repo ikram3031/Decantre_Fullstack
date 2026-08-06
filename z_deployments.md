@@ -74,6 +74,12 @@ All web traffic is routed through Nginx reverse proxy on the VPS with active Let
 - **Primary Uploads**: `/opt/dev/uploads` (mounted inside `decantre-backend-dev` at `/app/uploads`)
 - **Live Uploads**: `/decantre/live/uploads` (mounted inside `decantre-backend-live` at `/app/uploads`)
 
+### C. SMTP Email & OTP Configuration
+- **SMTP Host**: `smtp.hostinger.com`
+- **SMTP Port**: `587` (TLS)
+- **SMTP User**: `info@decantrebd.com`
+- **Status**: Configured in `/decantre/live/backend/.env` for member OTP emails & order notifications.
+
 ---
 
 ## 5. Key Operations & Management Commands
