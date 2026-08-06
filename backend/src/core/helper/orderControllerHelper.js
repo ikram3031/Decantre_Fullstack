@@ -58,7 +58,7 @@ export const buildOrderDocument = async (payload) => {
 
   return {
     orderNumber: await buildOrderNumber(payload.orderType === 'instore'),
-    status: 'pending',
+    status: 'processing',
     createdBy: createdByUserId,
     updatedBy: null,
     member: payload.memberId && Types.ObjectId.isValid(payload.memberId) ? payload.memberId : undefined,
