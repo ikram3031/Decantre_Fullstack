@@ -12,7 +12,7 @@ export default function VersionPage() {
     async function fetchVersion() {
       try {
         const res = await apiClient.get<{ version: string }>("/api/v1/version");
-        setBackendVersion(res.version);
+        setBackendVersion(res.data?.version || "1.0.0");
       } catch (err: any) {
         setError(err.message || "Failed to fetch backend version (Make sure you are logged in as Admin)");
         setBackendVersion("Error");
