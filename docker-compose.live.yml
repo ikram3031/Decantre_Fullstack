@@ -27,7 +27,7 @@ services:
     ports:
       - "5093:5093"
     volumes:
-      - /decantre/live/uploads:/app/uploads
+      - /decantre/uploads:/app/uploads
     depends_on:
       - mongodb
     networks:
