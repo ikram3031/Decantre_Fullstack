@@ -176,14 +176,14 @@ export const ProductDetail = () => {
   const isSwatchOutOfStock = React.useMemo(() => {
     if (!product) return true;
     if (product.stockStatus === 'outofstock') return true;
-    if (activeSwatch && activeSwatch.raw) {
+/*     if (activeSwatch && activeSwatch.raw) {
       const swatchRaw = activeSwatch.raw;
       return (
         swatchRaw.stock_status === 'outofstock' || 
         swatchRaw.stockStatus === 'outofstock' || 
         swatchRaw.stockQuantity === 0
       );
-    }
+    } */
     return product.stockQuantity === 0;
   }, [product, activeSwatch]);
 
