@@ -10,7 +10,7 @@ const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes
 export interface CategoryCacheEntry {
   id?: string;
   _id?: string;
-  did?: string;
+  did: string;
   name: string;
   slug: string;
 }
@@ -18,7 +18,7 @@ export interface CategoryCacheEntry {
 export interface BrandCacheEntry {
   id?: string;
   _id?: string;
-  did?: string;
+  did: string;
   name: string;
   slug: string;
   parent?: string;
@@ -141,7 +141,7 @@ export function useCategories() {
         .map((c) => ({
           id: c.id ? String(c.id) : undefined,
           _id: c._id ? String(c._id) : undefined,
-          did: c.did,
+          did: c.did ?? c.slug ?? String(c._id || c.id || ''),
           name: c.name!,
           slug: c.slug ?? '',
         }));
@@ -169,7 +169,7 @@ export function useBrands() {
         .map((b) => ({
           id: b.id ? String(b.id) : undefined,
           _id: b._id ? String(b._id) : undefined,
-          did: b.did,
+          did: b.did ?? b.slug ?? String(b._id || b.id || ''),
           name: b.name!,
           slug: b.slug ?? '',
           parent: b.parent,
