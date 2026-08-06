@@ -322,7 +322,7 @@ export function OrdersTable({
                 <SelectTrigger className="w-full h-9 cursor-pointer">
                   <SelectValue placeholder="Select order status" />
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="Pending">Pending</SelectItem>
                   <SelectItem value="Processing">Processing</SelectItem>
                   <SelectItem value="Shipped">Shipped</SelectItem>
@@ -338,7 +338,7 @@ export function OrdersTable({
                 <SelectTrigger className="w-full h-9 cursor-pointer">
                   <SelectValue placeholder="Select payment status" />
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="Pending">Pending</SelectItem>
                   <SelectItem value="Paid">Paid</SelectItem>
                   <SelectItem value="Failed">Failed</SelectItem>

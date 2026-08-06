@@ -141,7 +141,7 @@ export default function ProductsPage() {
                 <SelectTrigger className="w-[180px] h-9 cursor-pointer text-xs">
                   <span>{categoryFilter === 'All' ? 'Category: All' : `Category: ${categoryFilter}`}</span>
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="All">Category: All</SelectItem>
                   {categories.map((cat) => (
                     <SelectItem key={cat.did} value={cat.name}>{cat.name}</SelectItem>
@@ -153,7 +153,7 @@ export default function ProductsPage() {
                 <SelectTrigger className="w-[180px] h-9 cursor-pointer text-xs">
                   <span>{brandFilter === 'All' ? 'Brand: All' : `Brand: ${brandFilter}`}</span>
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="All">Brand: All</SelectItem>
                   {brands.map((brand) => (
                     <SelectItem key={brand.did} value={brand.name}>{brand.name}</SelectItem>
@@ -182,7 +182,7 @@ export default function ProductsPage() {
                     <span>Change Stock</span>
                   </div>
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="instock" className="cursor-pointer text-xs">
                     Mark In Stock
                   </SelectItem>

@@ -527,7 +527,7 @@ export default function NewProductPage() {
                       <SelectTrigger className="h-9 w-full cursor-pointer">
                         <SelectValue placeholder="Select type (e.g. Size, Volume)" />
                       </SelectTrigger>
-                      <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                      <SelectContent className="bg-popover border shadow-md" side="bottom">
                         {attributeGroups.map((group) => (
                           <SelectItem key={group.slug} value={group.slug}>
                             {group.name}
@@ -804,7 +804,7 @@ export default function NewProductPage() {
                 <SelectTrigger className="w-full cursor-pointer">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="__none__">None</SelectItem>
                   {categories.map((cat: CategoryCacheEntry) => (
                     <SelectItem key={cat.did} value={cat.slug}>
@@ -829,7 +829,7 @@ export default function NewProductPage() {
                 <SelectTrigger className="w-full cursor-pointer">
                   <SelectValue placeholder="Select brand" />
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="__none__">None</SelectItem>
                   {brands.map((b: BrandCacheEntry) => (
                     <SelectItem key={b.did} value={b.slug}>

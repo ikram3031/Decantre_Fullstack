@@ -145,7 +145,7 @@ export default function OrdersPage() {
                 <SelectTrigger className="w-[180px] h-9 cursor-pointer text-xs">
                   <span>{statusFilter === 'All' ? 'Order Status: All' : `Order Status: ${statusFilter}`}</span>
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="All">Order Status: All</SelectItem>
                   <SelectItem value="Pending">Pending</SelectItem>
                   <SelectItem value="Processing">Processing</SelectItem>
@@ -159,7 +159,7 @@ export default function OrdersPage() {
                 <SelectTrigger className="w-[160px] h-9 cursor-pointer text-xs">
                   <span>{paymentFilter === 'All' ? 'Payment: All' : `Payment: ${paymentFilter}`}</span>
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="All">Payment: All</SelectItem>
                   <SelectItem value="Paid">Paid</SelectItem>
                   <SelectItem value="Pending">Pending</SelectItem>
@@ -178,7 +178,7 @@ export default function OrdersPage() {
                 <SelectTrigger className="w-[145px] h-9 border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-medium cursor-pointer text-xs">
                   <span>Payment Status</span>
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="Paid" className="cursor-pointer text-xs">Paid</SelectItem>
                   <SelectItem value="Pending" className="cursor-pointer text-xs">Pending</SelectItem>
                   <SelectItem value="Failed" className="cursor-pointer text-xs">Failed</SelectItem>
@@ -191,7 +191,7 @@ export default function OrdersPage() {
                 <SelectTrigger className="w-[135px] h-9 border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-medium cursor-pointer text-xs">
                   <span>Order Status</span>
                 </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                <SelectContent className="bg-popover border shadow-md" side="bottom">
                   <SelectItem value="Pending" className="cursor-pointer text-xs">Pending</SelectItem>
                   <SelectItem value="Processing" className="cursor-pointer text-xs">Processing</SelectItem>
                   <SelectItem value="Shipped" className="cursor-pointer text-xs">Shipped</SelectItem>
