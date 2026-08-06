@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/core/api-client';
-import { getCategoryCache, getBrandName } from '@/lib/core/category-cache';
+import { getCategoryName, getBrandName } from '@/lib/core/category-cache';
 import type { Product, ProductVariant } from '@/types';
 
 export type { Product, ProductVariant };
@@ -116,20 +116,18 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
 
   const mappedProducts = productList.map((p): Product => {
     // Resolve category name via localStorage cache (did → name)
-    let categoryName = 'Uncategorized';
-    const rawCats = Array.isArray(p.categories) ? p.categories : [];
-
-    if (rawCats.length > 0) {
-      const firstCat = rawCats[0];
-      if (typeof firstCat === 'object' && firstCat !== null && 'name' in firstCat && firstCat.name) {
-        categoryName = firstCat.name;
-      } else {
-        const cache = getCategoryCache();
-        const catId = typeof firstCat === 'string' ? firstCat : firstCat?._id?.toString?.();
-        const matched = cache.find((c) => c.did === catId);
-        categoryName = matched?.name ?? 'Uncategorized';
+    const categoryName = (() => {
+      const rawCats = Array.isArray(p.categories) ? p.categories : typeof p.categories === 'string' ? [p.categories] : [];
+      if (rawCats.length > 0) {
+        const firstCat = rawCats[0];
+        if (typeof firstCat === 'string') {
+          return getCategoryName(firstCat) || firstCat;
+        } else if (typeof firstCat === 'object' && firstCat !== null && 'name' in firstCat && firstCat.name) {
+          return firstCat.name;
+        }
       }
-    }
+      return 'Uncategorized';
+    })();
 
     const productType: 'simple' | 'variant' = p.type === 'variant' ? 'variant' : 'simple';
 

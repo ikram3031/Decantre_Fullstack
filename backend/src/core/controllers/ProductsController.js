@@ -186,6 +186,7 @@ export const listProducts = async (req, res, next) => {
     const [total, rows] = await Promise.all([
       ProductModel.countDocuments(filter),
       ProductModel.find(filter)
+        .populate('categories', 'did name slug')
         .sort(sort)
         .skip(skip)
         .limit(limit)

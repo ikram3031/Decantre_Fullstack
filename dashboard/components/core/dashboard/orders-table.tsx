@@ -28,6 +28,21 @@ import { AlertCircle } from 'lucide-react';
 import { apiClient } from '@/lib/core/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/core/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/core/ui/select';
 import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
 import { getApiErrorMessage } from '@/lib/core/error-handler';
 import type { Route } from 'next';
@@ -74,6 +89,36 @@ export function OrdersTable({
 
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; orderNumber: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [statusTarget, setStatusTarget] = useState<Order | null>(null);
+  const [targetOrderStatus, setTargetOrderStatus] = useState<string>('Pending');
+  const [targetPaymentStatus, setTargetPaymentStatus] = useState<string>('Pending');
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+
+  const handleOpenStatusModal = (order: Order) => {
+    setStatusTarget(order);
+    setTargetOrderStatus(order.fulfillmentStatus || 'Pending');
+    setTargetPaymentStatus(order.paymentStatus || 'Pending');
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!statusTarget) return;
+    setIsUpdatingStatus(true);
+    try {
+      await apiClient.put(`/api/v1/orders/${statusTarget.id}`, {
+        fulfillmentStatus: targetOrderStatus,
+        paymentStatus: targetPaymentStatus,
+      });
+      toast.success(`Status for order #${statusTarget.orderNumber} updated successfully.`);
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
+      setStatusTarget(null);
+    } catch (err: unknown) {
+      console.error(err);
+      toast.error(getApiErrorMessage(err, 'Failed to update order status.'));
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
 
   const handleDeleteOrder = async () => {
     if (!deleteTarget) return;
@@ -235,6 +280,9 @@ export function OrdersTable({
                       <DropdownMenuItem onClick={() => handleEditOrderClick(order)}>
                         Edit Order
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleOpenStatusModal(order)}>
+                        Change Status
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="text-destructive focus:text-destructive cursor-pointer"
@@ -257,6 +305,63 @@ export function OrdersTable({
         </TableBody>
       </Table>
 
+      {/* Change Status Dialog */}
+      <Dialog open={!!statusTarget} onOpenChange={(open) => !open && setStatusTarget(null)}>
+        <DialogContent className="sm:max-w-[420px] bg-card text-card-foreground">
+          <DialogHeader>
+            <DialogTitle>Change Status</DialogTitle>
+            <DialogDescription>
+              Update order and payment status for <span className="font-semibold text-foreground">{statusTarget?.orderNumber}</span>.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">Order Status</label>
+              <Select value={targetOrderStatus} onValueChange={(val) => setTargetOrderStatus(val || "Pending")}>
+                <SelectTrigger className="w-full h-9 cursor-pointer">
+                  <SelectValue placeholder="Select order status" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                  <SelectItem value="Pending">Pending</SelectItem>
+                  <SelectItem value="Processing">Processing</SelectItem>
+                  <SelectItem value="Shipped">Shipped</SelectItem>
+                  <SelectItem value="Delivered">Delivered</SelectItem>
+                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground">Payment Status</label>
+              <Select value={targetPaymentStatus} onValueChange={(val) => setTargetPaymentStatus(val || "Pending")}>
+                <SelectTrigger className="w-full h-9 cursor-pointer">
+                  <SelectValue placeholder="Select payment status" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
+                  <SelectItem value="Pending">Pending</SelectItem>
+                  <SelectItem value="Paid">Paid</SelectItem>
+                  <SelectItem value="Failed">Failed</SelectItem>
+                  <SelectItem value="Refunded">Refunded</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setStatusTarget(null)} disabled={isUpdatingStatus}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium cursor-pointer"
+              onClick={handleUpdateStatus}
+              disabled={isUpdatingStatus}
+            >
+              {isUpdatingStatus ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDeleteDialog
         open={!!deleteTarget}

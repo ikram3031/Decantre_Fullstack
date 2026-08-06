@@ -450,10 +450,10 @@ export default function NewProductPage() {
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold">Stock Status *</label>
                 <Select value={stockStatus} onValueChange={(val) => setStockStatus(val || "instock")}>
-                  <SelectTrigger className="h-9">
+                  <SelectTrigger className="h-9 w-full cursor-pointer">
                     <SelectValue placeholder="Select stock status" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-popover border shadow-md">
                     <SelectItem value="instock">In Stock</SelectItem>
                     <SelectItem value="outofstock">Out of Stock</SelectItem>
                   </SelectContent>
@@ -480,7 +480,6 @@ export default function NewProductPage() {
                       type="number"
                       step="0.01"
                       required
-                      placeholder="99.99"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                     />
@@ -492,7 +491,6 @@ export default function NewProductPage() {
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder="Optional"
                       value={offerPrice}
                       onChange={(e) => setOfferPrice(e.target.value)}
                     />
@@ -500,7 +498,7 @@ export default function NewProductPage() {
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold">SKU</label>
                     <Input
-                      placeholder="OIP-001"
+                      placeholder="SKU"
                       value={sku}
                       onChange={(e) => setSku(e.target.value)}
                     />
@@ -526,10 +524,10 @@ export default function NewProductPage() {
                         setVariantInputModes(modes);
                       }}
                     >
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="h-9 w-full cursor-pointer">
                         <SelectValue placeholder="Select type (e.g. Size, Volume)" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
                         {attributeGroups.map((group) => (
                           <SelectItem key={group.slug} value={group.slug}>
                             {group.name}
@@ -671,7 +669,6 @@ export default function NewProductPage() {
                             type="number"
                             step="0.01"
                             required
-                            placeholder="199"
                             value={v.price}
                             onChange={(e) =>
                                 updateVariant(i, "price", e.target.value)
@@ -686,7 +683,6 @@ export default function NewProductPage() {
                           <Input
                             type="number"
                             step="0.01"
-                            placeholder="Optional"
                             value={v.offerPrice}
                             onChange={(e) =>
                               updateVariant(i, "offerPrice", e.target.value)
@@ -699,7 +695,7 @@ export default function NewProductPage() {
                             SKU
                           </label>
                           <Input
-                            placeholder="e.g. SKU-10ml"
+                            placeholder="SKU"
                             value={v.sku}
                             onChange={(e) =>
                               updateVariant(i, "sku", e.target.value)
@@ -805,10 +801,10 @@ export default function NewProductPage() {
                   setCategorySlug(val === "__none__" || !val ? "" : val)
                 }
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full cursor-pointer">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
                   <SelectItem value="__none__">None</SelectItem>
                   {categories.map((cat: CategoryCacheEntry) => (
                     <SelectItem key={cat.did} value={cat.slug}>
@@ -830,10 +826,10 @@ export default function NewProductPage() {
                   setBrandSlug(val === "__none__" || !val ? "" : val)
                 }
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full cursor-pointer">
                   <SelectValue placeholder="Select brand" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover border shadow-md" position="popper" side="bottom">
                   <SelectItem value="__none__">None</SelectItem>
                   {brands.map((b: BrandCacheEntry) => (
                     <SelectItem key={b.did} value={b.slug}>

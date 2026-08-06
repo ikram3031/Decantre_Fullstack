@@ -15,6 +15,7 @@ import { Badge } from '@/components/core/ui/badge';
 import { Button } from '@/components/core/ui/button';
 import { Skeleton } from '@/components/core/ui/skeleton';
 import { useProducts } from '@/hooks/core/use-products';
+import { getCategoryName, getBrandName } from '@/lib/core/category-cache';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/core/ui/dropdown-menu';
-import { MoreHorizontal, ImageIcon, PackageX } from 'lucide-react';
+import { MoreHorizontal, ImageIcon, PackageX, Trash2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/core/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import {
@@ -175,7 +176,6 @@ export function ProductsTable({
             <TableHead className="w-[140px]">Category</TableHead>
             <TableHead className="w-[120px]">Brand</TableHead>
             <TableHead className="w-[100px]">Price</TableHead>
-            <TableHead className="w-[80px]">Stock</TableHead>
             <TableHead className="w-[110px]">Status</TableHead>
             <TableHead className="w-[60px] text-right">Actions</TableHead>
           </TableRow>
@@ -197,7 +197,6 @@ export function ProductsTable({
                 <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                 <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-8" /></TableCell>
                 <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
                 <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto rounded-md" /></TableCell>
               </TableRow>
@@ -220,7 +219,7 @@ export function ProductsTable({
                   />
                 </TableCell>
                 {/* Product name + image */}
-                <TableCell className="max-w-[280px]">
+                <TableCell className="max-w-[200px]">
                   <div className="flex items-center gap-3 min-w-0">
                     {product.image ? (
                       <div className="relative h-9 w-9 overflow-hidden rounded-md border flex-shrink-0">
@@ -242,19 +241,20 @@ export function ProductsTable({
 
                 {/* Category */}
                 <TableCell className="max-w-[140px]">
-                  <span className="truncate block" title={product.category}>{product.category}</span>
+                  <span className="truncate block" title={getCategoryName(product.category) || product.category}>
+                    {getCategoryName(product.category) || product.category}
+                  </span>
                 </TableCell>
 
                 {/* Brand */}
                 <TableCell className="max-w-[120px]">
-                  <span className="truncate block text-muted-foreground" title={product.brand ?? '—'}>{product.brand ?? '—'}</span>
+                  <span className="truncate block text-muted-foreground" title={product.brand ? (getBrandName(product.brand) || product.brand) : '—'}>
+                    {product.brand ? (getBrandName(product.brand) || product.brand) : '—'}
+                  </span>
                 </TableCell>
 
                 {/* Price */}
                 <TableCell className="w-[100px] font-medium">৳{product.price.toFixed(2)}</TableCell>
-
-                {/* Stock Quantity */}
-                <TableCell className="w-[80px] font-mono text-sm">{product.stock ?? 0}</TableCell>
 
                 {/* Stock status */}
                 <TableCell className="w-[110px]">
@@ -278,19 +278,21 @@ export function ProductsTable({
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     } />
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuContent align="end" className="min-w-[150px]">
+                      <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
                       <DropdownMenuItem
+                        className="cursor-pointer text-xs flex items-center gap-2"
                         onClick={() => setStockTarget(product)}
                       >
-                        <PackageX className="h-4 w-4 mr-2 text-muted-foreground" />
-                        Update Stock Status
+                        <PackageX className="h-3.5 w-3.5 text-muted-foreground" />
+                        Change Stock
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        className="text-destructive focus:text-destructive cursor-pointer"
+                        className="text-destructive focus:text-destructive cursor-pointer text-xs flex items-center gap-2"
                         onClick={() => setDeleteTarget({ id: product.id, name: product.name })}
                       >
+                        <Trash2 className="h-3.5 w-3.5" />
                         Delete Product
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -300,7 +302,7 @@ export function ProductsTable({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={9} className="h-24 text-center">
+              <TableCell colSpan={8} className="h-24 text-center">
                 No products found.
               </TableCell>
             </TableRow>
@@ -312,19 +314,12 @@ export function ProductsTable({
       <Dialog open={!!stockTarget} onOpenChange={(open) => !open && setStockTarget(null)}>
         <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <PackageX className="h-5 w-5 text-primary" />
-              Update Stock Status
-            </DialogTitle>
+            <DialogTitle>Change Stock Status</DialogTitle>
             <DialogDescription>
-              Modify the inventory availability status for <span className="font-semibold text-foreground">"{stockTarget?.name}"</span>.
+              Update the availability status for <span className="font-semibold text-foreground">{stockTarget?.name}</span>.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-semibold text-muted-foreground">Current Stock Quantity:</span>
-              <span className="text-sm font-semibold font-mono">{stockTarget?.stock ?? 0}</span>
-            </div>
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold text-muted-foreground">Current Status:</span>
               <span className="text-sm font-semibold">
@@ -357,6 +352,7 @@ export function ProductsTable({
               Cancel
             </Button>
             <Button
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium cursor-pointer"
               onClick={handleUpdateStockStatus}
               disabled={isUpdatingStock}
             >
