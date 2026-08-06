@@ -64,5 +64,5 @@ networks:
     driver: bridge
 
 volumes:
-  mongodb-data-dev:
+  mongodb-data-live:
     driver: local
