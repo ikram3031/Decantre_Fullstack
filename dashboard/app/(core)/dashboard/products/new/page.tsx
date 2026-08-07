@@ -101,7 +101,6 @@ export default function NewProductPage() {
   // Simple product fields
   const [price, setPrice] = useState("");
   const [offerPrice, setOfferPrice] = useState("");
-  const [stockQuantity, setStockQuantity] = useState("");
   const [stockStatus, setStockStatus] = useState("instock");
   const [sku, setSku] = useState("");
 
@@ -265,12 +264,7 @@ export default function NewProductPage() {
         formData.append("type", "product");
         const uploadRes = await apiClient.post<{ data: { imageUrl: string } }>(
           `/api/v1/images/upload?type=product&productSlug=${slug.trim()}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          },
+          formData
         );
         finalMainImageUrl = uploadRes.data?.data?.imageUrl || "";
       }
@@ -289,12 +283,7 @@ export default function NewProductPage() {
           formData.append("type", "product");
           const uploadRes = await apiClient.post<{ data: { imageUrl: string } }>(
             `/api/v1/images/upload?type=product&productSlug=${slug.trim()}&variantName=${v.size.trim()}`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            },
+            formData
           );
           varImageUrl = uploadRes.data?.data?.imageUrl || "";
         }
@@ -318,7 +307,6 @@ export default function NewProductPage() {
         imageUrl: finalMainImageUrl || undefined,
         season,
         stockStatus,
-        stockQuantity: stockQuantity ? parseInt(stockQuantity, 10) : 0,
       };
 
       if (categorySlug) body.category = categorySlug;
@@ -446,7 +434,7 @@ export default function NewProductPage() {
             </div>
 
             {/* Global Stock Fields (Applicable for both Simple and Variant products) */}
-            <div className="grid grid-cols-2 gap-4 pb-4 border-b">
+            <div className="grid grid-cols-1 gap-4 pb-4 border-b">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold">Stock Status *</label>
                 <Select value={stockStatus} onValueChange={(val) => setStockStatus(val || "instock")}>
@@ -458,15 +446,6 @@ export default function NewProductPage() {
                     <SelectItem value="outofstock">Out of Stock</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold">Stock Quantity (Optional)</label>
-                <Input
-                  type="number"
-                  placeholder="e.g. 50"
-                  value={stockQuantity}
-                  onChange={(e) => setStockQuantity(e.target.value)}
-                />
               </div>
             </div>
 

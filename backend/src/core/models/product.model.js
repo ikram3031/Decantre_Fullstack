@@ -31,13 +31,7 @@ const productSchema = new Schema(
       min: 0, 
       default: null 
     },
-    stockQuantity: { 
-      type: Number, 
-      min: 0, 
-      default: 0 
-    },
     sku: { type: String, trim: true },
-    did: { type: String, default: () => generateDid(), unique: true, index: true },
 
     // Variant Product Fields (Type = "variant" hole eiti babohar hobe)
     variants: [
