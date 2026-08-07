@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/core/ui/button";
 import { Input } from "@/components/core/ui/input";
 import { Switch } from "@/components/core/ui/switch";
@@ -52,6 +53,7 @@ function slugify(text) {
 const API_BASE = (import.meta.env?.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
 const NewProductPage = () => {
+  const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
 
   // Basic fields
@@ -275,9 +277,16 @@ const NewProductPage = () => {
       }
     }
 
+    // Image is required
+    if (!mainImageFile && !uploadedImageUrl) {
+      toast.error("Product image is required. Please upload an image before saving.");
+      return;
+    }
+
     setIsCreating(true);
     try {
-      let finalMainImageUrl = uploadedImageUrl;
+      let finalMainImageUrl = uploadedImageUrl || "";
+      let finalThumbnailUrl = "";
       if (mainImageFile) {
         const formData = new FormData();
         formData.append("image", mainImageFile);
@@ -286,7 +295,8 @@ const NewProductPage = () => {
         const uploadRes = await apiClient.post(`/api/v1/images/upload`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        finalMainImageUrl = uploadRes.data?.data?.imageUrl || "";
+        finalMainImageUrl = uploadRes.data?.data?.imageUrl || uploadRes.data?.imageUrl || "";
+        finalThumbnailUrl = uploadRes.data?.data?.thumbnailUrl || uploadRes.data?.thumbnailUrl || "";
       }
 
       const uploadedVariants = [];
@@ -325,7 +335,8 @@ const NewProductPage = () => {
         slug: slug.trim(),
         description: description.trim() || name.trim(),
         type: productType,
-        imageUrl: finalMainImageUrl || undefined,
+        imageUrl: finalMainImageUrl || "",
+        thumbnailUrl: finalThumbnailUrl || finalMainImageUrl || "",
         season,
         stockStatus,
       };
@@ -344,7 +355,7 @@ const NewProductPage = () => {
       await apiClient.post("/api/v1/products", body);
       toast.success("Product created successfully!");
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      window.location.href = "/dashboard/products";
+      navigate("/dashboard/products");
     } catch (err) {
       toast.error(getApiErrorMessage(err, 'Failed to create product.'));
     } finally {
@@ -361,12 +372,12 @@ const NewProductPage = () => {
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 max-w-6xl mx-auto">
       <div className="flex items-center justify-between border-b pb-4">
         <div className="space-y-1">
-          <a
-            href="/dashboard/products"
+          <Link
+            to="/dashboard/products"
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-2"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Back to products
-          </a>
+          </Link>
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
             Add New Product
           </h2>

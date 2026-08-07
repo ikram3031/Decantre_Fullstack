@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { Button } from "@/components/core/ui/button";
 import { Input } from "@/components/core/ui/input";
 import { Switch } from "@/components/core/ui/switch";
@@ -51,8 +52,9 @@ function slugify(text) {
 
 const API_BASE = (import.meta.env?.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
-const EditProductPage = ({ params }) => {
-  const id = params?.id || typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '';
+const EditProductPage = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -381,6 +383,12 @@ const EditProductPage = ({ params }) => {
       }
     }
 
+    // Image is required — existing or newly selected
+    if (!mainImageFile && !uploadedImageUrl) {
+      toast.error("Product image is required. Please upload an image before saving.");
+      return;
+    }
+
     setIsCreating(true);
     try {
       let finalMainImageUrl = uploadedImageUrl;
@@ -456,7 +464,7 @@ const EditProductPage = ({ params }) => {
       await apiClient.put(`/api/v1/products/${id}`, body);
       toast.success("Product updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      window.location.href = "/dashboard/products";
+      navigate("/dashboard/products");
     } catch (err) {
       toast.error(getApiErrorMessage(err, 'Failed to update product.'));
     } finally {
@@ -481,12 +489,12 @@ const EditProductPage = ({ params }) => {
     <div className="flex-1 space-y-6 p-4 md:p-8 pt-6 max-w-6xl mx-auto">
       <div className="flex items-center justify-between border-b pb-4">
         <div className="space-y-1">
-          <a
-            href="/dashboard/products"
+          <Link
+            to="/dashboard/products"
             className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-2"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Back to products
-          </a>
+          </Link>
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
             Edit Product
           </h2>
