@@ -39,6 +39,6 @@ USER nodejs
 EXPOSE 5092
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=5 \
-    CMD node -e "require('http').get('http://localhost:5092', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || exit 1
+    CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 5092), (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || exit 1
 
 CMD ["npm", "run", "prod"]
