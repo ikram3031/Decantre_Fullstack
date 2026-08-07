@@ -15,6 +15,7 @@ import {
   UploadCloud,
   X,
   ArrowLeft,
+  AlertCircle,
 } from "lucide-react";
 import { apiClient } from "@/lib/core/api-client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -25,6 +26,8 @@ import {
 } from "@/lib/core/category-cache";
 import { getApiErrorMessage } from '@/lib/core/error-handler';
 
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB limit
+
 const emptyVariant = () => ({
   size: "",
   price: "",
@@ -33,6 +36,7 @@ const emptyVariant = () => ({
   imageUrl: "",
   imageFile: null,
   imagePreview: "",
+  imageError: "",
 });
 
 function slugify(text) {
@@ -64,6 +68,7 @@ const EditProductPage = ({ params }) => {
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState("");
   const [mainImageFile, setMainImageFile] = useState(null);
+  const [mainImageError, setMainImageError] = useState("");
   const fileInputRef = useRef(null);
 
   // Type toggle
@@ -148,6 +153,7 @@ const EditProductPage = ({ params }) => {
               imageUrl: v.imageUrl || "",
               imageFile: null,
               imagePreview: v.imageUrl || "",
+              imageError: "",
             }));
             setVariants(mappedVariants);
             
@@ -197,6 +203,7 @@ const EditProductPage = ({ params }) => {
       imageUrl: "",
       imageFile: null,
       imagePreview: "",
+      imageError: "",
     }));
     
     setVariants(newVariants);
@@ -229,6 +236,15 @@ const EditProductPage = ({ params }) => {
     if (!files || files.length === 0) return;
 
     const file = files[0];
+    if (file.size > MAX_IMAGE_SIZE) {
+      setMainImageError("Maximum size exceeded. Please upload a different image.");
+      setImagePreview("");
+      setMainImageFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    setMainImageError("");
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
     setMainImageFile(file);
@@ -239,6 +255,15 @@ const EditProductPage = ({ params }) => {
     if (!files || files.length === 0) return;
 
     const file = files[0];
+    if (file.size > MAX_IMAGE_SIZE) {
+      updateVariant(index, "imageError", "Maximum size exceeded. Please upload a different image.");
+      updateVariant(index, "imageFile", null);
+      updateVariant(index, "imagePreview", "");
+      e.target.value = "";
+      return;
+    }
+
+    updateVariant(index, "imageError", "");
     const previewUrl = URL.createObjectURL(file);
     updateVariant(index, "imageFile", file);
     updateVariant(index, "imagePreview", previewUrl);
@@ -248,6 +273,7 @@ const EditProductPage = ({ params }) => {
     setImagePreview("");
     setUploadedImageUrl("");
     setMainImageFile(null);
+    setMainImageError("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -281,6 +307,7 @@ const EditProductPage = ({ params }) => {
     setIsCreating(true);
     try {
       let finalMainImageUrl = uploadedImageUrl;
+      let finalThumbnailUrl = "";
       if (mainImageFile) {
         const formData = new FormData();
         formData.append("image", mainImageFile);
@@ -289,7 +316,8 @@ const EditProductPage = ({ params }) => {
         const uploadRes = await apiClient.post(`/api/v1/images/upload`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        finalMainImageUrl = uploadRes.data?.data?.imageUrl || "";
+        finalMainImageUrl = uploadRes.data?.data?.imageUrl || uploadRes.data?.imageUrl || "";
+        finalThumbnailUrl = uploadRes.data?.data?.thumbnailUrl || uploadRes.data?.thumbnailUrl || "";
       }
 
       const uploadedVariants = [];
@@ -308,9 +336,9 @@ const EditProductPage = ({ params }) => {
             formData.append("variantName", v.size.trim());
           }
           const uploadRes = await apiClient.post(`/api/v1/images/upload`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-          varImageUrl = uploadRes.data?.data?.imageUrl || "";
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          varImageUrl = uploadRes.data?.data?.imageUrl || uploadRes.data?.imageUrl || "";
         }
 
         uploadedVariants.push({
@@ -328,10 +356,14 @@ const EditProductPage = ({ params }) => {
         slug: slug.trim(),
         description: description.trim() || name.trim(),
         type: productType,
-        imageUrl: finalMainImageUrl || undefined,
+        imageUrl: finalMainImageUrl || "",
         season,
         stockStatus,
       };
+
+      if (finalThumbnailUrl) {
+        body.thumbnailUrl = finalThumbnailUrl;
+      }
 
       if (categorySlug) body.category = categorySlug;
       if (brandSlug) body.brand = brandSlug;
@@ -572,7 +604,9 @@ const EditProductPage = ({ params }) => {
                       >
                         <div className="flex flex-col items-center gap-1.5 self-center pb-0.5">
                           <span className="text-[10px] font-semibold text-muted-foreground">Image</span>
-                          <div className="relative w-9 h-9 border rounded flex items-center justify-center cursor-pointer overflow-hidden group hover:border-primary">
+                          <div className={`relative w-9 h-9 border rounded flex items-center justify-center cursor-pointer overflow-hidden group ${
+                            v.imageError ? "border-destructive bg-destructive/10 text-destructive" : "hover:border-primary"
+                          }`}>
                             {v.imagePreview ? (
                               <>
                                 <img src={v.imagePreview} alt="variant" className="w-full h-full object-cover" />
@@ -581,6 +615,7 @@ const EditProductPage = ({ params }) => {
                                   onClick={() => {
                                     updateVariant(i, "imageFile", null);
                                     updateVariant(i, "imagePreview", "");
+                                    updateVariant(i, "imageError", "");
                                   }}
                                   className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
@@ -589,7 +624,7 @@ const EditProductPage = ({ params }) => {
                               </>
                             ) : (
                               <label htmlFor={`variant-image-${i}`} className="cursor-pointer p-2 text-muted-foreground hover:text-primary flex items-center justify-center w-full h-full">
-                                <UploadCloud className="w-4 h-4" />
+                                <UploadCloud className={`w-4 h-4 ${v.imageError ? "text-destructive" : ""}`} />
                               </label>
                             )}
                             <input
@@ -600,6 +635,12 @@ const EditProductPage = ({ params }) => {
                               onChange={(e) => handleVariantImageSelect(i, e)}
                             />
                           </div>
+                          {v.imageError && (
+                            <p className="text-[10px] font-semibold text-destructive col-span-full mt-1 flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              {v.imageError}
+                            </p>
+                          )}
                         </div>
 
                         <div className="space-y-1">
@@ -731,15 +772,25 @@ const EditProductPage = ({ params }) => {
               {!imagePreview ? (
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-border/80 hover:border-primary/50 rounded-xl p-6 text-center cursor-pointer hover:bg-muted/10 transition-all flex flex-col items-center justify-center min-h-[160px]"
+                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center min-h-[160px] ${
+                    mainImageError
+                      ? "border-destructive bg-destructive/5 text-destructive"
+                      : "border-border/80 hover:border-primary/50 hover:bg-muted/10"
+                  }`}
                 >
-                  <UploadCloud className="h-10 w-10 text-muted-foreground mb-2" />
-                  <span className="text-xs font-medium text-foreground block">
+                  <UploadCloud className={`h-10 w-10 mb-2 ${mainImageError ? "text-destructive" : "text-muted-foreground"}`} />
+                  <span className="text-xs font-medium block">
                     Upload Image
                   </span>
                   <span className="text-[10px] text-muted-foreground block mt-1">
-                    PNG, JPG, WEBP up to 10MB
+                    PNG, JPG, WEBP up to 2MB
                   </span>
+                  {mainImageError && (
+                    <p className="text-xs font-semibold text-destructive mt-2.5 flex items-center justify-center gap-1.5 animate-in fade-in">
+                      <AlertCircle className="h-4 w-4" />
+                      {mainImageError}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="relative rounded-xl border overflow-hidden bg-muted/10 group min-h-[160px] flex items-center justify-center">
