@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Input } from '@/components/core/ui/input';
 import { Search, Bell, LogOut } from 'lucide-react';
 import { Button } from '@/components/core/ui/button';
-import { useTheme } from 'next-themes';
-import { Moon, Sun } from 'lucide-react';
+import { ThemeToggle } from '@/components/core/ui/theme-toggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +15,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/core/ui/avatar
 import { useDashboardStore } from '@/store/use-dashboard-store';
 import { useAuth } from '@/lib/core/auth-context';
 
-export function Header() {
-  const { setTheme } = useTheme();
+export const Header = () => {
   const { searchQuery, setSearchQuery } = useDashboardStore();
   const { user, logout } = useAuth();
 
   const userInitials = user?.name
-    ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
     : 'AD';
 
   return (
@@ -40,23 +38,8 @@ export function Header() {
             />
           </div>
         </form>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="outline" size="icon" className="shrink-0">
-                  <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span className="sr-only">Toggle theme</span>
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
 
           <Button variant="outline" size="icon" className="relative">
             <Bell className="h-4 w-4" />
@@ -99,4 +82,4 @@ export function Header() {
       </div>
     </header>
   );
-}
+};
