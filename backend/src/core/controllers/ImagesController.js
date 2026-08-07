@@ -25,7 +25,7 @@ export const uploadProductImage = async (req, res, next) => {
     const dd = String(now.getDate()).padStart(2, "0");
     const dateFolder = `${yy}${mm}${dd}`; // Format folder as YYMMDD
 
-    const destinationDir = path.join(process.cwd(), "src", "uploads", dateFolder);
+    const destinationDir = path.join(process.cwd(), "uploads", dateFolder);
 
     // Ensure the directory exists
     await fs.promises.mkdir(destinationDir, { recursive: true });
@@ -42,13 +42,13 @@ export const uploadProductImage = async (req, res, next) => {
         .replace(/^-+|-+$/g, "") || "image";
     const timestamp = Date.now();
 
-    // Check if it is a product upload
+    // Check if it is a product upload (support both req.body and req.query for backwards compatibility)
     const isProduct =
-      req.query.type === "product" || req.body.type === "product";
+      req.body.type === "product" || req.query.type === "product";
 
     if (isProduct) {
-      const productSlug = req.query.productSlug || req.body.productSlug;
-      const variantName = req.query.variantName || req.body.variantName;
+      const productSlug = req.body.productSlug || req.query.productSlug;
+      const variantName = req.body.variantName || req.query.variantName;
 
       let mainFilename;
       let thumbFilename;
@@ -96,8 +96,8 @@ export const uploadProductImage = async (req, res, next) => {
         .toFile(thumbFilePath);
 
       // Construct public URLs
-      const mainUrl = `/src/uploads/${dateFolder}/${mainFilename}`;
-      const thumbUrl = `/src/uploads/${dateFolder}/${thumbFilename}`;
+      const mainUrl = `/uploads/${dateFolder}/${mainFilename}`;
+      const thumbUrl = `/uploads/${dateFolder}/${thumbFilename}`;
 
       return res.status(200).json({
         status: "success",
@@ -117,7 +117,7 @@ export const uploadProductImage = async (req, res, next) => {
         .webp({ quality: 90 })
         .toFile(filePath);
 
-      const imageUrl = `/src/uploads/${dateFolder}/${filename}`;
+      const imageUrl = `/uploads/${dateFolder}/${filename}`;
 
       return res.status(200).json({
         status: "success",

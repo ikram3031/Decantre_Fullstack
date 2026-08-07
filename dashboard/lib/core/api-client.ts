@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { handleGlobalError } from './error-handler';
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://server.decantrebd.com';
 
 export const apiClient = axios.create({
   baseURL,
