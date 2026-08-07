@@ -264,7 +264,12 @@ export default function NewProductPage() {
         formData.append("type", "product");
         const uploadRes = await apiClient.post<{ data: { imageUrl: string } }>(
           `/api/v1/images/upload?type=product&productSlug=${slug.trim()}`,
-          formData
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
         finalMainImageUrl = uploadRes.data?.data?.imageUrl || "";
       }
@@ -283,7 +288,12 @@ export default function NewProductPage() {
           formData.append("type", "product");
           const uploadRes = await apiClient.post<{ data: { imageUrl: string } }>(
             `/api/v1/images/upload?type=product&productSlug=${slug.trim()}&variantName=${v.size.trim()}`,
-            formData
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
           );
           varImageUrl = uploadRes.data?.data?.imageUrl || "";
         }
