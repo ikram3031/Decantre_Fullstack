@@ -286,7 +286,9 @@ const EditProductPage = ({ params }) => {
         formData.append("image", mainImageFile);
         formData.append("type", "product");
         formData.append("productSlug", slug.trim());
-        const uploadRes = await apiClient.post(`/api/v1/images/upload`, formData);
+        const uploadRes = await apiClient.post(`/api/v1/images/upload`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
         finalMainImageUrl = uploadRes.data?.data?.imageUrl || "";
       }
 
@@ -305,7 +307,9 @@ const EditProductPage = ({ params }) => {
           if (v.size.trim()) {
             formData.append("variantName", v.size.trim());
           }
-          const uploadRes = await apiClient.post(`/api/v1/images/upload`, formData);
+          const uploadRes = await apiClient.post(`/api/v1/images/upload`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
           varImageUrl = uploadRes.data?.data?.imageUrl || "";
         }
 
