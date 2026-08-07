@@ -1,53 +1,21 @@
-# Base image
-FROM node:22-alpine AS base
-
-# Install dependencies only when needed
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
+# Build Stage
+FROM node:22-alpine AS builder
 WORKDIR /app
-
-# Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-RUN npm install -g npm@latest && npm ci
-
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+RUN npm ci
 COPY . .
 
-# Environment variables for build phase
-ARG NEXT_PUBLIC_API_BASE_URL=https://server.decantrebd.com
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_TELEMETRY_DISABLED=1
+ARG VITE_API_BASE_URL=https://server.decantrebd.com
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
-RUN mkdir -p /app/public
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM base AS runner
-WORKDIR /app
+# Production Stage (Nginx)
+FROM nginx:alpine AS runner
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=8005
-ENV HOSTNAME="0.0.0.0"
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./public
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
-
+EXPOSE 80
 EXPOSE 8005
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8005 || exit 1
-
-CMD ["node", "server.js"]
+CMD ["nginx", "-g", "daemon off;"]
