@@ -89,11 +89,13 @@ export const buildOrderDocument = async (payload) => {
 
 // Upsert the linked payment record so it reflects the created order totals.
 // Supports advance, partial, and full payments for COD, Cash, bKash, Nagad, Bank, Card.
-export const syncPaymentDocument = async (orderData) => {
+export const syncPaymentDocument = async (orderData, payload = {}) => {
   const totalAmount = Number(orderData.totals?.total || 0);
 
   let paidAmount = 0;
-  if (orderData.paidAmount !== undefined && orderData.paidAmount !== null) {
+  if (payload.paidAmount !== undefined && payload.paidAmount !== null) {
+    paidAmount = Number(payload.paidAmount);
+  } else if (orderData.paidAmount !== undefined && orderData.paidAmount !== null) {
     paidAmount = Number(orderData.paidAmount);
   } else if (orderData.paymentDetails?.paidAmount !== undefined) {
     paidAmount = Number(orderData.paymentDetails.paidAmount);

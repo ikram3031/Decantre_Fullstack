@@ -221,7 +221,7 @@ export const updateOrder = async (req, res, next) => {
       await updateMemberOrderReference(newMemberId, orderDid, orderValue);
     }
 
-    await syncPaymentDocument(order);
+    await syncPaymentDocument(order, payload);
 
     if (oldMemberId) affectedMemberIds.add(oldMemberId);
     if (newMemberId) affectedMemberIds.add(newMemberId);
