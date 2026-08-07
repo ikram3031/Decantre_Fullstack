@@ -330,7 +330,7 @@ export default function OrderDetailsPage() {
   const [customerZip, setCustomerZip] = useState("1000");
 
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [fulfillmentStatus, setFulfillmentStatus] = useState("Pending");
+  const [orderStatus, setorderStatus] = useState("Pending");
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -367,7 +367,7 @@ export default function OrderDetailsPage() {
       setCustomerZip(order.customer?.zip || "1000");
 
       setPaymentMethod(order.paymentMethod || "cash");
-      setFulfillmentStatus(order.fulfillmentStatus || "Pending");
+      setorderStatus(order.orderStatus || "Pending");
 
       setDiscountAmount(order.discountTotalAmount || 0);
       setShippingFee(order.totals?.shippingFee ?? order.shippingTotalAmount ?? 0);
@@ -459,7 +459,7 @@ export default function OrderDetailsPage() {
     setIsSubmitting(true);
     try {
       const orderPayload = {
-        status: getBackendStatus(fulfillmentStatus),
+        status: getBackendStatus(orderStatus),
         paymentMethod: paymentMethod,
         customer: {
           fullName: customerName.trim(),
@@ -585,7 +585,7 @@ export default function OrderDetailsPage() {
                 Order {order.orderNumber}
               </h2>
               <div className="flex gap-1.5">
-                {getFulfillmentBadge(order.fulfillmentStatus || order.status || "")}
+                {getFulfillmentBadge(order.orderStatus || order.status || "")}
                 {getPaymentBadge(order.paymentStatus || (order.status === "completed" ? "Paid" : "Pending"))}
               </div>
             </div>
@@ -1135,7 +1135,7 @@ export default function OrderDetailsPage() {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <label className="text-muted-foreground mb-1 block">Fulfillment Status</label>
-                  <Select value={fulfillmentStatus} onValueChange={(val: string | null) => setFulfillmentStatus(val ?? "Pending")}>
+                  <Select value={orderStatus} onValueChange={(val: string | null) => setorderStatus(val ?? "Pending")}>
                     <SelectTrigger className="w-full h-8">
                       <SelectValue placeholder="Select Fulfillment" />
                     </SelectTrigger>

@@ -48,8 +48,8 @@ const orderSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ["received", "processing", "shipped", "completed", "cancelled"],
-      default: "received",
+      enum: [ "processing", "shipped", "completed", "cancelled"],
+      default: "processing",
     },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
     updatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },

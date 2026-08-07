@@ -42,13 +42,13 @@ export const uploadProductImage = async (req, res, next) => {
         .replace(/^-+|-+$/g, "") || "image";
     const timestamp = Date.now();
 
-    // Check if it is a product upload
+    // Check if it is a product upload (support both req.body and req.query for backwards compatibility)
     const isProduct =
-      req.query.type === "product" || req.body.type === "product";
+      req.body.type === "product" || req.query.type === "product";
 
     if (isProduct) {
-      const productSlug = req.query.productSlug || req.body.productSlug;
-      const variantName = req.query.variantName || req.body.variantName;
+      const productSlug = req.body.productSlug || req.query.productSlug;
+      const variantName = req.body.variantName || req.query.variantName;
 
       let mainFilename;
       let thumbFilename;

@@ -109,8 +109,6 @@ export const createProduct = async (req, res, next) => {
               v.offerPrice !== undefined && v.offerPrice !== null
                 ? Number(v.offerPrice)
                 : null,
-            stockQuantity:
-              v.stockQuantity !== undefined ? Number(v.stockQuantity) : 0,
             sku: v.sku || "",
             sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : i,
             imageUrl: v.imageUrl || null,
@@ -122,8 +120,6 @@ export const createProduct = async (req, res, next) => {
         body.offerPrice !== undefined && body.offerPrice !== null
           ? Number(body.offerPrice)
           : null;
-      productData.stockQuantity =
-        body.stockQuantity !== undefined ? Number(body.stockQuantity) : 0;
       productData.sku = body.sku || "";
     }
 
@@ -329,8 +325,6 @@ export const updateProduct = async (req, res, next) => {
                 v.offerPrice !== undefined && v.offerPrice !== null
                   ? Number(v.offerPrice)
                   : null,
-              stockQuantity:
-                v.stockQuantity !== undefined ? Number(v.stockQuantity) : 0,
               sku: v.sku || "",
               sortOrder: v.sortOrder !== undefined ? Number(v.sortOrder) : i,
               imageUrl: v.imageUrl || null,
@@ -339,15 +333,12 @@ export const updateProduct = async (req, res, next) => {
       }
       product.price = undefined;
       product.offerPrice = undefined;
-      product.stockQuantity = undefined;
       product.sku = undefined;
     } else {
       if (body.price !== undefined) product.price = Number(body.price);
       if (body.offerPrice !== undefined)
         product.offerPrice =
           body.offerPrice !== null ? Number(body.offerPrice) : null;
-      if (body.stockQuantity !== undefined)
-        product.stockQuantity = Number(body.stockQuantity);
       if (body.sku !== undefined) product.sku = body.sku;
       product.variants = undefined;
     }

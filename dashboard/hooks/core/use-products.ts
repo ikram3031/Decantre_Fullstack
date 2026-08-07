@@ -9,6 +9,7 @@ interface FetchProductsParams {
   search?: string;
   category?: string;
   brand?: string;
+  stockStatus?: string;
   page?: number;
   limit?: number;
 }
@@ -92,6 +93,7 @@ const fetchProducts = async (params?: FetchProductsParams): Promise<FetchProduct
   }
   if (params?.category) queryParams.category = params.category;
   if (params?.brand) queryParams.brand = params.brand;
+  if (params?.stockStatus && params.stockStatus !== 'all') queryParams.stockStatus = params.stockStatus;
 
   const response = await apiClient.get<unknown>('/api/v1/products', { params: queryParams });
 

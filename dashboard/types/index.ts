@@ -58,7 +58,7 @@ export interface Order {
   date: string;
   totalAmount: number;
   paymentStatus: 'Paid' | 'Pending' | 'Failed';
-  fulfillmentStatus: 'Pending' | 'Processing' | 'Shipped' | 'Cancelled';
+  orderStatus: string;
 }
 
 export type OrderDetails = Order & {

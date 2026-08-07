@@ -59,12 +59,12 @@ export default function StockManagementPage() {
   // ── Helpers ──────────────────────────────────────────────────────────────
   const getStockBadge = (product: Product) => {
     if (product.status === 'Out of Stock' || (product.stock ?? 0) === 0) {
-      return <Badge variant="destructive" className="gap-1 text-[10px]"><XCircle className="h-3 w-3" />Out of Stock</Badge>;
+      return <Badge variant="destructive" className="w-[100px] inline-flex items-center justify-center gap-1 text-[10px] whitespace-nowrap shrink-0"><XCircle className="h-3 w-3" />Out of Stock</Badge>;
     }
     if ((product.stock ?? 0) < 10) {
-      return <Badge variant="outline" className="gap-1 text-[10px] border-amber-500 text-amber-500"><AlertTriangle className="h-3 w-3" />Low Stock</Badge>;
+      return <Badge variant="outline" className="w-[100px] inline-flex items-center justify-center gap-1 text-[10px] border-amber-500 text-amber-500 whitespace-nowrap shrink-0"><AlertTriangle className="h-3 w-3" />Low Stock</Badge>;
     }
-    return <Badge variant="outline" className="gap-1 text-[10px] border-emerald-500 text-emerald-500"><CheckCircle2 className="h-3 w-3" />In Stock</Badge>;
+    return <Badge variant="outline" className="w-[100px] inline-flex items-center justify-center gap-1 text-[10px] border-emerald-500 text-emerald-500 whitespace-nowrap shrink-0"><CheckCircle2 className="h-3 w-3" />In Stock</Badge>;
   };
 
   const getTotalVariantStock = (product: Product): number => {

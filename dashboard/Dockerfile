@@ -21,6 +21,7 @@ ARG NEXT_PUBLIC_API_BASE_URL=https://server.decantrebd.com
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 
+RUN mkdir -p /app/public
 RUN npm run build
 
 # Production image, copy all the files and run next

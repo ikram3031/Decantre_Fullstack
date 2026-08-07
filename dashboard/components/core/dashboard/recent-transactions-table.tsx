@@ -61,8 +61,8 @@ export function RecentTransactionsTable() {
               ))
             ) : orders?.data && orders.data.length > 0 ? (
               orders.data.slice(0, 5).map((tx) => (
-                <TableRow key={tx.id}>
-                  <TableCell className="font-medium">{tx.id}</TableCell>
+                <TableRow key={tx.orderNumber}>
+                  <TableCell className="font-medium">{tx.orderNumber}</TableCell>
                   <TableCell>{tx.customerName}</TableCell>
                   <TableCell>{getStatusBadge(tx.paymentStatus)}</TableCell>
                   <TableCell className="text-right">৳{tx.totalAmount.toFixed(2)}</TableCell>
