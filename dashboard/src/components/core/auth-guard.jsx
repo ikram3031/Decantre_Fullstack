@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/core/auth-context';
 
 export function AuthGuard({ children }) {
   const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLoading && !user && typeof window !== 'undefined') {
-      window.location.href = '/login';
+      navigate('/login');
     }
-  }, [user, isLoading]);
+  }, [user, isLoading, navigate]);
 
   if (isLoading) {
     return (
