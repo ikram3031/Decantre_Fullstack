@@ -29,7 +29,7 @@ Thumbs.db
 .idea/
 
 # Exclude old dashboard directories from git tracking & VPS copy
-# dash_old/
+dash_old/
 # old-dashboard/
 
 # Backups
