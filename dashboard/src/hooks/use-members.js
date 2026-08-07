@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 
 const mockMembers = [
   { id: 'M001', name: 'Nadia Rahman', email: 'nadia.rahman@gmail.com', phone: '01711234567', totalOrders: 14, lifetimeSpent: 18400, joinedDate: '2022-01-15', segment: 'VIP' },

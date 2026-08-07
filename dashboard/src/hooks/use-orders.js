@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 
 const fetchOrders = async (params) => {
   const limit = params?.limit ?? 15;

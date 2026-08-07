@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/core/ui/card';
-import { cn } from '@/lib/core/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 export function KpiCard({ title, value, icon: Icon, trend, trendDirection }) {
   return (

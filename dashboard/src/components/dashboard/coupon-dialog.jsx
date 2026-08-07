@@ -6,22 +6,22 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription,
-} from '@/components/core/ui/dialog';
-import { Input } from '@/components/core/ui/input';
-import { Button } from '@/components/core/ui/button';
-import { Switch } from '@/components/core/ui/switch';
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/core/ui/select';
+} from '@/components/ui/select';
 import { useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 import { toast } from 'sonner';
 import { Search, Info } from 'lucide-react';
-import { getApiErrorMessage } from '@/lib/core/error-handler';
+import { getApiErrorMessage } from '@/lib/error-handler';
 
 const toDateTimeLocalString = (isoString) => {
   if (!isoString) return '';

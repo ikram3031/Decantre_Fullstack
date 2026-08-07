@@ -1,5 +1,5 @@
-import DashboardLayout from '@/app/(core)/dashboard/layout';
-import DashboardOverview from '@/app/(core)/dashboard/page';
+import DashboardLayout from '@/pages/DashboardLayout';
+import DashboardOverview from '@/pages/DashboardPage';
 
 export default function App() {
   return (
@@ -8,3 +8,4 @@ export default function App() {
     </DashboardLayout>
   );
 }
+

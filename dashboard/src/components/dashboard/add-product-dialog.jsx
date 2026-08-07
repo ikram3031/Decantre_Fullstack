@@ -1,14 +1,14 @@
 import { useState, useCallback } from 'react';
-import { Button } from '@/components/core/ui/button';
-import { Input } from '@/components/core/ui/input';
-import { Switch } from '@/components/core/ui/switch';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/core/ui/select';
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -16,16 +16,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/core/ui/dialog';
+} from '@/components/ui/dialog';
 import { Plus, Trash2, Layers, Package } from 'lucide-react';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { getApiErrorMessage } from '@/lib/core/error-handler';
+import { getApiErrorMessage } from '@/lib/error-handler';
 import {
   useCategories,
   useBrands,
-} from '@/lib/core/category-cache';
+} from '@/lib/category-cache';
 
 const emptyVariant = () => ({
   size: '',

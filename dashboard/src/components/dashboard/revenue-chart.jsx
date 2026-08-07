@@ -7,10 +7,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/core/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { useOrderCounts } from '@/hooks/core/use-order-counts';
+import { useOrderCounts } from '@/hooks/use-order-counts';
 
 export function RevenueChart() {
   const { theme, systemTheme } = useTheme();

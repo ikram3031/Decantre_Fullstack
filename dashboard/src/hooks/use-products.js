@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/core/api-client';
-import { getCategoryName, getBrandName } from '@/lib/core/category-cache';
+import { apiClient } from '@/lib/api-client';
+import { getCategoryName, getBrandName } from '@/lib/category-cache';
 
 const API_BASE = (import.meta.env?.VITE_API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || '').replace(/\/$/, '');
 

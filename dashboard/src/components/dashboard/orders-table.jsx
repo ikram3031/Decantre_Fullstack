@@ -6,11 +6,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/core/ui/table';
-import { Badge } from '@/components/core/ui/badge';
-import { Button } from '@/components/core/ui/button';
-import { Skeleton } from '@/components/core/ui/skeleton';
-import { useOrders } from '@/hooks/core/use-orders';
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useOrders } from '@/hooks/use-orders';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,11 +18,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/core/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/core/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
@@ -32,16 +32,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/core/ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/core/ui/select';
-import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
-import { getApiErrorMessage } from '@/lib/core/error-handler';
+} from '@/components/ui/select';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { getApiErrorMessage } from '@/lib/error-handler';
 
 export function OrdersTable({
   searchQuery,

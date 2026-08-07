@@ -5,11 +5,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/core/ui/table';
-import { Button } from '@/components/core/ui/button';
-import { Badge } from '@/components/core/ui/badge';
-import { Skeleton } from '@/components/core/ui/skeleton';
-import { useSystemUsers } from '@/hooks/core/use-users';
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useSystemUsers } from '@/hooks/use-users';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,17 +17,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/core/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/core/ui/avatar';
-import { Alert, AlertDescription, AlertTitle } from '@/components/core/ui/alert';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { Switch } from '@/components/core/ui/switch';
+import { Switch } from '@/components/ui/switch';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
-import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 
 export function SystemUsersTable({
   searchQuery,

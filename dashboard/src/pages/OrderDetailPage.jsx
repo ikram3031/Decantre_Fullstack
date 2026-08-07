@@ -1,20 +1,20 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useOrder } from "@/hooks/core/use-orders";
-import { useProducts } from "@/hooks/core/use-products";
-import { useCategories, useBrands } from "@/lib/core/category-cache";
-import { apiClient } from "@/lib/core/api-client";
-import { useAuth } from "@/lib/core/auth-context";
+import { useOrder } from "@/hooks/use-orders";
+import { useProducts } from "@/hooks/use-products";
+import { useCategories, useBrands } from "@/lib/category-cache";
+import { apiClient } from "@/lib/api-client";
+import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
-import { Button } from "@/components/core/ui/button";
-import { Input } from "@/components/core/ui/input";
-import { Badge } from "@/components/core/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/core/ui/select";
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/core/ui/dialog";
+} from "@/components/ui/dialog";
 import {
   Search,
   Plus,
@@ -46,7 +46,7 @@ import {
   Check,
 } from "lucide-react";
 
-import { effectivePrice, formatBDT } from "@/utils/core/orderHelper";
+import { effectivePrice, formatBDT } from "@/utils/orderHelper";
 import { useQueryClient } from "@tanstack/react-query";
 
 function ProductAddDialog({

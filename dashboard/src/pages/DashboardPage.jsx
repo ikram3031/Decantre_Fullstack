@@ -1,6 +1,6 @@
-import { KpiCard } from '@/components/core/dashboard/kpi-card';
-import { RevenueChart } from '@/components/core/dashboard/revenue-chart';
-import { RecentTransactionsTable } from '@/components/core/dashboard/recent-transactions-table';
+import { KpiCard } from '@/components/dashboard/kpi-card';
+import { RevenueChart } from '@/components/dashboard/revenue-chart';
+import { RecentTransactionsTable } from '@/components/dashboard/recent-transactions-table';
 import { DollarSign, Users, CreditCard, Activity } from 'lucide-react';
 
 export default function DashboardPage() {

@@ -7,12 +7,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/core/ui/table';
-import { Badge } from '@/components/core/ui/badge';
-import { Button } from '@/components/core/ui/button';
-import { Skeleton } from '@/components/core/ui/skeleton';
-import { useProducts } from '@/hooks/core/use-products';
-import { getCategoryName, getBrandName } from '@/lib/core/category-cache';
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useProducts } from '@/hooks/use-products';
+import { getCategoryName, getBrandName } from '@/lib/category-cache';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,9 +20,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/core/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, ImageIcon, PackageX, Trash2, Eye } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/core/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import {
   Dialog,
@@ -31,19 +31,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/core/ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/core/ui/select';
+} from '@/components/ui/select';
 
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 
 export function ProductsTable({
   searchQuery,

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 
 const mockPayments = [
   { id: 'PAY-001', invoiceId: 'INV-2026-001', customerName: 'Nadia Rahman', method: 'bKash', date: '2026-07-15', amount: 15400, status: 'Completed' },

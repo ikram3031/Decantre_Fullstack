@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Input } from '@/components/core/ui/input';
+import { Input } from '@/components/ui/input';
 import { Search, Bell, LogOut } from 'lucide-react';
-import { Button } from '@/components/core/ui/button';
+import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import {
@@ -11,10 +11,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/core/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/core/ui/avatar';
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useDashboardStore } from '@/store/use-dashboard-store';
-import { useAuth } from '@/lib/core/auth-context';
+import { useAuth } from '@/lib/auth-context';
 
 export function Header() {
   const { setTheme } = useTheme();

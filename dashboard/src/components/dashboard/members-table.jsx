@@ -6,10 +6,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/core/ui/table';
-import { Button } from '@/components/core/ui/button';
-import { Skeleton } from '@/components/core/ui/skeleton';
-import { useMembers } from '@/hooks/core/use-members';
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useMembers } from '@/hooks/use-members';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,20 +17,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/core/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/core/ui/avatar';
-import { Alert, AlertDescription, AlertTitle } from '@/components/core/ui/alert';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/core/ui/dialog';
-import { Input } from '@/components/core/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
-import { apiClient } from '@/lib/core/api-client';
-import { useAuth } from '@/lib/core/auth-context';
+import { apiClient } from '@/lib/api-client';
+import { useAuth } from '@/lib/auth-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
-import { getApiErrorMessage } from '@/lib/core/error-handler';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { getApiErrorMessage } from '@/lib/error-handler';
 
 export function MembersTable({
   searchQuery,

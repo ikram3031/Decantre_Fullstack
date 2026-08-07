@@ -5,12 +5,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/core/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/core/ui/card';
-import { Badge } from '@/components/core/ui/badge';
+} from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { useDashboardStore } from '@/store/use-dashboard-store';
-import { useOrders } from '@/hooks/core/use-orders';
-import { Skeleton } from '@/components/core/ui/skeleton';
+import { useOrders } from '@/hooks/use-orders';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function RecentTransactionsTable() {
   const { searchQuery } = useDashboardStore();

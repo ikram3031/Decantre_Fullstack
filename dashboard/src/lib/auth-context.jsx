@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getGenericErrorMessage } from '@/lib/core/error-handler';
-import { apiClient } from '@/lib/core/api-client';
+import { getGenericErrorMessage } from '@/lib/error-handler';
+import { apiClient } from '@/lib/api-client';
 
 const AuthContext = createContext(undefined);
 

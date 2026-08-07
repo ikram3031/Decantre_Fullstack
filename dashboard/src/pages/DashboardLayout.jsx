@@ -1,7 +1,7 @@
-import { AppSidebar } from '@/components/core/dashboard/app-sidebar';
-import { Header } from '@/components/core/dashboard/header';
-import { ClientSidebarProvider } from '@/components/core/dashboard/client-sidebar-provider';
-import { AuthGuard } from '@/components/core/auth-guard';
+import { AppSidebar } from '@/components/dashboard/app-sidebar';
+import { Header } from '@/components/dashboard/header';
+import { ClientSidebarProvider } from '@/components/dashboard/client-sidebar-provider';
+import { AuthGuard } from '@/components/auth-guard';
 
 export default function DashboardLayout({ children }) {
   return (

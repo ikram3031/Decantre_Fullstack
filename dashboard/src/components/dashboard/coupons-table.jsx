@@ -6,12 +6,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/core/ui/table';
-import { Badge } from '@/components/core/ui/badge';
-import { Button } from '@/components/core/ui/button';
-import { Skeleton } from '@/components/core/ui/skeleton';
-import { Switch } from '@/components/core/ui/switch';
-import { useCoupons } from '@/hooks/core/use-coupons';
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
+import { useCoupons } from '@/hooks/use-coupons';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,15 +19,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/core/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, Ticket, Copy, Check, Percent, Tag } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/core/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { ConfirmDeleteDialog } from '@/components/core/ui/confirm-delete-dialog';
-import { getApiErrorMessage } from '@/lib/core/error-handler';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { getApiErrorMessage } from '@/lib/error-handler';
 
 export function CouponsTable({
   searchQuery,

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/core/api-client';
+import { apiClient } from '@/lib/api-client';
 
 const CATEGORY_STORAGE_KEY = 'decantre_category_cache';
 const BRAND_STORAGE_KEY = 'decantre_brand_cache';

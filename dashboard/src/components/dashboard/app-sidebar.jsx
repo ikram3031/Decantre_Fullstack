@@ -29,9 +29,9 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
   useSidebar,
-} from "@/components/core/ui/sidebar"
-import { DecantreLogo } from "@/components/core/DecantreLogo"
-import { useAuth } from "@/lib/core/auth-context"
+} from "@/components/ui/sidebar"
+import { DecantreLogo } from "@/components/DecantreLogo"
+import { useAuth } from "@/lib/auth-context"
 
 export function AppSidebar({ ...props }) {
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '/dashboard'

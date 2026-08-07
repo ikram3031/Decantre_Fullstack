@@ -6,8 +6,8 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/core/ui/dialog";
-import { Button } from "@/components/core/ui/button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export function ConfirmDeleteDialog({
   open,

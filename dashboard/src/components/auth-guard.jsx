@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useAuth } from '@/lib/core/auth-context';
+import { useAuth } from '@/lib/auth-context';
 
 export function AuthGuard({ children }) {
   const { user, isLoading } = useAuth();

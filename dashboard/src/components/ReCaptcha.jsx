@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Check, RefreshCw, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/core/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/core/ui/card';
-import { Alert, AlertDescription } from '@/components/core/ui/alert';
-import { Badge } from '@/components/core/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 
 const CHALLENGE_IMAGES = [
   { id: 1, image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=180&q=80', isPerfume: true },
