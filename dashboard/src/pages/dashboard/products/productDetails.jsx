@@ -89,6 +89,7 @@ const EditProductPage = ({ params }) => {
   // Category & Brand
   const [categorySlug, setCategorySlug] = useState("");
   const [brandSlug, setBrandSlug] = useState("");
+  const [parentBrandSlug, setParentBrandSlug] = useState("");
 
   // Season
   const [season, setSeason] = useState("All-Season");
@@ -97,11 +98,87 @@ const EditProductPage = ({ params }) => {
   const { data: categories = [] } = useCategories();
   const { data: brands = [] } = useBrands();
 
+  // Resolve top-level parent brands
+  const parentBrands = brands.filter((b) => !b.parent);
+
+  // Resolve child brands based on selected parent brand
+  const selectedParentObj = parentBrands.find(
+    (pb) =>
+      (pb.did && pb.did === parentBrandSlug) ||
+      (pb.slug && pb.slug.toLowerCase() === parentBrandSlug?.toLowerCase()) ||
+      (pb._id && String(pb._id) === parentBrandSlug)
+  );
+
+  const childBrands = selectedParentObj
+    ? brands.filter((b) => {
+        if (!b.parent) return false;
+        const parentVal = typeof b.parent === 'object'
+          ? (b.parent?.did || b.parent?.slug || b.parent?._id)
+          : String(b.parent);
+        return (
+          parentVal === selectedParentObj.did ||
+          parentVal === selectedParentObj.slug ||
+          parentVal === selectedParentObj._id ||
+          (selectedParentObj.id && parentVal === String(selectedParentObj.id))
+        );
+      })
+    : [];
+
+  // Auto-resolve parentBrandSlug and normalize brand name when product brandSlug or brands array loads
+  useEffect(() => {
+    if (!brandSlug || brands.length === 0) return;
+    
+    const currentBrandObj = brands.find(
+      (b) =>
+        (b.did && b.did === brandSlug) ||
+        (b.slug && b.slug.toLowerCase() === brandSlug.toLowerCase()) ||
+        (b._id && String(b._id) === brandSlug) ||
+        (b.id && String(b.id) === brandSlug)
+    );
+    
+    if (currentBrandObj) {
+      const canonicalKey = currentBrandObj.did || currentBrandObj.slug;
+      if (brandSlug !== canonicalKey) {
+        setBrandSlug(canonicalKey);
+      }
+
+      if (currentBrandObj.parent) {
+        const parentVal = typeof currentBrandObj.parent === 'object'
+          ? (currentBrandObj.parent.did || currentBrandObj.parent.slug || currentBrandObj.parent._id)
+          : String(currentBrandObj.parent);
+        
+        const parentObj = brands.find(
+          (b) =>
+            (b.did && b.did === parentVal) ||
+            (b.slug && b.slug.toLowerCase() === String(parentVal).toLowerCase()) ||
+            (b._id && String(b._id) === parentVal) ||
+            (b.id && String(b.id) === parentVal)
+        );
+        if (parentObj) {
+          setParentBrandSlug(parentObj.did || parentObj.slug);
+        }
+      } else {
+        setParentBrandSlug(currentBrandObj.did || currentBrandObj.slug);
+      }
+    }
+  }, [brandSlug, brands]);
+
   useEffect(() => {
     const fetchAttributes = async () => {
       try {
         const res = await apiClient.get("/api/v1/dashboard/attributes");
-        setAttributeGroups(res.data?.data || []);
+        const rawGroups = res.data?.data || [];
+        const sortedGroups = rawGroups.map((g) => ({
+          ...g,
+          values: Array.isArray(g.values)
+            ? [...g.values].sort((a, b) => {
+                const nameA = String(a.name || a.size || a || "");
+                const nameB = String(b.name || b.size || b || "");
+                return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
+              })
+            : [],
+        }));
+        setAttributeGroups(sortedGroups);
       } catch (err) {
         console.error("Failed to fetch attributes", err);
       }
@@ -859,28 +936,81 @@ const EditProductPage = ({ params }) => {
               </Select>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-muted-foreground">
-                Brand
-              </label>
-              <Select
-                value={brandSlug || "__none__"}
-                onValueChange={(val) =>
-                  setBrandSlug(val === "__none__" || !val ? "" : val)
-                }
-              >
-                <SelectTrigger className="w-full cursor-pointer">
-                  <SelectValue placeholder="Select brand" />
-                </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-md" side="bottom">
-                  <SelectItem value="__none__">None</SelectItem>
-                  {brands.map((b) => (
-                    <SelectItem key={b.did} value={b.slug}>
-                      {b.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-muted-foreground">
+                    Brand
+                  </label>
+                  {parentBrandSlug && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setParentBrandSlug("");
+                        setBrandSlug("");
+                      }}
+                      className="text-[11px] text-destructive hover:underline flex items-center gap-1 cursor-pointer"
+                      title="Clear brand selection"
+                    >
+                      <X className="h-3 w-3" /> Clear
+                    </button>
+                  )}
+                </div>
+                <Select
+                  value={parentBrandSlug || "__none__"}
+                  onValueChange={(val) => {
+                    const newParent = val === "__none__" || !val ? "" : val;
+                    setParentBrandSlug(newParent);
+                    setBrandSlug("");
+                  }}
+                >
+                  <SelectTrigger className="w-full cursor-pointer">
+                    <SelectValue placeholder="Select Brand (Niche, Designer...)" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border shadow-md" side="bottom">
+                    <SelectItem value="__none__">None</SelectItem>
+                    {parentBrands.map((pb) => (
+                      <SelectItem key={pb.did || pb.slug} value={pb.slug || pb.did}>
+                        {pb.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {parentBrandSlug && (
+                <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1">
+                  <label className="text-xs font-semibold text-muted-foreground">
+                    Sub Brand
+                  </label>
+                  <Select
+                    value={brandSlug || "__none__"}
+                    onValueChange={(val) =>
+                      setBrandSlug(val === "__none__" || !val ? "" : val)
+                    }
+                  >
+                    <SelectTrigger className="w-full cursor-pointer">
+                      <SelectValue placeholder="Select Sub Brand" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border shadow-md" side="bottom">
+                      <SelectItem value="__none__">None</SelectItem>
+                      {childBrands.length > 0
+                        ? childBrands.map((cb) => (
+                            <SelectItem key={cb.did || cb.slug} value={cb.slug || cb.did}>
+                              {cb.name}
+                            </SelectItem>
+                          ))
+                        : parentBrands
+                            .filter((pb) => pb.slug === parentBrandSlug || pb.did === parentBrandSlug)
+                            .map((pb) => (
+                              <SelectItem key={pb.did || pb.slug} value={pb.slug || pb.did}>
+                                {pb.name}
+                              </SelectItem>
+                            ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
 
             <div className="space-y-1.5">
