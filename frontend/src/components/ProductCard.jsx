@@ -30,10 +30,8 @@ export const ProductCard = ({
     : product.basePrice;
   const currentPrice = calculateItemPrice(variationPrice, currentSel.size, currentSel.concentration);
 
-  const selectedVar = product.variations && product.variations.find(v => v.size === currentSel.size);
-  const isOutOfStock = selectedVar 
-    ? (selectedVar.stock_status === 'outofstock' || selectedVar.stockStatus === 'outofstock' || selectedVar.stockQuantity === 0)
-    : (product.stockStatus === 'outofstock' || product.stockQuantity === 0);
+  const normalizedStatus = String(product.stockStatus || '').toLowerCase().trim();
+  const isOutOfStock = normalizedStatus === 'outofstock' || normalizedStatus === 'out of stock';
 
   const descriptionText = product.description || product.tagline || product.scentFamily || '';
 
@@ -111,11 +109,14 @@ export const ProductCard = ({
             <button
               key={size}
               type="button"
-              onClick={() => onSizeChange(size)}
-              className={`w-full text-center py-1 rounded-sm text-[11px] font-sans font-medium transition-all duration-200 border cursor-pointer ${
-                currentSel.size === size
-                  ? (isLight ? 'bg-black text-white border-black' : 'bg-gold text-black border-gold font-bold')
-                  : (isLight ? 'bg-zinc-100 border-zinc-200 text-zinc-600 hover:text-zinc-900' : 'bg-black/60 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700')
+              disabled={isOutOfStock}
+              onClick={() => !isOutOfStock && onSizeChange(size)}
+              className={`w-full text-center py-1 rounded-sm text-[11px] font-sans font-medium transition-all duration-200 border ${
+                isOutOfStock
+                  ? 'bg-zinc-900/40 border-zinc-800 text-zinc-600 cursor-not-allowed opacity-50 pointer-events-none'
+                  : currentSel.size === size
+                    ? (isLight ? 'bg-black text-white border-black cursor-pointer' : 'bg-gold text-black border-gold font-bold cursor-pointer')
+                    : (isLight ? 'bg-zinc-100 border-zinc-200 text-zinc-600 hover:text-zinc-900 cursor-pointer' : 'bg-black/60 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 cursor-pointer')
               }`}
             >
               {String(size).replace(/-/g, ' ')}

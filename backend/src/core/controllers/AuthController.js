@@ -7,7 +7,7 @@ import { comparePassword, hashPassword } from "../utils/password.js";
 
 const createAccessToken = (user) => {
   return jwt.sign(
-    { userId: user.id, role: user.role, email: user.email },
+    { userId: user.id },
     env.ACCESS_TOKEN_SECRET,
     { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN },
   );
@@ -57,9 +57,11 @@ export const login = async (req, res, next) => {
       data: {
         user: {
           id: user.id,
+          did: user.did,
           name: user.name,
           email: user.email,
           role: user.role,
+          lastLogin: user.lastLogin,
         },
         accessToken,
         accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN,
@@ -96,11 +98,7 @@ export const refreshToken = async (req, res, next) => {
       return res.status(500).json({ status: "error", message: "Failed to issue refresh token" });
     }
 
-    const accessToken = jwt.sign(
-      { userId: user.id, role: user.role, email: user.email },
-      env.ACCESS_TOKEN_SECRET,
-      { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN },
-    );
+    const accessToken = createAccessToken(user);
 
     logger.debug({ userId: user.id }, "Rotated refresh token and issued new access token");
 
@@ -282,9 +280,11 @@ export const googleAuth = async (req, res, next) => {
       data: {
         user: {
           id: user.id,
+          did: user.did,
           name: user.name,
           email: user.email,
           role: user.role,
+          lastLogin: user.lastLogin,
         },
         accessToken,
         accessTokenExpiresIn: env.ACCESS_TOKEN_EXPIRES_IN,

@@ -345,12 +345,7 @@ export const useAppStore = create((set, get) => {
     },
 
     calculateItemPrice: (basePrice, size, concentration) => {
-      let finalPrice = basePrice;
-      if (size === '50ml') {
-        finalPrice = basePrice * 0.75;
-      } else if (size === '200ml') {
-        finalPrice = basePrice * 1.6;
-      }
+      let finalPrice = Number(basePrice || 0);
       if (concentration === 'Extrait de Parfum') {
         finalPrice += 60;
       }

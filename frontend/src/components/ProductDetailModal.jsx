@@ -54,9 +54,7 @@ export const ProductDetailModal = ({
   const variationsToDisplay = selectedProduct.variations && selectedProduct.variations.length > 0
     ? selectedProduct.variations
     : [
-        { id: 'v1', size: '50ml', price: selectedProduct.basePrice * 0.75 },
-        { id: 'v2', size: '100ml', price: selectedProduct.basePrice },
-        { id: 'v3', size: '200ml', price: selectedProduct.basePrice * 1.6 }
+        { id: 'v1', size: 'Full Bottle', price: selectedProduct.price || selectedProduct.basePrice || 0 }
       ];
 
   // Selected variation price

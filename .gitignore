@@ -24,13 +24,16 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-
-
 # IDE files
 .vscode/
 .idea/
 
-# Exclude dashboard changes from git tracking
+# Exclude old dashboard directories from git tracking & VPS copy
+dash_old/
+# old-dashboard/
 
+# Backups
+backups/
+*.gz
 
 .agents

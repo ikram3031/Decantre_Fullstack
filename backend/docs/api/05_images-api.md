@@ -26,16 +26,18 @@ Authorization: Bearer <accessToken>
 
 | Name | Source | Type | Description |
 |---|---|---|---|
-| `image` | Body (File) | File | The image file to be uploaded (Max 10MB). |
-| `type` | Query / Body | String | Set to `product` to process as a product image (resizes to 1200x1200 max, and generates a 200x200 max thumbnail). If omitted or different, it will be uploaded without a thumbnail (resizing to 1920px width max). |
+| `image` | Body (File) | File | The image file to be uploaded (Max 1MB). |
+| `type` | Body / Query | String | Set to `product` to process as a product image (resizes to 1200x1200 max, and generates a 200x200 max thumbnail). |
+| `productSlug` | Body / Query | String | (Optional) Product slug used to generate formatted WebP file names (`<slug>_main_<timestamp>.webp`). |
+| `variantName` | Body / Query | String | (Optional) Product variant size/name used to generate formatted WebP file names (`<slug>_<variant>_<timestamp>.webp`). |
 
 #### Request Example (Product Upload)
 ```http
-POST /api/v1/images/upload?type=product
+POST /api/v1/images/upload
 Authorization: Bearer <accessToken>
 Content-Type: multipart/form-data
 
-[Form Data: image (file)]
+[Form Data: image (file), type=product, productSlug=perfume-x, variantName=100ml]
 ```
 
 #### Success Response (Product Upload)

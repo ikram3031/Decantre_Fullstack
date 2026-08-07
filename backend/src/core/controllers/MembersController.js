@@ -16,7 +16,7 @@ const { Types } = mongoose;
 
 const createAccessToken = (member) => {
   return jwt.sign(
-    { userId: member.id, role: member.role, email: member.email },
+    { userId: member.id },
     env.ACCESS_TOKEN_SECRET,
     { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN || "20m" },
   );
@@ -188,7 +188,7 @@ export const updateMember = async (req, res, next) => {
 
     const payload = req.body ?? {};
     const updates = {};
-    updates.updatedBy = payload.updatedBy || req.user?.userId || req.user?.id || null;
+    updates.updatedBy = payload.updatedBy || req.user?.userId || re.user?._id || req.user?.did || null;
 
     if (payload.name) {
       updates.name = payload.name.trim();
@@ -416,6 +416,7 @@ export const verifyMemberOtp = async (req, res, next) => {
       data: {
         user: {
           id: member.id,
+          did: member.did,
           name: member.name,
           email: member.email,
           phone: member.phone,
@@ -648,6 +649,7 @@ export const loginMember = async (req, res, next) => {
       data: {
         user: {
           id: member.id,
+          did: member.did,
           name: member.name,
           email: member.email,
           phone: member.phone,

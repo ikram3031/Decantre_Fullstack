@@ -14,7 +14,7 @@ const paymentSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ["paid", "partial", "pending", "failed"],
+      enum: ["paid", "partial", "pending", "n-a"],
       default: "pending",
     },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
