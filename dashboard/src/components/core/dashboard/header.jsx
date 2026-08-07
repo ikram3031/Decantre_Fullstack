@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from '@/components/core/ui/input';
-import { Search, Bell, LogOut } from 'lucide-react';
+import { Search, Bell, LogOut, Settings, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/core/ui/button';
 import { ThemeToggle } from '@/components/core/ui/theme-toggle';
 import {
@@ -61,16 +61,24 @@ export const Header = () => {
                 </Button>
               }
             />
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel className="font-normal">
+            <DropdownMenuContent align="end" className="w-56 p-1.5">
+              <DropdownMenuLabel className="font-normal px-2 py-1.5">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user?.name || 'Admin User'}</p>
-                  <p className="text-xs leading-none text-muted-foreground">{user?.email || 'admin@example.com'}</p>
+                  <p className="text-sm font-semibold leading-none">{user?.name || 'Admin User'}</p>
+                  <p className="text-xs leading-normal text-muted-foreground truncate" title={user?.email || ''}>
+                    {user?.email || 'admin@example.com'}
+                  </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <Settings className="h-4 w-4 mr-2 text-muted-foreground" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <HelpCircle className="h-4 w-4 mr-2 text-muted-foreground" />
+                Support
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive cursor-pointer">
                 <LogOut className="h-4 w-4 mr-2" />
