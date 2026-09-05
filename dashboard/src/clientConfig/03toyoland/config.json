@@ -19,7 +19,7 @@
     "enabledTabs": ["sales", "products", "payments", "inventory"]
   },
   "googleAnalytics": {
-    "measurementId": "G-TOYO338102",
+    "measurementId": "G-G04DRMDTFF",
     "gtmId": "GTM-TOY441Y",
     "propertyId": "419823414",
     "streamName": "Toyoland Web Stream",
