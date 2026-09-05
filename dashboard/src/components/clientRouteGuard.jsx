@@ -8,6 +8,7 @@ const getRequiredPermission = (pathname) => {
 
   if (cleanPath === '/dashboard') return 'overview';
   if (cleanPath === '/dashboard/orders/new') return 'orders.new';
+  if (cleanPath === '/dashboard/orders/in-store' || cleanPath === '/dashboard/orders/instore') return 'orders.instore';
   if (cleanPath.startsWith('/dashboard/orders')) return 'orders.list';
   
   if (cleanPath === '/dashboard/products/new') return 'products.new';
@@ -39,6 +40,10 @@ export const ClientRouteGuard = ({ children }) => {
   const features = clientConfig.features || {};
 
   if (requiredPermission === 'products.size-charts' && !features?.sizeChart) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if ((requiredPermission === 'orders.instore' || requiredPermission === 'orders.new') && features?.inStoreOrder === false) {
     return <Navigate to="/dashboard" replace />;
   }
 

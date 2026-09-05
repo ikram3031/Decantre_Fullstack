@@ -39,14 +39,15 @@
     "brand": false,
     "variantImage": false,
     "webmail": true,
-    "sizeChart": true
+    "sizeChart": true,
+    "inStoreOrder": false
   },
   "stockManagement": {
     "simpleProduct": true,
     "variableProduct": true
   },
   "reports": {
-    "enableInStoreFilter": true,
+    "enableInStoreFilter": false,
     "enableExport": true,
     "enabledTabs": [
       "sales",
@@ -128,7 +129,6 @@
   "allowedMenus": [
     "overview",
     "orders",
-    "orders.new",
     "orders.list",
     "products",
     "products.new",

@@ -102,6 +102,7 @@ export function AppSidebar({ ...props }) {
     if (menuKey === "season" && features?.season === false) return false
     if (menuKey === "tools.messages" && features?.webmail === false) return false
     if (menuKey === "products.size-charts" && !features?.sizeChart) return false
+    if ((menuKey === "orders.instore" || menuKey === "orders.new") && features?.inStoreOrder === false) return false
 
     return hasMenuAccess(userRole, menuKey)
   }

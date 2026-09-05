@@ -39,7 +39,8 @@
     "brand": true,
     "variantImage": true,
     "webmail": true,
-    "sizeChart": false
+    "sizeChart": false,
+    "inStoreOrder": true
   },
   "stockManagement": {
     "simpleProduct": true,
