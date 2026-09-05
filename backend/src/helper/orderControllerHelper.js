@@ -115,7 +115,7 @@ export const syncPaymentDocument = async (orderData, payload = {}) => {
   const isInstore = 
     (payload.orderType === 'instore') || 
     (orderData.orderNumber && orderData.orderNumber.startsWith('IS')) ||
-    (orderData.billingInfo?.email && orderData.billingInfo.email.includes('instore@decantre.com'));
+    (orderData.billingInfo?.email && orderData.billingInfo.email.includes('instore@'));
 
   let paidAmount = 0;
   if (isInstore || orderData.status === 'completed') {

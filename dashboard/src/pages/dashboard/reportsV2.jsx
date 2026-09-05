@@ -365,7 +365,7 @@ const ReportsV2Page = () => {
     return paymentChartData.reduce((acc, curr) => acc + (curr.value || 0), 0);
   }, [paymentChartData]);
 
-  const showInStoreFilter = reportsConfig.enableInStoreFilter;
+  const showInStoreFilter = reportsConfig.enableInStoreFilter && clientConfig?.features?.inStoreOrder !== false;
   const showExport = reportsConfig.enableExport;
 
   return (

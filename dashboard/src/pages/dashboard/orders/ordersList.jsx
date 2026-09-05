@@ -35,7 +35,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { logActivity } from '@/lib/activity-logger';
 import { useAuth } from '@/lib/auth-context';
+import { clientConfig } from '@/clientConfig';
 
+// Renders orders list management dashboard page
 const OrdersPage = () => {
   const { user } = useAuth();
   const [searchInput, setSearchInput] = useState('');
@@ -133,10 +135,12 @@ const OrdersPage = () => {
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Orders Management</h2>
         <div className="flex items-center gap-2">
-          <Button variant="outline" nativeButton={false} render={<a href="/dashboard/orders/new" />}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New In-Store Order
-          </Button>
+          {clientConfig?.features?.inStoreOrder !== false && (
+            <Button variant="outline" nativeButton={false} render={<a href="/dashboard/orders/new" />}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New In-Store Order
+            </Button>
+          )}
           <Button variant="outline">
             <Download className="mr-2 h-4 w-4" />
             Export Orders

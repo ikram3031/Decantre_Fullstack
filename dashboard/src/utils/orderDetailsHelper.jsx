@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { clientConfig } from "@/clientConfig";
 
 // Check if an order is an In-Store order based on order number prefix, type, or customer email.
 export const checkIsInStoreOrder = (order) => {
@@ -6,7 +7,7 @@ export const checkIsInStoreOrder = (order) => {
   const orderNum = String(order.orderNumber || "").toUpperCase();
   const type = String(order.orderType || "").toLowerCase();
   const email = String(order.customer?.email || "").toLowerCase();
-  return orderNum.startsWith("IS") || type === "instore" || email.includes("instore@decantre.com");
+  return orderNum.startsWith("IS") || type === "instore" || email.includes("instore@");
 };
 
 // Resolve the initial payment method dropdown value based on store type and raw method.
@@ -183,7 +184,7 @@ export const buildUpdatePayload = ({
     customer: {
       fullName: customerName.trim(),
       phone: formattedPhone,
-      email: customerEmail.trim() || (isInStoreOrder ? "instore@decantre.com" : "customer@decantre.com"),
+      email: customerEmail.trim() || (isInStoreOrder ? `instore@${clientConfig?.domain || 'store.com'}` : `customer@${clientConfig?.domain || 'store.com'}`),
       address: customerAddress.trim() || (isInStoreOrder ? "In-Store" : "Delivery Address"),
       city: customerCity,
       thana: customerThana,

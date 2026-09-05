@@ -395,7 +395,7 @@ const NewInStoreOrderPage = () => {
       const billingInfo = {
         fullName: customerName.trim() || "Walk-in Customer",
         phone: `+880${customerPhone.trim()}`,
-        email: customerEmail.trim() || "instore@decantre.com",
+        email: customerEmail.trim() || `instore@${clientConfig?.domain || 'decantrebd.com'}`,
         address: customerAddress.trim() || "In-Store",
         thana: "Dhaka",
         district: "Dhaka",
@@ -450,7 +450,7 @@ const NewInStoreOrderPage = () => {
         status: "paid",
       });
 
-      const invoiceUrl = `https://decantre.com/invoice/${orderNumber}`;
+      const invoiceUrl = `https://${clientConfig?.domain || 'decantrebd.com'}/invoice/${orderNumber}`;
       const invoiceItems = cart.map((item) => ({
         description: item.name,
         price: formatBDT(item.price),
@@ -463,7 +463,7 @@ const NewInStoreOrderPage = () => {
         orderNumber,
         invoiceUrl,
         customerName: customerName.trim() || "Walk-in Customer",
-        customerEmail: customerEmail.trim() || "instore@decantre.com",
+        customerEmail: customerEmail.trim() || `instore@${clientConfig?.domain || 'decantrebd.com'}`,
         customerPhone: `+880${customerPhone.trim()}`,
         customerAddress: customerAddress.trim() || "In-Store",
         subtotalAmount: subtotal,
