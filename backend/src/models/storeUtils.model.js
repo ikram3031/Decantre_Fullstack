@@ -21,6 +21,12 @@ const storeUtilsSchema = new Schema(
         ref: "Product",
       },
     ],
+    onSale: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
     updatedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

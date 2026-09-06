@@ -55,6 +55,88 @@ const storeSettingsSchema = new Schema(
         default: "",
       },
     },
+    googleAnalytics: {
+      measurementId: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      gtmId: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      propertyId: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      streamName: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      isEnabled: {
+        type: Boolean,
+        default: true,
+      },
+      enhancedMeasurement: {
+        type: Boolean,
+        default: true,
+      },
+      lastVerifiedAt: {
+        type: Date,
+        default: null,
+      },
+    },
+    seo: {
+      metaTitle: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      metaDescription: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      keywords: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
+      ogImage: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      siteName: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      twitterHandle: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      canonicalBaseUrl: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      robotsTxt: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+      gscVerificationCode: {
+        type: String,
+        default: "",
+        trim: true,
+      },
+    },
     updatedBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

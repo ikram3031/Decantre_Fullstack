@@ -36,6 +36,7 @@ import {
   LifeBuoy,
   Ruler,
   Store,
+  Search,
 } from "lucide-react"
 
 import {
@@ -484,18 +485,7 @@ export function AppSidebar({ ...props }) {
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   )}
-                  {isAllowed("tools.assets") && (
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        isActive={pathname === "/dashboard/tools/assets"}
-                        render={<Link to="/dashboard/tools/assets" />}
-                      >
-                        <ImageIcon className="h-3.5 w-3.5" />
-                        <span>Assets Manager</span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  )}
-                  {(isAllowed("tools.assets") || isAllowed("tools.media")) && (
+                  {(isAllowed("tools.assets") || isAllowed("tools.media") || isAllowed("tools")) && (
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
                         isActive={pathname === "/dashboard/media" || pathname.startsWith("/dashboard/media")}
@@ -539,6 +529,81 @@ export function AppSidebar({ ...props }) {
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   )}
+                </SidebarMenuSub>
+              )}
+            </SidebarMenuItem>
+          )}
+
+          {/* Settings Menu */}
+          {isAllowed("settings") && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={pathname.startsWith("/dashboard/settings")}
+                tooltip="Settings"
+                onClick={() => toggleMenu("settings")}
+                className="cursor-pointer flex items-center justify-between w-full"
+              >
+                <div className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  <span>Settings</span>
+                </div>
+                <ChevronRight
+                  className={`h-3.5 w-3.5 text-muted-foreground/70 transition-transform duration-200 group-data-[collapsible=icon]:hidden ${
+                    openMenu === "settings" ? "rotate-90 text-primary" : ""
+                  }`}
+                />
+              </SidebarMenuButton>
+              {openMenu === "settings" && (
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton
+                      isActive={pathname === "/dashboard/settings" || pathname.startsWith("/dashboard/settings/products")}
+                      render={<Link to="/dashboard/settings/products" />}
+                    >
+                      <Sparkles className="h-3.5 w-3.5" />
+                      <span>Products - Featured, On Sale</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton
+                      isActive={pathname.startsWith("/dashboard/settings/meta-pixel")}
+                      render={<Link to="/dashboard/settings/meta-pixel" />}
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                      <span>Meta Pixel</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton
+                      isActive={pathname.startsWith("/dashboard/settings/cms")}
+                      render={<Link to="/dashboard/settings/cms-content" />}
+                    >
+                      <ImageIcon className="h-3.5 w-3.5" />
+                      <span>CMS Content</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton
+                      isActive={pathname.startsWith("/dashboard/settings/google-analytics")}
+                      render={<Link to="/dashboard/settings/google-analytics" />}
+                    >
+                      <BarChart3 className="h-3.5 w-3.5" />
+                      <span>Google Analytics</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton
+                      isActive={pathname.startsWith("/dashboard/settings/seo")}
+                      render={<Link to="/dashboard/settings/seo" />}
+                    >
+                      <Search className="h-3.5 w-3.5" />
+                      <span>SEO</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
                 </SidebarMenuSub>
               )}
             </SidebarMenuItem>

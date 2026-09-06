@@ -17,6 +17,11 @@ import Trash from './pages/dashboard/trash';
 import ActivityLogs from './pages/dashboard/activityLogs';
 import Reviews from './pages/dashboard/reviews';
 import SettingsPage from './pages/dashboard/settings';
+import ProductShowcasesPage from './pages/dashboard/settings/productShowcases';
+import MetaPixelPage from './pages/dashboard/settings/metaPixel';
+import CMSContentPage from './pages/dashboard/settings/cmsContent';
+import GoogleAnalyticsPage from './pages/dashboard/settings/googleAnalytics';
+import SEOSettingsPage from './pages/dashboard/settings/seoSettings';
 import AllMedia from './pages/dashboard/allMedia';
 
 // Products
@@ -153,11 +158,50 @@ export const router = createBrowserRouter([
       },
       {
         path: 'settings',
-        element: (
-          <RoleGuard menuKey="settings">
-            <SettingsPage />
-          </RoleGuard>
-        ),
+        children: [
+          { path: '', element: <Navigate to="products" replace /> },
+          {
+            path: 'products',
+            element: (
+              <RoleGuard menuKey="settings">
+                <ProductShowcasesPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'meta-pixel',
+            element: (
+              <RoleGuard menuKey="settings">
+                <MetaPixelPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'cms-content',
+            element: (
+              <RoleGuard menuKey="settings">
+                <CMSContentPage />
+              </RoleGuard>
+            ),
+          },
+          { path: 'cms', element: <Navigate to="cms-content" replace /> },
+          {
+            path: 'google-analytics',
+            element: (
+              <RoleGuard menuKey="settings">
+                <GoogleAnalyticsPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'seo',
+            element: (
+              <RoleGuard menuKey="settings">
+                <SEOSettingsPage />
+              </RoleGuard>
+            ),
+          },
+        ],
       },
       {
         path: 'media',
@@ -177,11 +221,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'assets',
-            element: (
-              <RoleGuard menuKey="tools.assets">
-                <AssetsManager />
-              </RoleGuard>
-            ),
+            element: <Navigate to="/dashboard/settings/cms-content" replace />,
           },
           { path: 'media', element: <Navigate to="/dashboard/media" replace /> },
           {
