@@ -427,14 +427,15 @@ export function AppSidebar({ ...props }) {
           )}
 
           {/* Tools */}
-          {(isAllowed("tools") || isAllowed("analytics") || isAllowed("activity-logs")) && (
+          {(isAllowed("tools") || isAllowed("analytics") || isAllowed("activity-logs") || isAllowed("logs")) && (
             <SidebarMenuItem>
               <SidebarMenuButton
                 isActive={
                   pathname.startsWith("/dashboard/tools") ||
                   pathname.startsWith("/dashboard/media") ||
                   pathname.startsWith("/dashboard/analytics") ||
-                  pathname.startsWith("/dashboard/activity-logs")
+                  pathname.startsWith("/dashboard/activity-logs") ||
+                  pathname.startsWith("/dashboard/logs")
                 }
                 tooltip="Tools"
                 onClick={() => toggleMenu("tools")}
@@ -471,6 +472,17 @@ export function AppSidebar({ ...props }) {
                       >
                         <Activity className="h-3.5 w-3.5" />
                         <span>Activity Logs</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  )}
+                  {(isAllowed("logs") || isAllowed("tools.logs")) && (
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton
+                        isActive={pathname.startsWith("/dashboard/logs") || pathname.startsWith("/dashboard/tools/logs")}
+                        render={<Link to="/dashboard/logs" />}
+                      >
+                        <Terminal className="h-3.5 w-3.5" />
+                        <span>System Logs</span>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   )}
@@ -606,20 +618,6 @@ export function AppSidebar({ ...props }) {
                   </SidebarMenuSubItem>
                 </SidebarMenuSub>
               )}
-            </SidebarMenuItem>
-          )}
-
-          {/* System Logs (Fixed Standalone Main Menu Item directly at bottom of content) */}
-          {isAllowed("logs") && (
-            <SidebarMenuItem className="mt-auto pt-2">
-              <SidebarMenuButton
-                isActive={pathname === "/dashboard/logs" || pathname.startsWith("/dashboard/tools/logs")}
-                tooltip="System Logs"
-                render={<Link to="/dashboard/logs" />}
-              >
-                <Terminal className="h-4 w-4" />
-                <span>System Logs</span>
-              </SidebarMenuButton>
             </SidebarMenuItem>
           )}
         </SidebarMenu>
