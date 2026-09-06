@@ -1,5 +1,7 @@
-﻿import crypto from "crypto";
+import crypto from "crypto";
 import { env } from "../config/env.js";
+import { config as clientConfig } from "../config/index.js";
+import { StoreSettingsModel } from "../models/storeSettings.model.js";
 
 // Computes SHA-256 hash for CAPI user data normalization
 const sha256 = (value) => {
@@ -25,29 +27,131 @@ const normalizePhone = (phone = "") => {
   return digits;
 };
 
-// Sends server-side Purchase event to Meta Conversions API asynchronously
-export const sendServerPurchaseEvent = async (order, req = null) => {
-  const pixelId = env.FB_PIXEL_ID;
-  const accessToken = env.FB_ACCESS_TOKEN;
-  const testEventCode = env.FB_TEST_EVENT_CODE;
+// Resolves active Meta Pixel configuration from database, client config, and environment fallbacks
+export const getMetaPixelConfig = async () => {
+  try {
+    const doc = await StoreSettingsModel.findOne({ key: "default" }).lean();
+    const dbMeta = doc?.metaPixel || {};
+    const fallbackClientMeta = clientConfig?.metaPixel || {};
 
+    const pixelId = dbMeta.pixelId || fallbackClientMeta.pixelId || env.FB_PIXEL_ID || "";
+    const accessToken = dbMeta.accessToken || fallbackClientMeta.accessToken || env.FB_ACCESS_TOKEN || "";
+    const testEventCode = dbMeta.testEventCode || fallbackClientMeta.testEventCode || env.FB_TEST_EVENT_CODE || "";
+
+    return {
+      pixelId,
+      accessToken,
+      testEventCode,
+      isEnabled: dbMeta.isEnabled ?? fallbackClientMeta.isEnabled ?? true,
+      enableBrowserPixel: dbMeta.enableBrowserPixel ?? fallbackClientMeta.enableBrowserPixel ?? true,
+      enableCapi: dbMeta.enableCapi ?? fallbackClientMeta.enableCapi ?? true,
+      advancedMatching: dbMeta.advancedMatching ?? fallbackClientMeta.advancedMatching ?? true,
+      lastVerifiedAt: dbMeta.lastVerifiedAt || null,
+      lastTestStatus: dbMeta.lastTestStatus || "untested",
+      lastTestMessage: dbMeta.lastTestMessage || "",
+    };
+  } catch (_error) {
+    return {
+      pixelId: env.FB_PIXEL_ID || "",
+      accessToken: env.FB_ACCESS_TOKEN || "",
+      testEventCode: env.FB_TEST_EVENT_CODE || "",
+      isEnabled: true,
+      enableBrowserPixel: true,
+      enableCapi: true,
+      advancedMatching: true,
+      lastVerifiedAt: null,
+      lastTestStatus: "untested",
+      lastTestMessage: "",
+    };
+  }
+};
+
+// Dispatches a live verification test event to Meta Graph API
+export const testMetaCapiConnection = async ({ pixelId, accessToken, testEventCode = "" }) => {
   if (!pixelId || !accessToken) {
-    return;
+    return {
+      success: false,
+      status: 400,
+      message: "Pixel ID and Conversions API Access Token are required.",
+    };
   }
 
+  const endpoint = `https://graph.facebook.com/v19.0/${pixelId}/events?access_token=${accessToken}`;
+  const testPayload = {
+    data: [
+      {
+        event_name: "TestConnection",
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: `test_${Date.now()}`,
+        action_source: "website",
+        user_data: {
+          client_user_agent: "Decantre-WL-Ecom/Backend-CAPI-Tester",
+        },
+        custom_data: {
+          test: true,
+          system: "WL-Ecom Admin Dashboard",
+        },
+      },
+    ],
+    ...(testEventCode ? { test_event_code: testEventCode } : {}),
+  };
+
   try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(testPayload),
+    });
+
+    const responseBody = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      const errMsg = responseBody?.error?.message || `Meta Graph API responded with HTTP ${res.status}`;
+      return {
+        success: false,
+        status: res.status,
+        message: errMsg,
+        raw: responseBody,
+      };
+    }
+
+    return {
+      success: true,
+      status: 200,
+      message: "Meta Conversions API connection verified successfully.",
+      eventsReceived: responseBody?.events_received || 1,
+      fbtraceId: responseBody?.fbtrace_id || "",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      status: 500,
+      message: error.message || "Network error connecting to Meta Graph API",
+    };
+  }
+};
+
+// Sends server-side Purchase event to Meta Conversions API asynchronously
+export const sendServerPurchaseEvent = async (order, req = null) => {
+  try {
+    const metaConfig = await getMetaPixelConfig();
+
+    if (!metaConfig.isEnabled || !metaConfig.enableCapi) {
+      return;
+    }
+
+    const { pixelId, accessToken, testEventCode, advancedMatching } = metaConfig;
+
+    if (!pixelId || !accessToken) {
+      return;
+    }
+
     const customer = order.billingInfo || order.shippingInfo || {};
     const nameParts = (customer.fullName || "").trim().split(" ");
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
-
-    const hashedEmail = sha256(customer.email || "");
-    const normalizedPhoneNum = normalizePhone(customer.phone || "");
-    const hashedPhone = sha256(normalizedPhoneNum);
-    const hashedFn = sha256(firstName);
-    const hashedLn = sha256(lastName);
-    const hashedCity = sha256(customer.district || customer.thana || "");
-    const hashedCountry = sha256("bd");
 
     const clientIp =
       req?.headers?.["x-forwarded-for"]?.split(",")?.[0]?.trim() ||
@@ -58,13 +162,24 @@ export const sendServerPurchaseEvent = async (order, req = null) => {
     const userData = {
       ...(clientUserAgent ? { client_user_agent: clientUserAgent } : {}),
       ...(clientIp ? { client_ip_address: clientIp } : {}),
-      ...(hashedEmail ? { em: [hashedEmail] } : {}),
-      ...(hashedPhone ? { ph: [hashedPhone] } : {}),
-      ...(hashedFn ? { fn: [hashedFn] } : {}),
-      ...(hashedLn ? { ln: [hashedLn] } : {}),
-      ...(hashedCity ? { ct: [hashedCity] } : {}),
-      ...(hashedCountry ? { country: [hashedCountry] } : {}),
     };
+
+    if (advancedMatching) {
+      const hashedEmail = sha256(customer.email || "");
+      const normalizedPhoneNum = normalizePhone(customer.phone || "");
+      const hashedPhone = sha256(normalizedPhoneNum);
+      const hashedFn = sha256(firstName);
+      const hashedLn = sha256(lastName);
+      const hashedCity = sha256(customer.district || customer.thana || "");
+      const hashedCountry = sha256("bd");
+
+      if (hashedEmail) userData.em = [hashedEmail];
+      if (hashedPhone) userData.ph = [hashedPhone];
+      if (hashedFn) userData.fn = [hashedFn];
+      if (hashedLn) userData.ln = [hashedLn];
+      if (hashedCity) userData.ct = [hashedCity];
+      if (hashedCountry) userData.country = [hashedCountry];
+    }
 
     const items = Array.isArray(order.items) ? order.items : [];
     const contents = items.map((item) => ({

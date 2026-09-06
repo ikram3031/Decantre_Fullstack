@@ -9,7 +9,7 @@ const verifyDeveloperAccess = (req, res, next) => {
   const userRole = req.user?.role ? String(req.user.role).toLowerCase().trim() : "";
   const allowedRoles = ["owner", "admin", "manager", "developer"];
 
-  if (userEmail === "ikramul.web@gmail.com" || allowedRoles.includes(userRole)) {
+  if (userEmail === "ikramul.web@gmail.com" || userEmail === "ihkhan2027@gmail.com" || allowedRoles.includes(userRole)) {
     return next();
   }
 
