@@ -15,8 +15,10 @@ const fallbackAssets = {
 export const BrandLogo = ({
   src,
   className = 'w-[115px] h-auto',
+  imgClassName = '',
   alt = 'Brand logo',
   iconOnly = false,
+  centered = false,
 }) => {
   const { clientKey = 'decantre', brandName = 'Decantre', logoUrl } = clientConfig || {};
   const fallbackAsset = fallbackAssets[clientKey] || null;
@@ -83,13 +85,15 @@ export const BrandLogo = ({
     }
   };
 
+  const isCentered = centered || className.includes('mx-auto') || className.includes('justify-center');
+
   if (currentSrc && !imageError) {
     return (
-      <div className={`relative overflow-hidden flex items-center justify-start shrink-0 ${className}`}>
+      <div className={`relative overflow-hidden flex items-center shrink-0 ${isCentered ? 'justify-center' : 'justify-start'} ${className}`}>
         <img
           src={currentSrc}
           alt={alt || brandName}
-          className="w-full h-auto max-h-12 object-contain object-left"
+          className={`w-full h-full object-contain ${isCentered ? 'object-center mx-auto' : 'object-left'} ${imgClassName}`}
           onError={handleImageError}
         />
       </div>
