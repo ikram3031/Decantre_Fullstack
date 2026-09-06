@@ -143,7 +143,7 @@ export async function createApp() {
     const rawIp = xRealIp || (xForwardedFor ? xForwardedFor.split(",")[0].trim() : null) || req.ip || req.socket?.remoteAddress || "Unknown IP";
 
     // Clean IPv6 prefix if present (e.g. ::ffff:103.145.xx.xx)
-    const clientIp = rawIp.replace(/^::ffff:/, "");
+    const clientIp = rawIp;
     const source = getRequestSource(req);
 
     const now = new Date().toLocaleTimeString("en-US", { hour12: false });

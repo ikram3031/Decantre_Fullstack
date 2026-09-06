@@ -341,7 +341,7 @@ export default function SystemLogs() {
                   )}
 
                   {log.ip && (
-                    <span className="text-zinc-600 text-[10px] shrink-0 hidden md:inline-block">
+                    <span className="text-zinc-600 text-[10px] shrink-0 inline-block text-xs font-mono break-all w-[150px]">
                       {log.ip}
                     </span>
                   )}
