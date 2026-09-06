@@ -318,7 +318,7 @@ export function AppSidebar({ ...props }) {
           )}
 
           {/* Admin Menu */}
-          {(isAllowed("admin") || isAllowed("members") || isAllowed("reports") || isAllowed("analytics") || isAllowed("users") || isAllowed("activity-logs") || isAllowed("reviews") || isAllowed("trash") || isAllowed("settings")) && (
+          {(isAllowed("admin") || isAllowed("members") || isAllowed("reports") || isAllowed("analytics") || isAllowed("users") || isAllowed("activity-logs") || isAllowed("reviews") || isAllowed("trash") || isAllowed("settings") || isAllowed("billing") || isAllowed("billing.billings") || isAllowed("billing.payments")) && (
             <SidebarMenuItem>
               <SidebarMenuButton
                 isActive={
@@ -329,7 +329,8 @@ export function AppSidebar({ ...props }) {
                   pathname.startsWith("/dashboard/users") ||
                   pathname.startsWith("/dashboard/reviews") ||
                   pathname.startsWith("/dashboard/trash") ||
-                  pathname.startsWith("/dashboard/settings")
+                  pathname.startsWith("/dashboard/settings") ||
+                  pathname.startsWith("/dashboard/billing")
                 }
                 tooltip="Admin"
                 onClick={() => toggleMenu("admin")}
@@ -397,6 +398,28 @@ export function AppSidebar({ ...props }) {
                       >
                         <ShieldAlert className="h-3.5 w-3.5" />
                         <span>System Users</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  )}
+                  {(isAllowed("billing.billings") || isAllowed("billing") || isAllowed("admin")) && (
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton
+                        isActive={pathname === "/dashboard/billing/billings"}
+                        render={<Link to="/dashboard/billing/billings" />}
+                      >
+                        <Receipt className="h-3.5 w-3.5" />
+                        <span>Bills & Invoices</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  )}
+                  {(isAllowed("billing.payments") || isAllowed("billing") || isAllowed("admin")) && (
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton
+                        isActive={pathname === "/dashboard/billing/payments"}
+                        render={<Link to="/dashboard/billing/payments" />}
+                      >
+                        <CreditCard className="h-3.5 w-3.5" />
+                        <span>Payments</span>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   )}
