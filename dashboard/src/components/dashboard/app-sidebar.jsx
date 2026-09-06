@@ -317,54 +317,6 @@ export function AppSidebar({ ...props }) {
             </SidebarMenuItem>
           )}
 
-          {/* Accounting */}
-          {isAllowed("billing") && (
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                isActive={pathname.startsWith("/dashboard/billing")}
-                tooltip="Accounting"
-                onClick={() => toggleMenu("billing")}
-                className="cursor-pointer flex items-center justify-between w-full"
-              >
-                <div className="flex items-center gap-2">
-                  <CreditCard className="h-4 w-4" />
-                  <span>Accounting</span>
-                </div>
-                <ChevronRight
-                  className={`h-3.5 w-3.5 text-muted-foreground/70 transition-transform duration-200 group-data-[collapsible=icon]:hidden ${
-                    openMenu === "billing" ? "rotate-90 text-primary" : ""
-                  }`}
-                />
-              </SidebarMenuButton>
-              {openMenu === "billing" && (
-                <SidebarMenuSub>
-                  {isAllowed("billing.billings") && (
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        isActive={pathname === "/dashboard/billing/billings"}
-                        render={<Link to="/dashboard/billing/billings" />}
-                      >
-                        <Receipt className="h-3.5 w-3.5" />
-                        <span>Bills & Invoices</span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  )}
-                  {isAllowed("billing.payments") && (
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        isActive={pathname === "/dashboard/billing/payments"}
-                        render={<Link to="/dashboard/billing/payments" />}
-                      >
-                        <CreditCard className="h-3.5 w-3.5" />
-                        <span>Payments</span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  )}
-                </SidebarMenuSub>
-              )}
-            </SidebarMenuItem>
-          )}
-
           {/* Admin Menu */}
           {(isAllowed("admin") || isAllowed("members") || isAllowed("reports") || isAllowed("analytics") || isAllowed("users") || isAllowed("activity-logs") || isAllowed("reviews") || isAllowed("trash") || isAllowed("settings")) && (
             <SidebarMenuItem>
