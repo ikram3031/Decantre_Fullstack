@@ -318,7 +318,7 @@ export function AppSidebar({ ...props }) {
           )}
 
           {/* Admin Menu */}
-          {(isAllowed("admin") || isAllowed("members") || isAllowed("reports") || isAllowed("users") || isAllowed("reviews") || isAllowed("trash") || isAllowed("settings") || isAllowed("billing") || isAllowed("billing.billings") || isAllowed("billing.payments")) && (
+          {(isAllowed("admin") || isAllowed("members") || isAllowed("reports") || isAllowed("users") || isAllowed("reviews") || isAllowed("trash") || isAllowed("billing") || isAllowed("billing.billings") || isAllowed("billing.payments")) && (
             <SidebarMenuItem>
               <SidebarMenuButton
                 isActive={
@@ -327,7 +327,6 @@ export function AppSidebar({ ...props }) {
                   pathname.startsWith("/dashboard/users") ||
                   pathname.startsWith("/dashboard/reviews") ||
                   pathname.startsWith("/dashboard/trash") ||
-                  pathname.startsWith("/dashboard/settings") ||
                   pathname.startsWith("/dashboard/billing")
                 }
                 tooltip="Admin"
@@ -421,17 +420,6 @@ export function AppSidebar({ ...props }) {
                       <span className="text-destructive font-medium">Trash</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
-                  {isAllowed("settings") && (
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        isActive={pathname.startsWith("/dashboard/settings")}
-                        render={<Link to="/dashboard/settings" />}
-                      >
-                        <Settings className="h-3.5 w-3.5" />
-                        <span>Settings</span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  )}
                 </SidebarMenuSub>
               )}
             </SidebarMenuItem>
