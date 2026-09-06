@@ -277,11 +277,11 @@ const LoginPage = () => {
 
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 flex flex-col items-end gap-1 select-none pointer-events-auto">
         <span className="text-[10px] sm:text-[11px] font-medium tracking-wide text-muted-foreground/75">
-          Powered by FlexiBear
+          Powered By
         </span>
         <img
           src={plexiviaLogo}
-          alt="FlexiBear"
+          alt="Plexivia"
           className="h-5 sm:h-6 w-auto max-w-[120px] sm:max-w-[140px] object-contain opacity-80 hover:opacity-100 transition-opacity"
         />
       </div>
