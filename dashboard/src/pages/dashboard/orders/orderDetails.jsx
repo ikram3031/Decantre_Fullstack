@@ -65,6 +65,7 @@ import {
   resolvePaymentOptions,
   mapOrderItemsToCart,
   buildUpdatePayload,
+  getPaymentMethodLabel,
 } from "@/utils/orderDetailsHelper";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -386,9 +387,10 @@ const OrderDetailsPage = () => {
   );
 
   const isDigitalPayment = useMemo(() => {
+    if (isInStoreOrder) return false;
     const m = paymentMethod.toLowerCase();
     return m === "bkash" || m === "nagad" || m === "rocket" || m === "bank";
-  }, [paymentMethod]);
+  }, [isInStoreOrder, paymentMethod]);
 
   const paymentOptions = useMemo(
     () => resolvePaymentOptions(isInStoreOrder),
@@ -1000,7 +1002,9 @@ const OrderDetailsPage = () => {
                   <label className="text-muted-foreground mb-1 block">Payment Method</label>
                   <Select value={paymentMethod} onValueChange={(val) => setPaymentMethod(val ?? (isInStoreOrder ? "cash" : "cod"))}>
                     <SelectTrigger className="w-full h-8">
-                      <SelectValue placeholder="Select Payment Method" />
+                      <SelectValue placeholder="Select Payment Method">
+                        {(val) => getPaymentMethodLabel(val || paymentMethod)}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {paymentOptions.map((opt) => (
