@@ -147,6 +147,13 @@ export default function AssetsManager() {
     onSuccess: (res, vars) => {
       toast.success(res.message || `Saved as ${vars.targetFilename}`);
       setActiveUploadingSlot(null);
+      if (vars.targetFilename?.includes('logo') || vars.slotKey === 'logo') {
+        const newVer = Date.now();
+        try {
+          localStorage.setItem('brand_logo_version', String(newVer));
+        } catch {}
+        window.dispatchEvent(new CustomEvent('brand-logo-updated', { detail: { timestamp: newVer } }));
+      }
       queryClient.invalidateQueries({ queryKey: ['dash-assets'] });
     },
     onError: (err) => {
@@ -352,7 +359,11 @@ export default function AssetsManager() {
                           <img
                             src={resolveImageUrl(currentAsset.url || currentAsset.relativePath)}
                             alt={slot.label}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            className={
+                              slot.key === 'logo' || slot.filename?.includes('logo')
+                                ? "h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+                                : "h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            }
                             onError={(e) => {
                               e.target.style.display = 'none';
                             }}

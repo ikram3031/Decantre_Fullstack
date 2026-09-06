@@ -64,7 +64,7 @@
     "isVerified": true,
     "enhancedMeasurement": true
   },
-  "logoUrl": "https://server.engulfic.com/uploads/assets/engulfic_logo.webp",
+  "logoUrl": "https://server.engulfic.com/uploads/assets/logo.webp",
   "assetsConfig": {
     "sections": [
       {
@@ -113,7 +113,7 @@
           {
             "key": "logo",
             "label": "Header Logo",
-            "filename": "engulfic_logo.png",
+            "filename": "logo.webp",
             "recommendedSize": "500x200"
           },
           {
