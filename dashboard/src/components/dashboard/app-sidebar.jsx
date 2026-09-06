@@ -660,15 +660,6 @@ export function AppSidebar({ ...props }) {
                 <User className="h-4 w-4 text-primary" />
                 <span>Profile</span>
               </DropdownMenuItem>
-              {isAllowed("settings") && (
-                <DropdownMenuItem
-                  className="cursor-pointer flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-accent focus:bg-accent text-foreground"
-                  render={<Link to="/dashboard/settings" />}
-                >
-                  <Settings className="h-4 w-4 text-primary" />
-                  <span>Setting</span>
-                </DropdownMenuItem>
-              )}
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -705,15 +696,6 @@ export function AppSidebar({ ...props }) {
                 <User className="h-4 w-4 text-primary" />
                 <span>Profile</span>
               </DropdownMenuItem>
-              {isAllowed("settings") && (
-                <DropdownMenuItem
-                  className="cursor-pointer flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg hover:bg-accent focus:bg-accent text-foreground"
-                  render={<Link to="/dashboard/settings" />}
-                >
-                  <Settings className="h-4 w-4 text-primary" />
-                  <span>Setting</span>
-                </DropdownMenuItem>
-              )}
             </DropdownMenuContent>
           </DropdownMenu>
 
