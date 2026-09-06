@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { clientConfig } from '@/clientConfig';
 import { apiClient } from '@/lib/api-client';
+import engulficFallbackLogo from '@/assets/logo_engulfic.png';
+import decantreFallbackLogo from '@/assets/decantre_logo.png';
+import plexiviaFallbackLogo from '@/assets/plexivia.png';
 
-// Renders the branding logo dynamically from dynamic URL, client config, or fallback text
+const fallbackAssets = {
+  engulfic: engulficFallbackLogo,
+  decantre: decantreFallbackLogo,
+  plexivia: plexiviaFallbackLogo,
+};
+
+// Renders the branding logo dynamically from remote URL, asset fallback, or text badge
 export const DecantreLogo = ({
   src,
   className = 'h-10 w-auto',
   alt = 'Brand logo',
   iconOnly = false,
 }) => {
-  const [imageError, setImageError] = useState(false);
   const { clientKey = 'decantre', brandName = 'Decantre', logoUrl } = clientConfig || {};
+  const fallbackAsset = fallbackAssets[clientKey] || null;
 
-  // Resolve target logo URL (Prop > Client Config > Env Var > Default asset path)
-  const rawUrl = src || logoUrl || import.meta.env?.VITE_LOGO_URL || `/src/uploads/assets/logo.webp`;
+  const defaultLogo = clientKey === 'engulfic'
+    ? 'https://server.engulfic.com/uploads/assets/engulfic_logo.webp'
+    : '/src/uploads/assets/logo.webp';
 
-  // Helper to resolve full URL
+  const rawUrl = src || logoUrl || import.meta.env?.VITE_LOGO_URL || defaultLogo;
+
   const resolveLogoUrl = (url) => {
     if (!url) return null;
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:') || url.startsWith('blob:')) {
@@ -31,23 +42,36 @@ export const DecantreLogo = ({
     return `${base}${url}`;
   };
 
-  const finalUrl = resolveLogoUrl(rawUrl);
+  const primaryUrl = resolveLogoUrl(rawUrl);
+  const [currentSrc, setCurrentSrc] = useState(primaryUrl || fallbackAsset);
+  const [imageError, setImageError] = useState(false);
 
-  // If URL is available and hasn't errored out, render dynamic <img>
-  if (finalUrl && !imageError) {
+  useEffect(() => {
+    setCurrentSrc(primaryUrl || fallbackAsset);
+    setImageError(false);
+  }, [primaryUrl, fallbackAsset]);
+
+  const handleImageError = () => {
+    if (currentSrc !== fallbackAsset && fallbackAsset) {
+      setCurrentSrc(fallbackAsset);
+    } else {
+      setImageError(true);
+    }
+  };
+
+  if (currentSrc && !imageError) {
     return (
-      <div className={`relative overflow-hidden flex items-center shrink-0 ${className}`}>
+      <div className={`relative overflow-hidden flex items-center justify-center shrink-0 ${className}`}>
         <img
-          src={finalUrl}
+          src={currentSrc}
           alt={alt || brandName}
-          className="w-full h-full object-contain"
-          onError={() => setImageError(true)}
+          className="h-full w-auto max-w-full object-contain"
+          onError={handleImageError}
         />
       </div>
     );
   }
 
-  // Fallback badge for collapsed icon view
   if (iconOnly) {
     return (
       <div className={`flex items-center justify-center font-bold text-primary shrink-0 ${className}`}>
@@ -58,7 +82,6 @@ export const DecantreLogo = ({
     );
   }
 
-  // Fallback stylized text logo
   return (
     <div className={`flex items-center gap-2 font-bold tracking-wider text-xl text-primary shrink-0 ${className}`}>
       <span className="bg-primary/20 px-2 py-0.5 rounded border border-primary/30 uppercase text-xs font-black">
