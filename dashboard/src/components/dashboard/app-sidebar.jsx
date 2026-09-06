@@ -116,7 +116,7 @@ export function AppSidebar({ ...props }) {
               <div className="flex flex-col items-start gap-0.5 overflow-hidden">
                 <BrandLogo className="w-[115px] h-auto text-primary shrink-0" iconOnly={false} />
                 <span className="text-[10px] font-mono font-medium text-muted-foreground/75 tracking-wider pl-0.5">
-                  v{pkg.version || "3.2.2"}
+                  v{pkg.version || "3.03.00"}
                 </span>
               </div>
               <button
