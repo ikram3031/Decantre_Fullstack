@@ -142,11 +142,11 @@ export async function createApp() {
     const xForwardedFor = req.headers["x-forwarded-for"];
     const rawIp = xRealIp || (xForwardedFor ? xForwardedFor.split(",")[0].trim() : null) || req.ip || req.socket?.remoteAddress || "Unknown IP";
 
-    // Clean IPv6 prefix if present (e.g. ::ffff:103.145.xx.xx)
     const clientIp = rawIp;
     const source = getRequestSource(req);
-
-    const now = new Date().toLocaleTimeString("en-US", { hour12: false });
+    const requestDate = new Date();
+    const now = requestDate.toLocaleTimeString("en-US", { hour12: false });
+    const isoTimestamp = requestDate.toISOString();
 
     res.on("finish", () => {
       const diff = process.hrtime(startTime);
@@ -213,10 +213,9 @@ export async function createApp() {
         `${methodStr} ${colors.boldWhite}${displayUrl}${colors.reset}`
       );
 
-      // Stream / broadcast to the live logs dashboard client
       try {
         broadcastLogToClients({
-          timestamp: now,
+          timestamp: isoTimestamp,
           status,
           source,
           duration: timeMs,
@@ -226,7 +225,6 @@ export async function createApp() {
           url: req.originalUrl,
         });
       } catch (err) {
-        // Fallback for ESM imports / dev cycles
       }
     });
 

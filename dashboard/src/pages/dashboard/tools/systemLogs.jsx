@@ -163,6 +163,25 @@ export default function SystemLogs() {
     return <span className="font-mono font-semibold text-destructive">{s}</span>;
   };
 
+  // Formats log timestamp into localized time string or raw fallback
+  const formatLogTime = (ts) => {
+    if (!ts) return "—";
+    const d = new Date(ts);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleTimeString("en-GB", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        fractionalSecondDigits: 3,
+      });
+    }
+    if (typeof ts === "string" && /^\d{2}:\d{2}:\d{2}/.test(ts)) {
+      return ts;
+    }
+    return String(ts);
+  };
+
   const filteredLogs = logs.filter((log) => {
     const text = typeof log === "string" ? log : JSON.stringify(log);
     const matchesQuery = !filter || text.toLowerCase().includes(filter.toLowerCase());
@@ -306,15 +325,7 @@ export default function SystemLogs() {
                 );
               }
 
-              const time = log.timestamp
-                ? new Date(log.timestamp).toLocaleTimeString("en-GB", {
-                    hour12: false,
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    fractionalSecondDigits: 3,
-                  })
-                : "—";
+              const time = formatLogTime(log.timestamp);
 
               return (
                 <div
