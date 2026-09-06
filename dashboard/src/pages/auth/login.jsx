@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { handleGlobalError } from '@/lib/error-handler';
 import { toast } from 'sonner';
-import { DecantreLogo } from '@/components/DecantreLogo';
-import { apiClient } from '@/lib/api-client';
+import { BrandLogo } from '@/components/BrandLogo';
 
 
 const LoginPage = () => {
@@ -122,7 +121,7 @@ const LoginPage = () => {
           <CardHeader className="px-5 pt-5 pb-3 text-center border-b border-border/80 bg-card/40">
             
             <CardTitle className="text-xl font-bold tracking-tight flex items-center justify-center gap-1.5 text-foreground">
-              {step === 1 ? <DecantreLogo className="h-8 w-auto mx-auto mb-1.5" /> : '2FA VERIFICATION'}
+              {step === 1 ? <BrandLogo className="w-[140px] h-auto mx-auto mb-1.5" /> : '2FA VERIFICATION'}
             </CardTitle>
             <CardDescription className="text-[11px] text-muted-foreground mt-0.5">
               {step === 1 ? 'Secure store administration portal' : 'Google Authenticator verification'}

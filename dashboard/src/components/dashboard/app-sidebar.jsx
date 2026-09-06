@@ -68,7 +68,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { DecantreLogo } from "@/components/DecantreLogo"
+import { BrandLogo } from "@/components/BrandLogo"
 import { useAuth } from "@/lib/auth-context"
 import { clientConfig } from "@/clientConfig"
 import { hasMenuAccess } from "@/lib/rbac"
@@ -114,7 +114,7 @@ export function AppSidebar({ ...props }) {
           {state === "expanded" ? (
             <>
               <div className="flex flex-col items-start gap-0.5 overflow-hidden">
-                <DecantreLogo className="h-5 w-auto max-w-[115px] text-primary shrink-0" iconOnly={false} />
+                <BrandLogo className="w-[115px] h-auto text-primary shrink-0" iconOnly={false} />
                 <span className="text-[10px] font-mono font-medium text-muted-foreground/75 tracking-wider pl-0.5">
                   v{pkg.version || "3.2.2"}
                 </span>
