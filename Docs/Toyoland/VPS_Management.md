@@ -1,6 +1,6 @@
 # Toyoland Dev VPS & Deployment Management Guide
 
-This document serves as the complete operational manual for managing the **Toyoland Dev** environment on the Engulfic VPS (`144.79.218.8`).
+This document serves as the complete operational manual for managing the **Toyoland Dev** environment on the Engulfic VPS (`144.79.218.112`).
 
 ---
 
@@ -27,7 +27,7 @@ The environment variables are stored centrally on the VPS host and mounted direc
 ### How to Edit Configs:
 If you need to change a database password, JWT secret, or update ports:
 ```bash
-ssh -i "C:\Users\mdikr\.ssh\engulfic" root@144.79.218.8
+ssh -i "C:\Users\mdikr\.ssh\engulfic" root@144.79.218.112
 nano /opt/toyoland-dev/configs/backend.env
 ```
 *(After editing, you must restart the backend container for changes to take effect).*
@@ -54,7 +54,7 @@ Whenever new code is merged into the `Live` branch on GitHub, follow these exact
 
 ```bash
 # 1. Login to the VPS
-ssh -i "C:\Users\mdikr\.ssh\engulfic" root@144.79.218.8
+ssh -i "C:\Users\mdikr\.ssh\engulfic" root@144.79.218.112
 
 # 2. Go to the Toyoland codebase directory
 cd /ikram/Toyoland
@@ -141,7 +141,7 @@ Because port `27018` is blocked from the public internet, connect securely throu
    - Authentication DB: `admin`
 3. **Proxy / SSH Tunnel Tab**:
    - Proxy Method: `SSH with Password` (or `SSH with Identity File`)
-   - SSH Hostname: `144.79.218.8`
+   - SSH Hostname: `144.79.218.112`
    - SSH Port: `22`
    - SSH Username: `root`
    - SSH Password or Key File: *(Your VPS SSH credential)*

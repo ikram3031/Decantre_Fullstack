@@ -5,7 +5,7 @@
 ---
 
 ## 🖥️ সার্ভার তথ্য (Server Overview)
-* **VPS IP Address:** `144.79.218.8`
+* **VPS IP Address:** `144.79.218.112`
 * **Mail Subdomain:** `mail.engulfic.com`
 * **Webmail Portal:** `https://webmail.engulfic.com`
 * **Default Mail Account:** `info@engulfic.com`
@@ -19,10 +19,10 @@ Cloudflare Dashboard এ যান ➜ **engulfic.com** সিলেক্ট �
 
 | # | Type | Name | Content / Value | Proxy Status | TTL |
 |---|---|---|---|---|---|
-| 1 | **A** | `mail` | `144.79.218.8` | **DNS only (Grey ⚪)** | Auto |
-| 2 | **A** | `webmail` | `144.79.218.8` | **Proxied (Orange 🟠)** | Auto |
+| 1 | **A** | `mail` | `144.79.218.112` | **DNS only (Grey ⚪)** | Auto |
+| 2 | **A** | `webmail` | `144.79.218.112` | **Proxied (Orange 🟠)** | Auto |
 | 3 | **MX** | `@` | `mail.engulfic.com` *(Priority: 10)* | **DNS only** | Auto |
-| 4 | **TXT** | `@` | `v=spf1 ip4:144.79.218.8 +a +mx ~all` | **DNS only** | Auto |
+| 4 | **TXT** | `@` | `v=spf1 ip4:144.79.218.112 +a +mx ~all` | **DNS only** | Auto |
 | 5 | **TXT** | `mail._domainkey` | *(নিচের DKIM কোডটি)* | **DNS only** | Auto |
 | 6 | **TXT** | `_dmarc` | `v=DMARC1; p=none;` | **DNS only** | Auto |
 
@@ -34,7 +34,7 @@ Cloudflare Dashboard এ যান ➜ **engulfic.com** সিলেক্ট �
 > ⚠️ **গুরুত্বপূর্ণ:** প্রক্সি অবশ্যই **বন্ধ (Grey Cloud ⚪)** রাখবেন।
 * **Type:** `A`
 * **Name:** `mail`
-* **IPv4 address:** `144.79.218.8`
+* **IPv4 address:** `144.79.218.112`
 * **Proxy status:** `DNS only` (Grey Cloud ⚪)
 
 ---
@@ -43,7 +43,7 @@ Cloudflare Dashboard এ যান ➜ **engulfic.com** সিলেক্ট �
 > 💡 **নোট:** এই সাবডোমেইনে প্রক্সি **অন (Orange Cloud 🟠)** থাকবে যাতে ব্রাউজারে ফ্রি Cloudflare SSL সার্টিফিকেট পাওয়া যায়।
 * **Type:** `A`
 * **Name:** `webmail`
-* **IPv4 address:** `144.79.218.8`
+* **IPv4 address:** `144.79.218.112`
 * **Proxy status:** `Proxied` (Orange Cloud 🟠)
 
 ---
@@ -62,7 +62,7 @@ Cloudflare Dashboard এ যান ➜ **engulfic.com** সিলেক্ট �
 * **Name:** `@`
 * **Content:**
 ```text
-v=spf1 ip4:144.79.218.8 +a +mx ~all
+v=spf1 ip4:144.79.218.112 +a +mx ~all
 ```
 
 ---

@@ -24,7 +24,7 @@ This document serves as the master record of all white-label clients deployed on
 
 ---
 
-## 2. Engulfic & Toyoland VPS Host (`144.79.218.8`)
+## 2. Engulfic & Toyoland VPS Host (`144.79.218.112`)
 
 ### A. Environment Paths & Volumes
 - **Engulfic Codebase (Live):** `/opt/live` (Branch: `Live`)
