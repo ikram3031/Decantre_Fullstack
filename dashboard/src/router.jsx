@@ -208,6 +208,8 @@ export const router = createBrowserRouter([
               </RoleGuard>
             ),
           },
+          { path: 'analytics', element: <Navigate to="/dashboard/analytics" replace /> },
+          { path: 'activity-logs', element: <Navigate to="/dashboard/activity-logs" replace /> },
           { path: 'logs', element: <Navigate to="/dashboard/logs" replace /> },
         ],
       },
