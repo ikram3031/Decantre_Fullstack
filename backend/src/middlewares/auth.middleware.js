@@ -3,15 +3,21 @@ import { env } from "../config/env.js";
 import { UserModel } from "../models/user.model.js";
 import { MemberModel } from "../models/member.model.js";
 
+// Authenticates JWT access token via Bearer header or query token parameter
 export const authenticateToken = async (req, res, next) => {
+  let token = null;
   const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({ status: "error", message: "Authorization header missing" });
+  if (authHeader) {
+    const [scheme, parsedToken] = authHeader.split(" ");
+    if (scheme === "Bearer") {
+      token = parsedToken;
+    }
+  } else if (req.query?.token) {
+    token = req.query.token;
   }
 
-  const [scheme, token] = authHeader.split(" ");
-  if (scheme !== "Bearer" || !token) {
-    return res.status(401).json({ status: "error", message: "Invalid authorization format" });
+  if (!token) {
+    return res.status(401).json({ status: "error", message: "Authorization header or token missing" });
   }
 
   try {

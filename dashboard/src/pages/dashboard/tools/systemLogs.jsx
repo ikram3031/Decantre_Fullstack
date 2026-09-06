@@ -44,11 +44,10 @@ export default function SystemLogs() {
   useEffect(() => {
     fetchLogs();
 
-    // Setup Server-Sent Events (SSE) for realtime API call streaming
     let eventSource = null;
     try {
       const baseUrl = apiClient.defaults.baseURL || window.location.origin;
-      const token = localStorage.getItem("auth_token") || localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken") || localStorage.getItem("auth_token") || localStorage.getItem("token");
       const sseUrl = `${baseUrl}/api/v1/developer/logs/stream${token ? `?token=${encodeURIComponent(token)}` : ""}`;
       
       eventSource = new EventSource(sseUrl, { withCredentials: true });
