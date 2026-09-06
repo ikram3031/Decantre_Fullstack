@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { handleGlobalError } from '@/lib/error-handler';
 import { toast } from 'sonner';
 import { BrandLogo } from '@/components/BrandLogo';
+import plexiviaLogo from '@/assets/plexivia.png';
 
 
 const LoginPage = () => {
@@ -270,10 +271,20 @@ const LoginPage = () => {
           </CardContent>
         </Card>
       </motion.div>
-      {/* Fixed version label at bottom of page */}
       <p className="fixed bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground/80 font-mono z-20 select-none">
         v{__APP_VERSION__}
       </p>
+
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 flex flex-col items-end gap-1 select-none pointer-events-auto">
+        <span className="text-[10px] sm:text-[11px] font-medium tracking-wide text-muted-foreground/75">
+          Powered by FlexiBear
+        </span>
+        <img
+          src={plexiviaLogo}
+          alt="FlexiBear"
+          className="h-5 sm:h-6 w-auto max-w-[120px] sm:max-w-[140px] object-contain opacity-80 hover:opacity-100 transition-opacity"
+        />
+      </div>
     </div>
   );
 };
