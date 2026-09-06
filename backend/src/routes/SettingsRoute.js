@@ -23,21 +23,21 @@ settingsRouter.get("/public/meta-pixel", getPublicMetaPixelConfig);
 settingsRouter.get(
   "/meta-pixel",
   authenticateToken,
-  authorizeRoles("Owner", "Admin", "Manager"),
+  authorizeRoles("Owner", "Admin"),
   getMetaPixelSettings
 );
 
 settingsRouter.put(
   "/meta-pixel",
   authenticateToken,
-  authorizeRoles("Owner", "Admin", "Manager"),
+  authorizeRoles("Owner", "Admin"),
   updateMetaPixelSettings
 );
 
 settingsRouter.post(
   "/meta-pixel/test",
   authenticateToken,
-  authorizeRoles("Owner", "Admin", "Manager"),
+  authorizeRoles("Owner", "Admin"),
   testMetaPixelConnection
 );
 
@@ -45,14 +45,14 @@ settingsRouter.post(
 settingsRouter.get(
   "/google-analytics",
   authenticateToken,
-  authorizeRoles("Owner", "Admin", "Manager"),
+  authorizeRoles("Owner", "Admin"),
   getGoogleAnalyticsSettings
 );
 
 settingsRouter.put(
   "/google-analytics",
   authenticateToken,
-  authorizeRoles("Owner", "Admin", "Manager"),
+  authorizeRoles("Owner", "Admin"),
   updateGoogleAnalyticsSettings
 );
 
@@ -60,14 +60,14 @@ settingsRouter.put(
 settingsRouter.get(
   "/seo",
   authenticateToken,
-  authorizeRoles("Owner", "Admin", "Manager"),
+  authorizeRoles("Owner", "Admin"),
   getSeoSettings
 );
 
 settingsRouter.put(
   "/seo",
   authenticateToken,
-  authorizeRoles("Owner", "Admin", "Manager"),
+  authorizeRoles("Owner", "Admin"),
   updateSeoSettings
 );
 

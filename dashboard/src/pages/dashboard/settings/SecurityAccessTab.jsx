@@ -1,7 +1,8 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { ShieldCheck } from 'lucide-react';
 
-export default function SecurityAccessTab() {
+// Displays security and access policy configuration status for the store
+const SecurityAccessTab = () => {
   return (
     <Card className="border shadow-xs w-full">
       <CardHeader>
@@ -21,4 +22,6 @@ export default function SecurityAccessTab() {
       </CardContent>
     </Card>
   );
-}
+};
+
+export default SecurityAccessTab;
