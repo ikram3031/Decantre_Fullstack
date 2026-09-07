@@ -4,6 +4,14 @@ import './index.css';
 import App from './App.jsx';
 import { clientConfig } from './clientConfig';
 
+// Automatically recovers from stale chunk errors when a new deployment occurs
+if (typeof window !== 'undefined') {
+  window.addEventListener('vite:preloadError', (event) => {
+    event.preventDefault();
+    window.location.reload();
+  });
+}
+
 // Initialize dynamic page title & favicon immediately per client tenant
 if (typeof document !== 'undefined') {
   const brandName = clientConfig?.brandName || 'Decantre';
