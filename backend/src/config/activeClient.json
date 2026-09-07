@@ -64,6 +64,15 @@
     "isVerified": true,
     "enhancedMeasurement": true
   },
+  "tiktokPixel": {
+    "pixelId": "",
+    "accessToken": "",
+    "testEventCode": "",
+    "isEnabled": true,
+    "enableBrowserPixel": true,
+    "enableEventsApi": true,
+    "advancedMatching": true
+  },
   "logoUrl": "/src/uploads/assets/engulfic_logo.png",
   "assetsConfig": {
     "sections": [

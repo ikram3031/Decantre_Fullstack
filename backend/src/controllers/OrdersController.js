@@ -20,6 +20,7 @@ const { Types } = mongoose;
 
 import { sendOrderEmailsAsynchronously } from '../utils/orderDelivery.js';
 import { sendServerPurchaseEvent } from '../services/facebookCapi.service.js';
+import { sendTikTokServerPurchaseEvent } from '../services/tiktokEventsApi.service.js';
 
 // Create a new order from checkout payload and sync related payment/member data.
 export const createOrder = async (req, res, next) => {
@@ -104,6 +105,9 @@ export const createOrder = async (req, res, next) => {
 
     // Safely dispatch server-side Meta Conversions API (CAPI) Purchase event
     sendServerPurchaseEvent(createdOrder, req);
+
+    // Safely dispatch server-side TikTok Events API CompletePayment event
+    sendTikTokServerPurchaseEvent(createdOrder, req);
 
     // Automatically record newOrder activity log
     try {
