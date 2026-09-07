@@ -9,6 +9,7 @@ import InvitePage from './pages/invite';
 
 // Dashboard
 import Overview from './pages/dashboard/overview';
+import Analytics from './pages/dashboard/analytics';
 import Users from './pages/dashboard/users';
 import Reports from './pages/dashboard/reportsV2';
 import Members from './pages/dashboard/members';
@@ -16,6 +17,11 @@ import Trash from './pages/dashboard/trash';
 import ActivityLogs from './pages/dashboard/activityLogs';
 import Reviews from './pages/dashboard/reviews';
 import SettingsPage from './pages/dashboard/settings';
+import ProductShowcasesPage from './pages/dashboard/settings/productShowcases';
+import MetaPixelPage from './pages/dashboard/settings/metaPixel';
+import CMSContentPage from './pages/dashboard/settings/cmsContent';
+import GoogleAnalyticsPage from './pages/dashboard/settings/googleAnalytics';
+import SEOSettingsPage from './pages/dashboard/settings/seoSettings';
 import AllMedia from './pages/dashboard/allMedia';
 
 // Products
@@ -24,6 +30,7 @@ import ProductDetails from './pages/dashboard/products/productDetails';
 import AddNewProduct from './pages/dashboard/products/addNewProduct';
 // import Stock from './pages/dashboard/products/stock';
 import Coupons from './pages/dashboard/products/coupons';
+import SizeCharts from './pages/dashboard/products/sizeCharts';
 import Categories from './pages/dashboard/products/categories';
 import Brands from './pages/dashboard/products/brands';
 import Attributes from './pages/dashboard/products/attributes';
@@ -33,6 +40,7 @@ import EditAttribute from './pages/dashboard/products/editAttribute';
 import OrdersList from './pages/dashboard/orders/ordersList';
 import OrderDetails from './pages/dashboard/orders/orderDetails';
 import NewOrder from './pages/dashboard/orders/newOrder';
+import InStoreOrders from './pages/dashboard/orders/inStoreOrders';
 
 // Billing
 import BillingOverview from './pages/dashboard/billing/billingOverview';
@@ -40,10 +48,12 @@ import Payments from './pages/dashboard/billing/payments';
 import Billings from './pages/dashboard/billing/billings';
 
 // Tools
+import MessagesManager from './pages/dashboard/tools/messagesManager';
 import BulkImageResize from './pages/dashboard/tools/bulkImageResize';
 import MetaCatalog from './pages/dashboard/tools/metaCatalog';
 import SystemLogs from './pages/dashboard/tools/systemLogs';
 import AssetsManager from './pages/dashboard/tools/assetsManager';
+import SupportDesk from './pages/dashboard/tools/supportDesk';
 
 // AI Studio
 import Studio from './pages/dashboard/studio/index';
@@ -99,6 +109,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'analytics',
+        element: (
+          <RoleGuard menuKey="analytics">
+            <Analytics />
+          </RoleGuard>
+        ),
+      },
+      {
         path: 'members',
         element: (
           <RoleGuard menuKey="members">
@@ -140,11 +158,50 @@ export const router = createBrowserRouter([
       },
       {
         path: 'settings',
-        element: (
-          <RoleGuard menuKey="settings">
-            <SettingsPage />
-          </RoleGuard>
-        ),
+        children: [
+          { path: '', element: <Navigate to="products" replace /> },
+          {
+            path: 'products',
+            element: (
+              <RoleGuard menuKey="settings">
+                <ProductShowcasesPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'meta-pixel',
+            element: (
+              <RoleGuard menuKey="settings">
+                <MetaPixelPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'cms-content',
+            element: (
+              <RoleGuard menuKey="settings">
+                <CMSContentPage />
+              </RoleGuard>
+            ),
+          },
+          { path: 'cms', element: <Navigate to="cms-content" replace /> },
+          {
+            path: 'google-analytics',
+            element: (
+              <RoleGuard menuKey="settings">
+                <GoogleAnalyticsPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'seo',
+            element: (
+              <RoleGuard menuKey="settings">
+                <SEOSettingsPage />
+              </RoleGuard>
+            ),
+          },
+        ],
       },
       {
         path: 'media',
@@ -153,15 +210,20 @@ export const router = createBrowserRouter([
       {
         path: 'tools',
         children: [
-          { path: '', element: <Navigate to="assets" replace /> },
+          { path: '', element: <Navigate to="messages" replace /> },
           {
-            path: 'assets',
+            path: 'messages',
             element: (
-              <RoleGuard menuKey="tools.assets">
-                <AssetsManager />
+              <RoleGuard menuKey="tools.messages">
+                <MessagesManager />
               </RoleGuard>
             ),
           },
+          {
+            path: 'assets',
+            element: <Navigate to="/dashboard/settings/cms-content" replace />,
+          },
+          { path: 'media', element: <Navigate to="/dashboard/media" replace /> },
           {
             path: 'bulk-image-resize',
             element: (
@@ -178,9 +240,20 @@ export const router = createBrowserRouter([
               </RoleGuard>
             ),
           },
+          {
+            path: 'support',
+            element: (
+              <RoleGuard menuKey="tools.support">
+                <SupportDesk />
+              </RoleGuard>
+            ),
+          },
+          { path: 'analytics', element: <Navigate to="/dashboard/analytics" replace /> },
+          { path: 'activity-logs', element: <Navigate to="/dashboard/activity-logs" replace /> },
           { path: 'logs', element: <Navigate to="/dashboard/logs" replace /> },
         ],
       },
+      { path: 'messages', element: <Navigate to="/dashboard/tools/messages" replace /> },
       {
         path: 'developer',
         children: [
@@ -229,6 +302,14 @@ export const router = createBrowserRouter([
             element: (
               <RoleGuard menuKey="products.coupons">
                 <Coupons />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'size-charts',
+            element: (
+              <RoleGuard menuKey="products.size-charts">
+                <SizeCharts />
               </RoleGuard>
             ),
           },
@@ -291,6 +372,22 @@ export const router = createBrowserRouter([
             element: (
               <RoleGuard menuKey="orders.list">
                 <OrdersList />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'in-store',
+            element: (
+              <RoleGuard menuKey="orders.instore">
+                <InStoreOrders />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'instore',
+            element: (
+              <RoleGuard menuKey="orders.instore">
+                <InStoreOrders />
               </RoleGuard>
             ),
           },

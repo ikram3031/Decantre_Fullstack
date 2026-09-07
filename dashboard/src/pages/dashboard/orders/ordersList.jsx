@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { OrdersTable } from '@/components/dashboard/orders-table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Download, PlusCircle } from 'lucide-react';
+import { Search, Download, PlusCircle, Trash2, X } from 'lucide-react';
 
 import {
   Select,
@@ -21,7 +21,6 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 
-import { Trash2 } from 'lucide-react';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import {
   Dialog,
@@ -36,10 +35,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { logActivity } from '@/lib/activity-logger';
 import { useAuth } from '@/lib/auth-context';
+import { clientConfig } from '@/clientConfig';
 
+// Renders orders list management dashboard page
 const OrdersPage = () => {
   const { user } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [paymentFilter, setPaymentFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,11 +55,14 @@ const OrdersPage = () => {
 
   const queryClient = useQueryClient();
 
-  const handleSearch = (q) => {
-    setSearchQuery(q);
-    setCurrentPage(1);
-    setSelectedIds([]);
-  };
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInput.trim());
+      setCurrentPage(1);
+      setSelectedIds([]);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchInput]);
 
   const handleStatus = (v) => {
     setStatusFilter(v ?? 'All');
@@ -130,10 +135,12 @@ const OrdersPage = () => {
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Orders Management</h2>
         <div className="flex items-center gap-2">
-          <Button variant="outline" nativeButton={false} render={<a href="/dashboard/orders/new" />}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New In-Store Order
-          </Button>
+          {clientConfig?.features?.inStoreOrder !== false && (
+            <Button variant="outline" nativeButton={false} render={<a href="/dashboard/orders/new" />}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New In-Store Order
+            </Button>
+          )}
           <Button variant="outline">
             <Download className="mr-2 h-4 w-4" />
             Export Orders
@@ -145,12 +152,21 @@ const OrdersPage = () => {
         <div className="relative flex-1 w-full max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            type="search"
-            placeholder="Search by order ID or customer..."
-            className="pl-8 h-9"
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
+            type="text"
+            placeholder="Search by customer name, phone or order ID..."
+            className="pl-8 pr-8 h-9 text-xs"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
+          {searchInput && (
+            <button
+              type="button"
+              onClick={() => setSearchInput('')}
+              className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-start sm:justify-end">
           {selectedIds.length === 0 && (
@@ -227,13 +243,14 @@ const OrdersPage = () => {
       <div className="bg-card text-card-foreground shadow-sm border rounded-lg">
         <div className="p-6">
           <OrdersTable
-            searchQuery={searchQuery}
+            searchQuery={debouncedSearch}
             statusFilter={statusFilter}
             paymentFilter={paymentFilter}
             page={currentPage}
             onTotalPagesChange={setTotalPages}
             selectedIds={selectedIds}
             onSelectedIdsChange={setSelectedIds}
+            orderType="online"
           />
 
           <div className="border-t mt-4 pt-3">

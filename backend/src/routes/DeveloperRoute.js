@@ -3,16 +3,20 @@ import { authenticateToken } from "../middlewares/auth.middleware.js";
 
 const developerRouter = Router();
 
-// Developer verification middleware (Hardcoded for ikramul.web@gmail.com)
+// Verifies developer or authorized administrative staff access
 const verifyDeveloperAccess = (req, res, next) => {
   const userEmail = req.user?.email ? String(req.user.email).toLowerCase().trim() : "";
-  if (userEmail !== "ikramul.web@gmail.com") {
-    return res.status(403).json({
-      status: "error",
-      message: "Forbidden: Access restricted strictly to developer (ikramul.web@gmail.com).",
-    });
+  const userRole = req.user?.role ? String(req.user.role).toLowerCase().trim() : "";
+  const allowedRoles = ["owner", "admin", "manager", "developer"];
+
+  if (userEmail === "ikramul.web@gmail.com" || userEmail === "ihkhan2027@gmail.com" || allowedRoles.includes(userRole)) {
+    return next();
   }
-  next();
+
+  return res.status(403).json({
+    status: "error",
+    message: "Forbidden: You do not have permission to perform this action.",
+  });
 };
 
 // In-memory buffer of recent logs for SSE & polling

@@ -38,12 +38,14 @@ import {
 
 import { effectivePrice, formatBDT } from "@/utils/orderHelper";
 import { clientConfig } from "@/clientConfig";
+import { resolvePaymentOptions, getPaymentMethodLabel } from "@/utils/orderDetailsHelper";
 
-function ProductAddDialog({
+// Renders the modal dialog for selecting product variant and quantity before adding to cart
+const ProductAddDialog = ({
   product,
   onClose,
   onAddToCart,
-}) {
+}) => {
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
@@ -312,8 +314,9 @@ const NewInStoreOrderPage = () => {
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [paymentPhone, setPaymentPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const paymentOptions = useMemo(() => resolvePaymentOptions(true), []);
 
   const addToCart = useCallback((item) => {
     setCart((prev) => {
@@ -376,26 +379,14 @@ const NewInStoreOrderPage = () => {
       toast.error("Please enter a valid email address.");
       return;
     }
-    if (
-      (paymentMethod === "bkash" || paymentMethod === "nagad") &&
-      paymentPhone.trim().length !== 10
-    ) {
-      toast.error(
-        `Please enter a valid 10-digit ${paymentMethod === "bkash" ? "bKash" : "Nagad"} number.`,
-      );
-      return;
-    }
     setIsSubmitting(true);
     try {
-      const fullPaymentMethod =
-        (paymentMethod === "bkash" || paymentMethod === "nagad") && paymentPhone
-          ? `${paymentMethod} (+880${paymentPhone})`
-          : paymentMethod;
+      const fullPaymentMethod = getPaymentMethodLabel(paymentMethod);
 
       const billingInfo = {
         fullName: customerName.trim() || "Walk-in Customer",
         phone: `+880${customerPhone.trim()}`,
-        email: customerEmail.trim() || "instore@decantre.com",
+        email: customerEmail.trim() || `instore@${clientConfig?.domain || 'decantrebd.com'}`,
         address: customerAddress.trim() || "In-Store",
         thana: "Dhaka",
         district: "Dhaka",
@@ -436,12 +427,8 @@ const NewInStoreOrderPage = () => {
 
       await apiClient.post("/api/v1/payments", {
         orderId,
-        paymentMethod: paymentMethod,
-        paymentPhone:
-          (paymentMethod === "bkash" || paymentMethod === "nagad") &&
-          paymentPhone
-            ? `+880${paymentPhone}`
-            : "",
+        paymentMethod: fullPaymentMethod,
+        paymentPhone: "",
         totalAmount: finalTotal,
         paidAmount: finalTotal,
         pendingAmount: 0,
@@ -450,7 +437,7 @@ const NewInStoreOrderPage = () => {
         status: "paid",
       });
 
-      const invoiceUrl = `https://decantre.com/invoice/${orderNumber}`;
+      const invoiceUrl = `https://${clientConfig?.domain || 'decantrebd.com'}/invoice/${orderNumber}`;
       const invoiceItems = cart.map((item) => ({
         description: item.name,
         price: formatBDT(item.price),
@@ -463,18 +450,14 @@ const NewInStoreOrderPage = () => {
         orderNumber,
         invoiceUrl,
         customerName: customerName.trim() || "Walk-in Customer",
-        customerEmail: customerEmail.trim() || "instore@decantre.com",
+        customerEmail: customerEmail.trim() || `instore@${clientConfig?.domain || 'decantrebd.com'}`,
         customerPhone: `+880${customerPhone.trim()}`,
         customerAddress: customerAddress.trim() || "In-Store",
         subtotalAmount: subtotal,
         discountAmount: discountAmount,
         totalAmount: finalTotal,
-        paymentMethod: paymentMethod,
-        paymentPhone:
-          (paymentMethod === "bkash" || paymentMethod === "nagad") &&
-          paymentPhone
-            ? `+880${paymentPhone}`
-            : "",
+        paymentMethod: fullPaymentMethod,
+        paymentPhone: "",
         items: invoiceItems,
       });
 
@@ -927,46 +910,21 @@ const NewInStoreOrderPage = () => {
                 value={paymentMethod}
                 onValueChange={(v) => {
                   setPaymentMethod(v ?? "cash");
-                  setPaymentPhone("");
                 }}
               >
                 <SelectTrigger className="h-8 w-full">
-                  <SelectValue placeholder="Select Payment Method" />
+                  <SelectValue placeholder="Select Payment Method">
+                    {(val) => getPaymentMethodLabel(val || paymentMethod)}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">Cash</SelectItem>
-                  <SelectItem value="card">Card</SelectItem>
-                  <SelectItem value="bkash">bKash</SelectItem>
-                  <SelectItem value="nagad">Nagad</SelectItem>
+                  {paymentOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
-
-              {(paymentMethod === "bkash" || paymentMethod === "nagad") && (
-                <div className="animate-in fade-in slide-in-from-top-1 duration-200">
-                  <label className="text-xs text-muted-foreground mb-1 block">
-                    {paymentMethod === "bkash" ? "bKash" : "Nagad"} Number{" "}
-                    <span className="text-destructive">*</span>
-                  </label>
-                  <div className="flex items-center h-8 w-full rounded-lg border border-input bg-transparent transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 overflow-hidden">
-                    <span className="bg-muted/50 h-full flex items-center px-2.5 text-sm text-muted-foreground border-r border-input select-none font-medium">
-                      +880
-                    </span>
-                    <input
-                      type="text"
-                      className="flex-1 h-full bg-transparent px-2.5 text-base md:text-sm outline-none placeholder:text-muted-foreground"
-                      placeholder="1XXXXXXXXX"
-                      maxLength={10}
-                      value={paymentPhone}
-                      onChange={(e) => {
-                        const val = e.target.value
-                          .replace(/\D/g, "")
-                          .slice(0, 10);
-                        setPaymentPhone(val);
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -974,13 +932,7 @@ const NewInStoreOrderPage = () => {
             <div className="flex items-center justify-between mb-1.5">
               <p className="text-xs text-muted-foreground leading-relaxed">
                 <span className="font-semibold text-foreground">Payment:</span>{" "}
-                <span className="capitalize font-medium">{paymentMethod}</span>
-                {(paymentMethod === "bkash" || paymentMethod === "nagad") &&
-                  paymentPhone && (
-                    <span className="text-muted-foreground ml-1">
-                      (+880{paymentPhone})
-                    </span>
-                  )}
+                <span className="font-medium">{getPaymentMethodLabel(paymentMethod)}</span>
               </p>
               <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 text-[10px] font-semibold">
                 Paid (In-Store)
@@ -1069,7 +1021,7 @@ const NewInStoreOrderPage = () => {
                     <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                       Payment
                     </p>
-                    <p className="capitalize">{completedOrder.paymentMethod}</p>
+                    <p className="font-medium">{getPaymentMethodLabel(completedOrder.paymentMethod)}</p>
                   </div>
                   <div>
                     <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">

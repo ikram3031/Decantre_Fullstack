@@ -24,6 +24,12 @@ const envSchema = z.object({
   SMTP_PASSWORD: z.string().min(1, "SMTP_PASSWORD is required"),
   SMTP_FROM_NAME: z.string().default("Decantre BD"),
   SMTP_FROM: z.string().optional(),
+  IMAP_HOST: z.string().default("imap.hostinger.com"),
+  IMAP_PORT: z.coerce.number().int().positive().default(993),
+  IMAP_SECURE: z.coerce.boolean().default(true),
+  IMAP_USER: z.string().optional(),
+  IMAP_PASSWORD: z.string().optional(),
+  IMAP_SYNC_ENABLED: z.coerce.boolean().default(true),
   R2_ACCOUNT_ID: z.string().optional().default(""),
   R2_ACCESS_KEY_ID: z.string().optional().default(""),
   R2_SECRET_ACCESS_KEY: z.string().optional().default(""),
@@ -34,6 +40,9 @@ const envSchema = z.object({
   FB_PIXEL_ID: z.string().optional().default(""),
   FB_ACCESS_TOKEN: z.string().optional().default(""),
   FB_TEST_EVENT_CODE: z.string().optional().default(""),
+  CENTRAL_HUB_URL: z.string().optional().default(""),
+  CENTRAL_HUB_SECRET: z.string().optional().default(""),
+  VPS_IP: z.string().optional().default(""),
 });
 
 const parsed = envSchema.safeParse(process.env);

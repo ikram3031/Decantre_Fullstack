@@ -3,15 +3,10 @@ import { useAuth } from '@/lib/auth-context';
 import { hasMenuAccess } from '@/lib/rbac';
 import NotFound from '@/components/NotFound';
 
-/**
- * RoleGuard Component
- * 
- * Guards dashboard routes by validating if the logged-in user's role
- * has permission for the specified menuKey.
- * 
- * If unauthorized, renders the 404 <NotFound /> page as per requirement.
- */
-export default function RoleGuard({ menuKey, children }) {
+import { clientConfig } from '@/clientConfig';
+
+// Guards dashboard routes by validating role permission and tenant feature capability
+const RoleGuard = ({ menuKey, children }) => {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
@@ -23,7 +18,23 @@ export default function RoleGuard({ menuKey, children }) {
     );
   }
 
-  // Check role permission
+  const features = clientConfig?.features;
+  if (menuKey === 'products.size-charts' && !features?.sizeChart) {
+    return <NotFound />;
+  }
+  if (menuKey === 'products.brands' && features?.brand === false) {
+    return <NotFound />;
+  }
+  if (menuKey === 'season' && features?.season === false) {
+    return <NotFound />;
+  }
+  if (menuKey === 'tools.messages' && features?.webmail === false) {
+    return <NotFound />;
+  }
+  if ((menuKey === 'orders.instore' || menuKey === 'orders.new') && features?.inStoreOrder === false) {
+    return <NotFound />;
+  }
+
   const userRole = user?.role || 'Marketing Expert';
   const isAllowed = hasMenuAccess(userRole, menuKey);
 
@@ -32,4 +43,6 @@ export default function RoleGuard({ menuKey, children }) {
   }
 
   return children;
-}
+};
+
+export default RoleGuard;

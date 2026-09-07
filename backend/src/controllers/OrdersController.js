@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { validateOrderPayload } from '../helper/orderHelper.js';
 import { OrderModel } from '../models/order.model.js';
+import { ProductModel } from '../models/product.model.js';
 import { MemberModel } from '../models/member.model.js';
 import { CouponModel } from '../models/coupon.model.js';
 import { PaymentModel } from '../models/payment.model.js';
@@ -54,15 +55,45 @@ export const createOrder = async (req, res, next) => {
       }
     }
 
+    // Backend validation: Verify product exists and is in stock
+    const items = Array.isArray(payload.items) ? payload.items : [];
+    if (items.length > 0) {
+      for (const item of items) {
+        const productRef = item.productId || item.productDid || item.id || item._id;
+        const productName = item.name || item.productName || 'Product';
+        
+        let productDoc = null;
+        if (productRef) {
+          if (mongoose.Types.ObjectId.isValid(productRef)) {
+            productDoc = await ProductModel.findById(productRef).select('name stockStatus isActive').lean();
+          }
+          if (!productDoc) {
+            productDoc = await ProductModel.findOne({ did: productRef }).select('name stockStatus isActive').lean();
+          }
+        }
+        if (!productDoc && productName) {
+          productDoc = await ProductModel.findOne({ name: productName }).select('name stockStatus isActive').lean();
+        }
+
+        if (productDoc) {
+          if (productDoc.isActive === false) {
+            validationErrors.push(`"${productDoc.name || productName}" is currently unavailable.`);
+          } else if (String(productDoc.stockStatus || '').toLowerCase().trim() === 'outofstock') {
+            validationErrors.push(`"${productDoc.name || productName}" is currently out of stock.`);
+          }
+        }
+      }
+    }
+
     if (validationErrors.length > 0) {
       return res.status(400).json({
         status: 'error',
-        message: 'Invalid order payload',
+        message: validationErrors.join(', '),
         errors: validationErrors,
       });
     }
 
-        const orderData = await buildOrderDocument(payload);
+    const orderData = await buildOrderDocument(payload);
     const createdOrder = await OrderModel.create(orderData);
 
     await syncPaymentDocument(createdOrder, payload);
@@ -113,39 +144,101 @@ export const listOrders = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || '1', 10));
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit || '20', 10)));
-    const filter = {};
+    const andConditions = [];
+
     if (req.query.active !== undefined) {
-      filter.active = req.query.active === 'false' || req.query.active === false ? false : true;
+      andConditions.push({ active: req.query.active === 'false' || req.query.active === false ? false : true });
     } else {
-      filter.active = true;
+      andConditions.push({ active: true });
     }
 
     if (req.query.status) {
-      filter.status = req.query.status;
+      andConditions.push({ status: req.query.status.toLowerCase() });
+    }
+
+    if (req.query.orderType === 'instore') {
+      andConditions.push({
+        $or: [
+          { orderType: 'instore' },
+          { orderNumber: { $regex: '^IS', $options: 'i' } }
+        ]
+      });
+    } else if (req.query.orderType === 'online') {
+      andConditions.push({
+        $and: [
+          { orderType: { $ne: 'instore' } },
+          { orderNumber: { $not: { $regex: '^IS', $options: 'i' } } }
+        ]
+      });
     }
 
     if (req.query.paymentStatus) {
       const pStatus = req.query.paymentStatus.toLowerCase();
       const matchingPayments = await PaymentModel.find({ status: pStatus }).distinct('orderId');
       if (pStatus === 'paid') {
-        filter.$or = [
-          { _id: { $in: matchingPayments } },
-          { status: { $in: ['completed', 'shipped'] } }
-        ];
+        andConditions.push({
+          $or: [
+            { _id: { $in: matchingPayments } },
+            { status: { $in: ['completed', 'shipped'] } }
+          ]
+        });
       } else if (pStatus === 'pending') {
         const paidPayments = await PaymentModel.find({ status: 'paid' }).distinct('orderId');
-        filter.$and = [
-          { _id: { $nin: paidPayments } },
-          { status: { $nin: ['completed', 'shipped'] } }
-        ];
+        andConditions.push({
+          $and: [
+            { _id: { $nin: paidPayments } },
+            { status: { $nin: ['completed', 'shipped'] } }
+          ]
+        });
       } else {
-        filter._id = { $in: matchingPayments };
+        andConditions.push({ _id: { $in: matchingPayments } });
       }
     }
 
-    if (req.query.email) {
-      filter['billingInfo.email'] = req.query.email.toLowerCase().trim();
+    if (req.query.search) {
+      const term = String(req.query.search).trim();
+      if (term) {
+        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const textRegex = new RegExp(escaped, 'i');
+        const searchOr = [
+          { orderNumber: textRegex },
+          { did: textRegex },
+          { 'billingInfo.fullName': textRegex },
+          { 'shippingInfo.fullName': textRegex },
+          { 'billingInfo.email': textRegex },
+          { 'shippingInfo.email': textRegex },
+          { 'billingInfo.phone': textRegex },
+          { 'shippingInfo.phone': textRegex },
+        ];
+
+        const digitsOnly = term.replace(/\D/g, '');
+        if (digitsOnly.length >= 3) {
+          const rawDigitsRegex = new RegExp(digitsOnly, 'i');
+          searchOr.push({ 'billingInfo.phone': rawDigitsRegex });
+          searchOr.push({ 'shippingInfo.phone': rawDigitsRegex });
+
+          const coreDigits = digitsOnly.startsWith('880')
+            ? digitsOnly.slice(3)
+            : digitsOnly.startsWith('0')
+            ? digitsOnly.slice(1)
+            : digitsOnly;
+
+          if (coreDigits.length >= 3 && coreDigits !== digitsOnly) {
+            const coreRegex = new RegExp(coreDigits, 'i');
+            searchOr.push({ 'billingInfo.phone': coreRegex });
+            searchOr.push({ 'shippingInfo.phone': coreRegex });
+          }
+        }
+
+        if (Types.ObjectId.isValid(term)) {
+          searchOr.push({ _id: new Types.ObjectId(term) });
+        }
+
+        andConditions.push({ $or: searchOr });
+      }
     }
+
+    const filter = andConditions.length > 0 ? { $and: andConditions } : {};
 
     const total = await OrderModel.countDocuments(filter);
     const orders = await OrderModel.find(filter)

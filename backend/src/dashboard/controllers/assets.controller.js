@@ -42,7 +42,6 @@ const compressToTargetWebP = async (inputBuffer, targetMaxBytes = 230 * 1024) =>
     })
     .toBuffer();
 
-  // If output exceeds target size, iteratively optimize quality while keeping 100% full pixel resolution
   while (outputBuffer.length > targetMaxBytes && quality > 45) {
     quality -= 6;
     outputBuffer = await sharp(inputBuffer)
@@ -56,6 +55,63 @@ const compressToTargetWebP = async (inputBuffer, targetMaxBytes = 230 * 1024) =>
   }
 
   return outputBuffer;
+};
+
+// Removes solid or near-solid backgrounds from logo buffer with feathering and trims borders
+const removeImageBackground = async (inputBuffer) => {
+  const image = sharp(inputBuffer).ensureAlpha();
+  const { data, info } = await image.raw().toBuffer({ resolveWithObject: true });
+  const { width, height, channels } = info;
+
+  let opaqueCount = 0;
+  let darkCount = 0;
+  let lightCount = 0;
+
+  for (let i = 0; i < data.length; i += channels) {
+    const a = data[i + 3];
+    if (a > 20) {
+      opaqueCount++;
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      const maxC = Math.max(r, g, b);
+      const minC = Math.min(r, g, b);
+      if (maxC < 55) darkCount++;
+      if (minC > 215) lightCount++;
+    }
+  }
+
+  const isDarkBg = opaqueCount > 0 && (darkCount / opaqueCount > 0.2);
+  const isLightBg = opaqueCount > 0 && (lightCount / opaqueCount > 0.2);
+
+  if (isDarkBg) {
+    for (let i = 0; i < data.length; i += channels) {
+      const a = data[i + 3];
+      if (a === 0) continue;
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      const maxC = Math.max(r, g, b);
+      if (maxC <= 50) {
+        data[i + 3] = 0;
+      } else if (maxC < 85) {
+        data[i + 3] = Math.round(a * ((maxC - 50) / 35));
+      }
+    }
+  } else if (isLightBg) {
+    for (let i = 0; i < data.length; i += channels) {
+      const a = data[i + 3];
+      if (a === 0) continue;
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      const minC = Math.min(r, g, b);
+      if (minC >= 235) {
+        data[i + 3] = 0;
+      } else if (minC > 200) {
+        data[i + 3] = Math.round(a * ((235 - minC) / 35));
+      }
+    }
+  }
+
+  return await sharp(data, { raw: { width, height, channels } })
+    .trim()
+    .webp({ quality: 90, effort: 6 })
+    .toBuffer();
 };
 
 // Helper: Resolves absolute filesystem path of uploads/assets directory
@@ -123,16 +179,17 @@ export const uploadSlotAsset = async (req, res, next) => {
       });
     }
 
-    // Sanitize target filename
     let cleanBaseName = rawTargetName.replace(/[^a-zA-Z0-9._-]/g, "");
+    const isLogo = req.body.slotKey === "logo" || cleanBaseName.toLowerCase().includes("logo");
     
-    // Convert to .webp unless specifically .ico or .svg
     let targetFilename = cleanBaseName;
     const isIco = cleanBaseName.endsWith(".ico") || req.file.mimetype === "image/x-icon";
     const isSvg = cleanBaseName.endsWith(".svg") || req.file.mimetype === "image/svg+xml";
 
     if (!isIco && !isSvg) {
-      if (!cleanBaseName.toLowerCase().endsWith(".webp")) {
+      if (isLogo) {
+        targetFilename = "logo.webp";
+      } else if (!cleanBaseName.toLowerCase().endsWith(".webp")) {
         cleanBaseName = cleanBaseName.replace(/\.[^/.]+$/, "");
         targetFilename = `${cleanBaseName}.webp`;
       }
@@ -142,10 +199,12 @@ export const uploadSlotAsset = async (req, res, next) => {
     const destinationPath = path.join(assetsDir, targetFilename);
 
     if (isIco || isSvg) {
-      // Direct write for ICO / SVG vectors
       await fs.promises.writeFile(destinationPath, req.file.buffer);
+    } else if (isLogo) {
+      const backgroundlessBuffer = await removeImageBackground(req.file.buffer);
+      const webpBuffer = await compressToTargetWebP(backgroundlessBuffer, 230 * 1024);
+      await fs.promises.writeFile(destinationPath, webpBuffer);
     } else {
-      // Convert to WebP targeting <= 230KB while preserving full resolution
       const webpBuffer = await compressToTargetWebP(req.file.buffer, 230 * 1024);
       await fs.promises.writeFile(destinationPath, webpBuffer);
     }

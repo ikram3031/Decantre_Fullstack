@@ -1,8 +1,55 @@
 import { AttributeModel } from "../models/attribute.model.js";
+import { UserModel } from "../../models/user.model.js";
 import { logger } from "../../config/logger.js";
 
-const sortAttributeValues = (values = []) => {
+const DEFAULT_ATTRIBUTES = [
+  {
+    name: "Size",
+    slug: "size",
+    values: [
+      { name: "XS", slug: "xs" },
+      { name: "S", slug: "s" },
+      { name: "M", slug: "m" },
+      { name: "L", slug: "l" },
+      { name: "XL", slug: "xl" },
+      { name: "XXL", slug: "xxl" },
+      { name: "2XL", slug: "2xl" },
+      { name: "3XL", slug: "3xl" },
+    ],
+  },
+  {
+    name: "Color",
+    slug: "color",
+    values: [
+      { name: "Black", slug: "black", color: "#000000" },
+      { name: "White", slug: "white", color: "#ffffff" },
+      { name: "Navy", slug: "navy", color: "#001f3f" },
+      { name: "Olive", slug: "olive", color: "#3d9970" },
+      { name: "Beige", slug: "beige", color: "#f5f5dc" },
+      { name: "Charcoal", slug: "charcoal", color: "#36454f" },
+      { name: "Grey", slug: "grey", color: "#aaaaaa" },
+      { name: "Red", slug: "red", color: "#ff4136" },
+    ],
+  },
+];
+
+const STANDARD_SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "2XL", "3XL", "4XL", "5XL"];
+
+// Sorts attribute values by standard size order for size attribute, or alphabetically
+const sortAttributeValues = (values = [], attrSlug = "") => {
   if (!Array.isArray(values)) return [];
+  if (String(attrSlug).toLowerCase() === "size") {
+    return [...values].sort((a, b) => {
+      const nameA = String(typeof a === "string" ? a : (a?.name || a?.slug || "")).toUpperCase();
+      const nameB = String(typeof b === "string" ? b : (b?.name || b?.slug || "")).toUpperCase();
+      const idxA = STANDARD_SIZE_ORDER.indexOf(nameA);
+      const idxB = STANDARD_SIZE_ORDER.indexOf(nameB);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "base" });
+    });
+  }
   return [...values].sort((a, b) => {
     const valA = typeof a === "string" ? a : (a?.name || a?.size || "");
     const valB = typeof b === "string" ? b : (b?.name || b?.size || "");
@@ -10,16 +57,23 @@ const sortAttributeValues = (values = []) => {
   });
 };
 
-/**
- * GET /api/v1/dashboard/attributes
- * Returns a list of all attribute groups.
- */
+// Returns a list of all attribute groups and auto-seeds standard groups if empty
 export const getAttributes = async (req, res) => {
   try {
-    const attributes = await AttributeModel.find().lean();
+    let attributes = await AttributeModel.find().lean();
+    if (attributes.length === 0) {
+      const adminUser = await UserModel.findOne({}).lean();
+      const defaultUserId = adminUser?._id || req.user?._id || "66af9b0d9c49d21c988a6d66";
+      const seedDocs = DEFAULT_ATTRIBUTES.map((attr) => ({
+        ...attr,
+        createdBy: defaultUserId,
+      }));
+      await AttributeModel.insertMany(seedDocs);
+      attributes = await AttributeModel.find().lean();
+    }
     const sorted = attributes.map((attr) => ({
       ...attr,
-      values: sortAttributeValues(attr.values || []),
+      values: sortAttributeValues(attr.values || [], attr.slug),
     }));
     res.json({ status: "success", data: sorted });
   } catch (err) {

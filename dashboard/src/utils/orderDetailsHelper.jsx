@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { clientConfig } from "@/clientConfig";
 
 // Check if an order is an In-Store order based on order number prefix, type, or customer email.
 export const checkIsInStoreOrder = (order) => {
@@ -6,13 +7,30 @@ export const checkIsInStoreOrder = (order) => {
   const orderNum = String(order.orderNumber || "").toUpperCase();
   const type = String(order.orderType || "").toLowerCase();
   const email = String(order.customer?.email || "").toLowerCase();
-  return orderNum.startsWith("IS") || type === "instore" || email.includes("instore@decantre.com");
+  return orderNum.startsWith("IS") || type === "instore" || email.includes("instore@");
+};
+
+// Format raw payment method value into a clean display label.
+export const getPaymentMethodLabel = (val) => {
+  if (!val) return "";
+  const str = String(val).trim();
+  const lower = str.toLowerCase();
+  if (lower === "cash") return "Cash";
+  if (lower === "card") return "Card";
+  if (lower === "bank") return "Bank";
+  if (lower === "bkash") return "bKash";
+  if (lower === "nagad") return "Nagad";
+  if (lower === "rocket") return "Rocket";
+  if (lower === "cod") return "Cash on Delivery (COD)";
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 // Resolve the initial payment method dropdown value based on store type and raw method.
 export const getInitialPaymentMethod = (order, isInStore) => {
   const rawMethod = String(order?.paymentMethod || "").toLowerCase();
   if (isInStore) {
+    if (rawMethod.includes("card")) return "card";
+    if (rawMethod.includes("bank")) return "bank";
     if (rawMethod.includes("bkash")) return "bkash";
     if (rawMethod.includes("nagad")) return "nagad";
     if (rawMethod.includes("rocket")) return "rocket";
@@ -111,20 +129,26 @@ export const getFulfillmentBadge = (status) => {
 };
 
 // Return available payment method options based on whether order is In-Store or Website.
-export const resolvePaymentOptions = (isInStore) =>
-  isInStore
-    ? [
-        { value: "cash", label: "Cash (In-Store)" },
-        { value: "bkash", label: "bKash" },
-        { value: "nagad", label: "Nagad" },
-        { value: "rocket", label: "Rocket" },
-      ]
-    : [
-        { value: "cod", label: "Cash on Delivery (COD)" },
-        { value: "bkash", label: "bKash" },
-        { value: "nagad", label: "Nagad" },
-        { value: "bank", label: "Bank Transfer" },
-      ];
+export const resolvePaymentOptions = (isInStore) => {
+  if (isInStore) {
+    if (clientConfig?.inStorePaymentMethods && Array.isArray(clientConfig.inStorePaymentMethods)) {
+      return clientConfig.inStorePaymentMethods;
+    }
+    return [
+      { value: "cash", label: "Cash" },
+      { value: "card", label: "Card" },
+      { value: "bank", label: "Bank" },
+      { value: "bkash", label: "bKash" },
+      { value: "nagad", label: "Nagad" },
+    ];
+  }
+  return [
+    { value: "cod", label: "Cash on Delivery (COD)" },
+    { value: "bkash", label: "bKash" },
+    { value: "nagad", label: "Nagad" },
+    { value: "bank", label: "Bank Transfer" },
+  ];
+};
 
 // Map raw order items into editable cart items while retaining productDid and concentration.
 export const mapOrderItemsToCart = (items = []) =>
@@ -168,11 +192,11 @@ export const buildUpdatePayload = ({
   user,
 }) => {
   const formattedPhone = formatPhoneNumber(customerPhone);
-  const formattedPaymentPhone = isDigitalPayment && paymentPhone ? formatPhoneNumber(paymentPhone) : "";
+  const formattedPaymentPhone = !isInStoreOrder && isDigitalPayment && paymentPhone ? formatPhoneNumber(paymentPhone) : "";
 
-  let fullPaymentMethod = paymentMethod;
-  if (isDigitalPayment && formattedPaymentPhone) {
-    fullPaymentMethod = `${paymentMethod} (${formattedPaymentPhone})`;
+  let fullPaymentMethod = getPaymentMethodLabel(paymentMethod);
+  if (!isInStoreOrder && isDigitalPayment && formattedPaymentPhone) {
+    fullPaymentMethod = `${fullPaymentMethod} (${formattedPaymentPhone})`;
   }
 
   return {
@@ -183,7 +207,7 @@ export const buildUpdatePayload = ({
     customer: {
       fullName: customerName.trim(),
       phone: formattedPhone,
-      email: customerEmail.trim() || (isInStoreOrder ? "instore@decantre.com" : "customer@decantre.com"),
+      email: customerEmail.trim() || (isInStoreOrder ? `instore@${clientConfig?.domain || 'store.com'}` : `customer@${clientConfig?.domain || 'store.com'}`),
       address: customerAddress.trim() || (isInStoreOrder ? "In-Store" : "Delivery Address"),
       city: customerCity,
       thana: customerThana,

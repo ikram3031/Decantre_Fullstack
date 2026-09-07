@@ -5,7 +5,7 @@ This guide explains how to set up and deploy a new client using the centralized,
 ---
 
 ## Prerequisites
-1. Root SSH access to the client VPS (e.g., `144.79.218.126` or `144.79.218.8`).
+1. Root SSH access to the client VPS (e.g., `144.79.218.126` or `144.79.218.112`).
 2. Git installed on the VPS.
 3. Docker & Docker Compose installed on the VPS.
 

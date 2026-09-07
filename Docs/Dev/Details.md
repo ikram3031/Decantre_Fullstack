@@ -97,17 +97,17 @@ docker exec -i devtest-mongodb mongorestore -u admin -p [REDACTED] --authenticat
 
 ## 6. Local Frontend & Dashboard Connection
 
-When running frontend apps locally on your machine, configure them to point to the DevTest Backend (`http://144.79.218.126:5092`):
+When running frontend apps locally on your machine, configure them to point to the DevTest Backend (`https://dev.decantrebd.com` or `http://144.79.218.126:5092`):
 
 ### A. Decantre Frontend (`F:\Decantre\.env`, `.env.local`, `.env.development`)
 ```env
-VITE_API_URL=http://144.79.218.126:5092
-VITE_IMAGE_BASE_URL=http://144.79.218.126:5092
+VITE_API_URL=https://dev.decantrebd.com
+VITE_IMAGE_BASE_URL=https://dev.decantrebd.com
 ```
 
 ### B. Dashboard (`F:\AFull\dashboard\.env`, `.env.local`, `.env.development`)
 ```env
-VITE_API_BASE_URL=http://144.79.218.126:5092
+VITE_API_BASE_URL=https://dev.decantrebd.com
 ```
 
 ---
@@ -116,10 +116,10 @@ VITE_API_BASE_URL=http://144.79.218.126:5092
 
 - **Health Check / Root:**
   ```bash
-  curl http://144.79.218.126:5092/
+  curl https://dev.decantrebd.com/
   ```
 - **List Products:**
   ```bash
-  curl "http://144.79.218.126:5092/api/v1/products?limit=5"
+  curl "https://dev.decantrebd.com/api/v1/products?limit=5"
   ```
 

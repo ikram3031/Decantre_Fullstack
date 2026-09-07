@@ -6,7 +6,8 @@
   "features": {
     "season": true,
     "brand": true,
-    "variantImage": false
+    "variantImage": false,
+    "webmail": true
   },
   "stockManagement": {
     "simpleProduct": true,
@@ -17,7 +18,16 @@
     "enableExport": true,
     "enabledTabs": ["sales", "products", "payments", "inventory"]
   },
-  "logoUrl": "/src/uploads/assets/toyoland_logo.png",
+  "googleAnalytics": {
+    "measurementId": "G-G04DRMDTFF",
+    "gtmId": "GTM-TOY441Y",
+    "propertyId": "419823414",
+    "streamName": "Toyoland Web Stream",
+    "isVerified": true,
+    "enhancedMeasurement": true
+  },
+  "logoUrl": "/src/uploads/assets/logo.webp",
+  "siteIconUrl": "/src/uploads/assets/logo.webp",
   "assetsConfig": {
     "sections": [
       {
@@ -42,13 +52,14 @@
         "title": "Brand & Identity",
         "description": "Brand logo and browser favicon files",
         "slots": [
-          { "key": "logo", "label": "Header Logo", "filename": "toyoland_logo.png", "recommendedSize": "500x200" },
+          { "key": "logo", "label": "Dashboard Logo", "filename": "logo.webp", "recommendedSize": "500x200" },
           { "key": "favicon", "label": "Favicon Icon", "filename": "favicon.ico", "recommendedSize": "64x64" }
         ]
       }
     ]
   },
   "allowedMenus": [
+    "*",
     "overview",
     "orders",
     "orders.new",
@@ -62,17 +73,30 @@
     "products.coupons",
     "reviews",
     "members",
+    "billing",
+    "billing.billings",
+    "billing.payments",
+    "admin",
     "reports",
+    "analytics",
     "studio",
     "studio.batch-images",
     "activity-logs",
     "users",
+    "developer",
     "tools",
+    "tools.messages",
     "tools.assets",
     "tools.bulk-image-resize",
     "tools.meta-catalog",
-    "trash"
+    "logs",
+    "system-logs",
+    "trash",
+    "settings"
   ],
+
+
+
   "theme": {
     "light": {
       "--background": "oklch(1 0 0)",

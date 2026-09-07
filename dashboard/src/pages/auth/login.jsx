@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { handleGlobalError } from '@/lib/error-handler';
 import { toast } from 'sonner';
-import { DecantreLogo } from '@/components/DecantreLogo';
-import { apiClient } from '@/lib/api-client';
+import { BrandLogo } from '@/components/BrandLogo';
+import plexiviaLogo from '@/assets/plexivia.png';
 
 
 const LoginPage = () => {
@@ -122,7 +122,7 @@ const LoginPage = () => {
           <CardHeader className="px-5 pt-5 pb-3 text-center border-b border-border/80 bg-card/40">
             
             <CardTitle className="text-xl font-bold tracking-tight flex items-center justify-center gap-1.5 text-foreground">
-              {step === 1 ? <DecantreLogo className="h-8 w-auto mx-auto mb-1.5" /> : '2FA VERIFICATION'}
+              {step === 1 ? <BrandLogo className="w-[180px] sm:w-[210px] h-12 mx-auto mb-2" centered /> : '2FA VERIFICATION'}
             </CardTitle>
             <CardDescription className="text-[11px] text-muted-foreground mt-0.5">
               {step === 1 ? 'Secure store administration portal' : 'Google Authenticator verification'}
@@ -271,10 +271,20 @@ const LoginPage = () => {
           </CardContent>
         </Card>
       </motion.div>
-      {/* Fixed version label at bottom of page */}
       <p className="fixed bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground/80 font-mono z-20 select-none">
         v{__APP_VERSION__}
       </p>
+
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-20 flex flex-col items-end gap-1 select-none pointer-events-auto">
+        <span className="text-[10px] sm:text-[11px] font-medium tracking-wide text-muted-foreground/75">
+          Powered By
+        </span>
+        <img
+          src={plexiviaLogo}
+          alt="Plexivia"
+          className="h-5 sm:h-6 w-auto max-w-[120px] sm:max-w-[140px] object-contain opacity-80 hover:opacity-100 transition-opacity"
+        />
+      </div>
     </div>
   );
 };

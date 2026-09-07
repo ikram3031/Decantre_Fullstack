@@ -44,11 +44,10 @@ export default function SystemLogs() {
   useEffect(() => {
     fetchLogs();
 
-    // Setup Server-Sent Events (SSE) for realtime API call streaming
     let eventSource = null;
     try {
       const baseUrl = apiClient.defaults.baseURL || window.location.origin;
-      const token = localStorage.getItem("auth_token") || localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken") || localStorage.getItem("auth_token") || localStorage.getItem("token");
       const sseUrl = `${baseUrl}/api/v1/developer/logs/stream${token ? `?token=${encodeURIComponent(token)}` : ""}`;
       
       eventSource = new EventSource(sseUrl, { withCredentials: true });
@@ -162,6 +161,25 @@ export default function SystemLogs() {
       return <span className="font-mono font-semibold text-amber-500">{s}</span>;
     }
     return <span className="font-mono font-semibold text-destructive">{s}</span>;
+  };
+
+  // Formats log timestamp into localized time string or raw fallback
+  const formatLogTime = (ts) => {
+    if (!ts) return "—";
+    const d = new Date(ts);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleTimeString("en-GB", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        fractionalSecondDigits: 3,
+      });
+    }
+    if (typeof ts === "string" && /^\d{2}:\d{2}:\d{2}/.test(ts)) {
+      return ts;
+    }
+    return String(ts);
   };
 
   const filteredLogs = logs.filter((log) => {
@@ -307,15 +325,7 @@ export default function SystemLogs() {
                 );
               }
 
-              const time = log.timestamp
-                ? new Date(log.timestamp).toLocaleTimeString("en-GB", {
-                    hour12: false,
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    fractionalSecondDigits: 3,
-                  })
-                : "—";
+              const time = formatLogTime(log.timestamp);
 
               return (
                 <div
@@ -341,7 +351,7 @@ export default function SystemLogs() {
                   )}
 
                   {log.ip && (
-                    <span className="text-zinc-600 text-[10px] shrink-0 hidden md:inline-block">
+                    <span className="text-zinc-600 text-[10px] shrink-0 inline-block text-xs font-mono break-all w-[150px]">
                       {log.ip}
                     </span>
                   )}

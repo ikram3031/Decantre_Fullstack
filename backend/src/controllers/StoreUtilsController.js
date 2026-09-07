@@ -26,6 +26,14 @@ export const getStoreUtils = async (req, res, next) => {
         },
         populate: { path: "categories" },
       })
+      .populate({
+        path: "onSale",
+        match: {
+          isActive: true,
+          stockStatus: { $nin: ["outofstock", "out_of_stock"] },
+        },
+        populate: { path: "categories" },
+      })
       .lean();
 
     if (!storeUtils) {
@@ -33,6 +41,7 @@ export const getStoreUtils = async (req, res, next) => {
         key: "default",
         featured: [],
         bestSeller: [],
+        onSale: [],
       });
       storeUtils = storeUtils.toObject ? storeUtils.toObject() : storeUtils;
     }
@@ -44,7 +53,6 @@ export const getStoreUtils = async (req, res, next) => {
       return true;
     };
 
-    // If storeUtils featured is empty, auto-populate from active in-stock products tagged with "featured"
     let featuredList = Array.isArray(storeUtils.featured) ? storeUtils.featured.filter(isAvailableProduct) : [];
     if (featuredList.length === 0) {
       const taggedFeatured = await ProductModel.find({
@@ -69,7 +77,6 @@ export const getStoreUtils = async (req, res, next) => {
       }
     }
 
-    // If storeUtils bestSeller is empty, auto-populate from active in-stock products tagged with "best-seller"
     let bestSellerList = Array.isArray(storeUtils.bestSeller) ? storeUtils.bestSeller.filter(isAvailableProduct) : [];
     if (bestSellerList.length === 0) {
       const taggedBestSeller = await ProductModel.find({
@@ -95,14 +102,43 @@ export const getStoreUtils = async (req, res, next) => {
       }
     }
 
+    let onSaleList = Array.isArray(storeUtils.onSale) ? storeUtils.onSale.filter(isAvailableProduct) : [];
+    if (onSaleList.length === 0) {
+      const taggedOnSale = await ProductModel.find({
+        isActive: true,
+        stockStatus: { $nin: ["outofstock", "out_of_stock"] },
+        $or: [
+          { salePrice: { $gt: 0 } },
+          { offerPrice: { $gt: 0 } },
+          { tags: "sale" },
+          { tags: "on-sale" },
+          { tags: "Sale" },
+          { tags: { $regex: /^on-?sale$/i } },
+        ],
+      })
+        .populate("categories")
+        .limit(30)
+        .lean();
+
+      if (taggedOnSale.length > 0) {
+        onSaleList = taggedOnSale;
+        await StoreUtilsModel.updateOne(
+          { key: "default" },
+          { $set: { onSale: taggedOnSale.map((p) => p._id) } }
+        );
+      }
+    }
+
     const featuredProducts = featuredList.filter(isAvailableProduct).map(serializeProduct);
     const bestSellerProducts = bestSellerList.filter(isAvailableProduct).map(serializeProduct);
+    const onSaleProducts = onSaleList.filter(isAvailableProduct).map(serializeProduct);
 
     res.json({
       status: "success",
       data: {
         featured: featuredProducts,
         bestSeller: bestSellerProducts,
+        onSale: onSaleProducts,
         updatedAt: storeUtils.updatedAt || null,
       },
     });
@@ -170,6 +206,31 @@ export const updateStoreUtils = async (req, res, next) => {
       updateData.bestSeller = resolvedBestSellerIds;
     }
 
+    if (body.onSale !== undefined || body.on_sale !== undefined) {
+      const rawOnSale =
+        body.onSale !== undefined ? body.onSale : body.on_sale;
+      const rawOnSaleArr = Array.isArray(rawOnSale)
+        ? rawOnSale
+        : [rawOnSale];
+
+      const resolvedOnSaleIds = [];
+      for (const item of rawOnSaleArr) {
+        const val = typeof item === "object" && item !== null ? item.id || item._id || item.did : item;
+        if (!val) continue;
+
+        if (Types.ObjectId.isValid(val)) {
+          resolvedOnSaleIds.push(new Types.ObjectId(val));
+        } else if (typeof val === "string") {
+          const pDoc = await ProductModel.findOne({ did: val.trim() }).select("_id").lean();
+          if (pDoc?._id) {
+            resolvedOnSaleIds.push(pDoc._id);
+          }
+        }
+      }
+
+      updateData.onSale = resolvedOnSaleIds;
+    }
+
     if (req.user?.userId || req.user?.id) {
       updateData.updatedBy = req.user.userId || req.user.id;
     }
@@ -195,6 +256,14 @@ export const updateStoreUtils = async (req, res, next) => {
         },
         populate: { path: "categories" },
       })
+      .populate({
+        path: "onSale",
+        match: {
+          isActive: true,
+          stockStatus: { $nin: ["outofstock", "out_of_stock"] },
+        },
+        populate: { path: "categories" },
+      })
       .lean();
 
     const isAvailableProduct = (p) => {
@@ -212,12 +281,17 @@ export const updateStoreUtils = async (req, res, next) => {
       ? updatedDoc.bestSeller.filter(isAvailableProduct).map(serializeProduct)
       : [];
 
+    const onSaleProducts = Array.isArray(updatedDoc.onSale)
+      ? updatedDoc.onSale.filter(isAvailableProduct).map(serializeProduct)
+      : [];
+
     res.json({
       status: "success",
       message: "Store utilities updated successfully",
       data: {
         featured: featuredProducts,
         bestSeller: bestSellerProducts,
+        onSale: onSaleProducts,
         updatedAt: updatedDoc.updatedAt || null,
       },
     });

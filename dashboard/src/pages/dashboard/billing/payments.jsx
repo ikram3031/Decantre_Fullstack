@@ -261,6 +261,7 @@ const PaymentsPage = () => {
                     <SelectItem value="All">All Methods</SelectItem>
                     <SelectItem value="Cash">Cash</SelectItem>
                     <SelectItem value="Card">Card</SelectItem>
+                    <SelectItem value="Bank">Bank</SelectItem>
                     <SelectItem value="bKash">bKash</SelectItem>
                     <SelectItem value="Nagad">Nagad</SelectItem>
                   </SelectContent>

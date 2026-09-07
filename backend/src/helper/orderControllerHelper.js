@@ -96,6 +96,7 @@ export const buildOrderDocument = async (payload) => {
     shippingTotalAmount: Number(payload.shippingTotalAmount || 0),
     discountTotalAmount: Number(payload.discountTotalAmount || 0),
     couponCode: payload.couponCode ? String(payload.couponCode).trim().toUpperCase() : null,
+    orderType: isInstore ? 'instore' : 'online',
     items: normalizeOrderItems(payload.items),
     totals: {
       subtotal: Number(payload.subtotal || payload.subTotal || 0),
@@ -114,7 +115,7 @@ export const syncPaymentDocument = async (orderData, payload = {}) => {
   const isInstore = 
     (payload.orderType === 'instore') || 
     (orderData.orderNumber && orderData.orderNumber.startsWith('IS')) ||
-    (orderData.billingInfo?.email && orderData.billingInfo.email.includes('instore@decantre.com'));
+    (orderData.billingInfo?.email && orderData.billingInfo.email.includes('instore@'));
 
   let paidAmount = 0;
   if (isInstore || orderData.status === 'completed') {

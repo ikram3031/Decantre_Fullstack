@@ -2,12 +2,24 @@
   "clientId": "01",
   "clientKey": "decantre",
   "brandName": "Decantre",
+  "supportPhone": "01869151550",
+  "whatsappNumber": "01869151550",
   "apiBaseUrl": "https://server.decantrebd.com",
   "features": {
     "season": true,
     "brand": true,
-    "variantImage": true
+    "variantImage": true,
+    "webmail": true,
+    "sizeChart": false,
+    "inStoreOrder": true
   },
+  "inStorePaymentMethods": [
+    { "value": "cash", "label": "Cash" },
+    { "value": "card", "label": "Card" },
+    { "value": "bank", "label": "Bank" },
+    { "value": "bkash", "label": "bKash" },
+    { "value": "nagad", "label": "Nagad" }
+  ],
   "stockManagement": {
     "simpleProduct": true,
     "variableProduct": false
@@ -16,6 +28,14 @@
     "enableInStoreFilter": true,
     "enableExport": true,
     "enabledTabs": ["sales", "products", "payments", "inventory"]
+  },
+  "googleAnalytics": {
+    "measurementId": "G-95TCXBZG7W",
+    "gtmId": "GTM-DEC883Z",
+    "propertyId": "419823412",
+    "streamName": "Decantre Web Stream",
+    "isVerified": true,
+    "enhancedMeasurement": true
   },
   "logoUrl": "/src/uploads/logo_horizontal.png",
   "siteIconUrl": "/src/uploads/logo.webp",
@@ -69,17 +89,23 @@
     "billing.billings",
     "billing.payments",
     "reports",
+    "analytics",
     "users",
     "developer",
     "tools",
+    "tools.messages",
     "tools.assets",
     "tools.bulk-image-resize",
     "tools.meta-catalog",
     "studio",
     "studio.batch-images",
     "activity-logs",
-    "trash"
+    "logs",
+    "system-logs",
+    "trash",
+    "settings"
   ],
+
   "theme": {
     "light": {
       "--background": "#ffffff",

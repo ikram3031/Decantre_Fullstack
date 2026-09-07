@@ -17,6 +17,7 @@
         "orders",
         "orders.new",
         "orders.list",
+        "orders.instore",
         "products",
         "products.new",
         "products.list",
@@ -24,12 +25,17 @@
         "products.brands",
         "products.attributes",
         "products.coupons",
+        "products.size-charts",
         "reviews",
+        "analytics",
+        "reports",
         "tools",
+        "tools.messages",
+        "tools.assets",
         "tools.bulk-image-resize",
         "tools.meta-catalog",
-        "logs",
-        "settings"
+        "tools.support",
+        "logs"
       ]
     },
     "Marketing Expert": {
@@ -41,9 +47,12 @@
         "products.brands",
         "products.attributes",
         "products.coupons",
+        "products.size-charts",
+        "analytics",
         "tools",
         "tools.bulk-image-resize",
-        "tools.meta-catalog"
+        "tools.meta-catalog",
+        "tools.support"
       ]
     }
   }

@@ -32,6 +32,11 @@ export async function createApp() {
     "https://www.toyoland.shop",
     "https://dashboard.toyoland.shop",
     "https://server.toyoland.shop",
+    "https://kawaiikutir.shop",
+    "https://www.kawaiikutir.shop",
+    "https://admin.kawaiikutir.shop",
+    "https://dashboard.kawaiikutir.shop",
+    "https://server.kawaiikutir.shop",
     "http://localhost:8001",
     "http://localhost:8005",
     "http://localhost:3000",
@@ -46,16 +51,15 @@ export async function createApp() {
 
   const corsOptions = {
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       const isAllowedExplicit = allowedOrigins.includes("*") || allowedOrigins.includes(origin);
       if (isAllowedExplicit) {
         return callback(null, true);
       }
 
-      // Check if origin matches known client domain keywords or subdomains (toyoland, engulfic, decantre, etc.)
       const isKnownClientDomain =
         origin.includes("toyoland") ||
+        origin.includes("kawaiikutir") ||
         origin.includes("engulfic") ||
         origin.includes("decantre") ||
         origin.includes("localhost") ||
@@ -88,8 +92,16 @@ export async function createApp() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
-  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-  app.use("/src/uploads", express.static(path.join(process.cwd(), "uploads")));
+  const staticAssetOptions = {
+    setHeaders: (res, filePath) => {
+      if (filePath.includes("assets")) {
+        res.setHeader("Cache-Control", "no-cache, must-revalidate");
+      }
+    },
+  };
+
+  app.use("/uploads", express.static(path.join(process.cwd(), "uploads"), staticAssetOptions));
+  app.use("/src/uploads", express.static(path.join(process.cwd(), "uploads"), staticAssetOptions));
 
   // Helper to format transfer byte size
   function formatBytes(bytes) {
@@ -138,11 +150,11 @@ export async function createApp() {
     const xForwardedFor = req.headers["x-forwarded-for"];
     const rawIp = xRealIp || (xForwardedFor ? xForwardedFor.split(",")[0].trim() : null) || req.ip || req.socket?.remoteAddress || "Unknown IP";
 
-    // Clean IPv6 prefix if present (e.g. ::ffff:103.145.xx.xx)
-    const clientIp = rawIp.replace(/^::ffff:/, "");
+    const clientIp = rawIp;
     const source = getRequestSource(req);
-
-    const now = new Date().toLocaleTimeString("en-US", { hour12: false });
+    const requestDate = new Date();
+    const now = requestDate.toLocaleTimeString("en-US", { hour12: false });
+    const isoTimestamp = requestDate.toISOString();
 
     res.on("finish", () => {
       const diff = process.hrtime(startTime);
@@ -209,10 +221,9 @@ export async function createApp() {
         `${methodStr} ${colors.boldWhite}${displayUrl}${colors.reset}`
       );
 
-      // Stream / broadcast to the live logs dashboard client
       try {
         broadcastLogToClients({
-          timestamp: now,
+          timestamp: isoTimestamp,
           status,
           source,
           duration: timeMs,
@@ -222,7 +233,6 @@ export async function createApp() {
           url: req.originalUrl,
         });
       } catch (err) {
-        // Fallback for ESM imports / dev cycles
       }
     });
 

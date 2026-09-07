@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useOrder } from "@/hooks/use-orders";
 import { useAuth } from "@/lib/auth-context";
 import { useProducts } from "@/hooks/use-products";
 import { useCategories, useBrands } from "@/lib/category-cache";
-import { apiClient } from "@/lib/api-client";
+import { apiClient, baseURL } from "@/lib/api-client";
 import { logActivity } from "@/lib/activity-logger";
 import { toast } from "sonner";
 import { clientConfig } from "@/clientConfig";
@@ -49,6 +49,7 @@ import {
   Search,
   X,
   Tag,
+  FileText,
 } from "lucide-react";
 
 import { effectivePrice, formatBDT } from "@/utils/orderHelper";
@@ -64,6 +65,7 @@ import {
   resolvePaymentOptions,
   mapOrderItemsToCart,
   buildUpdatePayload,
+  getPaymentMethodLabel,
 } from "@/utils/orderDetailsHelper";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -257,8 +259,9 @@ const ProductAddDialog = ({ product, onClose, onAddToCart }) => {
 
 const OrderDetailsPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const searchParams = new URLSearchParams(window.location.search);
+  const [searchParams] = useSearchParams();
   const startInEditMode = searchParams.get("edit") === "true";
 
   const { user } = useAuth();
@@ -384,15 +387,24 @@ const OrderDetailsPage = () => {
   );
 
   const isDigitalPayment = useMemo(() => {
+    if (isInStoreOrder) return false;
     const m = paymentMethod.toLowerCase();
     return m === "bkash" || m === "nagad" || m === "rocket" || m === "bank";
-  }, [paymentMethod]);
+  }, [isInStoreOrder, paymentMethod]);
 
   const paymentOptions = useMemo(
     () => resolvePaymentOptions(isInStoreOrder),
     [isInStoreOrder],
   );
 
+  // Opens the printable invoice endpoint in a new browser tab
+  const handleOpenInvoice = () => {
+    const apiBase = (baseURL || import.meta.env.VITE_API_BASE_URL || clientConfig?.apiBaseUrl || 'https://server.decantrebd.com').replace(/\/$/, '');
+    const orderIdentifier = order?._id || order?.id || order?.did || order?.orderNumber || id;
+    window.open(`${apiBase}/api/v1/orders/${orderIdentifier}/invoice`, '_blank', 'noopener,noreferrer');
+  };
+
+  // Saves edits made to the current order
   const handleSave = async () => {
     if (cart.length === 0) {
       toast.error("Cart is empty. Add at least one product.");
@@ -468,7 +480,7 @@ const OrderDetailsPage = () => {
       <div className="flex-1 p-8 text-center space-y-4">
         <h2 className="text-2xl font-bold text-destructive">Order Not Found</h2>
         <p className="text-muted-foreground">The order you are looking for does not exist or failed to load.</p>
-        <Button onClick={() => { window.location.href = "/dashboard/orders"; }}>
+        <Button onClick={() => navigate("/dashboard/orders")}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Orders
         </Button>
       </div>
@@ -486,7 +498,7 @@ const OrderDetailsPage = () => {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => { window.location.href = "/dashboard/orders"; }}
+            onClick={() => navigate("/dashboard/orders")}
             className="h-9 w-9 border-border/80"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -534,9 +546,14 @@ const OrderDetailsPage = () => {
               </Button>
             </>
           ) : (
-            <Button className="gap-1.5 shadow-sm" onClick={() => setIsEditMode(true)}>
-              <Edit className="h-4 w-4" /> Edit Order
-            </Button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button variant="outline" className="gap-1.5 shadow-sm bg-background cursor-pointer" onClick={handleOpenInvoice}>
+                <FileText className="h-4 w-4 text-muted-foreground" /> Print Invoice
+              </Button>
+              <Button className="gap-1.5 shadow-sm cursor-pointer" onClick={() => setIsEditMode(true)}>
+                <Edit className="h-4 w-4" /> Edit Order
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -985,7 +1002,9 @@ const OrderDetailsPage = () => {
                   <label className="text-muted-foreground mb-1 block">Payment Method</label>
                   <Select value={paymentMethod} onValueChange={(val) => setPaymentMethod(val ?? (isInStoreOrder ? "cash" : "cod"))}>
                     <SelectTrigger className="w-full h-8">
-                      <SelectValue placeholder="Select Payment Method" />
+                      <SelectValue placeholder="Select Payment Method">
+                        {(val) => getPaymentMethodLabel(val || paymentMethod)}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {paymentOptions.map((opt) => (
