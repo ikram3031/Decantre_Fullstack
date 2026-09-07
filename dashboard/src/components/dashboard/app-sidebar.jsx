@@ -16,7 +16,6 @@ import {
   Menu,
   Sliders,
   Terminal,
-  Database,
   Sparkles,
   ShieldCheck,
   Activity,
@@ -73,6 +72,19 @@ import { BrandLogo } from "@/components/BrandLogo"
 import { useAuth } from "@/lib/auth-context"
 import { clientConfig } from "@/clientConfig"
 import { hasMenuAccess } from "@/lib/rbac"
+
+// Renders the standard TikTok musical note brand icon
+const TikTokIcon = ({ className = "h-3.5 w-3.5", ...props }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden="true"
+    {...props}
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.96-4.49V8.75a8.16 8.16 0 0 0 4.81 1.54V6.85a4.87 4.87 0 0 1-1-.16z" />
+  </svg>
+);
 
 export function AppSidebar({ ...props }) {
   const location = useLocation()
@@ -584,6 +596,16 @@ export function AppSidebar({ ...props }) {
                     >
                       <Share2 className="h-3.5 w-3.5" />
                       <span>Meta Pixel</span>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton
+                      isActive={pathname.startsWith("/dashboard/settings/tiktok-pixel")}
+                      render={<Link to="/dashboard/settings/tiktok-pixel" />}
+                    >
+                      <TikTokIcon className="h-3.5 w-3.5 shrink-0" />
+                      <span>TikTok Pixel</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
 

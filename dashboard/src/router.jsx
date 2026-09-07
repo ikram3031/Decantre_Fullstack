@@ -16,9 +16,9 @@ import Members from './pages/dashboard/members';
 import Trash from './pages/dashboard/trash';
 import ActivityLogs from './pages/dashboard/activityLogs';
 import Reviews from './pages/dashboard/reviews';
-import SettingsPage from './pages/dashboard/settings';
 import ProductShowcasesPage from './pages/dashboard/settings/productShowcases';
 import MetaPixelPage from './pages/dashboard/settings/metaPixel';
+import TikTokPixelPage from './pages/dashboard/settings/tiktokPixel';
 import CMSContentPage from './pages/dashboard/settings/cmsContent';
 import GoogleAnalyticsPage from './pages/dashboard/settings/googleAnalytics';
 import SEOSettingsPage from './pages/dashboard/settings/seoSettings';
@@ -52,7 +52,6 @@ import MessagesManager from './pages/dashboard/tools/messagesManager';
 import BulkImageResize from './pages/dashboard/tools/bulkImageResize';
 import MetaCatalog from './pages/dashboard/tools/metaCatalog';
 import SystemLogs from './pages/dashboard/tools/systemLogs';
-import AssetsManager from './pages/dashboard/tools/assetsManager';
 import SupportDesk from './pages/dashboard/tools/supportDesk';
 
 // AI Studio
@@ -173,6 +172,14 @@ export const router = createBrowserRouter([
             element: (
               <RoleGuard menuKey="settings">
                 <MetaPixelPage />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'tiktok-pixel',
+            element: (
+              <RoleGuard menuKey="settings">
+                <TikTokPixelPage />
               </RoleGuard>
             ),
           },
