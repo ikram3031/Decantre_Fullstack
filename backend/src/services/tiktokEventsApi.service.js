@@ -186,6 +186,10 @@ export const sendTikTokServerPurchaseEvent = async (order, req = null) => {
       price: Number(item.unitPrice || 0),
     }));
 
+    const orderTotalAmount = Number(
+      order.totals?.total ?? order.total ?? order.totalAmount ?? 0
+    );
+
     const eventPayload = {
       event_source: "web",
       event_source_id: pixelId,
@@ -198,7 +202,7 @@ export const sendTikTokServerPurchaseEvent = async (order, req = null) => {
           user: userObj,
           properties: {
             currency: "BDT",
-            value: Number(order.total || 0),
+            value: orderTotalAmount,
             content_type: "product",
             contents,
             order_id: String(order.orderNumber || order._id || ""),
