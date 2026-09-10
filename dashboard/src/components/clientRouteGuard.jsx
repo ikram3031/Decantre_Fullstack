@@ -47,8 +47,13 @@ export const ClientRouteGuard = ({ children }) => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  if (requiredPermission && !allowedMenus.includes(requiredPermission)) {
-    return <Navigate to="/dashboard" replace />;
+  if (requiredPermission && !allowedMenus.includes('*')) {
+    const parentPermission = requiredPermission.includes('.') ? requiredPermission.split('.')[0] : null;
+    const isExplicitlyAllowed = allowedMenus.includes(requiredPermission);
+    const isParentAllowed = parentPermission && allowedMenus.includes(parentPermission);
+    if (!isExplicitlyAllowed && !isParentAllowed) {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return children;
