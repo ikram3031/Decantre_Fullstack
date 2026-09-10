@@ -98,9 +98,7 @@
   "allowedMenus": [
     "overview",
     "orders",
-    "orders.new",
     "orders.list",
-    "orders.instore",
     "products",
     "products.new",
     "products.list",

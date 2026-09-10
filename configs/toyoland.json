@@ -35,7 +35,8 @@
     "season": true,
     "brand": true,
     "variantImage": false,
-    "webmail": true
+    "webmail": true,
+    "inStoreOrder": true
   },
   "stockManagement": {
     "simpleProduct": true,
