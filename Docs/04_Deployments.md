@@ -24,15 +24,12 @@ This document serves as the master record of all white-label clients deployed on
 
 ---
 
-## 2. Engulfic & Toyoland VPS Host (`144.79.218.112`)
+## 2. Engulfic VPS Host (`144.79.218.112`)
 
 ### A. Environment Paths & Volumes
 - **Engulfic Codebase (Live):** `/opt/live` (Branch: `Live`)
-- **Toyoland Dev Codebase (Dev):** `/ikram/Toyoland` (Branch: `Live`)
 - **Engulfic Configurations:** `/opt/engulfic/configs/`
-- **Toyoland Configurations:** `/opt/toyoland-dev/configs/`
 - **Engulfic Uploads:** `/var/www/uploads/` & `/opt/engulfic/uploads/`
-- **Toyoland Uploads:** `/ikram/caution/uploads/`
 
 ### B. Active Containers & Port Routing
 | Container Name | Client / Service | Host Port Binding | Internal Port | Domain / Routing | Exposure Status |
@@ -40,15 +37,28 @@ This document serves as the master record of all white-label clients deployed on
 | **`engulfic-backend-live`** | Engulfic Live API | `127.0.0.1:5094` | `5092` | `https://server.engulfic.com` | Reverse Proxied via Nginx |
 | **`engulfic-dashboard-live`** | Engulfic Live Dashboard | `127.0.0.1:8015` | `8005` | `https://dashboard.engulfic.com` | Reverse Proxied via Nginx |
 | **`engulfic-mongodb-live`** | Engulfic MongoDB | `127.0.0.1:27017` | `27017` | Direct Access | **Localhost Only (SSH Tunnel)** |
-| **`engulfic-frontend`** | Engulfic Legacy Frontend | `127.0.0.1:8001` | `8001` | `https://engulfic.com` | Reverse Proxied via Nginx |
-| **`toyoland-backend-dev`** | Toyoland Dev API | `127.0.0.1:5092` | `5092` | Direct Access / Local IP | Localhost Only |
-| **`toyoland-dashboard-dev`** | Toyoland Dev Dashboard | `127.0.0.1:8005` | `8005` | Direct Access / Local IP | Localhost Only |
-| **`toyoland-frontend`** | Toyoland Dev Frontend | `127.0.0.1:8006` | `8006` | Direct Access (Port `8006`) | Localhost Only |
-| **`toyoland-mongodb-dev`** | Toyoland MongoDB | `127.0.0.1:27018` | `27017` | Direct Access | **Localhost Only (SSH Tunnel)** |
+| **`engulfic-frontend`** | Engulfic Storefront | `127.0.0.1:8001` | `8001` | `https://engulfic.com` | Reverse Proxied via Nginx |
 
 ---
 
-## 3. General Maintenance Workflows
+## 3. Toyoland Dedicated VPS Host (`144.79.218.122` - `host.toyoland.com`)
+
+### A. Environment Paths & Volumes
+- **Toyoland Codebase (Live):** `/opt/live` (Branch: `Live`)
+- **Toyoland Configurations:** `/opt/toyoland/configs/`
+- **Toyoland Uploads:** `/var/www/uploads/` & `/opt/toyoland/uploads/`
+
+### B. Active Containers & Port Routing
+| Container Name | Client / Service | Host Port Binding | Internal Port | Domain / Routing | Exposure Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`toyoland-backend-live`** | Toyoland Live API | `127.0.0.1:5092` | `5092` | `https://server.toyoland.shop` | Reverse Proxied via Nginx |
+| **`toyoland-dashboard-live`** | Toyoland Live Dashboard | `127.0.0.1:8005` | `8005` | `https://admin.toyoland.shop` | Reverse Proxied via Nginx |
+| **`toyoland-frontend-live`** | Toyoland Storefront | `127.0.0.1:8001` | `8001` | `https://toyoland.shop` | Reverse Proxied via Nginx |
+| **`toyoland-mongodb-live`** | Toyoland MongoDB | `127.0.0.1:27017` | `27017` | Direct Access | **Localhost Only (SSH Tunnel)** |
+
+---
+
+## 4. General Maintenance Workflows
 
 ### A. Sourcing Custom Configs on VPS
 Since we use dynamic compose settings, always run deployments with the environment file flag:
