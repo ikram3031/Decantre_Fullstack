@@ -44,7 +44,7 @@
   },
   "stockManagement": {
     "simpleProduct": true,
-    "variableProduct": false
+    "variableProduct": true
   },
   "reports": {
     "enableInStoreFilter": true,

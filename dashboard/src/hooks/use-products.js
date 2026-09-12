@@ -71,6 +71,7 @@ const fetchProducts = async (params) => {
           price: Number(v.price ?? 0),
           offerPrice: v.offerPrice != null ? Number(v.offerPrice) : null,
           stockQuantity: Number(v.stockQuantity ?? 0),
+          stockStatus: v.stockStatus || 'instock',
           sku: v.sku ?? '',
           sortOrder: Number(v.sortOrder ?? 0),
         }))

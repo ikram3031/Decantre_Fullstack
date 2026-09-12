@@ -46,8 +46,21 @@ export const serializeProduct = (product) => {
 
   const primaryCategory = populatedCategories.length > 0 ? populatedCategories[0] : null;
 
+  const rawVariants = Array.isArray(source?.variants)
+    ? source.variants.map((v) => ({
+        size: v.size ?? "",
+        price: Number(v.price ?? 0),
+        offerPrice: v.offerPrice != null ? Number(v.offerPrice) : null,
+        sku: v.sku ?? "",
+        sortOrder: Number(v.sortOrder ?? 0),
+        imageUrl: v.imageUrl ?? null,
+        stockStatus: v.stockStatus || "instock",
+      }))
+    : undefined;
+
   return {
     ...rest,
+    ...(rawVariants !== undefined ? { variants: rawVariants } : {}),
     id,
     category: primaryCategory,
     categories: populatedCategories.length > 0 ? populatedCategories : rawCategories,
