@@ -270,6 +270,17 @@ export function AppSidebar({ ...props }) {
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   )}
+                  {isAllowed("products.miniature") && (
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton
+                        isActive={pathname === "/dashboard/products/miniature"}
+                        render={<Link to="/dashboard/products/miniature" />}
+                      >
+                        <Sparkles className="h-3.5 w-3.5" />
+                        <span>Miniature</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  )}
                   {isAllowed("products.categories") && (
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton

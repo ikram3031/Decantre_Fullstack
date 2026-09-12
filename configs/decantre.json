@@ -102,6 +102,7 @@
     "products",
     "products.new",
     "products.list",
+    "products.miniature",
     "products.categories",
     "products.brands",
     "products.attributes",

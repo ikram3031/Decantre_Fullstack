@@ -21,6 +21,7 @@
         "products",
         "products.new",
         "products.list",
+        "products.miniature",
         "products.categories",
         "products.brands",
         "products.attributes",
@@ -43,6 +44,7 @@
       "allowedMenus": [
         "products",
         "products.list",
+        "products.miniature",
         "products.categories",
         "products.brands",
         "products.attributes",

@@ -26,6 +26,7 @@ import AllMedia from './pages/dashboard/allMedia';
 
 // Products
 import ProductsList from './pages/dashboard/products/productsList';
+import MiniatureProductsList from './pages/dashboard/products/miniatureProductsList';
 import ProductDetails from './pages/dashboard/products/productDetails';
 import AddNewProduct from './pages/dashboard/products/addNewProduct';
 // import Stock from './pages/dashboard/products/stock';
@@ -285,6 +286,14 @@ export const router = createBrowserRouter([
             element: (
               <RoleGuard menuKey="products.list">
                 <ProductsList />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'miniature',
+            element: (
+              <RoleGuard menuKey="products.miniature">
+                <MiniatureProductsList />
               </RoleGuard>
             ),
           },
