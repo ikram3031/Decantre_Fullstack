@@ -159,6 +159,31 @@ export const getClientIndustryData = (clientKey = getActiveClientKey()) => {
           { id: 2, type: 'add_to_cart', label: 'Added to Cart "Anime Plushie Keychain"', location: 'Chittagong, BD', time: '15s ago', badge: 'bg-purple-500/15 text-purple-500' },
         ],
       };
+    case 'demo':
+      return {
+        accentColor: '#4f46e5',
+        realtimeActive: 12,
+        baseSessions: 8500,
+        baseUsers: 6200,
+        basePageviews: 24500,
+        baseRevenue: 145000,
+        baseTransactions: 98,
+        topPages: [
+          { path: '/', title: 'Demo Store Homepage', pageviews: 8200, uniqueViews: 5900, avgTime: '1m 45s', bounceRate: '24.0%', exitRate: '18.0%' },
+          { path: '/collections/featured', title: 'Featured Collection', pageviews: 5400, uniqueViews: 3800, avgTime: '2m 20s', bounceRate: '20.0%', exitRate: '15.0%' },
+          { path: '/cart', title: 'Shopping Cart', pageviews: 1800, uniqueViews: 1300, avgTime: '1m 30s', bounceRate: '15.0%', exitRate: '20.0%' },
+          { path: '/checkout', title: 'Secure Checkout', pageviews: 950, uniqueViews: 720, avgTime: '2m 05s', bounceRate: '8.0%', exitRate: '10.0%' },
+        ],
+        sampleProducts: [
+          { path: '/products/demo-item-alpha', title: 'Demo Item Alpha Pro' },
+          { path: '/products/demo-item-beta', title: 'Demo Item Beta Wireless' },
+        ],
+        liveEvents: [
+          { id: 1, type: 'view_item', label: 'Viewed "Demo Item Alpha Pro"', location: 'Dhaka, BD', time: 'Just now', badge: 'bg-indigo-500/15 text-indigo-500' },
+          { id: 2, type: 'add_to_cart', label: 'Added to Cart "Demo Item Beta Wireless"', location: 'Chittagong, BD', time: '20s ago', badge: 'bg-blue-500/15 text-blue-500' },
+          { id: 3, type: 'purchase', label: 'Completed Order (৳2,450 via bKash)', location: 'Dhaka, BD', time: '1m ago', badge: 'bg-emerald-500/15 text-emerald-500' },
+        ],
+      };
     default:
       return {
         accentColor: '#C5A059',

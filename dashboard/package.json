@@ -9,11 +9,13 @@
     "dev:engulfic": "vite --mode engulfic",
     "dev:toyoland": "vite --mode toyoland",
     "dev:kawaiikutir": "vite --mode kawaiikutir",
+    "dev:demo": "vite --mode demo",
     "build": "vite build",
     "build:decantre": "vite build --mode decantre",
     "build:engulfic": "vite build --mode engulfic",
     "build:toyoland": "vite build --mode toyoland",
     "build:kawaiikutir": "vite build --mode kawaiikutir",
+    "build:demo": "vite build --mode demo",
     "lint": "oxlint",
     "preview": "vite preview"
   },

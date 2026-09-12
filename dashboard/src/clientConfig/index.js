@@ -2,6 +2,7 @@ import decantreConfig from './01decantre/config.json';
 import engulficConfig from './02engulfic/config.json';
 import toyolandConfig from './03toyoland/config.json';
 import kawaiikutirConfig from './04kawaiikutir/config.json';
+import demoConfig from './05demo/config.json';
 import activeSyncedConfig from './activeConfig.json';
 
 const clientConfigs = {
@@ -9,6 +10,7 @@ const clientConfigs = {
   engulfic: engulficConfig,
   toyoland: toyolandConfig,
   kawaiikutir: kawaiikutirConfig,
+  demo: demoConfig,
 };
 
 // Detects active client key from current window location hostname
