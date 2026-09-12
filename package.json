@@ -2,5 +2,14 @@
   "name": "multi-tenant-ecommerce",
   "version": "1.0.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/sync-config.js demo && npm run dev --prefix dashboard",
+    "dev:demo": "node scripts/sync-config.js demo && npm run dev:demo --prefix dashboard",
+    "dev:dashboard": "npm run dev --prefix dashboard",
+    "dev:backend": "npm run dev --prefix backend",
+    "sync:demo": "node scripts/sync-config.js demo",
+    "build": "npm run build --prefix dashboard",
+    "build:demo": "node scripts/sync-config.js demo && npm run build:demo --prefix dashboard"
+  }
 }
