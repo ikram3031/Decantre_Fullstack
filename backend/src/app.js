@@ -10,6 +10,7 @@ import attributeRouter from "./dashboard/routes/attribute.route.js";
 import mediaAuditRouter from "./dashboard/routes/mediaAuditRoute.js";
 import developerRouter, { broadcastLogToClients } from "./routes/DeveloperRoute.js";
 import { env } from "./config/env.js";
+import { getDynamicCorsConfig } from "./config/index.js";
 
 export async function createApp() {
   const app = express();
@@ -17,42 +18,7 @@ export async function createApp() {
   app.set("wpTablePrefix", process.env.WP_TABLE_PREFIX || "wp_");
   app.set("trust proxy", true);
 
-  const defaultOrigins = [
-    "https://decantrebd.com",
-    "https://www.decantrebd.com",
-    "https://dashboard.decantrebd.com",
-    "http://dashboard.decantrebd.com",
-    "https://service.decantrebd.com",
-    "https://server.decantrebd.com",
-    "https://engulfic.com",
-    "https://www.engulfic.com",
-    "https://dashboard.engulfic.com",
-    "https://server.engulfic.com",
-    "https://toyoland.shop",
-    "https://www.toyoland.shop",
-    "https://dashboard.toyoland.shop",
-    "https://server.toyoland.shop",
-    "https://kawaiikutir.shop",
-    "https://www.kawaiikutir.shop",
-    "https://admin.kawaiikutir.shop",
-    "https://dashboard.kawaiikutir.shop",
-    "https://server.kawaiikutir.shop",
-    "https://demo.shop",
-    "https://www.demo.shop",
-    "https://admin.demo.shop",
-    "https://dashboard.demo.shop",
-    "https://server.demo.shop",
-    "http://localhost:8001",
-    "http://localhost:8005",
-    "http://localhost:3000",
-    "http://localhost:5173",
-  ];
-
-  const envOrigins = env.ALLOWED_ORIGINS
-    ? env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
-    : [];
-
-  const allowedOrigins = Array.from(new Set([...defaultOrigins, ...envOrigins]));
+  const { allowedOrigins, clientKeywords } = getDynamicCorsConfig(env.ALLOWED_ORIGINS);
 
   const corsOptions = {
     origin: (origin, callback) => {
@@ -62,14 +28,7 @@ export async function createApp() {
         return callback(null, true);
       }
 
-      const isKnownClientDomain =
-        origin.includes("toyoland") ||
-        origin.includes("kawaiikutir") ||
-        origin.includes("engulfic") ||
-        origin.includes("decantre") ||
-        origin.includes("demo") ||
-        origin.includes("localhost") ||
-        origin.includes("127.0.0.1");
+      const isKnownClientDomain = clientKeywords.some((keyword) => origin.toLowerCase().includes(keyword));
 
       if (isKnownClientDomain) {
         return callback(null, true);

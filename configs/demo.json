@@ -1,14 +1,14 @@
 {
-  "clientId": "05",
+  "clientId": "00",
   "clientKey": "demo",
   "brandName": "Demo Store",
   "domain": "plexivia.online",
   "supportEmail": "support@plexivia.online",
-  "phone": "+8801700000000",
+  "phone": "+8801823110885",
   "address": "Dhaka, Bangladesh",
-  "apiBaseUrl": "https://server.plexivia.online",
+  "apiBaseUrl": "https://api.plexivia.online",
   "dashboardUrl": "https://admin.plexivia.online",
-  "storefrontUrl": "https://plexivia.online",
+  "storefrontUrl": "https://store.plexivia.online",
   "policies": {
     "stock": {
       "mode": "variant_wise",

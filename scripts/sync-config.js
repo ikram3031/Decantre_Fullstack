@@ -85,6 +85,21 @@ const syncClientConfig = () => {
   fs.writeFileSync(backendActiveTarget, JSON.stringify(parsed, null, 2), "utf8");
   fs.writeFileSync(dashboardActiveTarget, JSON.stringify(parsed, null, 2), "utf8");
 
+  const allClientsTarget = path.join(rootDir, "backend", "src", "config", "allClients.json");
+  const allConfigs = {};
+  const configsDir = path.join(rootDir, "configs");
+  if (fs.existsSync(configsDir)) {
+    fs.readdirSync(configsDir)
+      .filter((file) => file.endsWith(".json"))
+      .forEach((file) => {
+        try {
+          const key = path.basename(file, ".json").toLowerCase();
+          allConfigs[key] = JSON.parse(fs.readFileSync(path.join(configsDir, file), "utf8"));
+        } catch {}
+      });
+    fs.writeFileSync(allClientsTarget, JSON.stringify(allConfigs, null, 2), "utf8");
+  }
+
   console.log(`✨ Successfully synced configuration for client: [${parsed.brandName} (${clientKey})]`);
   console.log(`   ├─ Stock Policy:   ${parsed.policies?.stock?.mode || "N/A"}`);
   console.log(`   ├─ Pricing Policy: ${parsed.policies?.pricing?.mode || "N/A"}`);

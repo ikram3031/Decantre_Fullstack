@@ -1,8 +1,8 @@
 {
-  "clientId": "05",
+  "clientId": "00",
   "clientKey": "demo",
   "brandName": "Demo Store",
-  "apiBaseUrl": "https://server.demo.shop",
+  "apiBaseUrl": "https://api.plexivia.online",
   "features": {
     "season": true,
     "brand": true,
