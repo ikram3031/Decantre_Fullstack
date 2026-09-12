@@ -56,6 +56,7 @@ export function ProductsTable({
   onTotalPagesChange,
   selectedIds,
   onSelectedIdsChange,
+  fixedOnSale = false,
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -83,6 +84,7 @@ export function ProductsTable({
     category: categoryFilter !== 'All' && categoryFilter !== 'LowStock' ? categoryFilter : undefined,
     brand: brandFilter !== 'All' ? brandFilter : undefined,
     stockStatus: stockStatusFilter !== 'all' ? stockStatusFilter : undefined,
+    onSale: fixedOnSale ? true : undefined,
     page,
     limit: 15,
   });

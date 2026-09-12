@@ -12,6 +12,7 @@ import {
   Package,
   Receipt,
   Ticket,
+  Tag,
   X,
   Menu,
   Sliders,
@@ -267,6 +268,17 @@ export function AppSidebar({ ...props }) {
                       >
                         <ListOrdered className="h-3.5 w-3.5" />
                         <span>Product List</span>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  )}
+                  {isAllowed("products.on-sale") && (
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton
+                        isActive={pathname === "/dashboard/products/on-sale"}
+                        render={<Link to="/dashboard/products/on-sale" />}
+                      >
+                        <Tag className="h-3.5 w-3.5" />
+                        <span>On Sale</span>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   )}

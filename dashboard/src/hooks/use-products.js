@@ -22,6 +22,7 @@ const fetchProducts = async (params) => {
   if (params?.category) queryParams.category = params.category;
   if (params?.brand) queryParams.brand = params.brand;
   if (params?.stockStatus && params.stockStatus !== 'all') queryParams.stockStatus = params.stockStatus;
+  if (params?.onSale) queryParams.onSale = true;
 
   const response = await apiClient.get('/api/v1/products', { params: queryParams });
 

@@ -35,7 +35,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 // Renders the products management interface with search, filters, pagination, and bulk stock controls
-const ProductsPage = ({ fixedCategory = null, pageTitle = 'Products & Inventory' }) => {
+const ProductsPage = ({ fixedCategory = null, fixedOnSale = false, pageTitle = 'Products & Inventory' }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState(fixedCategory || 'All');
   const [brandFilter, setBrandFilter] = useState('All');
@@ -273,6 +273,7 @@ const ProductsPage = ({ fixedCategory = null, pageTitle = 'Products & Inventory'
             onTotalPagesChange={setTotalPages}
             selectedIds={selectedIds}
             onSelectedIdsChange={setSelectedIds}
+            fixedOnSale={fixedOnSale}
           />
 
           {totalPages > 1 && (

@@ -26,6 +26,7 @@ import AllMedia from './pages/dashboard/allMedia';
 
 // Products
 import ProductsList from './pages/dashboard/products/productsList';
+import OnSaleProductsList from './pages/dashboard/products/onSaleProductsList';
 import MiniatureProductsList from './pages/dashboard/products/miniatureProductsList';
 import ProductDetails from './pages/dashboard/products/productDetails';
 import AddNewProduct from './pages/dashboard/products/addNewProduct';
@@ -286,6 +287,14 @@ export const router = createBrowserRouter([
             element: (
               <RoleGuard menuKey="products.list">
                 <ProductsList />
+              </RoleGuard>
+            ),
+          },
+          {
+            path: 'on-sale',
+            element: (
+              <RoleGuard menuKey="products.on-sale">
+                <OnSaleProductsList />
               </RoleGuard>
             ),
           },

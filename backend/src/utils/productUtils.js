@@ -338,6 +338,25 @@ export const buildProductFilter = async (input = {}) => {
     }
   }
 
+  if (source.onSale === true || source.onSale === "true" || source.on_sale === true || source.on_sale === "true") {
+    const onSaleConditions = [
+      { offerPrice: { $gt: 0, $ne: null } },
+      { "variants.offerPrice": { $gt: 0, $ne: null } },
+      { tags: { $in: ["sale", "on-sale", "Sale", "On-Sale"] } }
+    ];
+    if (filter.$and) {
+      filter.$and.push({ $or: onSaleConditions });
+    } else if (filter.$or) {
+      filter.$and = [
+        { $or: filter.$or },
+        { $or: onSaleConditions }
+      ];
+      delete filter.$or;
+    } else {
+      filter.$or = onSaleConditions;
+    }
+  }
+
   return filter;
 };
 
