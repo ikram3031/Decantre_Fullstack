@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { clientConfig } from '@/clientConfig';
-import { apiClient } from '@/lib/api-client';
-import engulficFallbackLogo from '@/assets/engulfic_logo.webp';
-import decantreFallbackLogo from '@/assets/decantre_logo.png';
-import plexiviaFallbackLogo from '@/assets/plexivia.png';
-
-const fallbackAssets = {
-  engulfic: engulficFallbackLogo,
-  decantre: decantreFallbackLogo,
-  plexivia: plexiviaFallbackLogo,
-};
-
+import { apiClient, resolveImageUrl } from '@/lib/api-client';
 // Renders the tenant branding logo with fixed proportional width and dynamic height
 export const BrandLogo = ({
   src,
@@ -21,7 +11,6 @@ export const BrandLogo = ({
   centered = false,
 }) => {
   const { clientKey = 'decantre', brandName = 'Decantre', logoUrl } = clientConfig || {};
-  const fallbackAsset = fallbackAssets[clientKey] || null;
 
   const [logoVersion, setLogoVersion] = useState(() => {
     try {
@@ -32,21 +21,12 @@ export const BrandLogo = ({
   });
 
   const defaultLogo = '/uploads/assets/logo.webp';
-  const rawUrl = src || logoUrl || import.meta.env?.VITE_LOGO_URL || defaultLogo;
+  const rawUrl = src || (logoUrl && !logoUrl.includes('demo_logo') ? logoUrl : defaultLogo) || defaultLogo;
 
+  // Resolves image paths and appends version query string for real-time asset invalidation
   const resolveLogoUrl = (url, version) => {
     if (!url) return null;
-    let finalUrl = url;
-    if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('data:') && !url.startsWith('blob:')) {
-      const base = apiClient?.defaults?.baseURL || '';
-      if (url.startsWith('/') && base.endsWith('/')) {
-        finalUrl = `${base.slice(0, -1)}${url}`;
-      } else if (!url.startsWith('/') && !base.endsWith('/')) {
-        finalUrl = `${base}/${url}`;
-      } else {
-        finalUrl = `${base}${url}`;
-      }
-    }
+    let finalUrl = resolveImageUrl(url);
     if (version && !finalUrl.startsWith('data:') && !finalUrl.startsWith('blob:')) {
       finalUrl += `${finalUrl.includes('?') ? '&' : '?'}v=${version}`;
     }
@@ -54,7 +34,7 @@ export const BrandLogo = ({
   };
 
   const primaryUrl = resolveLogoUrl(rawUrl, logoVersion);
-  const [currentSrc, setCurrentSrc] = useState(primaryUrl || fallbackAsset);
+  const [currentSrc, setCurrentSrc] = useState(primaryUrl);
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
@@ -73,16 +53,13 @@ export const BrandLogo = ({
   }, []);
 
   useEffect(() => {
-    setCurrentSrc(primaryUrl || fallbackAsset);
+    setCurrentSrc(primaryUrl);
     setImageError(false);
-  }, [primaryUrl, fallbackAsset]);
+  }, [primaryUrl]);
 
+  // Handles image load failures and cleanly triggers text badge fallback
   const handleImageError = () => {
-    if (currentSrc !== fallbackAsset && fallbackAsset) {
-      setCurrentSrc(fallbackAsset);
-    } else {
-      setImageError(true);
-    }
+    setImageError(true);
   };
 
   const isCentered = centered || className.includes('mx-auto') || className.includes('justify-center');

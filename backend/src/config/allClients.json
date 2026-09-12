@@ -249,11 +249,11 @@
     "clientKey": "demo",
     "brandName": "Demo Store",
     "domain": "plexivia.online",
-    "supportEmail": "support@plexivia.online",
+    "supportEmail": "info@plexivia.online",
     "phone": "+8801823110885",
     "address": "Dhaka, Bangladesh",
     "apiBaseUrl": "https://api.plexivia.online",
-    "dashboardUrl": "https://admin.plexivia.online",
+    "dashboardUrl": "https://dashboard.plexivia.online",
     "storefrontUrl": "https://store.plexivia.online",
     "policies": {
       "stock": {
@@ -301,8 +301,8 @@
         "inventory"
       ]
     },
-    "logoUrl": "/src/uploads/assets/demo_logo.png",
-    "siteIconUrl": "/src/uploads/assets/demo_logo.png",
+    "logoUrl": "/uploads/assets/logo.webp",
+    "siteIconUrl": "/uploads/assets/logo.webp",
     "assetsConfig": {
       "sections": [
         {
@@ -345,7 +345,7 @@
             {
               "key": "logo",
               "label": "Header Logo",
-              "filename": "demo_logo.png",
+              "filename": "logo.webp",
               "recommendedSize": "500x200"
             },
             {

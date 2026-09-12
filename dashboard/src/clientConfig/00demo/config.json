@@ -27,8 +27,8 @@
     "isVerified": true,
     "enhancedMeasurement": true
   },
-  "logoUrl": "/src/uploads/assets/demo_logo.png",
-  "siteIconUrl": "/src/uploads/assets/demo_logo.png",
+  "logoUrl": "/uploads/assets/logo.webp",
+  "siteIconUrl": "/uploads/assets/logo.webp",
   "assetsConfig": {
     "sections": [
       {
@@ -53,7 +53,7 @@
         "title": "Brand & Identity",
         "description": "Brand logo and browser favicon files",
         "slots": [
-          { "key": "logo", "label": "Dashboard Logo", "filename": "demo_logo.png", "recommendedSize": "500x200" },
+          { "key": "logo", "label": "Dashboard Logo", "filename": "logo.webp", "recommendedSize": "500x200" },
           { "key": "favicon", "label": "Favicon Icon", "filename": "favicon.ico", "recommendedSize": "64x64" }
         ]
       }

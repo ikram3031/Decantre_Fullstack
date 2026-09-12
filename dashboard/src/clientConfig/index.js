@@ -17,6 +17,7 @@ const clientConfigs = {
 const getClientFromHostname = () => {
   if (typeof window === 'undefined') return null;
   const hostname = window.location.hostname.toLowerCase();
+  if (hostname.includes('plexivia')) return 'demo';
   const matchedKey = Object.keys(clientConfigs).find((key) => hostname.includes(key));
   return matchedKey || null;
 };
