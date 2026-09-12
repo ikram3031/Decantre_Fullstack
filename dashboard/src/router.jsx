@@ -305,6 +305,14 @@ export const router = createBrowserRouter([
               </RoleGuard>
             ),
           },
+          {
+            path: 'new/:category',
+            element: (
+              <RoleGuard menuKey="products.new">
+                <AddNewProduct />
+              </RoleGuard>
+            ),
+          },
           /* {
             path: 'stock',
             element: (

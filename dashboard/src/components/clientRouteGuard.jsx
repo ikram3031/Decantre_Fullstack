@@ -11,7 +11,7 @@ const getRequiredPermission = (pathname) => {
   if (cleanPath === '/dashboard/orders/in-store' || cleanPath === '/dashboard/orders/instore') return 'orders.instore';
   if (cleanPath.startsWith('/dashboard/orders')) return 'orders.list';
   
-  if (cleanPath === '/dashboard/products/new') return 'products.new';
+  if (cleanPath === '/dashboard/products/new' || cleanPath.startsWith('/dashboard/products/new/')) return 'products.new';
   if (cleanPath === '/dashboard/products/miniature') return 'products.miniature';
   if (cleanPath === '/dashboard/products/categories') return 'products.categories';
   if (cleanPath === '/dashboard/products/brands') return 'products.brands';
