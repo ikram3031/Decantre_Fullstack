@@ -7,7 +7,7 @@
   "phone": "+8801823110885",
   "address": "Dhaka, Bangladesh",
   "apiBaseUrl": "https://api.plexivia.online",
-  "dashboardUrl": "https://admin.plexivia.online",
+  "dashboardUrl": "https://dashboard.plexivia.online",
   "storefrontUrl": "https://store.plexivia.online",
   "policies": {
     "stock": {
